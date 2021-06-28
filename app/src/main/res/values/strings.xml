@@ -85,5 +85,7 @@
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="button_choose_file">Выбрать готовый файл</string>
     <string name="button_choose_theme">Выберите тему приложения</string>
+    <string name="alert_device_port_tint">Подключаемый порт</string>
+    <string name="alert_device_ip_hint">Ip устройства</string>
 
 </resources>

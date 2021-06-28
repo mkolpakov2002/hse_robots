@@ -25,8 +25,6 @@ public class DeviceItemType implements ItemType{
     private String deviceMAC;
     private String devClass;
     private String devType;
-    //TODO
-    //public static String host_address="192.168.1.138";
     private String devIp;
     private int devPort;
     private String devProtocol;
@@ -41,16 +39,15 @@ public class DeviceItemType implements ItemType{
     @Ignore
     private String imageType = "default";
 
-    public DeviceItemType(String devName, String deviceMAC, String devProtocol, String devClass, String devType) {
+    public DeviceItemType(String devName, String deviceMAC, String devProtocol, String devClass, String devType,String devIp, int devPort) {
         this.devName = devName;
         this.deviceMAC = deviceMAC;
         this.devProtocol = devProtocol;
         this.devClass = devClass;
         this.devType = devType;
         //Ip и порт
-        //this.devIp = devIp;
-        //this.devIp = "192.168.1.138";
-        //this.devPort = 9002;
+        this.devIp = devIp;
+        this.devPort = 9002;
 
         switch (devClass) {
             case "class_android":
@@ -99,13 +96,13 @@ public class DeviceItemType implements ItemType{
     public String getImageType() {
         return imageType;
     }
-
+    //"192.168.1.138"
     public void setDevIp(String devIp){
-        this.devIp = "192.168.1.138";
+        this.devIp = devIp;
     }
-
+    //4141
     public void setDevPort(int devPort){
-        this.devPort = 4141;
+        this.devPort = devPort;
     }
 
     public void setDevId(int devId){ this.devId = devId; }

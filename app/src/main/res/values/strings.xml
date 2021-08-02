@@ -11,7 +11,7 @@
     <string name="ok_add_bd_label">Завершить</string>
     <string name="suggestionNoBtAdapter">На вашем устройстве нет Bluetooth адаптера, дальнейшая работа невозможна</string>
     <string name="error">Ошибка приложения</string>
-    <string name="suggestionEnableBluetooth">Пожалуйста, включите bluetooth чтобы приложение заработало!</string>
+    <string name="suggestionEnableBluetooth">Пожалуйста, включите bluetooth для выбора устройств!</string>
     <string name="btnEnBt">Включить bluetooth</string>
     <string name="add_device">Добавить устройство</string>
     <string name="paired_devices">Список сопряжённых устройств</string>
@@ -37,6 +37,7 @@
     <string name="alert_change">Редактировать</string>
     <string name="alert_delete">Удалить</string>
     <string name="alert_info">Информация</string>
+    <string name="alert_connection_attempt">Идёт соединение…</string>
     <string name="button_forward">Вперёд</string>
     <string name="button_backward">Назад</string>
     <string name="button_leftward">Влево</string>
@@ -68,4 +69,6 @@
     <string name="button_save_protocol">добавить протокол</string>
     <string name="button_add_protocol">добавить новый протокол</string>
     <string name="button_delete_protocols">удалить кастомные протоколы</string>
+    <string name="error_empty">Введите данные</string>
+    <string name="error_mac">Введите корректный MAC</string>
 </resources>

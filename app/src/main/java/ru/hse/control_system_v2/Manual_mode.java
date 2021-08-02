@@ -11,7 +11,9 @@ import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.*;
+import android.widget.CompoundButton;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
@@ -22,7 +24,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import ru.hse.control_system_v2.dbprotocol.ProtocolRepo;
-import ru.hse.control_system_v2.list_devices.DeviceItem;
+import ru.hse.control_system_v2.list_devices.DeviceItemType;
 
 public class Manual_mode extends Activity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener
 {
@@ -36,7 +38,7 @@ public class Manual_mode extends Activity implements View.OnClickListener, Compo
     ArrayList<DataThread> dataThreadForArduinoList;
     ArrayList<Boolean> resultOfConnection;
     ArrayList<BluetoothSocket> socketList;
-    ArrayList<DeviceItem> devicesList;
+    ArrayList<DeviceItemType> devicesList;
     TextView outputText;
     SwitchMaterial hold_command;
     int numberOfEndedConnections;

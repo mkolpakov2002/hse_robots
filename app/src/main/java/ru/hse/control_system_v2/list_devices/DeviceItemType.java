@@ -1,18 +1,16 @@
 package ru.hse.control_system_v2.list_devices;
 
-import android.content.Context;
-import android.content.Intent;
-import android.util.Log;
+import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.Objects;
-
-import ru.hse.control_system_v2.BluetoothConnectionService;
-import ru.hse.control_system_v2.MainActivity;
-
-public class DeviceItem {
-    private String name, deviceMAC, devClass, devType, protocol;
+public class DeviceItemType implements ItemType{
+    private final String name;
+    private final String deviceMAC;
+    private final String devClass;
+    private final String devType;
+    private final String protocol;
     int id;
-    public DeviceItem(int id, String name, String deviceMAC, String protocol, String devClass, String devType) {
+
+    public DeviceItemType(int id, String name, String deviceMAC, String protocol, String devClass, String devType) {
         this.name = name;
         this.deviceMAC = deviceMAC;
         this.id = id;
@@ -25,7 +23,7 @@ public class DeviceItem {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        DeviceItem item = (DeviceItem) o;
+        DeviceItemType item = (DeviceItemType) o;
         return name.equals(item.name) &&
                 deviceMAC.equals(item.deviceMAC);
     }
@@ -48,9 +46,14 @@ public class DeviceItem {
 
     public String getProtocol() { return protocol; }
 
-    public void startBluetoothConnectionService(Context ma){
-        Intent intent = new Intent(ma, BluetoothConnectionService.class);
-        intent.putExtra("protocol", protocol);
-        ma.startService(intent);
+    @Override
+    public int getItemViewType() {
+        return ItemType.DEVICE_ITEM_TYPE;
+    }
+
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder viewHolder) {
+        ViewHolderFactory.ListDevicesHolder textViewHolder = (ViewHolderFactory.ListDevicesHolder) viewHolder;
+        textViewHolder.mName.setText(name);
     }
 }

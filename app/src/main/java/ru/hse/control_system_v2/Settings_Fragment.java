@@ -1,79 +1,101 @@
-package ru.hse.control_system_v2.dbprotocol;
+package ru.hse.control_system_v2;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.AlertDialog;
+import android.bluetooth.BluetoothAdapter;
+import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.text.Editable;
 import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ScrollView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.Fragment;
 
 import com.google.android.material.snackbar.Snackbar;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 
-import ru.hse.control_system_v2.MainActivity;
-import ru.hse.control_system_v2.R;
-import ru.hse.control_system_v2.TextChangedListener;
 import ru.hse.control_system_v2.dbdevices.DeviceDBHelper;
+import ru.hse.control_system_v2.dbprotocol.ProtocolDBHelper;
+import ru.hse.control_system_v2.dbprotocol.ProtocolRepo;
 
+import static android.app.Activity.RESULT_OK;
 import static android.view.View.GONE;
-import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
 
-public class AddProtocolDBActivity extends AppCompatActivity implements View.OnClickListener {
+public class Settings_Fragment extends Fragment implements View.OnClickListener {
+//TODO
+    //скрыть боттом шит с добавлением устройства
+    //не скрыввать гл. меню при выключении bt в этом фрагменте
     ProtocolDBHelper dbHelper;
     EditText editTextName, editTextLen, editTextCode;
-    Button buttonAdd, buttonShowProtoMenu, buttonCancel, buttonFile;
+    Button buttonAdd, buttonShowProtoMenu, buttonCancel, buttonFile, buttonDeleteDevices;
     TextView textListProtocols;
     final int REQUEST_CODE_OPEN = 20, PERMISSION_REQUEST_CODE = 123;
     SQLiteDatabase database;
     boolean isEditTextNameChanged, isEditTextLenChanged, isEditTextCodeChanged;
     ScrollView menuProto;
+    BluetoothAdapter btAdapter;
+    private Context fragmentContext;
+    MainActivity ma;
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.add_bd_protocol);
+    public void onAttach(@NonNull Context context) {
+        fragmentContext=context;
+        ma = ((MainActivity) fragmentContext);
+        super.onAttach(context);
+    }
 
-        dbHelper = new ProtocolDBHelper(this);
+    public Settings_Fragment() {
+        // Required empty public constructor
+    }
 
-        buttonAdd = findViewById(R.id.button_add_protocol);
+
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_settings, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        dbHelper = new ProtocolDBHelper(fragmentContext);
+
+        fragmentContext.registerReceiver(BluetoothStateChanged, new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
+
+        buttonAdd = view.findViewById(R.id.button_add_protocol);
         buttonAdd.setOnClickListener(this);
         buttonAdd.setBackgroundColor(getResources().getColor(R.color.foregroundColor));
         buttonAdd.setEnabled(false);
 
-        editTextName = findViewById(R.id.editTextProtocolName);
+        editTextName = view.findViewById(R.id.editTextProtocolName);
         editTextName.addTextChangedListener(new TextChangedListener<EditText>(editTextName) {
             @Override
             public void onTextChanged(EditText target, Editable s) {
@@ -81,7 +103,7 @@ public class AddProtocolDBActivity extends AppCompatActivity implements View.OnC
                 canShowSaveButton();
             }
         });
-        editTextLen = findViewById(R.id.editTextLength);
+        editTextLen = view.findViewById(R.id.editTextLength);
         editTextLen.addTextChangedListener(new TextChangedListener<EditText>(editTextLen) {
             @Override
             public void onTextChanged(EditText target, Editable s) {
@@ -89,7 +111,7 @@ public class AddProtocolDBActivity extends AppCompatActivity implements View.OnC
                 canShowSaveButton();
             }
         });
-        editTextCode = findViewById(R.id.editTextCode);
+        editTextCode = view.findViewById(R.id.editTextCode);
         editTextCode.addTextChangedListener(new TextChangedListener<EditText>(editTextCode) {
             @Override
             public void onTextChanged(EditText target, Editable s) {
@@ -100,60 +122,65 @@ public class AddProtocolDBActivity extends AppCompatActivity implements View.OnC
 
         editTextCode.setMovementMethod(new ScrollingMovementMethod());
 
-        menuProto = findViewById(R.id.add_proto_scroll);
+        menuProto = view.findViewById(R.id.add_proto_scroll);
         menuProto.setVisibility(GONE);
 
-        textListProtocols = findViewById(R.id.text_protocols);
+        textListProtocols = view.findViewById(R.id.text_protocols);
         textListProtocols.setMovementMethod(new ScrollingMovementMethod());
 
         database = dbHelper.getWritableDatabase();
 
-        buttonCancel = findViewById(R.id.button_cancel_protocol);
+        buttonCancel = view.findViewById(R.id.button_delete_protos);
         buttonCancel.setOnClickListener(this);
 
-        buttonShowProtoMenu = findViewById(R.id.button_show_add_proto);
+        buttonDeleteDevices = view.findViewById(R.id.button_delete_devices);
+        buttonDeleteDevices.setOnClickListener(this);
+
+        buttonShowProtoMenu = view.findViewById(R.id.button_show_add_proto);
         buttonShowProtoMenu.setOnClickListener(this);
 
-        buttonFile = findViewById(R.id.button_choose_file);
+        buttonFile = view.findViewById(R.id.button_choose_file);
         buttonFile.setOnClickListener(this);
-
-    }
-
-    @Override
-    protected void onStart(){
-        super.onStart();
+        btAdapter = BluetoothAdapter.getDefaultAdapter();
         showProtocols();
     }
+
 
     void canShowSaveButton(){
         if (isEditTextNameChanged && isEditTextLenChanged && isEditTextCodeChanged){
             buttonAdd.setEnabled(true);
-            buttonAdd.setBackgroundColor(getResources().getColor(R.color.white));
+            buttonAdd.setBackgroundColor(fragmentContext.getColor(R.color.white));
         } else {
             buttonAdd.setEnabled(false);
-            buttonAdd.setBackgroundColor(getResources().getColor(R.color.foregroundColor));
+            buttonAdd.setBackgroundColor(fragmentContext.getColor(R.color.foregroundColor));
         }
     }
+    DeviceDBHelper dbdevice;
     @Override
     public void onClick(View v) {
         switch (v.getId()){
+            case R.id.button_delete_devices:
+                dbdevice = DeviceDBHelper.getInstance(fragmentContext);
+                DeviceDBHelper helper = new DeviceDBHelper(fragmentContext);
+                dbdevice.onUpgrade(helper.getReadableDatabase(), DeviceDBHelper.DATABASE_VERSION, DeviceDBHelper.DATABASE_VERSION + 1);
+                dbdevice = helper;
             case R.id.button_add_protocol:
                 String name = editTextName.getText().toString();
                 String slength = editTextLen.getText().toString();
                 int length;
                 String code = editTextCode.getText().toString();
-                ProtocolRepo protocolRepo = new ProtocolRepo(getApplicationContext(), "");
+                ProtocolRepo protocolRepo = new ProtocolRepo(fragmentContext, "");
                 int result = protocolRepo.stringXMLparser(code);
                 if (result > 0) {
-                    Toast.makeText(getApplicationContext(), "Invalid XML code", Toast.LENGTH_LONG).show();
+                    Toast.makeText(fragmentContext, "Invalid XML code", Toast.LENGTH_LONG).show();
                     break;
                 }
                 if (name.isEmpty()) {
-                    Toast.makeText(getApplicationContext(), "Invalid name", Toast.LENGTH_LONG).show();
+                    Toast.makeText(fragmentContext, "Invalid name", Toast.LENGTH_LONG).show();
                     break;
                 }
                 if (slength.isEmpty()) {
-                    Toast.makeText(getApplicationContext(), "Invalid length", Toast.LENGTH_LONG).show();
+                    Toast.makeText(fragmentContext, "Invalid length", Toast.LENGTH_LONG).show();
                     break;
                 }
                 else
@@ -164,29 +191,29 @@ public class AddProtocolDBActivity extends AppCompatActivity implements View.OnC
                 try {
                     contentValues.put(ProtocolDBHelper.KEY_CODE, saveToFile(name,code));
                 } catch (IOException e) {
-                    Toast.makeText(getApplicationContext(), "Error saving: try again", Toast.LENGTH_LONG).show();
+                    Toast.makeText(fragmentContext, "Error saving: try again", Toast.LENGTH_LONG).show();
                     e.printStackTrace();
                 }
 
                 if (dbHelper.insert(contentValues) == 0)
-                    Toast.makeText(getApplicationContext(), "Protocol has already been registered", Toast.LENGTH_LONG).show();
+                    Toast.makeText(fragmentContext, "Protocol has already been registered", Toast.LENGTH_LONG).show();
                 else {
                     editTextName.setText("");
                     editTextLen.setText("");
                     editTextCode.setText("");
-                    Toast.makeText(getApplicationContext(), "Accepted", Toast.LENGTH_LONG).show();
+                    Toast.makeText(fragmentContext, "Accepted", Toast.LENGTH_LONG).show();
                     showProtocols();
                 }
 
                 break;
 
-            case R.id.button_cancel_protocol:
-                AlertDialog dialog =new AlertDialog.Builder(this)
+            case R.id.button_delete_protos:
+                AlertDialog dialog =new AlertDialog.Builder(fragmentContext)
                         .setTitle("Подтверждение")
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .setMessage("Вы действительно хотите удалить все кастомные протоколы?")
                         .setPositiveButton("OK", (dialog1, whichButton) -> {
-                            ProtocolDBHelper dbHelper = new ProtocolDBHelper(getApplicationContext());
+                            ProtocolDBHelper dbHelper = new ProtocolDBHelper(fragmentContext);
                             dbHelper.onUpgrade(dbHelper.getWritableDatabase(), 1,1);
                             showProtocols();
                         })
@@ -227,7 +254,7 @@ public class AddProtocolDBActivity extends AppCompatActivity implements View.OnC
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE_OPEN) {
             if (resultCode == RESULT_OK) {
@@ -244,7 +271,7 @@ public class AddProtocolDBActivity extends AppCompatActivity implements View.OnC
         String[] permissions = new String[]{Manifest.permission.READ_EXTERNAL_STORAGE};
 
         for (String perms : permissions){
-            res = checkCallingOrSelfPermission(perms);
+            res = ma.checkCallingOrSelfPermission(perms);
             if (!(res == PackageManager.PERMISSION_GRANTED)){
                 return false;
             }
@@ -253,10 +280,10 @@ public class AddProtocolDBActivity extends AppCompatActivity implements View.OnC
     }
 
     public void requestPermissionWithRationale() {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+        if (ActivityCompat.shouldShowRequestPermissionRationale(ma,
                 Manifest.permission.READ_EXTERNAL_STORAGE)) {
             final String message = "Storage permission is needed to show files count";
-            Snackbar.make(AddProtocolDBActivity.this.findViewById(R.id.activity_explain_perms), message, Snackbar.LENGTH_LONG)
+            Snackbar.make(ma.findViewById(R.id.activity_explain_perms), message, Snackbar.LENGTH_LONG)
                     .setAction("GRANT", v -> requestPerms())
                     .show();
         } else {
@@ -266,12 +293,13 @@ public class AddProtocolDBActivity extends AppCompatActivity implements View.OnC
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         boolean allowed = true;
 
-        switch (requestCode){
+        switch (requestCode) {
             case PERMISSION_REQUEST_CODE:
 
-                for (int res : grantResults){
+                for (int res : grantResults) {
                     // if user granted all permissions.
                     allowed = allowed && (res == PackageManager.PERMISSION_GRANTED);
                 }
@@ -283,18 +311,14 @@ public class AddProtocolDBActivity extends AppCompatActivity implements View.OnC
                 break;
         }
 
-        if (allowed){
+        if (allowed) {
 
-        }
-        else {
+        } else {
             // we will give warning to user that they haven't granted permissions.
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if (shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)){
-                    Toast.makeText(this, "Storage Permissions denied.", Toast.LENGTH_SHORT).show();
-
-                } else {
-                    showNoStoragePermissionSnackbar();
-                }
+            if (shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                Toast.makeText(ma, "Storage Permissions denied.", Toast.LENGTH_SHORT).show();
+            } else {
+                showNoStoragePermissionSnackbar();
             }
         }
 
@@ -303,13 +327,13 @@ public class AddProtocolDBActivity extends AppCompatActivity implements View.OnC
 
 
     public void showNoStoragePermissionSnackbar() {
-        Snackbar.make(AddProtocolDBActivity.this.findViewById(R.id.activity_explain_perms), "Storage permission isn't granted" , Snackbar.LENGTH_LONG)
+        Snackbar.make(ma.findViewById(R.id.activity_explain_perms), "Storage permission isn't granted" , Snackbar.LENGTH_LONG)
                 .setAction("SETTINGS", new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         openApplicationSettings();
 
-                        Toast.makeText(getApplicationContext(),
+                        Toast.makeText(fragmentContext,
                                 "Open Permissions and grant the Storage permission",
                                 Toast.LENGTH_SHORT)
                                 .show();
@@ -320,15 +344,13 @@ public class AddProtocolDBActivity extends AppCompatActivity implements View.OnC
 
     public void openApplicationSettings() {
         Intent appSettingsIntent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                Uri.parse("package:" + getPackageName()));
+                Uri.parse("package:" + ma.getPackageName()));
         startActivityForResult(appSettingsIntent, PERMISSION_REQUEST_CODE);
     }
 
     private void requestPerms(){
         String[] permissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-            requestPermissions(permissions,PERMISSION_REQUEST_CODE);
-        }
+        requestPermissions(permissions,PERMISSION_REQUEST_CODE);
     }
 
     private String readTextFile(Uri uri)
@@ -337,7 +359,7 @@ public class AddProtocolDBActivity extends AppCompatActivity implements View.OnC
         StringBuilder builder = new StringBuilder();
         try
         {
-            reader = new BufferedReader(new InputStreamReader(getContentResolver().openInputStream(uri)));
+            reader = new BufferedReader(new InputStreamReader(ma.getContentResolver().openInputStream(uri)));
             String line = "";
             while ((line = reader.readLine()) != null)
             {
@@ -352,7 +374,7 @@ public class AddProtocolDBActivity extends AppCompatActivity implements View.OnC
     private String saveToFile(String name, String code) throws IOException {
         String fileName = name + ".xml";
         BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(new
-                File(getFilesDir() + File.separator + name + ".xml")));
+                File(ma.getFilesDir() + File.separator + name + ".xml")));
         bufferedWriter.write(code);
         bufferedWriter.close();
         return fileName;
@@ -378,5 +400,24 @@ public class AddProtocolDBActivity extends AppCompatActivity implements View.OnC
 
         cursor.close();
     }
+
+    //True, если Bluetooth включён
+    public boolean btIsEnabledFlagVoid(){
+        return btAdapter.isEnabled();
+    }
+
+    //выполняемый код при изменении состояния bluetooth
+    private final BroadcastReceiver BluetoothStateChanged = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(btIsEnabledFlagVoid()){
+                // Bluetooth включён, надо скрыть кнопку включения Bluetooth
+                ma.hideFabToEnBt();
+            } else {
+                // Bluetooth выключён, надо показать кнопку включения Bluetooth
+                ma.showFabToEnBt();
+            }
+        }
+    };
 
 }

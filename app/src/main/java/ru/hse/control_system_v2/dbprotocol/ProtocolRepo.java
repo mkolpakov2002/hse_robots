@@ -1,31 +1,20 @@
 package ru.hse.control_system_v2.dbprotocol;
 
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
-import org.w3c.dom.Document;
-import org.xml.sax.InputSource;
+
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 import ru.hse.control_system_v2.R;
 
@@ -37,7 +26,6 @@ public class ProtocolRepo extends HashMap<String, Byte> {
     private Context context;
     ProtocolDBHelper dbHelper;
 
-    //TODO ругается, что Call requires API level R (current min is 23): java.util.List#of
     public static final List<String> labels = List.of("class_android","class_computer","class_arduino","type_sphere","type_anthropomorphic",
             "type_cubbi","type_computer","no_class","no_type","redo_command","new_command","type_move","type_tele",
             "STOP","FORWARD","FORWARD_STOP","BACK", "BACK_STOP","LEFT","LEFT_STOP","RIGHT","RIGHT_STOP");

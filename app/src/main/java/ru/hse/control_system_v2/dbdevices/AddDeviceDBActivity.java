@@ -2,28 +2,17 @@ package ru.hse.control_system_v2.dbdevices;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.text.Editable;
-import android.text.InputType;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -32,14 +21,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-import ru.hse.control_system_v2.MainActivity;
+import ru.hse.control_system_v2.DialogDeviceEdit;
 import ru.hse.control_system_v2.R;
 import ru.hse.control_system_v2.dbprotocol.ProtocolDBHelper;
 
@@ -60,16 +48,12 @@ public class AddDeviceDBActivity extends AppCompatActivity implements DevicesAda
     SwipeRefreshLayout swipeToRefreshLayout;
     Bundle b;
     public static boolean stateOfAlert;
-    public static int dataChanged = 0;
-
-    ArrayList<String> data;
-    List<String> listClasses, listTypes;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_bd_device);
-        inflater = AddDeviceDBActivity.this.getLayoutInflater();
+        inflater = this.getLayoutInflater();
 
         swipeToRefreshLayout = findViewById(R.id.swipeRefreshLayout_add_device);
         swipeToRefreshLayout.setOnRefreshListener(this);
@@ -146,8 +130,11 @@ public class AddDeviceDBActivity extends AppCompatActivity implements DevicesAda
         i = i - 2;
         //В текущем пункте List View находим первый символ ":", всё после него, а также два символа до него - адрес выбранного устройства
         selectedDevice = selectedDevice.substring(i);
-        SetDeviceAlertDialog alertDialog = new SetDeviceAlertDialog(this, selectedDevice);
-        alertDialog.show();
+        DialogDeviceEdit alertDialog = new DialogDeviceEdit(null,selectedDevice);
+        Bundle args = new Bundle();
+        alertDialog.setArguments(args);
+        //fragment.currentDevice = item;
+        alertDialog.show(this.getSupportFragmentManager(), "dialog");
     }
 
     // Метод для вывода всплывающих данных на экран
@@ -167,11 +154,7 @@ public class AddDeviceDBActivity extends AppCompatActivity implements DevicesAda
         return btAdapter.isEnabled();
     }
 
-    void exitActivity(){
-        Intent intent = new Intent();
-        intent.putExtra("result", dataChanged);
-        Log.d("Add device", "Exit " + dataChanged);
-        setResult(RESULT_OK, intent);
+    public void exitActivity(){
         finish();
     }
     @Override

@@ -7,17 +7,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-
-import ru.hse.control_system_v2.MainActivity;
 import ru.hse.control_system_v2.R;
-import ru.hse.control_system_v2.list_devices.DeviceRepository;
-import ru.hse.control_system_v2.list_devices.ListDevicesAdapter;
 
 public class DeviceDBHelper extends SQLiteOpenHelper {
-
-    public static DeviceDBHelper instance;
+    static DeviceDBHelper instance;
 
     public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "addedDevices";
@@ -31,7 +24,7 @@ public class DeviceDBHelper extends SQLiteOpenHelper {
     public static final String KEY_TYPE = "id_type";
     public static final String KEY_PROTO = "id_protocol";
     public static final String KEY_PANEL = "id_panel";
-    private Context contextmy;
+    private final Context contextmy;
 
     public DeviceDBHelper(Context context) {super(context, DATABASE_NAME, null, DATABASE_VERSION); contextmy = context;}
 

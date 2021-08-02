@@ -4,12 +4,12 @@ import android.bluetooth.BluetoothSocket;
 
 import java.util.ArrayList;
 
-import ru.hse.control_system_v2.list_devices.DeviceItem;
+import ru.hse.control_system_v2.list_devices.DeviceItemType;
 
 public class SocketHandler {
     private static ArrayList<BluetoothSocket> socketList;
     private static ArrayList<Boolean> resultOfConnection;
-    private static ArrayList<DeviceItem> devicesList;
+    private static ArrayList<DeviceItemType> devicesList;
     private static int numberOfConnections;
 
     public static synchronized ArrayList<BluetoothSocket> getSocketList(){
@@ -28,11 +28,11 @@ public class SocketHandler {
         SocketHandler.numberOfConnections = numberOfConnections;
     }
 
-    public static synchronized ArrayList<DeviceItem> getDevicesList(){
+    public static synchronized ArrayList<DeviceItemType> getDevicesList(){
         return devicesList;
     }
 
-    public static synchronized void setDevicesList(ArrayList<DeviceItem> devicesList){
+    public static synchronized void setDevicesList(ArrayList<DeviceItemType> devicesList){
         SocketHandler.devicesList = devicesList;
     }
 }

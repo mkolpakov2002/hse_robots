@@ -5,4 +5,4 @@
     android:adjustViewBounds="true"
     android:orientation="vertical"
     android:scaleType="fitCenter"
-    android:src="@mipmap/image"></ImageView>
+    android:src="@mipmap/image" />

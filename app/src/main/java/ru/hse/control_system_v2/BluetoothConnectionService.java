@@ -4,9 +4,7 @@ import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
-import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
@@ -14,28 +12,29 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Timer;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
-import ru.hse.control_system_v2.list_devices.DeviceItem;
+import ru.hse.control_system_v2.list_devices.DeviceItemType;
 
 public class BluetoothConnectionService extends Service {
     BluetoothDevice device;
     String TAG = "ConnectionService";
-    // SPP UUID сервиса
-    UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+    // SPP UUID сервиса согласно документации Android:
+    /*
+    Hint: If you are connecting to a Bluetooth serial board,
+     then try using the well-known SPP UUID 00001101-0000-1000-8000-00805F9B34FB
+     https://developer.android.com/reference/android/bluetooth/BluetoothDevice.html
+     */
+    private final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     BluetoothAdapter btAdapter;
     String classDevice;
     ExecutorService executorService;
-    ArrayList<DeviceItem> devicesList;
-    ArrayList<DeviceItem> devicesListConnected;
+    ArrayList<DeviceItemType> devicesList;
+    ArrayList<DeviceItemType> devicesListConnected;
     ArrayList<MyRun> treadList;
     ArrayList<Boolean> resultOfConnection;
     ArrayList<BluetoothSocket> socketList;
@@ -55,14 +54,10 @@ public class BluetoothConnectionService extends Service {
         devicesListConnected = new ArrayList<>();
         socketListConnected  = new ArrayList<>();
 
+        devicesList.addAll(DeviceHandler.getDevicesList());
+        
         Bundle arguments = intent.getExtras();
         classDevice = arguments.get("protocol").toString();
-        if (MainActivity.devicesList.size() != 0) {
-            devicesList.addAll(MainActivity.devicesList);
-        } else {
-            devicesList.add(MainActivity.currentDevice);
-        }
-
 
         executorService = Executors.newFixedThreadPool(devicesList.size());
         Log.d(TAG, "...Соединение начато...");

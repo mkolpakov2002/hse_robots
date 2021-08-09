@@ -47,7 +47,7 @@ import static android.app.Activity.RESULT_OK;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
-public class Settings_Fragment extends Fragment implements View.OnClickListener {
+public class SettingsFragment extends Fragment implements View.OnClickListener {
 //TODO
     //скрыть боттом шит с добавлением устройства
     //не скрыввать гл. меню при выключении bt в этом фрагменте
@@ -70,7 +70,7 @@ public class Settings_Fragment extends Fragment implements View.OnClickListener 
         super.onAttach(context);
     }
 
-    public Settings_Fragment() {
+    public SettingsFragment() {
         // Required empty public constructor
     }
 

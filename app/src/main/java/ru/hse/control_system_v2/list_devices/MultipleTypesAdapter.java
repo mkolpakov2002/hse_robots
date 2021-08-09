@@ -3,6 +3,8 @@ package ru.hse.control_system_v2.list_devices;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +15,6 @@ import androidx.fragment.app.FragmentManager;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -27,22 +28,28 @@ import static android.view.View.VISIBLE;
 
 public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements ViewHolderFactory.ListDevicesHolder.IListener {
 
-    public static List<ItemType> dataSet;
-    public static List<DeviceItemType> mData = new ArrayList<>();
+    public List<ItemType> dataSet;
+    public List<DeviceItemType> mData;
     Context context;
     MainActivity ma;
     DeviceClickedListener listener;
+    float scalingFactorSelected = 0.85f;
+    float scalingFactorNotSelected = 1.0f;
 
 
-    public MultipleTypesAdapter(List<ItemType> dataSet, @NonNull Context context, List <DeviceItemType> devices){
+    public MultipleTypesAdapter(List<ItemType> dataSet, @NonNull Context context, List <DeviceItemType> mData){
         super();
-        MultipleTypesAdapter.dataSet = dataSet;
-        mData = devices;
+        this.dataSet = dataSet;
+        this.mData = mData;
         this.context = context;
         if (context instanceof Activity){
             ma = (MainActivity) context;
         }
         listener = new MyListener();
+    }
+
+    public void setItems(List<DeviceItemType> mData) {
+        this.mData = mData;
     }
 
 
@@ -88,6 +95,10 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
                             deviceImage.setVisibility(VISIBLE);
                             mName.setAlpha(1f);
                             checkMark.setVisibility(INVISIBLE);
+
+                            //itemView.setScaleX(scalingFactorNotSelected);
+                            //itemView.setScaleY(scalingFactorNotSelected);
+                            performVibrate();
                             break;
                         }
                     }
@@ -106,6 +117,10 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
                         deviceImage.setVisibility(INVISIBLE);
                         mName.setAlpha(0.6f);
                         checkMark.setVisibility(VISIBLE);
+                        //itemView.setScaleX(scalingFactorSelected);
+                        //itemView.setScaleY(scalingFactorSelected);
+                        performVibrate();
+
                     } else {
                         if(selectedDevicesList.size() == 0) {
                             Log.d(TAG, "...Список очищен...");
@@ -152,6 +167,10 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
                 deviceImage.setVisibility(INVISIBLE);
                 deviceName.setAlpha(0.6f);
                 checkMark.setVisibility(VISIBLE);
+                //itemView.setScaleX(scalingFactorSelected);
+                //itemView.setScaleY(scalingFactorSelected);
+                performVibrate();
+
             } else {
                 if (!selectedDevicesList.get(0).getProtocol().equals(item.getProtocol())||
                         !selectedDevicesList.get(0).getDevClass().equals(item.getDevClass())||
@@ -169,6 +188,10 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
                         deviceImage.setVisibility(INVISIBLE);
                         deviceName.setAlpha(0.6f);
                         checkMark.setVisibility(VISIBLE);
+                        //itemView.setScaleX(scalingFactorSelected);
+                        //itemView.setScaleY(scalingFactorSelected);
+                        performVibrate();
+
                     }
                 }
 
@@ -188,6 +211,11 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         dataSet.get(position).onBindViewHolder(holder);
+    }
+
+    private void performVibrate() {
+        Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+        v.vibrate(VibrationEffect.createOneShot(150,10));
     }
 
     @Override

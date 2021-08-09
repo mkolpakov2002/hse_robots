@@ -27,8 +27,6 @@ import com.google.android.material.floatingactionbutton.ExtendedFloatingActionBu
 import java.util.ArrayList;
 import java.util.List;
 
-import ru.hse.control_system_v2.dbdevices.DeviceDBHelper;
-import ru.hse.control_system_v2.dbprotocol.ProtocolDBHelper;
 import ru.hse.control_system_v2.list_devices.ButtonItemType;
 import ru.hse.control_system_v2.list_devices.DeviceItemType;
 import ru.hse.control_system_v2.list_devices.DeviceRepository;
@@ -37,8 +35,6 @@ import ru.hse.control_system_v2.list_devices.MultipleTypesAdapter;
 
 public class MainMenuFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
-    DeviceDBHelper dbdevice;
-    ProtocolDBHelper dbprotocol;
     //инициализация swipe refresh
     SwipeRefreshLayout swipeToRefreshLayout;
     BluetoothAdapter btAdapter;
@@ -84,9 +80,6 @@ public class MainMenuFragment extends Fragment implements SwipeRefreshLayout.OnR
 
         mainMenu = ma.findViewById(R.id.bottomnav);
 
-        dbprotocol = ProtocolDBHelper.getInstance(fragmentContext);
-
-
         AlertDialog.Builder builder = new AlertDialog.Builder(fragmentContext, R.style.dialogTheme);
         LayoutInflater inflater = ma.getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.dialog_connection, null);
@@ -112,20 +105,14 @@ public class MainMenuFragment extends Fragment implements SwipeRefreshLayout.OnR
         //dbdevice = new DeviceDBHelper(fragmentContext);
         recycler = view.findViewById(R.id.recycler_main);
         recycler.setLayoutManager(gridLayoutManager);
-        recycler.setHasFixedSize(true);
-        items = new ArrayList<>();
-        items.add(new ButtonItemType(fragmentContext));
+        recycler.setItemViewCacheSize(20);
         onRefresh();
     }
 
     public void showStartOfConnection(){
         fabToStartConnecting.hide();
-        //selectedDevicesList.clear();
-        //progressOfConnectionDialog.setMessage("Соединение...");
         progressOfConnectionDialog.setCancelable(false);
-        //progressOfConnectionDialog.setInverseBackgroundForced(false);
         progressOfConnectionDialog.show();
-
         DeviceHandler.setDevicesList(selectedDevicesList);
         showToast("Соединение начато");
         isItemSelected = true;
@@ -137,8 +124,8 @@ public class MainMenuFragment extends Fragment implements SwipeRefreshLayout.OnR
         @Override
         public void onReceive(Context context, Intent intent) {
             showToast("Подключение не успешно");
-            onRefresh();
             progressOfConnectionDialog.hide();
+            onRefresh();
         }
     };
 
@@ -150,9 +137,8 @@ public class MainMenuFragment extends Fragment implements SwipeRefreshLayout.OnR
             selectedDevicesList.clear();
             Bundle arguments = intent.getExtras();
             String classDevice = arguments.get("protocol").toString();
-            Intent startSendingData = new Intent(fragmentContext, Manual_mode.class);
+            Intent startSendingData = new Intent(fragmentContext, ManualMode.class);
             startSendingData.putExtra("protocol", classDevice);
-            startSendingData.putExtra("length", dbprotocol.getLength(classDevice));
             startActivity(startSendingData);
             progressOfConnectionDialog.hide();
         }
@@ -175,12 +161,19 @@ public class MainMenuFragment extends Fragment implements SwipeRefreshLayout.OnR
             // Bluetooth включён, надо показать кнопку добавления устройств и другую информацию
             ma.showMainMenu();
             allDevicesList = new ArrayList<>();
-
             allDevicesList.addAll(DeviceRepository.getInstance(fragmentContext).list());
-            items.subList(1, items.size()).clear();
-            items.addAll(allDevicesList);
-            adapter = new MultipleTypesAdapter(items, fragmentContext, allDevicesList);
-            recycler.setAdapter(adapter);
+            if (adapter != null) { // it works second time and later
+                items.subList(1, items.size()).clear();
+                items.addAll(allDevicesList);
+                adapter.setItems(allDevicesList);
+                adapter.notifyDataSetChanged();
+            } else { // it works first time
+                items = new ArrayList<>();
+                items.add(new ButtonItemType(fragmentContext));
+                items.addAll(allDevicesList);
+                adapter = new MultipleTypesAdapter(items, fragmentContext, allDevicesList);
+                recycler.setAdapter(adapter);
+            }
         } else {
             headerText.setText(R.string.suggestionEnableBluetooth);
             recycler.setAdapter(null);

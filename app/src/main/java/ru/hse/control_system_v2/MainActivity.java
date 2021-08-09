@@ -14,9 +14,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 
@@ -39,12 +38,10 @@ public class MainActivity extends AppCompatActivity {
     Button buttonToAddDeviceViaMAC;
     public BottomSheetDialog bottomSheetBehavior;
 
-    public DrawerLayout drawerLayout;
-
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.getDefaultNightMode());
         setContentView(R.layout.main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -52,8 +49,7 @@ public class MainActivity extends AppCompatActivity {
         fabToEnBt = findViewById(R.id.floating_action_button_En_Bt);
         fabToEnBt.setOnClickListener(v -> {
             Intent intentBtEnabled = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            int REQUEST_ENABLE_BT = 1;
-            startActivityForResult(intentBtEnabled, REQUEST_ENABLE_BT);
+            startActivity(intentBtEnabled);
         });
 
         fabToEnBt.hide();
@@ -87,30 +83,21 @@ public class MainActivity extends AppCompatActivity {
         ////////////////////////////////////////////////////
 
         ImageButton closeBottomSheet = bottomSheetBehavior.findViewById(R.id.close_bottom_sheet);
+        assert closeBottomSheet != null;
         closeBottomSheet.setOnClickListener(view -> {
             hideBottomSheet();
         });
-        if (savedInstanceState == null) {
-            setUpNavigation();
-        }
+        setUpNavigation();
     }
 
-    public void setUpNavigation(){
+    void setUpNavigation(){
         main_bottom_menu =findViewById(R.id.bottomnav);
         NavHostFragment navHostFragment = (NavHostFragment)getSupportFragmentManager()
                 .findFragmentById(R.id.nav_host_fragment);
-        assert navHostFragment != null;
-        NavigationUI.setupWithNavController(main_bottom_menu,
-                navHostFragment.getNavController());
-        main_bottom_menu.setOnItemSelectedListener(item -> {
-            NavController navController = navHostFragment.getNavController();
-            if(item.getItemId() == R.id.main) {
-                navController.navigate(R.id.mainMenuFragment);
-            } else {
-                navController.navigate(R.id.settings_Fragment);
-            }
-            return true;
-        });
+        if(navHostFragment != null){
+            NavigationUI.setupWithNavController(main_bottom_menu,
+                    (navHostFragment).getNavController());
+        }
     }
 
     // проверка на наличие Bluetooth адаптера; дальнейшее продолжение работы в случае наличия
@@ -131,17 +118,17 @@ public class MainActivity extends AppCompatActivity {
                     });
         } else {
             if (isFirstLaunch == 1){
-            sPref = getPreferences(MODE_PRIVATE);
-            SharedPreferences.Editor ed = sPref.edit();
-            ed.putInt("isFirstLaunch", 0);
-            ed.apply();
-            isFirstLaunch = 0;
-            requestPerms();
-            if (btIsEnabledFlagVoid()){
-                createOneButtonAlertDialog(getResources().getString(R.string.instruction_alert),
-                        getResources().getString(R.string.other_discoverable_devices));
+                sPref = getPreferences(MODE_PRIVATE);
+                SharedPreferences.Editor ed = sPref.edit();
+                ed.putInt("isFirstLaunch", 0);
+                ed.apply();
+                isFirstLaunch = 0;
+                requestPerms();
+                if (btIsEnabledFlagVoid()){
+                    createOneButtonAlertDialog(getResources().getString(R.string.instruction_alert),
+                            getResources().getString(R.string.other_discoverable_devices));
+                }
             }
-        }
         }
     }
 
@@ -198,8 +185,6 @@ public class MainActivity extends AppCompatActivity {
         });
         alertDialog.show();
     }
-
-
 
     public synchronized void showFabToEnBt(){
         fabToEnBt.show();

@@ -13,31 +13,15 @@
         tools:layout="@layout/fragment_main">
         <action
             android:id="@+id/action_mainMenuFragment_to_settings_Fragment"
-            app:destination="@id/settings_Fragment" />
-        <action
-            android:id="@+id/action_mainMenuFragment_to_addDeviceDBActivity"
-            app:destination="@id/addDeviceDBActivity" />
-        <action
-            android:id="@+id/action_mainMenuFragment_to_manual_mode"
-            app:destination="@id/manual_mode" />
+            app:destination="@id/settingsFragment" />
     </fragment>
     <fragment
-        android:id="@+id/settings_Fragment"
-        android:name="ru.hse.control_system_v2.Settings_Fragment"
+        android:id="@+id/settingsFragment"
+        android:name="ru.hse.control_system_v2.SettingsFragment"
         android:label="settings"
         tools:layout="@layout/fragment_settings">
         <action
             android:id="@+id/action_settings_Fragment_to_mainMenuFragment"
             app:destination="@id/mainMenuFragment" />
     </fragment>
-    <activity
-        android:id="@+id/addDeviceDBActivity"
-        android:name="ru.hse.control_system_v2.dbdevices.AddDeviceDBActivity"
-        android:label="AddDeviceDBActivity"
-        tools:layout="@layout/add_bd_device"/>
-    <activity
-        android:id="@+id/manual_mode"
-        android:name="ru.hse.control_system_v2.Manual_mode"
-        android:label="Manual_mode"
-        tools:layout="@layout/manual_mode"/>
 </navigation>

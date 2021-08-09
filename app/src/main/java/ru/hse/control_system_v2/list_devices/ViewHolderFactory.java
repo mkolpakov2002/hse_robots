@@ -5,6 +5,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -28,13 +29,19 @@ public class ViewHolderFactory {
 
     static class ListDevicesHolder extends RecyclerView.ViewHolder {
         TextView mName;
+        ImageView deviceImage;
+        ImageView checkMark;
         MainActivity ma;
 
         private static final String TAG = "VHFactory";
 
+
         public ListDevicesHolder(@NonNull View itemView, @NonNull Context context, IListener listener) {
             super(itemView);
             mName = itemView.findViewById(R.id.item_name);
+            deviceImage = itemView.findViewById(R.id.icon_image_view);
+            checkMark = itemView.findViewById(R.id.check_mark);
+
             if (context instanceof Activity){
                 ma = (MainActivity) context;
             }

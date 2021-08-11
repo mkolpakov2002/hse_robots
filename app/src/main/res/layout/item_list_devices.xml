@@ -14,7 +14,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:foreground="?android:attr/selectableItemBackground"
-        android:paddingBottom="8dp">
+        android:paddingBottom="8dp"
+        android:hapticFeedbackEnabled="true">
 
         <ImageView
             android:id="@+id/icon_image_view"
@@ -24,7 +25,7 @@
             android:contentDescription="@string/robot_item_image"
             android:elevation="10dp"
             android:scaleType="centerInside"
-            android:src="@drawable/darwin_mini"
+            android:src="@drawable/type_cubbi"
             app:layout_constraintDimensionRatio="1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_percent="0.25"
@@ -51,11 +52,12 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:visibility="invisible"
-            app:layout_constraintBottom_toTopOf="@+id/item_name"
+            android:elevation="10dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintHeight_percent="0.3"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_baseline_check_24" />
+            app:layout_constraintWidth_percent="0.3"
+            app:srcCompat="@drawable/animated_check" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

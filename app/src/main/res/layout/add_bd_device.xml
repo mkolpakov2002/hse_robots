@@ -85,7 +85,7 @@
         android:contentDescription="@string/suggestionEnableBluetooth"
         android:text="@string/go_to_settings"
         android:theme="@style/Theme.Control_system_v2"
-        app:icon="@drawable/ic_baseline_settings_24"
+        app:icon="@drawable/ic_settings"
         app:iconTint="@color/colorAccent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

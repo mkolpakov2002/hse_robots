@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
         // настройка поведения нижнего экрана
         bottomSheetBehavior = new BottomSheetDialog(this,R.style.BottomSheetDialog);
 
-        bottomSheetBehavior.setContentView(R.layout.bottom_sheet_dialog);
+        bottomSheetBehavior.setContentView(R.layout.bottom_sheet_dialog_add_device);
         bottomSheetBehavior.setCancelable(true);
         bottomSheetBehavior.dismiss();
         hideBottomSheet();
@@ -76,11 +76,6 @@ public class MainActivity extends AppCompatActivity {
             DialogSaveDeviceWithMAC dialog = new DialogSaveDeviceWithMAC();
             dialog.show(this.getSupportFragmentManager(), "dialog");
         });
-
-
-
-
-        ////////////////////////////////////////////////////
 
         ImageButton closeBottomSheet = bottomSheetBehavior.findViewById(R.id.close_bottom_sheet);
         assert closeBottomSheet != null;

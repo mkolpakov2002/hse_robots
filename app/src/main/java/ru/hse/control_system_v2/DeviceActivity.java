@@ -26,7 +26,7 @@ import java.util.TimerTask;
 import ru.hse.control_system_v2.dbprotocol.ProtocolRepo;
 import ru.hse.control_system_v2.list_devices.DeviceItemType;
 
-public class ManualMode extends Activity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener
+public class DeviceActivity extends Activity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener
 {
     boolean is_hold_command;
     Timer arduino_timer;            // таймер для arduino
@@ -101,7 +101,7 @@ public class ManualMode extends Activity implements View.OnClickListener, Compou
         for(int i = 0; i < devicesList.size(); i++) {
             if (!BluetoothAdapter.checkBluetoothAddress(devicesList.get(i).getMAC())) {
                 showToast("Wrong MAC address");
-                ManualMode.this.finish();
+                DeviceActivity.this.finish();
             }
         }
 
@@ -184,7 +184,7 @@ public class ManualMode extends Activity implements View.OnClickListener, Compou
 
         message[countCommands++] = getDevicesID.get("STOP");
         for(int i = 0; i < dataThreadForArduinoList.size(); i++){
-            Log.d("Logg", "ManualMode onPause");
+            Log.d("Logg", "DeviceActivity onPause");
             dataThreadForArduinoList.get(i).Send_Data(message, lengthMes);
         }
 

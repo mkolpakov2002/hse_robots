@@ -16,8 +16,7 @@
             android:layout_centerVertical="true"
             android:layout_marginStart="16dp"
             android:text="devicename"
-            android:textColor="@color/headerColor"
-            android:textSize="16sp" />
+            android:textColor="@color/headerColor" />
         <ImageView
             android:layout_width="wrap_content"
             android:id="@+id/imageView"

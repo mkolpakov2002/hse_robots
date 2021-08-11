@@ -5,18 +5,22 @@
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
-
     <application
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:supportsRtl="true"
         android:roundIcon="@mipmap/ic_launcher_round"
-        android:theme="@style/Theme.Control_system_v2.NoActionBar">
-
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Control_system_v2.NoActionBar"
+        android:allowBackup="false">
+        <service
+            android:name=".WiFiConnectionService"
+            android:enabled="true"
+            android:exported="false" />
         <service
             android:name=".BluetoothConnectionService"
             android:enabled="true"
@@ -24,24 +28,24 @@
 
         <activity
             android:name=".MainActivity"
+            android:configChanges="keyboardHidden|orientation"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:configChanges="keyboardHidden|orientation"
-            android:windowSoftInputMode="adjustPan">
+            android:windowSoftInputMode="adjustPan"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".ManualMode"
-            android:screenOrientation="fullSensor"
-            android:configChanges="keyboardHidden|orientation"/>
+            android:name=".DeviceActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="fullSensor" />
         <activity
             android:name=".dbdevices.AddDeviceDBActivity"
-            android:screenOrientation="portrait"
-            android:configChanges="keyboardHidden|orientation"/>
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

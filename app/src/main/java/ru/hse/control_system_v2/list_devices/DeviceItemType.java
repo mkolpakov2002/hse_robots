@@ -1,5 +1,7 @@
 package ru.hse.control_system_v2.list_devices;
 
+import android.view.View;
+
 import androidx.recyclerview.widget.RecyclerView;
 
 public class DeviceItemType implements ItemType{
@@ -53,7 +55,10 @@ public class DeviceItemType implements ItemType{
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder) {
-        ViewHolderFactory.ListDevicesHolder textViewHolder = (ViewHolderFactory.ListDevicesHolder) viewHolder;
-        textViewHolder.mName.setText(name);
+        ViewHolderFactory.ListDevicesHolder mViewHolder = (ViewHolderFactory.ListDevicesHolder) viewHolder;
+        mViewHolder.mName.setText(name);
+        mViewHolder.checkMark.setVisibility(View.GONE);
+        mViewHolder.deviceImage.setVisibility(View.VISIBLE);
+
     }
 }

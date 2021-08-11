@@ -98,7 +98,7 @@ public class MainMenuFragment extends Fragment implements SwipeRefreshLayout.OnR
         fabToStartConnecting.setOnClickListener(v -> {
             showStartOfConnection();
             Intent startBluetoothConnectionService = new Intent(fragmentContext, BluetoothConnectionService.class);
-            startBluetoothConnectionService.putExtra("protocol", selectedDevicesList.get(0).getProtocol());
+            startBluetoothConnectionService.putExtra("protocol", adapter.getSelectedProto());
             fragmentContext.startService(startBluetoothConnectionService);
         });
 
@@ -113,7 +113,7 @@ public class MainMenuFragment extends Fragment implements SwipeRefreshLayout.OnR
         fabToStartConnecting.hide();
         progressOfConnectionDialog.setCancelable(false);
         progressOfConnectionDialog.show();
-        DeviceHandler.setDevicesList(selectedDevicesList);
+        DeviceHandler.setDevicesList(adapter.getSelectedDevices());
         showToast("Соединение начато");
         isItemSelected = true;
     }
@@ -134,10 +134,10 @@ public class MainMenuFragment extends Fragment implements SwipeRefreshLayout.OnR
         @Override
         public void onReceive(Context context, Intent intent) {
             //Устройство подключено, Service выполнился успешно
-            selectedDevicesList.clear();
+            adapter.clearSelected();
             Bundle arguments = intent.getExtras();
             String classDevice = arguments.get("protocol").toString();
-            Intent startSendingData = new Intent(fragmentContext, ManualMode.class);
+            Intent startSendingData = new Intent(fragmentContext, DeviceActivity.class);
             startSendingData.putExtra("protocol", classDevice);
             startActivity(startSendingData);
             progressOfConnectionDialog.hide();
@@ -154,7 +154,6 @@ public class MainMenuFragment extends Fragment implements SwipeRefreshLayout.OnR
     @Override
     public void onRefresh() {
         ma.hideBottomSheet();
-        selectedDevicesList.clear();
         fabToStartConnecting.hide();
         if (btIsEnabledFlagVoid()) {
             headerText.setText(R.string.favorites_devices);
@@ -166,6 +165,7 @@ public class MainMenuFragment extends Fragment implements SwipeRefreshLayout.OnR
                 items.subList(1, items.size()).clear();
                 items.addAll(allDevicesList);
                 adapter.setItems(allDevicesList);
+                adapter.clearSelected();
                 adapter.notifyDataSetChanged();
             } else { // it works first time
                 items = new ArrayList<>();
@@ -177,6 +177,7 @@ public class MainMenuFragment extends Fragment implements SwipeRefreshLayout.OnR
         } else {
             headerText.setText(R.string.suggestionEnableBluetooth);
             recycler.setAdapter(null);
+            adapter = null;
             ma.showFabToEnBt();
         }
         // Приложение обновлено, завершаем анимацию обновления

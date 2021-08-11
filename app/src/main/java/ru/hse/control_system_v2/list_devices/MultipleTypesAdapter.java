@@ -1,13 +1,16 @@
 package ru.hse.control_system_v2.list_devices;
 
+import static android.view.View.VISIBLE;
+
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.drawable.Animatable;
 import android.os.Bundle;
-import android.os.VibrationEffect;
-import android.os.Vibrator;
 import android.util.Log;
+import android.view.HapticFeedbackConstants;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -15,6 +18,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -22,9 +26,6 @@ import ru.hse.control_system_v2.DialogDevice;
 import ru.hse.control_system_v2.MainActivity;
 import ru.hse.control_system_v2.MainMenuFragment;
 import ru.hse.control_system_v2.R;
-
-import static android.view.View.INVISIBLE;
-import static android.view.View.VISIBLE;
 
 public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements ViewHolderFactory.ListDevicesHolder.IListener {
 
@@ -35,6 +36,7 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
     DeviceClickedListener listener;
     float scalingFactorSelected = 0.85f;
     float scalingFactorNotSelected = 1.0f;
+    List<DeviceItemType> selectedDevicesList;
 
 
     public MultipleTypesAdapter(List<ItemType> dataSet, @NonNull Context context, List <DeviceItemType> mData){
@@ -46,6 +48,7 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
             ma = (MainActivity) context;
         }
         listener = new MyListener();
+        selectedDevicesList = new ArrayList<>();
     }
 
     public void setItems(List<DeviceItemType> mData) {
@@ -72,10 +75,9 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
 
         @Override
         public void deviceClicked(DeviceItemType item, View itemView) {
-            List<DeviceItemType> selectedDevicesList = MainMenuFragment.selectedDevicesList;
             View deviceImage = itemView.findViewById(R.id.icon_image_view);
             View mName = itemView.findViewById(R.id.item_name);
-            View checkMark = itemView.findViewById(R.id.check_mark);
+            ImageView checkMark = (ImageView) itemView.findViewById(R.id.check_mark);
             //проверяю происходит ли выбор списка устройств
             if(selectedDevicesList.size() != 0) {
                 Log.d(TAG, "...Список не пуст, нажато устройство...");
@@ -89,23 +91,24 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
                     boolean wasAlreadySelected = false;
                     for (int i = 0; i < selectedDevicesList.size(); i++) {
                         if (selectedDevicesList.get(i).getMAC().equals(item.getMAC())) {
-                            MainMenuFragment.selectedDevicesList.remove(i);
+
+                            selectedDevicesList.remove(i);
                             wasAlreadySelected = true;
                             Log.d(TAG, "...В списке нашлось это устройство, удаляю...");
-                            deviceImage.setVisibility(VISIBLE);
-                            mName.setAlpha(1f);
-                            checkMark.setVisibility(INVISIBLE);
+                            //deviceImage.setVisibility(VISIBLE);
+                            //mName.setAlpha(1f);
+                            checkMark.setVisibility(View.GONE);
 
                             //itemView.setScaleX(scalingFactorNotSelected);
                             //itemView.setScaleY(scalingFactorNotSelected);
-                            performVibrate();
+                            performVibrate(itemView);
                             break;
                         }
                     }
 
                     if (!wasAlreadySelected) {
                         Log.d(TAG, "...В списке не нашлось это устройство, добавляю...");
-                        MainMenuFragment.selectedDevicesList.add(item);
+                        selectedDevicesList.add(item);
                         NavHostFragment navHostFragment = (NavHostFragment)((MainActivity) context).getSupportFragmentManager().getPrimaryNavigationFragment();
                         assert navHostFragment != null;
                         FragmentManager fragmentManager = navHostFragment.getChildFragmentManager();
@@ -114,12 +117,13 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
                             MainMenuFragment mainMenuFragment = (MainMenuFragment) current;
                             mainMenuFragment.showDeviceSelectedItems();
                         }
-                        deviceImage.setVisibility(INVISIBLE);
-                        mName.setAlpha(0.6f);
+                        //deviceImage.setVisibility(INVISIBLE);
+                        //mName.setAlpha(0.6f);
                         checkMark.setVisibility(VISIBLE);
+                        ((Animatable) checkMark.getDrawable()).start();
                         //itemView.setScaleX(scalingFactorSelected);
                         //itemView.setScaleY(scalingFactorSelected);
-                        performVibrate();
+                        performVibrate(itemView);
 
                     } else {
                         if(selectedDevicesList.size() == 0) {
@@ -148,14 +152,14 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
 
         @Override
         public void deviceLongClicked(DeviceItemType item, View itemView) {
-            List<DeviceItemType> selectedDevicesList = MainMenuFragment.selectedDevicesList;
+            //selectedDevicesList = MainMenuFragment.selectedDevicesList;
 
             View deviceImage = itemView.findViewById(R.id.icon_image_view);
             View deviceName = itemView.findViewById(R.id.item_name);
-            View checkMark = itemView.findViewById(R.id.check_mark);
+            ImageView checkMark = (ImageView) itemView.findViewById(R.id.check_mark);
             if (selectedDevicesList.size() == 0) {
                 Log.d(TAG, "...Список пуст, добавляю устройство...");
-                MainMenuFragment.selectedDevicesList.add(item);
+                selectedDevicesList.add(item);
                 NavHostFragment navHostFragment = (NavHostFragment)((MainActivity) context).getSupportFragmentManager().getPrimaryNavigationFragment();
                 assert navHostFragment != null;
                 FragmentManager fragmentManager = navHostFragment.getChildFragmentManager();
@@ -164,12 +168,13 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
                     MainMenuFragment mainMenuFragment = (MainMenuFragment) current;
                     mainMenuFragment.showDeviceSelectedItems();
                 }
-                deviceImage.setVisibility(INVISIBLE);
-                deviceName.setAlpha(0.6f);
+                //deviceImage.setVisibility(INVISIBLE);
+                //deviceName.setAlpha(0.6f);
                 checkMark.setVisibility(VISIBLE);
+                ((Animatable) checkMark.getDrawable()).start();
                 //itemView.setScaleX(scalingFactorSelected);
                 //itemView.setScaleY(scalingFactorSelected);
-                performVibrate();
+                performVibrate(itemView);
 
             } else {
                 if (!selectedDevicesList.get(0).getProtocol().equals(item.getProtocol())||
@@ -184,13 +189,14 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
                         }
                     }
                     if (!wasAlreadySelected) {
-                        MainMenuFragment.selectedDevicesList.add(item);
-                        deviceImage.setVisibility(INVISIBLE);
-                        deviceName.setAlpha(0.6f);
+                        selectedDevicesList.add(item);
+                        //deviceImage.setVisibility(INVISIBLE);
+                        //deviceName.setAlpha(0.6f);
                         checkMark.setVisibility(VISIBLE);
+                        ((Animatable) checkMark.getDrawable()).start();
                         //itemView.setScaleX(scalingFactorSelected);
                         //itemView.setScaleY(scalingFactorSelected);
-                        performVibrate();
+                        performVibrate(itemView);
 
                     }
                 }
@@ -213,9 +219,8 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
         dataSet.get(position).onBindViewHolder(holder);
     }
 
-    private void performVibrate() {
-        Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-        v.vibrate(VibrationEffect.createOneShot(150,10));
+    private void performVibrate(View v) {
+        v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
     }
 
     @Override
@@ -226,6 +231,18 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
     @Override
     public int getItemViewType(int position) {
         return dataSet.get(position).getItemViewType();
+    }
+
+    public void clearSelected(){
+        selectedDevicesList.clear();
+    }
+
+    public String getSelectedProto(){
+        return selectedDevicesList.get(0).getProtocol();
+    }
+
+    public List<DeviceItemType> getSelectedDevices(){
+        return selectedDevicesList;
     }
 
 }

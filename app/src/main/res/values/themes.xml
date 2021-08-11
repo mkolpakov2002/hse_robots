@@ -24,6 +24,8 @@
 
     <style name="bottomSheetStyleWrapper" parent="Widget.Design.BottomSheet.Modal">
         <item name="android:background">@android:color/transparent</item>
+        <item name="colorPrimary">@color/colorAccent</item>
+        <item name="android:textColorSecondary">@color/foregroundColor</item>
     </style>
 
     <style name="Theme.Control_system_v2.NoActionBar">

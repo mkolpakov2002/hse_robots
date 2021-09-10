@@ -52,6 +52,7 @@ public class MainMenuFragment extends Fragment implements SwipeRefreshLayout.OnR
     private Context fragmentContext;
     MainActivity ma;
     AlertDialog progressOfConnectionDialog;
+    View view;
 
 
     @Override
@@ -66,8 +67,17 @@ public class MainMenuFragment extends Fragment implements SwipeRefreshLayout.OnR
                              Bundle savedInstanceState) {
 
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_main, container, false);
+        if (view == null) {
+            view = inflater.inflate(R.layout.fragment_main, container, false);
+        }
+        return view;
 
+    }
+
+    @Override
+    public void onStart(){
+        super.onStart();
+        onRefresh();
     }
 
     @Override
@@ -106,7 +116,7 @@ public class MainMenuFragment extends Fragment implements SwipeRefreshLayout.OnR
         recycler = view.findViewById(R.id.recycler_main);
         recycler.setLayoutManager(gridLayoutManager);
         recycler.setItemViewCacheSize(20);
-        onRefresh();
+        //onRefresh();
     }
 
     public void showStartOfConnection(){

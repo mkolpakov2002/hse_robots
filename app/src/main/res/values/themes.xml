@@ -2,7 +2,7 @@
     <!-- Base application theme. -->
     <style name="Theme.Control_system_v2" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/purple_500</item>
+        <item name="colorPrimary">@color/colorAccent</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
@@ -28,10 +28,7 @@
         <item name="android:textColorSecondary">@color/foregroundColor</item>
     </style>
 
-    <style name="Theme.Control_system_v2.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-    </style>
+
     <style name="ToolbarColoredBackArrow" parent="Theme.Control_system_v2">
         <item name="android:textColorSecondary">@color/white</item>
     </style>

@@ -3,7 +3,12 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/mkolp/AndroidStudioProjects/436-remote-control-of-robotic-devices/app/src/main/res/drawable/ic_warning.xml" value="0.26614583333333336" />
         <entry key="..\:/Users/mkolp/AndroidStudioProjects/436-remote-control-of-robotic-devices/app/src/main/res/drawable/white_bg.xml" value="0.26614583333333336" />
+        <entry key="..\:/Users/mkolp/AndroidStudioProjects/436-remote-control-of-robotic-devices/app/src/main/res/layout/add_bd_device.xml" value="0.25" />
+        <entry key="..\:/Users/mkolp/AndroidStudioProjects/436-remote-control-of-robotic-devices/app/src/main/res/layout/add_bd_protocol.xml" value="0.25" />
+        <entry key="..\:/Users/mkolp/AndroidStudioProjects/436-remote-control-of-robotic-devices/app/src/main/res/layout/devices_list.xml" value="0.25" />
+        <entry key="..\:/Users/mkolp/AndroidStudioProjects/436-remote-control-of-robotic-devices/app/src/main/res/layout/main.xml" value="0.25" />
       </map>
     </option>
   </component>
@@ -51,7 +56,7 @@
       </value>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" project-jdk-name="1.8" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">

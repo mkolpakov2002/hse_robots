@@ -125,69 +125,70 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/textView7"
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/textFieldProtocolName"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
                         android:layout_marginTop="16dp"
                         android:layout_marginEnd="8dp"
-                        android:text="@string/protocol_name" />
+                        android:hint="@string/protocol_name"
+                        app:endIconMode="clear_text"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
-                    <EditText
-                        android:id="@+id/editTextProtocolName"
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/editTextProtocolName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="textPersonName"
+                            android:textSize="@dimen/text_size_protocol" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/textFieldLength"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
                         android:layout_marginTop="8dp"
                         android:layout_marginEnd="8dp"
-                        android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
-                        android:inputType="textPersonName"
-                        android:textSize="@dimen/text_size_protocol" />
+                        android:hint="@string/protocol_length"
+                        app:endIconMode="clear_text"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
-                    <TextView
-                        android:id="@+id/textView8"
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/editTextLength"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:ems="10"
+                            android:inputType="number"
+                            android:textSize="@dimen/text_size_protocol" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/textFieldCodeEdit"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
                         android:layout_marginTop="8dp"
                         android:layout_marginEnd="8dp"
-                        android:text="@string/protocol_length" />
+                        android:hint="@string/protocol_xml"
+                        app:endIconMode="clear_text"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
-                    <EditText
-                        android:id="@+id/editTextLength"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginEnd="8dp"
-                        android:ems="10"
-                        android:inputType="number"
-                        android:textSize="@dimen/text_size_protocol" />
-
-                    <TextView
-                        android:id="@+id/textView10"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="16dp"
-                        android:layout_marginEnd="8dp"
-                        android:text="@string/protocol_xml" />
-
-                    <EditText
+                    <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/editTextCode"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginEnd="8dp"
-                        android:background="@drawable/textview_bg"
                         android:ems="10"
                         android:gravity="start|top"
                         android:inputType="textMultiLine"
-                        android:textColor="@color/white"
                         android:textSize="@dimen/text_size_protocol"
                         app:layout_constraintHeight_percent="0.25" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
 
                     <Button
                         android:id="@+id/button_choose_file"

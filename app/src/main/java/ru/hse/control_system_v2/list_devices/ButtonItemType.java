@@ -25,6 +25,7 @@ public class ButtonItemType implements ItemType {
                 NavHostFragment navHostFragment = (NavHostFragment)((MainActivity) c).getSupportFragmentManager().getPrimaryNavigationFragment();
                 assert navHostFragment != null;
                 FragmentManager fragmentManager = navHostFragment.getChildFragmentManager();
+
                 Fragment current = fragmentManager.getPrimaryNavigationFragment();
                 if(current instanceof MainMenuFragment){
                     MainMenuFragment mainMenuFragment = (MainMenuFragment) current;

@@ -21,6 +21,9 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.android.material.button.MaterialButton;
 
@@ -198,10 +201,14 @@ public class DialogDeviceEdit extends DialogFragment {
         dbHelper.update(contentValues, id);
         dbHelper.viewData();
         //Обновление MainActivity
-        MainMenuFragment fragment = (MainMenuFragment) ((MainActivity) c).getSupportFragmentManager()
-                .findFragmentByTag("main");
-        if (fragment != null){
-            fragment.onRefresh();
+        NavHostFragment navHostFragment = (NavHostFragment)((MainActivity) c).getSupportFragmentManager().getPrimaryNavigationFragment();
+        assert navHostFragment != null;
+        FragmentManager fragmentManager = navHostFragment.getChildFragmentManager();
+
+        Fragment current = fragmentManager.getPrimaryNavigationFragment();
+        if(current instanceof MainMenuFragment){
+            MainMenuFragment mainMenuFragment = (MainMenuFragment) current;
+            mainMenuFragment.onRefresh();
         }
     }
 
@@ -240,6 +247,17 @@ public class DialogDeviceEdit extends DialogFragment {
             Toast.makeText(c, "Wrong MAC address", Toast.LENGTH_LONG).show();
             Log.d("Add device", "Device denied");
         }
+        //Обновление MainActivity
+        NavHostFragment navHostFragment = (NavHostFragment)((MainActivity) c).getSupportFragmentManager().getPrimaryNavigationFragment();
+        assert navHostFragment != null;
+        FragmentManager fragmentManager = navHostFragment.getChildFragmentManager();
+
+        Fragment current = fragmentManager.getPrimaryNavigationFragment();
+        if(current instanceof MainMenuFragment){
+            MainMenuFragment mainMenuFragment = (MainMenuFragment) current;
+            mainMenuFragment.onRefresh();
+        }
+        //TODO
         ((AddDeviceDBActivity) c).exitActivity();
     }
 

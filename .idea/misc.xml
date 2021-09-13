@@ -3,11 +3,27 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/mkolp/AndroidStudioProjects/436-remote-control-of-robotic-devices/app/src/main/res/drawable/animated_check.xml" value="0.26614583333333336" />
+        <entry key="..\:/Users/mkolp/AndroidStudioProjects/436-remote-control-of-robotic-devices/app/src/main/res/drawable/background_bg.xml" value="0.26614583333333336" />
+        <entry key="..\:/Users/mkolp/AndroidStudioProjects/436-remote-control-of-robotic-devices/app/src/main/res/drawable/check_mark.xml" value="0.26614583333333336" />
+        <entry key="..\:/Users/mkolp/AndroidStudioProjects/436-remote-control-of-robotic-devices/app/src/main/res/drawable/dialog_bg.xml" value="0.26614583333333336" />
+        <entry key="..\:/Users/mkolp/AndroidStudioProjects/436-remote-control-of-robotic-devices/app/src/main/res/drawable/ic_baseline_check_24.xml" value="0.26614583333333336" />
+        <entry key="..\:/Users/mkolp/AndroidStudioProjects/436-remote-control-of-robotic-devices/app/src/main/res/drawable/ic_baseline_code_24.xml" value="0.26614583333333336" />
+        <entry key="..\:/Users/mkolp/AndroidStudioProjects/436-remote-control-of-robotic-devices/app/src/main/res/drawable/ic_baseline_keyboard_24.xml" value="0.26614583333333336" />
+        <entry key="..\:/Users/mkolp/AndroidStudioProjects/436-remote-control-of-robotic-devices/app/src/main/res/drawable/ic_baseline_keyboard_arrow_down_24.xml" value="0.26614583333333336" />
+        <entry key="..\:/Users/mkolp/AndroidStudioProjects/436-remote-control-of-robotic-devices/app/src/main/res/drawable/ic_baseline_keyboard_arrow_left_24.xml" value="0.26614583333333336" />
+        <entry key="..\:/Users/mkolp/AndroidStudioProjects/436-remote-control-of-robotic-devices/app/src/main/res/drawable/ic_baseline_keyboard_arrow_up_24.xml" value="0.26614583333333336" />
+        <entry key="..\:/Users/mkolp/AndroidStudioProjects/436-remote-control-of-robotic-devices/app/src/main/res/drawable/ic_home.xml" value="0.26614583333333336" />
         <entry key="..\:/Users/mkolp/AndroidStudioProjects/436-remote-control-of-robotic-devices/app/src/main/res/drawable/ic_warning.xml" value="0.26614583333333336" />
         <entry key="..\:/Users/mkolp/AndroidStudioProjects/436-remote-control-of-robotic-devices/app/src/main/res/drawable/white_bg.xml" value="0.26614583333333336" />
         <entry key="..\:/Users/mkolp/AndroidStudioProjects/436-remote-control-of-robotic-devices/app/src/main/res/layout/add_bd_device.xml" value="0.25" />
         <entry key="..\:/Users/mkolp/AndroidStudioProjects/436-remote-control-of-robotic-devices/app/src/main/res/layout/add_bd_protocol.xml" value="0.25" />
+        <entry key="..\:/Users/mkolp/AndroidStudioProjects/436-remote-control-of-robotic-devices/app/src/main/res/layout/bottom_sheet_dialog_add_device.xml" value="0.25" />
+        <entry key="..\:/Users/mkolp/AndroidStudioProjects/436-remote-control-of-robotic-devices/app/src/main/res/layout/bottom_sheet_dialog_connection_type.xml" value="0.25" />
         <entry key="..\:/Users/mkolp/AndroidStudioProjects/436-remote-control-of-robotic-devices/app/src/main/res/layout/devices_list.xml" value="0.25" />
+        <entry key="..\:/Users/mkolp/AndroidStudioProjects/436-remote-control-of-robotic-devices/app/src/main/res/layout/dialog_connection.xml" value="0.25" />
+        <entry key="..\:/Users/mkolp/AndroidStudioProjects/436-remote-control-of-robotic-devices/app/src/main/res/layout/dialog_enter_mac.xml" value="0.25" />
+        <entry key="..\:/Users/mkolp/AndroidStudioProjects/436-remote-control-of-robotic-devices/app/src/main/res/layout/dialog_simple_tip.xml" value="0.25" />
         <entry key="..\:/Users/mkolp/AndroidStudioProjects/436-remote-control-of-robotic-devices/app/src/main/res/layout/main.xml" value="0.25" />
       </map>
     </option>

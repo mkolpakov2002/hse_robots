@@ -2,9 +2,6 @@ package ru.hse.control_system_v2;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothSocket;
-import android.content.Context;
-import android.content.Intent;
-import android.os.IBinder;
 import android.util.Log;
 
 import java.io.IOException;
@@ -166,7 +163,7 @@ public class DataThread extends Thread{ // класс поток для прие
 
     public void Send_Data(String message) { sendData(message, len);}
 
-    public void Send_Data(byte message[], int len) {
+    public void Send_Data(byte[] message, int len) {
         Log.d("Send_Data", "********************************************");
         this.len = len;
         sendData(message, len);}

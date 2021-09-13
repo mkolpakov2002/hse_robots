@@ -65,12 +65,13 @@ public class MainActivity extends AppCompatActivity {
         hideBottomSheet();
         buttonToAddDeviceViaMAC = bottomSheetBehavior.findViewById(R.id.button_manual_mac);
         buttonToAddDevice = bottomSheetBehavior.findViewById(R.id.button_add_device);
-        assert buttonToAddDevice != null;
-        buttonToAddDevice.setOnClickListener(view -> {
-            Intent intent = new Intent(this, AddDeviceDBActivity.class);
-            bottomSheetBehavior.dismiss();
-            startActivity(intent);
-        });
+        if (buttonToAddDevice != null) {
+            buttonToAddDevice.setOnClickListener(view -> {
+                Intent intent = new Intent(this, AddDeviceDBActivity.class);
+                bottomSheetBehavior.dismiss();
+                startActivity(intent);
+            });
+        }
         buttonToAddDeviceViaMAC.setOnClickListener(view -> {
             bottomSheetBehavior.dismiss();
             DialogSaveDeviceWithMAC dialog = new DialogSaveDeviceWithMAC();
@@ -78,10 +79,11 @@ public class MainActivity extends AppCompatActivity {
         });
 
         ImageButton closeBottomSheet = bottomSheetBehavior.findViewById(R.id.close_bottom_sheet);
-        assert closeBottomSheet != null;
-        closeBottomSheet.setOnClickListener(view -> {
-            hideBottomSheet();
-        });
+        if (closeBottomSheet != null) {
+            closeBottomSheet.setOnClickListener(view -> {
+                hideBottomSheet();
+            });
+        }
         setUpNavigation();
     }
 
@@ -126,11 +128,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
-    private static long back_pressed = 0;
-
-
-
 
     // Метод для вывода всплывающих данных на экран
     public void showToast(String outputInfoString) {

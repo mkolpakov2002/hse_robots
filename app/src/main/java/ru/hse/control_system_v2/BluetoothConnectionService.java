@@ -103,7 +103,7 @@ public class BluetoothConnectionService extends Service {
                     resultOfConnection.set(i, false);
                     e.printStackTrace();
                 }
-                if (resultOfConnection.get(i).equals(true)){
+                if (resultOfConnection.get(i)){
                     try {
                         socketList.get(i).connect();
                         // Отключаем поиск устройств для сохранения заряда батареи

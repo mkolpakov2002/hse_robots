@@ -1,8 +1,13 @@
 package ru.hse.control_system_v2;
 
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothSocket;
+import android.content.Context;
+import android.os.SystemClock;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,6 +16,12 @@ import java.util.Timer;
 import java.util.UUID;
 
 public class DataThread extends Thread{ // класс поток для приема и передачи данных
+    public DataThread(@NonNull Context context){
+        if (context instanceof Activity){
+            c = context;
+        }
+        Log.d(TAG, "Поток запущен");
+    }
 
     public void setSelectedDevice(String selectedDevice) {
         this.MAC = selectedDevice;
@@ -21,15 +32,15 @@ public class DataThread extends Thread{ // класс поток для прие
     public void setSocket(BluetoothSocket clientSocket){
         this.clientSocket = clientSocket;
     }
-
+    Context c;
     String MAC;
     String classDevice;
     BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
     BluetoothSocket clientSocket;
     private byte[] inputPacket;
     private static final String TAG = "Thread";
-    OutputStream OutStrem;
-    InputStream InStrem;
+    OutputStream mmOutStream;
+    InputStream mmInStream;
     private int[] my_data;
     int len;
     // SPP UUID сервиса
@@ -51,59 +62,88 @@ public class DataThread extends Thread{ // класс поток для прие
             Log.d("BLUETOOTH", e.getMessage());
         }
 
-        OutStrem = tmpOut;
-        InStrem = tmpIn;
+        mmOutStream = tmpOut;
+        mmInStream = tmpIn;
         inputPacket = new byte[12];
-        byte[] buffer = new byte[12]; // 12 должно быть: 2 - префикс 7 - данные 3 - контр сумма
+        StringBuilder str = new StringBuilder();
         int bufNum;
         int pacNum = 0;
-
-        while (true) // ну а дальше тоже 12
-        {
-            try
-            {
-                bufNum = InStrem.read(buffer);
-                if (pacNum + bufNum < 13) // нормально считываем данные
-                {
-                    System.arraycopy(buffer, 0, inputPacket, pacNum, bufNum);
-                    pacNum = pacNum + bufNum;
-                } else // если неправильые данные, то переслать
-                {
-                    ready_to_request = false;
-                    Log.d(TAG, "Как то много всего пришло");
-                    pacNum = 0;
-
-                    byte[] message = new byte[]{0x30, 0x15, 0x0f, 0x37, 0x37, 0x37};
-                    sendData(message, len);
+        boolean flag = true;
+        while(flag){
+            byte[] buffer = new byte[1024];  // buffer store for the stream
+            int bytes = 0; // bytes returned from read()
+            // Keep listening to the InputStream until an exception occurs
+            // Read from the InputStream
+            try {
+                bytes = mmInStream.read(buffer);
+                flag = true;
+            } catch (IOException e) {
+                Log.e(TAG, "Ошибка чтения входящих данных в потоке " + e.getMessage());
+                flag = false;
+            }
+            if(flag){
+                //успешно считываем данные
+                StringBuilder incomingDataBuffer = new StringBuilder();
+                String incomingMessage = new String(buffer, 0, bytes);
+                //incomingMessage - текущие входящие данные (в текущем заходе цикла while); содержат символы \r, которые не нужны
+                incomingMessage = incomingMessage.replaceAll("\r", "");
+                //str - переменная для формирования итоговой строки
+                str.append(incomingMessage);
+                int j = 0;
+                boolean isComplete = false;
+                while(!isComplete){
+                    //обрабатываем str, выделяем строки с символом \n в конце
+                    if(str.charAt(j)=='\n' && j+1<=str.length()-1) {
+                        //substring копирует до второго параметра НЕ включительно, но включая с первого
+                        incomingDataBuffer.append(str.substring(0, j+1));
+                        incomingData(incomingDataBuffer.toString());
+                        //incomingDataBuffer.toString() - подходящая строка
+                        //записываем в str остаток старой строки (str без incomingDataBuffer.toString())
+                        incomingDataBuffer.setLength(0);
+                        String bufferStr = str.substring(j + 1);
+                        str.setLength(0);
+                        str.append(bufferStr);
+                        j = -1;
+                    } else if(str.charAt(j)=='\n') {
+                        //нету элемента j+1, рассматриваемый символ \n последний в str
+                        //просто копируем (без остатка, его нет)
+                        incomingDataBuffer.append(str);
+                        incomingData(incomingDataBuffer.toString());
+                        j = -1;
+                        str.setLength(0);
+                    }
+                    if(str.indexOf("\n") == -1){
+                        //более символов \n не найдено, завершаем обработку строки
+                        isComplete = true;
+                    }
+                    j++;
                 }
+            } else if(DeviceActivity.active){
+                //чтение входящей информации неуспешно при открытом приложении
+                ((DeviceActivity) c).runOnUiThread(new Runnable() {
+                    public void run() {
 
-                if (pacNum == 12) // все нормально
-                {
-                    pacNum = 0;//здесь проверяем пакет и прочее
-
-                    Log.d(TAG, "***Получаем данные: " +
-                            buffer[0] + " " +
-                            buffer[1] + " " +
-                            buffer[2] + " " +
-                            buffer[3] + " " +
-                            buffer[4] + " " +
-                            buffer[5] + " " +
-                            buffer[6] + " " +
-                            buffer[7] + " " +
-                            buffer[8] + " " +
-                            buffer[9] + " " +
-                            buffer[10] + " " +
-                            buffer[11] + " ");
-
-                    ready_to_request = true;
-                }
-            } catch (IOException e)
-            {
-                break;
+                        //((DeviceActivity) c).connectionFailed();
+                    }
+                });
             }
         }
+
         Log.d("Конец true", "********************************************");
     }
+
+    synchronized void incomingData(String incomingData){
+        if(DeviceActivity.active){
+            Log.d(TAG, "Входящие данные: " + incomingData);
+            ((DeviceActivity) c).runOnUiThread(new Runnable() {
+                public void run() {
+                    ((DeviceActivity) c).printDataToTextView(incomingData.replaceAll("\n",""));
+                }
+            });
+            SystemClock.sleep(100);
+        }
+    }
+
     public void sendData(String message, int len)
     {
         Log.d("Send_Data 3", "********************************************");
@@ -112,7 +152,7 @@ public class DataThread extends Thread{ // класс поток для прие
 
         try
         {
-            OutStrem.write(msgBuffer);
+            mmOutStream.write(msgBuffer);
         } catch (IOException e)
         {
         }
@@ -127,7 +167,7 @@ public class DataThread extends Thread{ // класс поток для прие
         Log.d(TAG, logMessage + "***");
         try
         {
-            OutStrem.write(message);
+            mmOutStream.write(message);
         } catch (IOException e)
         {
         }
@@ -145,12 +185,12 @@ public class DataThread extends Thread{ // класс поток для прие
 
     public Object status_OutStrem()
     {
-        if (OutStrem == null)
+        if (mmOutStream == null)
         {
 
             return null;
         }
-        return OutStrem;
+        return mmOutStream;
     }
 
 
@@ -166,7 +206,8 @@ public class DataThread extends Thread{ // класс поток для прие
     public void Send_Data(byte[] message, int len) {
         Log.d("Send_Data", "********************************************");
         this.len = len;
-        sendData(message, len);}
+        sendData(message, len);
+    }
 
     public void Disconnect(Timer bt_timer) // для работы через определенные промежутки времени
     {

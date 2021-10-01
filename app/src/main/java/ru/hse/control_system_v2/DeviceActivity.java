@@ -23,11 +23,13 @@ import java.util.Arrays;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import ru.hse.control_system_v2.dbprotocol.ProtocolDBHelper;
 import ru.hse.control_system_v2.dbprotocol.ProtocolRepo;
 import ru.hse.control_system_v2.list_devices.DeviceItemType;
 
 public class DeviceActivity extends Activity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener
 {
+    private static final String TAG = "DeviceActivity";
     boolean is_hold_command;
     Timer arduino_timer;            // таймер для arduino
     String[] pre_str_sens_data;             // форматирование вывода данных с сенсоров
@@ -45,6 +47,8 @@ public class DeviceActivity extends Activity implements View.OnClickListener, Co
     ProtocolRepo getDevicesID;
     int countCommands;
     int lengthMes;
+    ProtocolDBHelper dbprotocol;
+    public static boolean active;
 
     Resources res;
 
@@ -54,6 +58,7 @@ public class DeviceActivity extends Activity implements View.OnClickListener, Co
         super.onCreate(savedInstanceState);
         setContentView(R.layout.manual_mode);
         showToast("Started Manual mode!");
+        active = true;
         findViewById(R.id.button_stop).setEnabled(false);
 
         socketList = SocketHandler.getSocketList();
@@ -70,7 +75,7 @@ public class DeviceActivity extends Activity implements View.OnClickListener, Co
         outputText.append("\n"+ "Список успешных подключений:");
         for(int i = 0; i < devicesList.size(); i++){
             outputText.append("\n"+ "Устройство " + devicesList.get(i).getName() + " подключено;");
-            DataThread dataThreadForArduino = new DataThread();
+            DataThread dataThreadForArduino = new DataThread(this);
             dataThreadForArduino.setSelectedDevice(devicesList.get(i).getMAC());
             dataThreadForArduino.setSocket(socketList.get(i));
             dataThreadForArduino.setProtocol(classDevice);
@@ -94,7 +99,10 @@ public class DeviceActivity extends Activity implements View.OnClickListener, Co
         boolean is_fixed_angel = false;
         String protocolName = b.getString("protocol");
         getDevicesID = new ProtocolRepo(getApplicationContext(), protocolName);
-        lengthMes = b.getInt("length");
+        dbprotocol = ProtocolDBHelper.getInstance(getApplicationContext());
+
+
+        lengthMes = dbprotocol.getLength(classDevice);
         message = new byte[lengthMes];
         countCommands = 0;
 
@@ -149,6 +157,7 @@ public class DeviceActivity extends Activity implements View.OnClickListener, Co
         hold_command.setChecked(false);
 
         Arrays.fill(message, (byte) 0);
+        Log.d("DeviceActivity", String.valueOf(message.length));
     }
 
     @Override
@@ -161,11 +170,16 @@ public class DeviceActivity extends Activity implements View.OnClickListener, Co
         finish();
     }
 
+    public synchronized void printDataToTextView(String printData){
+        Log.d(TAG, "Output message " + printData);
+        outputText.append("\n" + "---" + "\n" + printData);
+    }
+
     @Override
     protected void onResume()
     {
         super.onResume();
-
+        active = true;
         //arduino.BluetoothConnectionServiceVoid();     // соединяемся с bluetooth
         //TODO - вызывает вылет приложения
     }
@@ -174,6 +188,7 @@ public class DeviceActivity extends Activity implements View.OnClickListener, Co
     protected void onPause()
     {
         super.onPause();
+        active = false;
         completeDevicesInfo();
 
         if (getDevicesID.getTag(res.getString(R.string.TAG_TURN_COM)))
@@ -380,6 +395,7 @@ public class DeviceActivity extends Activity implements View.OnClickListener, Co
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        active = false;
         for (int i = 0; i < dataThreadForArduinoList.size(); i++){
             try {
                 Log.d("BLUETOOTH", "Отсоединение от устройства");

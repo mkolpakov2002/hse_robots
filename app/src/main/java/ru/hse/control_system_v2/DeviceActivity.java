@@ -20,6 +20,7 @@ import com.google.android.material.switchmaterial.SwitchMaterial;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -58,7 +59,6 @@ public class DeviceActivity extends Activity implements View.OnClickListener, Co
         super.onCreate(savedInstanceState);
         setContentView(R.layout.manual_mode);
         showToast("Started Manual mode!");
-        active = true;
         findViewById(R.id.button_stop).setEnabled(false);
 
         socketList = SocketHandler.getSocketList();

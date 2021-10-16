@@ -64,7 +64,7 @@ public class BluetoothDataThread extends Thread{ // класс поток для
                 bytes = mmInStream.read(buffer);
             } catch (IOException e) {
                 Log.e(TAG, "Ошибка чтения входящих данных в потоке " + e.getMessage());
-                deviceItemType.closeConnection();
+
                 Disconnect();
             }
             if(deviceItemType.isConnected()){

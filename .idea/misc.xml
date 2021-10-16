@@ -3,6 +3,11 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/User/AndroidStudioProjects/hse_robots/app/src/main/res/layout/activity_wi_fi_device.xml" value="0.4" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/hse_robots/app/src/main/res/layout/add_bd_device.xml" value="0.1793478260869565" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/hse_robots/app/src/main/res/layout/dialog_device_menu.xml" value="0.536" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/hse_robots/app/src/main/res/layout/manual_mode.xml" value="0.4" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/hse_robots/app/src/main/res/menu/main_bottom_menu.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/mkolp/AndroidStudioProjects/436-remote-control-of-robotic-devices/app/src/main/res/drawable/animated_check.xml" value="0.26614583333333336" />
         <entry key="..\:/Users/mkolp/AndroidStudioProjects/436-remote-control-of-robotic-devices/app/src/main/res/drawable/background_bg.xml" value="0.26614583333333336" />
         <entry key="..\:/Users/mkolp/AndroidStudioProjects/436-remote-control-of-robotic-devices/app/src/main/res/drawable/check_mark.xml" value="0.26614583333333336" />

@@ -53,7 +53,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_delete_protos"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -64,6 +64,7 @@
                 android:gravity="start"
                 android:text="@string/button_delete_protocols"
                 android:textColor="#000000"
+                app:cornerRadius="20dp"
                 app:icon="@drawable/ic_baseline_delete_outline_24"
                 app:iconGravity="end"
                 app:iconTint="@color/colorAccent"
@@ -72,7 +73,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/add_proto_scroll"
                 app:strokeColor="@color/foregroundColor" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_delete_devices"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -83,6 +84,7 @@
                 android:gravity="start"
                 android:text="@string/drawer_item_data_base"
                 android:textColor="#000000"
+                app:cornerRadius="20dp"
                 app:icon="@drawable/ic_baseline_delete_outline_24"
                 app:iconGravity="end"
                 app:iconTint="@color/colorAccent"
@@ -91,7 +93,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/button_delete_protos"
                 app:strokeColor="@color/foregroundColor" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_show_add_proto"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -101,6 +103,7 @@
                 android:gravity="start"
                 android:text="@string/button_add_protocol"
                 android:textColor="#000000"
+                app:cornerRadius="20dp"
                 app:icon="@drawable/ic_baseline_keyboard_arrow_right_24"
                 app:iconGravity="end"
                 app:iconTint="@color/colorAccent"

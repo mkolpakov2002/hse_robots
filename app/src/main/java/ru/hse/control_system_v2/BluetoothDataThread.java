@@ -15,73 +15,59 @@ import java.io.OutputStream;
 import java.util.Timer;
 import java.util.UUID;
 
-public class DataThread extends Thread{ // класс поток для приема и передачи данных
-    public DataThread(@NonNull Context context){
+import ru.hse.control_system_v2.list_devices.DeviceItemType;
+
+public class BluetoothDataThread extends Thread{ // класс поток для приема и передачи данных
+    public BluetoothDataThread(@NonNull Context context, DeviceItemType deviceItemType){
         if (context instanceof Activity){
             c = context;
         }
+        this.deviceItemType = deviceItemType;
+
         Log.d(TAG, "Поток запущен");
     }
-
-    public void setSelectedDevice(String selectedDevice) {
-        this.MAC = selectedDevice;
-    }
-    public void setProtocol(String classDevice) {
-        this.classDevice = classDevice;
-    }
-    public void setSocket(BluetoothSocket clientSocket){
-        this.clientSocket = clientSocket;
-    }
+    DeviceItemType deviceItemType;
     Context c;
-    String MAC;
-    String classDevice;
+
     BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
-    BluetoothSocket clientSocket;
-    private byte[] inputPacket;
+
     private static final String TAG = "Thread";
     OutputStream mmOutStream;
     InputStream mmInStream;
-    private int[] my_data;
-    int len;
-    // SPP UUID сервиса
-    public static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
-    private boolean ready_to_request;         // флаг готовности принятия данных: true - высылай новый пакет   false - не высылай пакет
+
     @Override
     public void run()
     {
         Log.d("thread is running", "********************************************");
         OutputStream tmpOut = null;
         InputStream tmpIn = null;
-        try
-        {
-            tmpOut = clientSocket.getOutputStream();
-            tmpIn = clientSocket.getInputStream();
-        } catch (IOException e)
-        {
+        try {
+            tmpOut = deviceItemType.getBtSocket().getOutputStream();
+            tmpIn = deviceItemType.getBtSocket().getInputStream();
+        } catch (IOException e) {
             e.printStackTrace();
             Log.d("BLUETOOTH", e.getMessage());
+
         }
 
         mmOutStream = tmpOut;
         mmInStream = tmpIn;
-        inputPacket = new byte[12];
+
         StringBuilder str = new StringBuilder();
-        int bufNum;
-        int pacNum = 0;
-        boolean flag = true;
-        while(flag){
+
+        while(deviceItemType.isConnected()){
             byte[] buffer = new byte[1024];  // buffer store for the stream
             int bytes = 0; // bytes returned from read()
             // Keep listening to the InputStream until an exception occurs
             // Read from the InputStream
             try {
                 bytes = mmInStream.read(buffer);
-                flag = true;
             } catch (IOException e) {
                 Log.e(TAG, "Ошибка чтения входящих данных в потоке " + e.getMessage());
-                flag = false;
+                deviceItemType.closeConnection();
+                Disconnect();
             }
-            if(flag){
+            if(deviceItemType.isConnected()){
                 //успешно считываем данные
                 StringBuilder incomingDataBuffer = new StringBuilder();
                 String incomingMessage = new String(buffer, 0, bytes);
@@ -118,14 +104,10 @@ public class DataThread extends Thread{ // класс поток для прие
                     }
                     j++;
                 }
-            } else if(DeviceActivity.active){
+            } else if(BluetoothDeviceActivity.active){
                 //чтение входящей информации неуспешно при открытом приложении
-                ((DeviceActivity) c).runOnUiThread(new Runnable() {
-                    public void run() {
-
-                        //((DeviceActivity) c).connectionFailed();
-                    }
-                });
+                BluetoothDeviceActivity.addDisconnectedDevice(deviceItemType);
+                Disconnect();
             }
         }
 
@@ -133,66 +115,35 @@ public class DataThread extends Thread{ // класс поток для прие
     }
 
     synchronized void incomingData(String incomingData){
-        if(DeviceActivity.active){
+        if(BluetoothDeviceActivity.active){
             Log.d(TAG, "Входящие данные: " + incomingData);
-            ((DeviceActivity) c).runOnUiThread(new Runnable() {
+            ((BluetoothDeviceActivity) c).runOnUiThread(new Runnable() {
                 public void run() {
-                    ((DeviceActivity) c).printDataToTextView(incomingData.replaceAll("\n",""));
+                    ((BluetoothDeviceActivity) c).printDataToTextView(incomingData.replaceAll("\n",""));
                 }
             });
             SystemClock.sleep(100);
         }
     }
 
-    public void sendData(String message, int len)
-    {
-        Log.d("Send_Data 3", "********************************************");
-        byte[] msgBuffer = message.getBytes();
-        Log.d(TAG, "***Отправляем данные: " + message + "***");
-
-        try
-        {
-            mmOutStream.write(msgBuffer);
-        } catch (IOException e)
-        {
-        }
-    }
-
     public void sendData(byte[] message, int len)
     {
         Log.d("Send_Data 2", "********************************************");
-        String logMessage = "***Отправляем данные: ";
+        StringBuilder logMessage = new StringBuilder("***Отправляем данные: ");
         for (int i=0; i < len; i++)
-            logMessage += message[i] + " ";
+            logMessage.append(message[i]).append(" ");
         Log.d(TAG, logMessage + "***");
-        try
-        {
+        try {
             mmOutStream.write(message);
-        } catch (IOException e)
-        {
+        } catch (IOException e){
+            deviceItemType.closeConnection();
+            if(BluetoothDeviceActivity.active){
+                //чтение входящей информации неуспешно при открытом приложении
+                BluetoothDeviceActivity.addDisconnectedDevice(deviceItemType);
+                Disconnect();
+            }
         }
     }
-
-    public void cancel()
-    {
-        try
-        {
-            clientSocket.close();
-        } catch (IOException e)
-        {
-        }
-    }
-
-    public Object status_OutStrem()
-    {
-        if (mmOutStream == null)
-        {
-
-            return null;
-        }
-        return mmOutStream;
-    }
-
 
     //возвращает true, если bluetooth включён
     public boolean btIsEnabledFlagVoid() {
@@ -200,72 +151,13 @@ public class DataThread extends Thread{ // класс поток для прие
     }
 
 
-
-    public void Send_Data(String message) { sendData(message, len);}
-
-    public void Send_Data(byte[] message, int len) {
-        Log.d("Send_Data", "********************************************");
-        this.len = len;
-        sendData(message, len);
-    }
-
-    public void Disconnect(Timer bt_timer) // для работы через определенные промежутки времени
-    {
-        Log.d(TAG, "...In onPause()...");
-
-        if (status_OutStrem() != null)
-        {
-            cancel();
-            bt_timer.cancel();
-        }
-
-        try
-        {
-            clientSocket.close();
-
-        } catch (IOException e2)
-        {
-            //MyError("Fatal Error", "В onPause() Не могу закрыть сокет" + e2.getMessage() + ".", "Не могу закрыть сокет.");
-        }
-
-    }
     public void Disconnect() // при ручном управлении передачей пакетов
     {
-        Log.d(TAG, "...In onPause()...");
 
-        if (status_OutStrem() != null)
-        {
-            cancel();
-        }
+        deviceItemType.closeConnection();
+        Thread.currentThread().interrupt();
 
-        try
-        {
-            clientSocket.close();
-
-        } catch (IOException e2)
-        {
-            //MyError("Fatal Error", "В onPause() Не могу закрыть сокет" + e2.getMessage() + ".", "Не могу закрыть сокет.");
-        }
     }
 
-    public boolean isReady_to_request()
-    {
-        return ready_to_request;
-    }
-
-    public void setReady_to_request(boolean ready_to_request)
-    {
-        this.ready_to_request = ready_to_request;
-    }
-
-    public int[] getMy_data()
-    {
-        for (int i = 0; i < 5; i++) // 12 должно быть: 2 - префикс 7 - данные 3 - контр сумма.  ... ну или 7 - только данные
-        {
-            my_data[i] = (int) inputPacket[i +2];
-            my_data[i] = my_data[i]*5;
-        }
-        return my_data;
-    }
 
 }

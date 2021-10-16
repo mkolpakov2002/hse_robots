@@ -37,8 +37,7 @@ public class BluetoothConnectionService extends Service {
     ArrayList<DeviceItemType> devicesListConnected;
     ArrayList<MyRun> treadList;
     ArrayList<Boolean> resultOfConnection;
-    ArrayList<BluetoothSocket> socketList;
-    ArrayList<BluetoothSocket> socketListConnected;
+    boolean isSuccess = false;
     int numberOfEndedConnections;
     Intent intentService;
 
@@ -49,10 +48,10 @@ public class BluetoothConnectionService extends Service {
         numberOfEndedConnections = 0;
         resultOfConnection = new ArrayList<>();
         treadList = new ArrayList<>();
-        socketList = new ArrayList<>();
+
         devicesList = new ArrayList<>();
         devicesListConnected = new ArrayList<>();
-        socketListConnected  = new ArrayList<>();
+
 
         devicesList.addAll(DeviceHandler.getDevicesList());
         
@@ -61,12 +60,13 @@ public class BluetoothConnectionService extends Service {
 
         executorService = Executors.newFixedThreadPool(devicesList.size());
         Log.d(TAG, "...Соединение начато...");
+        btAdapter = BluetoothAdapter.getDefaultAdapter();
         for(int i = 0; i < devicesList.size(); i++){
             Log.d(TAG, "...Создаю массивы данных...");
-            MyRun mr = new MyRun(devicesList.get(i).getMAC(), i);
+            MyRun mr = new MyRun(devicesList.get(i), i);
             resultOfConnection.add(i, false);
             treadList.add(i, mr);
-            socketList.add(i, null);
+
         }
         for(int i = 0; i < devicesList.size(); i++){
             Log.d(TAG, "...Создаю потоки...");
@@ -82,53 +82,36 @@ public class BluetoothConnectionService extends Service {
     class MyRun implements Runnable {
         String deviceMAC;
         int i;
+        DeviceItemType currentDevice;
 
-        public MyRun(String deviceMAC, int i) {
-            this.deviceMAC = deviceMAC;
+        public MyRun(DeviceItemType currentDevice, int i) {
+            this.currentDevice = currentDevice;
+            this.deviceMAC = currentDevice.getMAC();
             this.i = i;
         }
 
         public void run() {
-            btAdapter = BluetoothAdapter.getDefaultAdapter();
             if (btIsEnabledFlagVoid()) {
                 device = btAdapter.getRemoteDevice(deviceMAC);
                 // Попытка подключиться к устройству
                 try {
-                    socketList.set(i, (BluetoothSocket) device.getClass().getMethod("createRfcommSocketToServiceRecord", UUID.class).invoke(device, MY_UUID));
+                    currentDevice.setBtSocket((BluetoothSocket) device.getClass().getMethod("createRfcommSocketToServiceRecord", UUID.class).invoke(device, MY_UUID));
                     Log.d(TAG, "...Создаю сокет...");
-                    resultOfConnection.set(i, true);
                 } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
                     Log.d("BLUETOOTH", e.getMessage());
                     Log.d(TAG, "...Создание сокета неуспешно...");
-                    resultOfConnection.set(i, false);
                     e.printStackTrace();
                 }
-                if (resultOfConnection.get(i)){
-                    try {
-                        socketList.get(i).connect();
-                        // Отключаем поиск устройств для сохранения заряда батареи
-                        BluetoothAdapter.getDefaultAdapter().cancelDiscovery();
-                        resultOfConnection.set(i, true);
-                        Log.d(TAG, "...Подключаюсь к сокету...");
-                    } catch (IOException e) {
-                        resultOfConnection.set(i, false);
-                        Log.d(TAG, "...Соединение через сокет неуспешно...");
-                        try {
-                            // В случае ошибки пытаемся закрыть соединение
-                            socketList.get(i).close();
-                        } catch (IOException closeException) {
-                            Log.d("BLUETOOTH", e.getMessage());
-                            e.printStackTrace();
-                        }
-                        Log.d("BLUETOOTH", e.getMessage());
-                        e.printStackTrace();
-                    }
+                if (currentDevice.isConnected()){
+                    currentDevice.openBtConnection();
+                    // Отключаем поиск устройств для сохранения заряда батареи
+                    BluetoothAdapter.getDefaultAdapter().cancelDiscovery();
+                    Log.d(TAG, "...Подключаюсь к сокету...");
                 }
-            } else {
-                resultOfConnection.set(i, false);
             }
+            resultOfConnection(currentDevice);
+
             Log.d(TAG, "...Попытка подключения для текущего устройства завершена...");
-            resultOfConnection();
         }
     }
 
@@ -149,22 +132,18 @@ public class BluetoothConnectionService extends Service {
     }
 
     // Передаём данные о статусе соединения в Main Activity
-    synchronized void resultOfConnection() {
+    synchronized void resultOfConnection(DeviceItemType currentDevice) {
         numberOfEndedConnections++;
+        if(currentDevice.isConnected()){
+            devicesListConnected.add(currentDevice);
+            isSuccess = true;
+
+        }
         if(numberOfEndedConnections == devicesList.size()){
             Intent resultOfConnectionIntent;
-            boolean isSuccess = false;
-            for(int i = 0; i < devicesList.size(); i++){
-                if(resultOfConnection.get(i).equals(true)){
-                    isSuccess = true;
-                    devicesListConnected.add(devicesList.get(i));
-                    socketListConnected.add(socketList.get(i));
-                }
-            }
             if(isSuccess){
                 resultOfConnectionIntent = new Intent("success");
                 resultOfConnectionIntent.putExtra("protocol", classDevice);
-                SocketHandler.setSocketList(socketListConnected);
                 SocketHandler.setDevicesList(devicesListConnected);
                 SocketHandler.setNumberOfConnections(numberOfEndedConnections);
                 Log.d(TAG, "...Соединение успешно, передаю результат в Main Activity...");

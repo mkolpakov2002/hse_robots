@@ -23,10 +23,16 @@ public class ButtonItemType implements ItemType {
             @Override
             public void onClick(View v) {
                 NavHostFragment navHostFragment = (NavHostFragment)((MainActivity) c).getSupportFragmentManager().getPrimaryNavigationFragment();
-                assert navHostFragment != null;
-                FragmentManager fragmentManager = navHostFragment.getChildFragmentManager();
 
-                Fragment current = fragmentManager.getPrimaryNavigationFragment();
+                FragmentManager fragmentManager = null;
+                if (navHostFragment != null) {
+                    fragmentManager = navHostFragment.getChildFragmentManager();
+                }
+
+                Fragment current = null;
+                if (fragmentManager != null) {
+                    current = fragmentManager.getPrimaryNavigationFragment();
+                }
                 if(current instanceof MainMenuFragment){
                     MainMenuFragment mainMenuFragment = (MainMenuFragment) current;
                     mainMenuFragment.showAddDeviceBottomMenu();

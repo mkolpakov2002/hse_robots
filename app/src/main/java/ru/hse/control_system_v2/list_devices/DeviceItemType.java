@@ -1,11 +1,14 @@
 package ru.hse.control_system_v2.list_devices;
 
+import android.bluetooth.BluetoothSocket;
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
 
-import androidx.appcompat.content.res.AppCompatResources;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.io.IOException;
+import java.net.Socket;
 
 import ru.hse.control_system_v2.R;
 
@@ -17,6 +20,9 @@ public class DeviceItemType implements ItemType{
     private final String protocol;
     int id;
     Context c;
+    BluetoothSocket bluetoothSocket;
+    Boolean isConnected;
+    Socket wifiSocket;
 
     public DeviceItemType(int id, String name, String deviceMAC, String protocol, String devClass, String devType, Context c) {
         this.name = name;
@@ -37,6 +43,48 @@ public class DeviceItemType implements ItemType{
         DeviceItemType item = (DeviceItemType) o;
         return name.equals(item.name) &&
                 deviceMAC.equals(item.deviceMAC);
+    }
+
+    public Boolean isConnected(){
+        return isConnected;
+    }
+
+    public BluetoothSocket getBtSocket() {
+        return bluetoothSocket;
+    }
+
+    public void setBtSocket(BluetoothSocket socket) {
+        if(socket != null){
+            isConnected = true;
+            bluetoothSocket = socket;
+        } else
+            isConnected = false;
+    }
+
+    public void closeConnection(){
+        if (bluetoothSocket!=null){
+            try {
+                bluetoothSocket.close();
+                bluetoothSocket = null;
+            } catch (IOException e) {
+                e.printStackTrace();
+                Log.d("BLUETOOTH", e.getMessage());
+            }
+            isConnected = false;
+        }
+    }
+
+    public void openBtConnection(){
+        if (bluetoothSocket!=null){
+            try {
+                bluetoothSocket.connect();
+            } catch (IOException e) {
+                e.printStackTrace();
+                Log.d("BLUETOOTH", e.getMessage());
+                closeConnection();
+                isConnected = false;
+            }
+        }
     }
 
     public String getMAC() {

@@ -12,14 +12,6 @@ public class SocketHandler {
     private static ArrayList<DeviceItemType> devicesList;
     private static int numberOfConnections;
 
-    public static synchronized ArrayList<BluetoothSocket> getSocketList(){
-        return socketList;
-    }
-
-    public static synchronized void setSocketList(ArrayList<BluetoothSocket> socketList){
-        SocketHandler.socketList = socketList;
-    }
-
     public static synchronized int getNumberOfConnections(){
         return numberOfConnections;
     }

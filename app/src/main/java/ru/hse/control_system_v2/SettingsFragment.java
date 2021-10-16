@@ -48,9 +48,7 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
 public class SettingsFragment extends Fragment implements View.OnClickListener {
-//TODO
-    //скрыть боттом шит с добавлением устройства
-    //не скрыввать гл. меню при выключении bt в этом фрагменте
+
     ProtocolDBHelper dbHelper;
     EditText editTextName, editTextLen, editTextCode;
     Button buttonAdd, buttonShowProtoMenu, buttonCancel, buttonFile, buttonDeleteDevices;

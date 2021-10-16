@@ -21,8 +21,12 @@ import androidx.navigation.fragment.NavHostFragment;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 import ru.hse.control_system_v2.dbdevices.DeviceDBHelper;
 import ru.hse.control_system_v2.dbprotocol.ProtocolDBHelper;
@@ -92,8 +96,10 @@ public class DialogDevice extends DialogFragment {
         protocolDBHelper = new ProtocolDBHelper(c);
 
         data = protocolDBHelper.getProtocolNames();
-        listClasses = List.of("class_android", "class_computer", "class_arduino", "no_class");
-        listTypes = List.of("type_sphere", "type_anthropomorphic", "type_cubbi", "type_computer", "no_type");
+        listClasses = new ArrayList<>();
+        listClasses.addAll(Arrays.asList("class_android", "class_computer", "class_arduino", "no_class"));
+        listTypes = new ArrayList<>();
+        listTypes.addAll(Arrays.asList("type_sphere", "type_anthropomorphic", "type_cubbi", "type_computer", "no_type"));
         showDeviceInformation(dialogView);
 
         final AlertDialog alertDialog = builder.create();

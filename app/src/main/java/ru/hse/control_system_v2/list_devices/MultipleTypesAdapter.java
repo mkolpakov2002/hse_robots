@@ -33,6 +33,7 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
     public List<DeviceItemType> mData;
     Context context;
     MainActivity ma;
+    MainMenuFragment mainMenuFragment;
     DeviceClickedListener listener;
     float scalingFactorSelected = 0.85f;
     float scalingFactorNotSelected = 1.0f;
@@ -46,6 +47,19 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
         this.context = context;
         if (context instanceof Activity){
             ma = (MainActivity) context;
+        }
+        NavHostFragment navHostFragment = (NavHostFragment)(ma).getSupportFragmentManager().getPrimaryNavigationFragment();
+
+        FragmentManager fragmentManager = null;
+        if (navHostFragment != null) {
+            fragmentManager = navHostFragment.getChildFragmentManager();
+        }
+        Fragment current = null;
+        if (fragmentManager != null) {
+            current = fragmentManager.getPrimaryNavigationFragment();
+        }
+        if(current instanceof MainMenuFragment){
+            mainMenuFragment = (MainMenuFragment) current;
         }
         listener = new MyListener();
         selectedDevicesList = new ArrayList<>();
@@ -99,9 +113,10 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
                             //mName.setAlpha(1f);
                             checkMark.setVisibility(View.GONE);
 
-                            //itemView.setScaleX(scalingFactorNotSelected);
-                            //itemView.setScaleY(scalingFactorNotSelected);
-                            performVibrate(itemView);
+                            itemView.setScaleX(scalingFactorNotSelected);
+                            itemView.setScaleY(scalingFactorNotSelected);
+                            itemView.setBackgroundColor(ma.getResources().getColor(R.color.foregroundColor));
+                            //performVibrate(itemView);
                             break;
                         }
                     }
@@ -109,33 +124,22 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
                     if (!wasAlreadySelected) {
                         Log.d(TAG, "...В списке не нашлось это устройство, добавляю...");
                         selectedDevicesList.add(item);
-                        NavHostFragment navHostFragment = (NavHostFragment)((MainActivity) context).getSupportFragmentManager().getPrimaryNavigationFragment();
-                        assert navHostFragment != null;
-                        FragmentManager fragmentManager = navHostFragment.getChildFragmentManager();
-                        Fragment current = fragmentManager.getPrimaryNavigationFragment();
-                        if(current instanceof MainMenuFragment){
-                            MainMenuFragment mainMenuFragment = (MainMenuFragment) current;
-                            mainMenuFragment.showDeviceSelectedItems();
-                        }
+                        mainMenuFragment.showDeviceSelectedItems();
+
                         //deviceImage.setVisibility(INVISIBLE);
                         //mName.setAlpha(0.6f);
                         checkMark.setVisibility(VISIBLE);
                         ((Animatable) checkMark.getDrawable()).start();
-                        //itemView.setScaleX(scalingFactorSelected);
-                        //itemView.setScaleY(scalingFactorSelected);
-                        performVibrate(itemView);
+                        itemView.setScaleX(scalingFactorSelected);
+                        itemView.setScaleY(scalingFactorSelected);
+                        //performVibrate(itemView);
 
                     } else {
                         if(selectedDevicesList.size() == 0) {
                             Log.d(TAG, "...Список очищен...");
-                            NavHostFragment navHostFragment = (NavHostFragment)((MainActivity) context).getSupportFragmentManager().getPrimaryNavigationFragment();
-                            assert navHostFragment != null;
-                            FragmentManager fragmentManager = navHostFragment.getChildFragmentManager();
-                            Fragment current = fragmentManager.getPrimaryNavigationFragment();
-                            if(current instanceof MainMenuFragment){
-                                MainMenuFragment mainMenuFragment = (MainMenuFragment) current;
-                                mainMenuFragment.hideDeviceSelectedItems();
-                            }
+
+                            mainMenuFragment.hideDeviceSelectedItems();
+
                         }
                     }
                 }
@@ -160,21 +164,15 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
             if (selectedDevicesList.size() == 0) {
                 Log.d(TAG, "...Список пуст, добавляю устройство...");
                 selectedDevicesList.add(item);
-                NavHostFragment navHostFragment = (NavHostFragment)((MainActivity) context).getSupportFragmentManager().getPrimaryNavigationFragment();
-                assert navHostFragment != null;
-                FragmentManager fragmentManager = navHostFragment.getChildFragmentManager();
-                Fragment current = fragmentManager.getPrimaryNavigationFragment();
-                if(current instanceof MainMenuFragment){
-                    MainMenuFragment mainMenuFragment = (MainMenuFragment) current;
-                    mainMenuFragment.showDeviceSelectedItems();
-                }
+                mainMenuFragment.showDeviceSelectedItems();
+
                 //deviceImage.setVisibility(INVISIBLE);
                 //deviceName.setAlpha(0.6f);
                 checkMark.setVisibility(VISIBLE);
                 ((Animatable) checkMark.getDrawable()).start();
-                //itemView.setScaleX(scalingFactorSelected);
-                //itemView.setScaleY(scalingFactorSelected);
-                performVibrate(itemView);
+                itemView.setScaleX(scalingFactorSelected);
+                itemView.setScaleY(scalingFactorSelected);
+                //performVibrate(itemView);
 
             } else {
                 if (!selectedDevicesList.get(0).getProtocol().equals(item.getProtocol())||
@@ -194,9 +192,9 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
                         //deviceName.setAlpha(0.6f);
                         checkMark.setVisibility(VISIBLE);
                         ((Animatable) checkMark.getDrawable()).start();
-                        //itemView.setScaleX(scalingFactorSelected);
-                        //itemView.setScaleY(scalingFactorSelected);
-                        performVibrate(itemView);
+                        itemView.setScaleX(scalingFactorSelected);
+                        itemView.setScaleY(scalingFactorSelected);
+                        //performVibrate(itemView);
 
                     }
                 }

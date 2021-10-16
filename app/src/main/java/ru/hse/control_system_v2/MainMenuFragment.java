@@ -147,7 +147,7 @@ public class MainMenuFragment extends Fragment implements SwipeRefreshLayout.OnR
             adapter.clearSelected();
             Bundle arguments = intent.getExtras();
             String classDevice = arguments.get("protocol").toString();
-            Intent startSendingData = new Intent(fragmentContext, DeviceActivity.class);
+            Intent startSendingData = new Intent(fragmentContext, BluetoothDeviceActivity.class);
             startSendingData.putExtra("protocol", classDevice);
             startActivity(startSendingData);
             progressOfConnectionDialog.hide();

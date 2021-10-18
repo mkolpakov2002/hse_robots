@@ -29,20 +29,18 @@ import ru.hse.control_system_v2.dbdevices.AddDeviceDBActivity;
 
 public class MainActivity extends AppCompatActivity {
 
-    ExtendedFloatingActionButton fabToEnBt;
-    int isFirstLaunch;
-    SharedPreferences sPref;
-    BluetoothAdapter btAdapter;
-    static BottomNavigationView main_bottom_menu;
-    Button buttonToAddDevice;
-    Button buttonToAddDeviceViaMAC;
-    public BottomSheetDialog bottomSheetBehavior;
+    private ExtendedFloatingActionButton fabToEnBt;
+    private int isFirstLaunch;
+    private SharedPreferences sPref;
+    private BluetoothAdapter btAdapter;
+    private BottomNavigationView main_bottom_menu;
+    private BottomSheetDialog bottomSheetBehavior;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.getDefaultNightMode());
-        setContentView(R.layout.main);
+        setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -63,8 +61,8 @@ public class MainActivity extends AppCompatActivity {
         bottomSheetBehavior.setCancelable(true);
         bottomSheetBehavior.dismiss();
         hideBottomSheet();
-        buttonToAddDeviceViaMAC = bottomSheetBehavior.findViewById(R.id.button_manual_mac);
-        buttonToAddDevice = bottomSheetBehavior.findViewById(R.id.button_add_device);
+        Button buttonToAddDeviceViaMAC = bottomSheetBehavior.findViewById(R.id.button_manual_mac);
+        Button buttonToAddDevice = bottomSheetBehavior.findViewById(R.id.button_add_device);
         if (buttonToAddDevice != null) {
             buttonToAddDevice.setOnClickListener(view -> {
                 Intent intent = new Intent(this, AddDeviceDBActivity.class);

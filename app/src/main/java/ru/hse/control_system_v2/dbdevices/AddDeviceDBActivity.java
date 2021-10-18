@@ -52,7 +52,7 @@ public class AddDeviceDBActivity extends AppCompatActivity implements DevicesAda
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.add_bd_device);
+        setContentView(R.layout.activity_add_bd_device);
         inflater = this.getLayoutInflater();
 
         swipeToRefreshLayout = findViewById(R.id.swipeRefreshLayout_add_device);

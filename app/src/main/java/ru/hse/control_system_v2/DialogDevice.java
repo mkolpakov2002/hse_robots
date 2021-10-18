@@ -20,6 +20,7 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.android.material.button.MaterialButton;
 
+import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -34,18 +35,11 @@ import ru.hse.control_system_v2.list_devices.DeviceItemType;
 
 
 public class DialogDevice extends DialogFragment {
-    DeviceDBHelper dbHelper;
-    Spinner spinnerProtocol, spinnerClass, spinnerType;
-    String newName, name, MAC, protocol, devClass, devType;
-    int id;
-    AlertDialog.Builder builder;
-    ProtocolDBHelper protocolDBHelper;
-    ArrayList<String> data;
-    List<String> listClasses, listTypes;
-    Context c;
-    DeviceDBHelper dbdevice;
-
-    DeviceItemType currentDevice;
+    private String name, MAC, protocol, devClass, devType;
+    private int id;
+    private Context c;
+    private DeviceDBHelper dbdevice;
+    private final DeviceItemType currentDevice;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -81,25 +75,35 @@ public class DialogDevice extends DialogFragment {
         deviceProtoView.setText(protocol);
     }
 
+    private void updateMainScreen(){
+        NavHostFragment navHostFragment = (NavHostFragment)((MainActivity) c).getSupportFragmentManager().getPrimaryNavigationFragment();
+
+        FragmentManager fragmentManager = null;
+        if (navHostFragment != null) {
+            fragmentManager = navHostFragment.getChildFragmentManager();
+        }
+
+        Fragment current = null;
+        if (fragmentManager != null) {
+            current = fragmentManager.getPrimaryNavigationFragment();
+        }
+        if(current instanceof MainMenuFragment){
+            MainMenuFragment mainMenuFragment = (MainMenuFragment) current;
+            mainMenuFragment.onRefresh();
+        }
+    }
+
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         dbdevice = DeviceDBHelper.getInstance(c);
         getDeviceInformation();
 
-        builder = new AlertDialog.Builder(c,R.style.dialogTheme);
+        AlertDialog.Builder builder = new AlertDialog.Builder(c, R.style.dialogTheme);
         LayoutInflater inflater = this.getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.dialog_device_menu, null);
 
         builder.setView(dialogView);
-        dbHelper = new DeviceDBHelper(c);
-        protocolDBHelper = new ProtocolDBHelper(c);
-
-        data = protocolDBHelper.getProtocolNames();
-        listClasses = new ArrayList<>();
-        listClasses.addAll(Arrays.asList("class_android", "class_computer", "class_arduino", "no_class"));
-        listTypes = new ArrayList<>();
-        listTypes.addAll(Arrays.asList("type_sphere", "type_anthropomorphic", "type_cubbi", "type_computer", "no_type"));
         showDeviceInformation(dialogView);
 
         final AlertDialog alertDialog = builder.create();
@@ -108,16 +112,11 @@ public class DialogDevice extends DialogFragment {
             if(alertDialog != null && alertDialog.isShowing()){
                 alertDialog.dismiss();
             }
-            NavHostFragment navHostFragment = (NavHostFragment)((MainActivity) c).getSupportFragmentManager().getPrimaryNavigationFragment();
-            assert navHostFragment != null;
-            FragmentManager fragmentManager = navHostFragment.getChildFragmentManager();
-            Fragment current = fragmentManager.getPrimaryNavigationFragment();
-            if(current instanceof MainMenuFragment){
-                MainMenuFragment mainMenuFragment = (MainMenuFragment) current;
-                mainMenuFragment.showStartOfConnection();
-            }
+            updateMainScreen();
             //запуск подключения происходит ниже
-            DeviceHandler.setDevicesList(Collections.singletonList(currentDevice));
+            ArrayList<DeviceItemType> deviceItemTypeArrayList = new ArrayList<>();
+            deviceItemTypeArrayList.add(currentDevice);
+            DeviceHandler.setDevicesList(deviceItemTypeArrayList);
             Intent startBluetoothConnectionService = new Intent(c, BluetoothConnectionService.class);
             startBluetoothConnectionService.putExtra("protocol", currentDevice.getProtocol());
             c.startService(startBluetoothConnectionService);
@@ -129,14 +128,7 @@ public class DialogDevice extends DialogFragment {
                 alertDialog.dismiss();
             }
             dbdevice.deleteDevice(id);
-            NavHostFragment navHostFragment = (NavHostFragment)((MainActivity) c).getSupportFragmentManager().getPrimaryNavigationFragment();
-            assert navHostFragment != null;
-            FragmentManager fragmentManager = navHostFragment.getChildFragmentManager();
-            Fragment current = fragmentManager.getPrimaryNavigationFragment();
-            if(current instanceof MainMenuFragment){
-                MainMenuFragment mainMenuFragment = (MainMenuFragment) current;
-                mainMenuFragment.onRefresh();
-            }
+            updateMainScreen();
         });
 
         MaterialButton buttonToChangeDevice = dialogView.findViewById(R.id.dialog_device_change);

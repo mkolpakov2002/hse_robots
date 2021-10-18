@@ -9,6 +9,6 @@ public class WiFiDeviceActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_wi_fi_device);
+        setContentView(R.layout.activity_wifi_device);
     }
 }

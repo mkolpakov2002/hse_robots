@@ -1,8 +1,9 @@
 package ru.hse.control_system_v2;
 
+import static ru.hse.control_system_v2.Constants.APP_LOG_TAG;
+
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.os.SystemClock;
 import android.util.Log;
@@ -12,33 +13,29 @@ import androidx.annotation.NonNull;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Timer;
-import java.util.UUID;
 
 import ru.hse.control_system_v2.list_devices.DeviceItemType;
 
-public class BluetoothDataThread extends Thread{ // класс поток для приема и передачи данных
+public class BluetoothDataThread extends Thread {
+    private final DeviceItemType deviceItemType;
+    private Context c;
+    private final BluetoothDeviceActivity bluetoothDeviceActivity;
+    private final BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
+    private OutputStream mmOutStream;
+
+
     public BluetoothDataThread(@NonNull Context context, DeviceItemType deviceItemType){
         if (context instanceof Activity){
             c = context;
         }
+        bluetoothDeviceActivity = ((BluetoothDeviceActivity) c);
         this.deviceItemType = deviceItemType;
-
-        Log.d(TAG, "Поток запущен");
+        Log.d(APP_LOG_TAG, "Поток запущен");
     }
-    DeviceItemType deviceItemType;
-    Context c;
-
-    BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
-
-    private static final String TAG = "Thread";
-    OutputStream mmOutStream;
-    InputStream mmInStream;
 
     @Override
-    public void run()
-    {
-        Log.d("thread is running", "********************************************");
+    public void run() {
+        Log.d(APP_LOG_TAG, "Bt thread is running");
         OutputStream tmpOut = null;
         InputStream tmpIn = null;
         try {
@@ -46,13 +43,12 @@ public class BluetoothDataThread extends Thread{ // класс поток для
             tmpIn = deviceItemType.getBtSocket().getInputStream();
         } catch (IOException e) {
             e.printStackTrace();
-            Log.d("BLUETOOTH", e.getMessage());
-
+            Log.e(APP_LOG_TAG, e.getMessage());
+            Disconnect();
         }
 
         mmOutStream = tmpOut;
-        mmInStream = tmpIn;
-
+        InputStream mmInStream = tmpIn;
         StringBuilder str = new StringBuilder();
 
         while(deviceItemType.isConnected()){
@@ -63,8 +59,7 @@ public class BluetoothDataThread extends Thread{ // класс поток для
             try {
                 bytes = mmInStream.read(buffer);
             } catch (IOException e) {
-                Log.e(TAG, "Ошибка чтения входящих данных в потоке " + e.getMessage());
-
+                Log.e(APP_LOG_TAG, "Ошибка чтения входящих данных в потоке " + e.getMessage());
                 Disconnect();
             }
             if(deviceItemType.isConnected()){
@@ -104,19 +99,20 @@ public class BluetoothDataThread extends Thread{ // класс поток для
                     }
                     j++;
                 }
-            } else if(BluetoothDeviceActivity.active){
+            } else {
                 //чтение входящей информации неуспешно при открытом приложении
-                BluetoothDeviceActivity.addDisconnectedDevice(deviceItemType);
                 Disconnect();
             }
         }
 
-        Log.d("Конец true", "********************************************");
+        Log.d(APP_LOG_TAG, "Конец работы цикла потока Bt");
     }
 
     synchronized void incomingData(String incomingData){
-        if(BluetoothDeviceActivity.active){
-            Log.d(TAG, "Входящие данные: " + incomingData);
+        if(bluetoothDeviceActivity.isActive()){
+            Log.d(APP_LOG_TAG, "Входящие данные Bt: " + incomingData);
+            //TODO
+            //А если activity не активна?
             ((BluetoothDeviceActivity) c).runOnUiThread(new Runnable() {
                 public void run() {
                     ((BluetoothDeviceActivity) c).printDataToTextView(incomingData.replaceAll("\n",""));
@@ -126,22 +122,15 @@ public class BluetoothDataThread extends Thread{ // класс поток для
         }
     }
 
-    public void sendData(byte[] message, int len)
-    {
-        Log.d("Send_Data 2", "********************************************");
-        StringBuilder logMessage = new StringBuilder("***Отправляем данные: ");
+    public void sendData(byte[] message, int len) {
+        StringBuilder logMessage = new StringBuilder("Отправляем данные по Bt: ");
         for (int i=0; i < len; i++)
             logMessage.append(message[i]).append(" ");
-        Log.d(TAG, logMessage + "***");
+        Log.d(APP_LOG_TAG, logMessage + "***");
         try {
             mmOutStream.write(message);
         } catch (IOException e){
-            deviceItemType.closeConnection();
-            if(BluetoothDeviceActivity.active){
-                //чтение входящей информации неуспешно при открытом приложении
-                BluetoothDeviceActivity.addDisconnectedDevice(deviceItemType);
-                Disconnect();
-            }
+            Disconnect();
         }
     }
 
@@ -150,13 +139,12 @@ public class BluetoothDataThread extends Thread{ // класс поток для
         return btAdapter.isEnabled();
     }
 
-
-    public void Disconnect() // при ручном управлении передачей пакетов
-    {
-
+    public void Disconnect() {
         deviceItemType.closeConnection();
+        if(btIsEnabledFlagVoid()){
+            bluetoothDeviceActivity.addDisconnectedDevice(deviceItemType);
+        }
         Thread.currentThread().interrupt();
-
     }
 
 

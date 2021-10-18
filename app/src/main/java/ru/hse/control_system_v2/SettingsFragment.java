@@ -49,17 +49,18 @@ import static android.view.View.VISIBLE;
 
 public class SettingsFragment extends Fragment implements View.OnClickListener {
 
-    ProtocolDBHelper dbHelper;
-    EditText editTextName, editTextLen, editTextCode;
-    Button buttonAdd, buttonShowProtoMenu, buttonCancel, buttonFile, buttonDeleteDevices;
-    TextView textListProtocols;
-    final int REQUEST_CODE_OPEN = 20, PERMISSION_REQUEST_CODE = 123;
-    SQLiteDatabase database;
-    boolean isEditTextNameChanged, isEditTextLenChanged, isEditTextCodeChanged;
-    ScrollView menuProto;
-    BluetoothAdapter btAdapter;
+    private ProtocolDBHelper dbHelper;
+    private EditText editTextName, editTextLen, editTextCode;
+    private Button buttonAdd;
+    private Button buttonShowProtoMenu;
+    private TextView textListProtocols;
+    private final int REQUEST_CODE_OPEN = 20, PERMISSION_REQUEST_CODE = 123;
+    private SQLiteDatabase database;
+    private boolean isEditTextNameChanged, isEditTextLenChanged, isEditTextCodeChanged;
+    private ScrollView menuProto;
+    private BluetoothAdapter btAdapter;
     private Context fragmentContext;
-    MainActivity ma;
+    private MainActivity ma;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -71,8 +72,6 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
     public SettingsFragment() {
         // Required empty public constructor
     }
-
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -128,16 +127,16 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
 
         database = dbHelper.getWritableDatabase();
 
-        buttonCancel = view.findViewById(R.id.button_delete_protos);
+        Button buttonCancel = view.findViewById(R.id.button_delete_protos);
         buttonCancel.setOnClickListener(this);
 
-        buttonDeleteDevices = view.findViewById(R.id.button_delete_devices);
+        Button buttonDeleteDevices = view.findViewById(R.id.button_delete_devices);
         buttonDeleteDevices.setOnClickListener(this);
 
         buttonShowProtoMenu = view.findViewById(R.id.button_show_add_proto);
         buttonShowProtoMenu.setOnClickListener(this);
 
-        buttonFile = view.findViewById(R.id.button_choose_file);
+        Button buttonFile = view.findViewById(R.id.button_choose_file);
         buttonFile.setOnClickListener(this);
         btAdapter = BluetoothAdapter.getDefaultAdapter();
         showProtocols();

@@ -12,6 +12,8 @@ import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.card.MaterialCardView;
+
 import ru.hse.control_system_v2.MainActivity;
 import ru.hse.control_system_v2.R;
 
@@ -32,6 +34,7 @@ public class ViewHolderFactory {
         ImageView deviceImage;
         ImageView checkMark;
         MainActivity ma;
+        MaterialCardView materialCardView;
 
         private static final String TAG = "VHFactory";
 
@@ -41,6 +44,7 @@ public class ViewHolderFactory {
             mName = itemView.findViewById(R.id.item_name);
             deviceImage = itemView.findViewById(R.id.icon_image_view);
             checkMark = itemView.findViewById(R.id.check_mark);
+            materialCardView = itemView.findViewById(R.id.device_item_card_view);
 
             if (context instanceof Activity){
                 ma = (MainActivity) context;
@@ -64,12 +68,12 @@ public class ViewHolderFactory {
     public static RecyclerView.ViewHolder create(ViewGroup parent, int viewType, Context context, ListDevicesHolder.IListener listener) {
         switch (viewType) {
             case ItemType.BUTTON_ITEM_TYPE:
-                View buttonTypeView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_list_button_add, parent, false);
+                View buttonTypeView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_main_list_button_add, parent, false);
                 return new ViewHolderFactory.ButtonViewHolder(buttonTypeView);
 
             case ItemType.DEVICE_ITEM_TYPE:
                 LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-                View layout = inflater.inflate(R.layout.item_list_devices, parent, false);
+                View layout = inflater.inflate(R.layout.item_main_list_device, parent, false);
                 return new ViewHolderFactory.ListDevicesHolder(layout, context, listener);
             default:
                 return null;

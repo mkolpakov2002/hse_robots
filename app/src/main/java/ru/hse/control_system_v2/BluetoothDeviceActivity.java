@@ -1,9 +1,10 @@
 package ru.hse.control_system_v2;
 
 
+import static ru.hse.control_system_v2.Constants.APP_LOG_TAG;
+
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -17,82 +18,66 @@ import android.widget.Toast;
 
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import ru.hse.control_system_v2.dbprotocol.ProtocolDBHelper;
 import ru.hse.control_system_v2.dbprotocol.ProtocolRepo;
 import ru.hse.control_system_v2.list_devices.DeviceItemType;
 
-public class BluetoothDeviceActivity extends Activity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener
-{
-    private static final String TAG = "DeviceActivity";
-    boolean is_hold_command;
+public class BluetoothDeviceActivity extends Activity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
 
-    byte[] message;      // комманда посылаемая на arduino
-    byte prevCommand = 0;
-    String classDevice;
-    ArrayList<BluetoothDataThread> bluetoothDataThreadForArduinoList;
-
-    ArrayList<DeviceItemType> devicesList;
-    static ArrayList<DeviceItemType> disconnectedDevicesList;
-    TextView outputText;
-    SwitchMaterial hold_command;
-    int numberOfEndedConnections;
+    private boolean isHoldCommand;
+    private byte[] message;      // комманда посылаемая на arduino
+    private byte prevCommand = 0;
+    private ArrayList<BluetoothDataThread> bluetoothDataThreadForArduinoList;
+    private ArrayList<DeviceItemType> devicesList;
+    private ArrayList<DeviceItemType> disconnectedDevicesList;
+    private TextView outputText;
     ProtocolRepo getDevicesID;
-    int countCommands;
-    int lengthMes;
-    ProtocolDBHelper dbprotocol;
-    public static boolean active;
-
-    Resources res;
+    private int countCommands;
+    private int lengthMes;
+    private boolean active;
+    private Resources res;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.manual_mode);
-        showToast("Started Manual mode!");
+        setContentView(R.layout.activity_bluetooth_device);
         findViewById(R.id.button_stop).setEnabled(false);
 
         disconnectedDevicesList = new ArrayList<>();
 
-        devicesList = SocketHandler.getDevicesList();
-        numberOfEndedConnections = SocketHandler.getNumberOfConnections();
+        devicesList = DeviceHandler.getDevicesList();
+        checkForActiveDevices();
+
         outputText = findViewById(R.id.incoming_data);
         outputText.setMovementMethod(new ScrollingMovementMethod());
 
         Bundle b = getIntent().getExtras();
-        classDevice = b.get("protocol").toString();
+        String classDevice = b.get("protocol").toString();
 
         bluetoothDataThreadForArduinoList = new ArrayList<>();
-        outputText.append("\n"+ "Подключено " + devicesList.size() +" из " + numberOfEndedConnections + " устройств;");
+        outputText.append("\n"+ "Подключено " + devicesList.size() + " из " + (devicesList.size()+disconnectedDevicesList.size()) + " устройств;");
         outputText.append("\n"+ "Список успешных подключений:");
         for(int i = 0; i < devicesList.size(); i++){
             outputText.append("\n"+ "Устройство " + devicesList.get(i).getName() + " подключено;");
             BluetoothDataThread bluetoothDataThreadForArduino = new BluetoothDataThread(this, devicesList.get(i));
             bluetoothDataThreadForArduinoList.add(bluetoothDataThreadForArduino);
             bluetoothDataThreadForArduinoList.get(i).start();
-
         }
 
-
         res = getResources();
-        is_hold_command = false;
+        isHoldCommand = false;
         String protocolName = b.getString("protocol");
         getDevicesID = new ProtocolRepo(getApplicationContext(), protocolName);
-        dbprotocol = ProtocolDBHelper.getInstance(getApplicationContext());
-
-
-        lengthMes = dbprotocol.getLength(classDevice);
+        ProtocolDBHelper protocolDBHelper = ProtocolDBHelper.getInstance(getApplicationContext());
+        lengthMes = protocolDBHelper.getLength(classDevice);
         message = new byte[lengthMes];
         countCommands = 0;
 
-        for(int i = 0; i < devicesList.size(); i++) {
-            if (!BluetoothAdapter.checkBluetoothAddress(devicesList.get(i).getMAC())) {
+        for(DeviceItemType currentDevice: devicesList) {
+            if (!BluetoothAdapter.checkBluetoothAddress(currentDevice.getMAC())) {
                 showToast("Wrong MAC address");
                 BluetoothDeviceActivity.this.finish();
             }
@@ -104,12 +89,11 @@ public class BluetoothDeviceActivity extends Activity implements View.OnClickLis
         findViewById(R.id.button_right).setOnTouchListener(touchListener);
         findViewById(R.id.button_stop).setOnClickListener(this);
 
-        hold_command = findViewById(R.id.switch_hold_command_mm);
+        SwitchMaterial hold_command = findViewById(R.id.switch_hold_command_mm);
         hold_command.setOnCheckedChangeListener(this);
         hold_command.setChecked(false);
 
         Arrays.fill(message, (byte) 0);
-        Log.d("DeviceActivity", String.valueOf(message.length));
     }
 
     @Override
@@ -123,30 +107,49 @@ public class BluetoothDeviceActivity extends Activity implements View.OnClickLis
     }
 
     public synchronized void printDataToTextView(String printData){
-        Log.d(TAG, "Output message " + printData);
+        Log.d(APP_LOG_TAG, "Печатаемое сообщение в BtDeviceActivity: " + printData);
         outputText.append("\n" + "---" + "\n" + printData);
     }
 
-    public static synchronized void addDisconnectedDevice(DeviceItemType currentDevice){
+    public synchronized boolean isActive(){
+        return active;
+    }
+
+    void checkForActiveDevices(){
+        for (DeviceItemType currentDevice: devicesList){
+            if(!currentDevice.isConnected()){
+                disconnectedDevicesList.add(currentDevice);
+            }
+        }
+        for (DeviceItemType currentDevice: disconnectedDevicesList){
+            if(currentDevice.isConnected()){
+                devicesList.add(currentDevice);
+            }
+        }
+        devicesList.removeIf(currentDevice -> !currentDevice.isConnected());
+        disconnectedDevicesList.removeIf(DeviceItemType::isConnected);
+    }
+
+    public synchronized void addDisconnectedDevice(DeviceItemType currentDevice){
         disconnectedDevicesList.add(currentDevice);
         //TODO
         //Диалог с предложением переподключить эти устройства
-        Log.d("BtDevActivity", "disconnected");
+        Log.d(APP_LOG_TAG, "устройство отсоединилось");
 
     }
 
     @Override
-    protected void onResume()
-    {
+    protected void onResume() {
         super.onResume();
         active = true;
+        checkForActiveDevices();
+
         //arduino.BluetoothConnectionServiceVoid();     // соединяемся с bluetooth
         //TODO - вызывает вылет приложения
     }
 
     @Override
-    protected void onPause()
-    {
+    protected void onPause() {
         super.onPause();
         active = false;
         completeDevicesInfo();
@@ -159,27 +162,20 @@ public class BluetoothDeviceActivity extends Activity implements View.OnClickLis
 
         message[countCommands++] = getDevicesID.get("STOP");
         for(int i = 0; i < bluetoothDataThreadForArduinoList.size(); i++){
-            Log.d("Logg", "DeviceActivity onPause");
+            Log.d(APP_LOG_TAG, "BtDeviceActivity в onPause");
             bluetoothDataThreadForArduinoList.get(i).sendData(message, lengthMes);
         }
 
-
-        try
-        {
-            for(int i = 0; i < bluetoothDataThreadForArduinoList.size(); i++){
-                bluetoothDataThreadForArduinoList.get(i).Disconnect();
-            }
+        for(int i = 0; i < bluetoothDataThreadForArduinoList.size(); i++) {
+            bluetoothDataThreadForArduinoList.get(i).Disconnect();
         }
-        catch (Exception e)
-        {}
     }
 
     @Override
     public void onClick(View v)
     {
         completeDevicesInfo();
-        switch (v.getId())
-        {
+        switch (v.getId()) {
             case R.id.button_stop:
                 outputText.append("\n"+ "Отправляю команду стоп;");
                 completeMessage("STOP");
@@ -194,20 +190,18 @@ public class BluetoothDeviceActivity extends Activity implements View.OnClickLis
         public boolean onTouch(View v, MotionEvent event)
         {
             completeDevicesInfo();
-            if(event.getAction() == MotionEvent.ACTION_DOWN)                        // если нажали на кнопку и не важно есть удержание команд или нет
-            {
-                switch (v.getId())
-                {
+            if(event.getAction() == MotionEvent.ACTION_DOWN) {
+                // если нажали на кнопку и не важно есть удержание команд или нет
+                switch (v.getId()) {
                     case R.id.button_up:
-                        //Toast.makeText(getApplicationContext(), "Вперед поехали", Toast.LENGTH_SHORT).show();
-                        Log.d("Вперед поехали", "********************************************");
+                        Log.d(APP_LOG_TAG, "Отправляю команду движения вперёд;");
                         outputText.append("\n"+ "Отправляю команду движения вперёд;");
                         completeMessage("FORWARD");
                         countCommands = 0;
                         break;
                     case R.id.button_down:
                         outputText.append("\n"+ "Отправляю команду движения назад;");
-                        Log.d("Назад поехали", "********************************************");
+                        Log.d(APP_LOG_TAG, "Отправляю команду движения назад;");
                         //Toast.makeText(getApplicationContext(), "Назад поехали", Toast.LENGTH_SHORT).show();
                         completeMessage("BACK");
                         countCommands = 0;
@@ -215,23 +209,23 @@ public class BluetoothDeviceActivity extends Activity implements View.OnClickLis
                     case R.id.button_left:
                         outputText.append("\n"+ "Отправляю команду движения влево;");
                         //Toast.makeText(getApplicationContext(), "Влево поехали", Toast.LENGTH_SHORT).show();
-                        Log.d("Влево поехали", "********************************************");
+                        Log.d(APP_LOG_TAG, "Отправляю команду движения влево;");
                         completeMessage("LEFT");
                         countCommands = 0;
                         break;
                     case R.id.button_right:
                         //Toast.makeText(getApplicationContext(), "Вправо поехали", Toast.LENGTH_SHORT).show();
                         outputText.append("\n"+ "Отправляю команду движения вправо;");
-                        Log.d("Вправо поехали", "********************************************");
+                        Log.d(APP_LOG_TAG, "Отправляю команду движения вправо;");
                         completeMessage("RIGHT");
                         countCommands = 0;
                         break;
                 }
             }
-            else if(event.getAction() == MotionEvent.ACTION_UP)             // если отпустили кнопку
-            {
-                if(!is_hold_command)    // и нет удержания команд то все кнопки отправляют команду стоп
-                {
+            else if(event.getAction() == MotionEvent.ACTION_UP) {
+                // если отпустили кнопку
+                if(!isHoldCommand) {
+                    // и нет удержания команд то все кнопки отправляют команду стоп
                     outputText.append("\n"+ "Кнопка отпущена, отправляю команду стоп;");
                     switch (v.getId())
                     {
@@ -252,7 +246,7 @@ public class BluetoothDeviceActivity extends Activity implements View.OnClickLis
                             countCommands = 0;
                             break;
                     }
-                    Log.d("mLog", String.valueOf(countCommands));
+                    Log.d(APP_LOG_TAG, "Количество посылаемых команд " + countCommands);
                 }
             }
             return false;
@@ -274,7 +268,7 @@ public class BluetoothDeviceActivity extends Activity implements View.OnClickLis
             message[countCommands++] = getDevicesID.get(devicesList.get(0).getDevType());// класс и тип устройства приема
     }
 
-    public void completeMessage (String command) {
+    public void completeMessage(String command) {
 
         Byte code = getDevicesID.get(command);
         if (code != null) {
@@ -297,19 +291,15 @@ public class BluetoothDeviceActivity extends Activity implements View.OnClickLis
     }
 
     @Override
-    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
-    {
-        switch (buttonView.getId())
-        {
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        switch (buttonView.getId()) {
             case R.id.switch_hold_command_mm:
-                is_hold_command = isChecked;
-                if(is_hold_command)
-                {
+                isHoldCommand = isChecked;
+                if(isHoldCommand) {
                     outputText.append("\n"+ "Удерживание комманды включено...");
                     findViewById(R.id.button_stop).setEnabled(true);
                 }
-                else
-                {
+                else {
                     outputText.append("\n"+ "Удерживание комманды отключено...");
                     findViewById(R.id.button_stop).setEnabled(false);
                 }
@@ -330,7 +320,7 @@ public class BluetoothDeviceActivity extends Activity implements View.OnClickLis
         super.onDestroy();
         active = false;
         for (int i = 0; i < devicesList.size(); i++){
-            Log.d("BLUETOOTH", "Отсоединение от устройства");
+            Log.d(APP_LOG_TAG, "BtDeviceActivity в onDestroy, отключение устройств");
             devicesList.get(i).closeConnection();
 
         }

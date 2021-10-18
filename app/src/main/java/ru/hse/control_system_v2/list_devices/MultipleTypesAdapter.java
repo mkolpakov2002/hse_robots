@@ -4,6 +4,7 @@ import static android.view.View.VISIBLE;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.drawable.Animatable;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,10 +14,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.content.res.AppCompatResources;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.card.MaterialCardView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -89,9 +94,9 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
 
         @Override
         public void deviceClicked(DeviceItemType item, View itemView) {
-            View deviceImage = itemView.findViewById(R.id.icon_image_view);
-            View mName = itemView.findViewById(R.id.item_name);
             ImageView checkMark = (ImageView) itemView.findViewById(R.id.check_mark);
+            MaterialCardView materialCardView = itemView.findViewById(R.id.device_item_card_view);
+
             //проверяю происходит ли выбор списка устройств
             if(selectedDevicesList.size() != 0) {
                 Log.d(TAG, "...Список не пуст, нажато устройство...");
@@ -103,20 +108,14 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
                 else {
                     //необходимо проверить на присутствие в списке
                     boolean wasAlreadySelected = false;
-                    for (int i = 0; i < selectedDevicesList.size(); i++) {
-                        if (selectedDevicesList.get(i).getMAC().equals(item.getMAC())) {
 
-                            selectedDevicesList.remove(i);
+                    for (DeviceItemType currentDevice: selectedDevicesList) {
+                        if (currentDevice.getMAC().equals(item.getMAC())) {
+                            selectedDevicesList.remove(currentDevice);
                             wasAlreadySelected = true;
                             Log.d(TAG, "...В списке нашлось это устройство, удаляю...");
-                            //deviceImage.setVisibility(VISIBLE);
-                            //mName.setAlpha(1f);
                             checkMark.setVisibility(View.GONE);
-
-                            itemView.setScaleX(scalingFactorNotSelected);
-                            itemView.setScaleY(scalingFactorNotSelected);
-                            itemView.setBackgroundColor(ma.getResources().getColor(R.color.foregroundColor));
-                            //performVibrate(itemView);
+                            materialCardView.setStrokeColor(Color.TRANSPARENT);
                             break;
                         }
                     }
@@ -125,14 +124,9 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
                         Log.d(TAG, "...В списке не нашлось это устройство, добавляю...");
                         selectedDevicesList.add(item);
                         mainMenuFragment.showDeviceSelectedItems();
-
-                        //deviceImage.setVisibility(INVISIBLE);
-                        //mName.setAlpha(0.6f);
+                        materialCardView.setStrokeColor(ma.getResources().getColor(R.color.colorAccent));
                         checkMark.setVisibility(VISIBLE);
                         ((Animatable) checkMark.getDrawable()).start();
-                        itemView.setScaleX(scalingFactorSelected);
-                        itemView.setScaleY(scalingFactorSelected);
-                        //performVibrate(itemView);
 
                     } else {
                         if(selectedDevicesList.size() == 0) {
@@ -149,30 +143,23 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
                 DialogDevice dialog = new DialogDevice(item);
                 Bundle args = new Bundle();
                 dialog.setArguments(args);
-                //fragment.currentDevice = item;
                 dialog.show(ma.getSupportFragmentManager(), "dialog");
             }
         }
 
         @Override
         public void deviceLongClicked(DeviceItemType item, View itemView) {
-            //selectedDevicesList = MainMenuFragment.selectedDevicesList;
 
-            View deviceImage = itemView.findViewById(R.id.icon_image_view);
-            View deviceName = itemView.findViewById(R.id.item_name);
+            MaterialCardView materialCardView = itemView.findViewById(R.id.device_item_card_view);
+            //ConstraintLayout mLayout = itemView.findViewById(R.id.constraint_layout);
             ImageView checkMark = (ImageView) itemView.findViewById(R.id.check_mark);
             if (selectedDevicesList.size() == 0) {
                 Log.d(TAG, "...Список пуст, добавляю устройство...");
                 selectedDevicesList.add(item);
                 mainMenuFragment.showDeviceSelectedItems();
-
-                //deviceImage.setVisibility(INVISIBLE);
-                //deviceName.setAlpha(0.6f);
+                materialCardView.setStrokeColor(ma.getResources().getColor(R.color.colorAccent));
                 checkMark.setVisibility(VISIBLE);
                 ((Animatable) checkMark.getDrawable()).start();
-                itemView.setScaleX(scalingFactorSelected);
-                itemView.setScaleY(scalingFactorSelected);
-                //performVibrate(itemView);
 
             } else {
                 if (!selectedDevicesList.get(0).getProtocol().equals(item.getProtocol())||
@@ -188,14 +175,9 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
                     }
                     if (!wasAlreadySelected) {
                         selectedDevicesList.add(item);
-                        //deviceImage.setVisibility(INVISIBLE);
-                        //deviceName.setAlpha(0.6f);
+                        materialCardView.setStrokeColor(ma.getResources().getColor(R.color.colorAccent));
                         checkMark.setVisibility(VISIBLE);
                         ((Animatable) checkMark.getDrawable()).start();
-                        itemView.setScaleX(scalingFactorSelected);
-                        itemView.setScaleY(scalingFactorSelected);
-                        //performVibrate(itemView);
-
                     }
                 }
 

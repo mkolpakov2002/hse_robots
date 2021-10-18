@@ -28,6 +28,7 @@ import androidx.navigation.fragment.NavHostFragment;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import ru.hse.control_system_v2.dbdevices.AddDeviceDBActivity;
@@ -37,17 +38,20 @@ import ru.hse.control_system_v2.list_devices.DeviceItemType;
 
 public class DialogDeviceEdit extends DialogFragment {
 
-    Context c;
-    Spinner spinnerProtocol, spinnerClass, spinnerType;
-    ArrayList<String> data;
-    List<String> listClasses, listTypes;
-    ProtocolDBHelper protocolDBHelper;
-    DeviceItemType currentDevice;
-    String newName, name, MAC, protocol, devClass, devType;
-    int id;
-    DeviceDBHelper dbHelper;
-    boolean isNewDev = false;
-    EditText editTextNameAlert;
+    private Context c;
+    private Spinner spinnerProtocol, spinnerClass, spinnerType;
+    private ArrayList<String> data;
+    private List<String> listClasses, listTypes;
+    private DeviceItemType currentDevice;
+    private String name;
+    private String MAC;
+    private String protocol;
+    private String devClass;
+    private String devType;
+    private int id;
+    private DeviceDBHelper dbHelper;
+    private boolean isNewDev = false;
+    private EditText editTextNameAlert;
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -79,10 +83,10 @@ public class DialogDeviceEdit extends DialogFragment {
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
 
         dbHelper = new DeviceDBHelper(c);
-        protocolDBHelper = new ProtocolDBHelper(c);
+        ProtocolDBHelper protocolDBHelper = new ProtocolDBHelper(c);
         data = protocolDBHelper.getProtocolNames();
-        listClasses = List.of("class_android", "class_computer", "class_arduino", "no_class");
-        listTypes = List.of("type_sphere", "type_anthropomorphic", "type_cubbi", "type_computer", "no_type");
+        listClasses = Arrays.asList("class_android", "class_computer", "class_arduino", "no_class");
+        listTypes = Arrays.asList("type_sphere", "type_anthropomorphic", "type_cubbi", "type_computer", "no_type");
 
         LayoutInflater inflater = this.getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.dialog_edit_device, null);
@@ -144,7 +148,7 @@ public class DialogDeviceEdit extends DialogFragment {
 
         editTextNameAlert.setInputType(InputType.TYPE_CLASS_TEXT);
         editTextNameAlert.setHint(getResources().getString(R.string.alert_device_name_tint));
-        editTextNameAlert.addTextChangedListener(new TextChangedListener<EditText>(editTextNameAlert) {
+        editTextNameAlert.addTextChangedListener(new TextChangedListener<>(editTextNameAlert) {
             @Override
             public void onTextChanged(EditText target, Editable s) {
                 if(s.length() == 0){
@@ -182,7 +186,7 @@ public class DialogDeviceEdit extends DialogFragment {
     }
 
     void saveOldDevice(){
-        newName = editTextNameAlert.getText().toString();
+        String newName = editTextNameAlert.getText().toString();
         protocol = data.get((int) spinnerProtocol.getSelectedItemId());
         String classDevice = listClasses.get((int) spinnerClass.getSelectedItemId());
         String typeDevice;
@@ -201,15 +205,7 @@ public class DialogDeviceEdit extends DialogFragment {
         dbHelper.update(contentValues, id);
         dbHelper.viewData();
         //Обновление MainActivity
-        NavHostFragment navHostFragment = (NavHostFragment)((MainActivity) c).getSupportFragmentManager().getPrimaryNavigationFragment();
-        assert navHostFragment != null;
-        FragmentManager fragmentManager = navHostFragment.getChildFragmentManager();
-
-        Fragment current = fragmentManager.getPrimaryNavigationFragment();
-        if(current instanceof MainMenuFragment){
-            MainMenuFragment mainMenuFragment = (MainMenuFragment) current;
-            mainMenuFragment.onRefresh();
-        }
+        updateMainScreen();
     }
 
     void saveNewDevice(){
@@ -249,24 +245,27 @@ public class DialogDeviceEdit extends DialogFragment {
         }
         //Обновление MainActivity
         if(!isNewDev){
-            NavHostFragment navHostFragment = (NavHostFragment)((MainActivity) c).getSupportFragmentManager().getPrimaryNavigationFragment();
-
-            FragmentManager fragmentManager = null;
-            if (navHostFragment != null) {
-                fragmentManager = navHostFragment.getChildFragmentManager();
-            }
-
-            Fragment current = null;
-            if (fragmentManager != null) {
-                current = fragmentManager.getPrimaryNavigationFragment();
-            }
-            if(current instanceof MainMenuFragment){
-                MainMenuFragment mainMenuFragment = (MainMenuFragment) current;
-                mainMenuFragment.onRefresh();
-            }
+            updateMainScreen();
         }
 
         ((AddDeviceDBActivity) c).exitActivity();
     }
 
+    private void updateMainScreen(){
+        NavHostFragment navHostFragment = (NavHostFragment)((MainActivity) c).getSupportFragmentManager().getPrimaryNavigationFragment();
+
+        FragmentManager fragmentManager = null;
+        if (navHostFragment != null) {
+            fragmentManager = navHostFragment.getChildFragmentManager();
+        }
+
+        Fragment current = null;
+        if (fragmentManager != null) {
+            current = fragmentManager.getPrimaryNavigationFragment();
+        }
+        if(current instanceof MainMenuFragment){
+            MainMenuFragment mainMenuFragment = (MainMenuFragment) current;
+            mainMenuFragment.onRefresh();
+        }
+    }
 }

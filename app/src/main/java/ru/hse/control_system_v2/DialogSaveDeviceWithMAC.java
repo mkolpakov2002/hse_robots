@@ -22,7 +22,9 @@ import ru.hse.control_system_v2.dbprotocol.ProtocolDBHelper;
 
 
 public class DialogSaveDeviceWithMAC extends DialogFragment {
-    Context c;
+    private Context c;
+    private String mPreviousMac = null;
+
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -31,14 +33,9 @@ public class DialogSaveDeviceWithMAC extends DialogFragment {
         }
     }
 
-    ProtocolDBHelper protocolDBHelper;
-    String name;
-    String mPreviousMac = null;
-
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        protocolDBHelper = ProtocolDBHelper.getInstance(c);
 
         LayoutInflater inflater = this.getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.dialog_enter_mac, null);
@@ -134,19 +131,19 @@ public class DialogSaveDeviceWithMAC extends DialogFragment {
 
     private static String formatMacAddress(String cleanMac) {
         int grouppedCharacters = 0;
-        String formattedMac = "";
+        StringBuilder formattedMac = new StringBuilder();
         for (int i = 0; i < cleanMac.length(); ++i) {
-            formattedMac += cleanMac.charAt(i);
+            formattedMac.append(cleanMac.charAt(i));
             ++grouppedCharacters;
             if (grouppedCharacters == 2) {
-                formattedMac += ":";
+                formattedMac.append(":");
                 grouppedCharacters = 0;
             }
         }
         if (cleanMac.length() == 12) {
-            formattedMac = formattedMac.substring(0, formattedMac.length() - 1);
+            formattedMac = new StringBuilder(formattedMac.substring(0, formattedMac.length() - 1));
         }
-        return formattedMac;
+        return formattedMac.toString();
     }
 
     private static String clearNonMacCharacters(String mac) {

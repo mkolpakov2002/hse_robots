@@ -69,10 +69,15 @@ public class DialogDeviceEdit extends DialogFragment {
         devType = currentDevice.getDevType();
     }
 
-    public DialogDeviceEdit(DeviceItemType currentDevice, String MAC){
+    public DialogDeviceEdit(DeviceItemType currentDevice, String deviceInfo){
         if(currentDevice == null){
             isNewDev = true;
-            this.MAC = MAC;
+            //Get information from List View in String
+            int i = deviceInfo.indexOf(':');
+            i = i - 2;
+            //В текущем пункте List View находим первый символ ":", всё после него, а также два символа до него - адрес выбранного устройства
+            this.MAC = deviceInfo.substring(i);
+            this.name = deviceInfo.substring(0,i-1);
         } else {
             this.currentDevice = currentDevice;
             getDeviceInformation();
@@ -123,9 +128,9 @@ public class DialogDeviceEdit extends DialogFragment {
         adapterType.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerType = dialogView.findViewById(R.id.spinner_type);
         spinnerType.setAdapter(adapterType);
+        editTextNameAlert.setText(name);
 
         if(!isNewDev){
-            editTextNameAlert.setText(name);
             for(int i = 0; i<data.size(); i++){
                 if (data.get(i).equals(protocol)){
                     spinnerProtocol.setSelection(i);

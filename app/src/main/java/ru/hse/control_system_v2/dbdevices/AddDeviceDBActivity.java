@@ -37,7 +37,7 @@ public class AddDeviceDBActivity extends AppCompatActivity implements DevicesAda
     ExtendedFloatingActionButton fabToOpenSettings;
     RecyclerView pairedList;
     BluetoothAdapter btAdapter;
-    String selectedDevice;
+    String selectedDeviceInfo;
     DevicesAdapter devicesAdapter;
     String deviceHardwareAddress;
 
@@ -124,13 +124,8 @@ public class AddDeviceDBActivity extends AppCompatActivity implements DevicesAda
 
     //Получаем адрес устройства из List View
     public void checkDeviceAddress(DeviceModel deviceModel) {
-        selectedDevice = deviceModel.getDeviceName();
-        //Get information from List View in String
-        int i = selectedDevice.indexOf(':');
-        i = i - 2;
-        //В текущем пункте List View находим первый символ ":", всё после него, а также два символа до него - адрес выбранного устройства
-        selectedDevice = selectedDevice.substring(i);
-        DialogDeviceEdit alertDialog = new DialogDeviceEdit(null,selectedDevice);
+        selectedDeviceInfo = deviceModel.getDeviceName();
+        DialogDeviceEdit alertDialog = new DialogDeviceEdit(null, selectedDeviceInfo);
         Bundle args = new Bundle();
         alertDialog.setArguments(args);
         //fragment.currentDevice = item;

@@ -25,22 +25,20 @@ public class DeviceItemType implements ItemType{
     private final String devIp;
     private final int devPort;
     private final String protocol;
-    int id;
-    Context c;
-    BluetoothSocket bluetoothSocket;
-    Boolean isConnected;
-    Socket wifiSocket;
-    SocketAddress addr;
+    private final int id;
+    private BluetoothSocket bluetoothSocket;
+    private Boolean isConnected;
+    private Socket wifiSocket;
+    private SocketAddress addr;
 
 
-    public DeviceItemType(int id, String name, String deviceMAC, String protocol, String devClass, String devType, Context c) {
+    public DeviceItemType(int id, String name, String deviceMAC, String protocol, String devClass, String devType) {
         this.name = name;
         this.deviceMAC = deviceMAC;
         this.id = id;
         this.protocol = protocol;
         this.devClass = devClass;
         this.devType = devType;
-        this.c = c;
         //подгружаем картинку в зависимости от типа робота (а не храним отдельно)
         //this.devImage = devImage;
         //TODO
@@ -53,10 +51,17 @@ public class DeviceItemType implements ItemType{
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
+
         if (o == null || getClass() != o.getClass()) return false;
+
         DeviceItemType item = (DeviceItemType) o;
-        return name.equals(item.name) &&
-                deviceMAC.equals(item.deviceMAC);
+        return this.getName().equals(item.getName()) &&
+                this.getMAC().equals(item.getMAC()) &&
+                this.getDevType().equals(item.getDevType()) &&
+                this.getDevClass().equals(item.getDevClass()) &&
+                this.getIp().equals(item.getIp()) &&
+                this.getPort()==(item.getPort()) &&
+                this.getProtocol().equals(item.getProtocol());
     }
 
     public Boolean isConnected(){

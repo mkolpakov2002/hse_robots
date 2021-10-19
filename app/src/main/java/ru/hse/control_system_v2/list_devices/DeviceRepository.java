@@ -55,7 +55,7 @@ public class DeviceRepository implements Serializable {
             int classIndex = cursor.getColumnIndex(DeviceDBHelper.KEY_CLASS);
             int typeIndex = cursor.getColumnIndex(DeviceDBHelper.KEY_TYPE);
             do {
-                DeviceItemType item = new DeviceItemType(cursor.getInt(idIndex), cursor.getString(nameIndex), cursor.getString(MacIndex), cursor.getString(protocolIndex), cursor.getString(classIndex), cursor.getString(typeIndex), context);
+                DeviceItemType item = new DeviceItemType(cursor.getInt(idIndex), cursor.getString(nameIndex), cursor.getString(MacIndex), cursor.getString(protocolIndex), cursor.getString(classIndex), cursor.getString(typeIndex));
                 data.add(item);
             } while (cursor.moveToNext());
         }

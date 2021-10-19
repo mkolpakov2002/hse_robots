@@ -70,11 +70,13 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             });
         }
-        buttonToAddDeviceViaMAC.setOnClickListener(view -> {
-            bottomSheetBehavior.dismiss();
-            DialogSaveDeviceWithMAC dialog = new DialogSaveDeviceWithMAC();
-            dialog.show(this.getSupportFragmentManager(), "dialog");
-        });
+        if (buttonToAddDeviceViaMAC != null) {
+            buttonToAddDeviceViaMAC.setOnClickListener(view -> {
+                bottomSheetBehavior.dismiss();
+                DialogSaveDeviceWithMAC dialog = new DialogSaveDeviceWithMAC();
+                dialog.show(this.getSupportFragmentManager(), "dialog");
+            });
+        }
 
         ImageButton closeBottomSheet = bottomSheetBehavior.findViewById(R.id.close_bottom_sheet);
         if (closeBottomSheet != null) {

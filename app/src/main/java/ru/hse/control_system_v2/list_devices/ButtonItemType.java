@@ -13,31 +13,16 @@ import ru.hse.control_system_v2.MainMenuFragment;
 
 public class ButtonItemType implements ItemType {
 
-    Context c;
-    public ButtonItemType(Context c){
-        this.c = c;
+    MainActivity ma;
+    public ButtonItemType(MainActivity ma){
+        this.ma = ma;
     }
     public View.OnClickListener getOnClickListener() {
 
        return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                NavHostFragment navHostFragment = (NavHostFragment)((MainActivity) c).getSupportFragmentManager().getPrimaryNavigationFragment();
-
-                FragmentManager fragmentManager = null;
-                if (navHostFragment != null) {
-                    fragmentManager = navHostFragment.getChildFragmentManager();
-                }
-
-                Fragment current = null;
-                if (fragmentManager != null) {
-                    current = fragmentManager.getPrimaryNavigationFragment();
-                }
-                if(current instanceof MainMenuFragment){
-                    MainMenuFragment mainMenuFragment = (MainMenuFragment) current;
-                    mainMenuFragment.showAddDeviceBottomMenu();
-                }
-
+                ma.showBottomSheet();
             }
         };
     }

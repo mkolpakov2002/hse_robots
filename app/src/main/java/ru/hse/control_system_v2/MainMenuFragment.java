@@ -153,8 +153,6 @@ public class MainMenuFragment extends Fragment implements SwipeRefreshLayout.OnR
     }
 
     boolean areListsEqual(List<DeviceItemType> list1, List<DeviceItemType> list2){
-        //TODO
-        //При изменении класса устройства проверка всё равно даёт true
         return (list1.containsAll(list2) && list2.containsAll(list1) && list1.size() == list2.size());
     }
 
@@ -172,7 +170,7 @@ public class MainMenuFragment extends Fragment implements SwipeRefreshLayout.OnR
                 allDevicesList = new ArrayList<>();
                 allDevicesList.addAll(newDevicesList);
                 items = new ArrayList<>();
-                items.add(new ButtonItemType(fragmentContext));
+                items.add(new ButtonItemType(ma));
                 items.addAll(allDevicesList);
                 adapter = new MultipleTypesAdapter(items, fragmentContext, allDevicesList);
                 recycler.setAdapter(adapter);
@@ -222,10 +220,6 @@ public class MainMenuFragment extends Fragment implements SwipeRefreshLayout.OnR
             onRefresh();
         }
     };
-
-    public void showAddDeviceBottomMenu(){
-        ma.showBottomSheet();
-    }
 
     public void hideDeviceSelectedItems(){
         fabToStartConnecting.hide();

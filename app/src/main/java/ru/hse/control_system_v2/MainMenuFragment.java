@@ -43,8 +43,8 @@ public class MainMenuFragment extends Fragment implements SwipeRefreshLayout.OnR
     private RecyclerView recycler;
     private MultipleTypesAdapter adapter = null;
     private TextView headerText;
-    private List<ItemType> items = new ArrayList<>();
-    private List<DeviceItemType> allDevicesList = new ArrayList<>();
+    private ArrayList<ItemType> items = new ArrayList<>();
+    private ArrayList<DeviceItemType> allDevicesList = new ArrayList<>();
     private Context fragmentContext;
     private MainActivity ma;
     private AlertDialog progressOfConnectionDialog;
@@ -164,7 +164,8 @@ public class MainMenuFragment extends Fragment implements SwipeRefreshLayout.OnR
         if (btIsEnabledFlagVoid()) {
             headerText.setText(R.string.favorites_devices);
             // Bluetooth включён, надо показать кнопку добавления устройств и другую информацию
-            List<DeviceItemType> newDevicesList = new ArrayList<>(DeviceRepository.getInstance(fragmentContext).list());
+            ArrayList<DeviceItemType> newDevicesList = new ArrayList<>(DeviceRepository.getInstance(fragmentContext).list());
+
 
             if (adapter == null){ // it works first time
                 allDevicesList = new ArrayList<>();
@@ -174,15 +175,16 @@ public class MainMenuFragment extends Fragment implements SwipeRefreshLayout.OnR
                 items.addAll(allDevicesList);
                 adapter = new MultipleTypesAdapter(items, fragmentContext, allDevicesList);
                 recycler.setAdapter(adapter);
-            } else if (!areListsEqual(newDevicesList, allDevicesList)) {
+            } else if(!areListsEqual(newDevicesList,allDevicesList)){
                 // it works second time and later
-                items.subList(1, items.size()).clear();
-                items.addAll(newDevicesList);
-                adapter.setItems(newDevicesList);
-                allDevicesList.clear();
-                allDevicesList.addAll(newDevicesList);
-                adapter.clearSelected();
-                adapter.notifyDataSetChanged();
+                //items.subList(1, items.size()).clear();
+                //items.addAll(newDevicesList);
+                //adapter.setItems(newDevicesList);
+                //allDevicesList.clear();
+                //allDevicesList.addAll(newDevicesList);
+                //adapter.clearSelected();
+                //adapter.notifyDataSetChanged();
+                adapter.onNewData(newDevicesList);
             }
         } else {
             headerText.setText(R.string.suggestionEnableBluetooth);

@@ -2,6 +2,8 @@ package ru.hse.control_system_v2.list_devices;
 
 import static android.view.View.VISIBLE;
 
+import static ru.hse.control_system_v2.Constants.APP_LOG_TAG;
+
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
@@ -19,11 +21,14 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.navigation.fragment.NavHostFragment;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.card.MaterialCardView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -34,18 +39,16 @@ import ru.hse.control_system_v2.R;
 
 public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements ViewHolderFactory.ListDevicesHolder.IListener {
 
-    public List<ItemType> dataSet;
-    public List<DeviceItemType> mData;
+    public ArrayList<ItemType> dataSet;
+    public ArrayList<DeviceItemType> mData;
     Context context;
     MainActivity ma;
     MainMenuFragment mainMenuFragment;
     DeviceClickedListener listener;
-    float scalingFactorSelected = 0.85f;
-    float scalingFactorNotSelected = 1.0f;
-    List<DeviceItemType> selectedDevicesList;
+    ArrayList<DeviceItemType> selectedDevicesList;
 
 
-    public MultipleTypesAdapter(List<ItemType> dataSet, @NonNull Context context, List <DeviceItemType> mData){
+    public MultipleTypesAdapter(ArrayList<ItemType> dataSet, @NonNull Context context, ArrayList <DeviceItemType> mData){
         super();
         this.dataSet = dataSet;
         this.mData = mData;
@@ -70,10 +73,19 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
         selectedDevicesList = new ArrayList<>();
     }
 
-    public void setItems(List<DeviceItemType> mData) {
+    public void setItems(ArrayList<DeviceItemType> mData) {
         this.mData = mData;
     }
 
+    public void onNewData(ArrayList<DeviceItemType> newDevicesList) {
+        ArrayList<ItemType> newDataSet = new ArrayList<>();
+        newDataSet.add(dataSet.get(0));
+        newDataSet.addAll(newDevicesList);
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new ItemsDiffUtilCallBack(newDataSet,dataSet),true);
+        this.dataSet = newDataSet;
+        this.mData = newDevicesList;
+        diffResult.dispatchUpdatesTo(this);
+    }
 
     public interface DeviceClickedListener {
         void deviceClicked(DeviceItemType item, View itemView);
@@ -151,7 +163,6 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
         public void deviceLongClicked(DeviceItemType item, View itemView) {
 
             MaterialCardView materialCardView = itemView.findViewById(R.id.device_item_card_view);
-            //ConstraintLayout mLayout = itemView.findViewById(R.id.constraint_layout);
             ImageView checkMark = (ImageView) itemView.findViewById(R.id.check_mark);
             if (selectedDevicesList.size() == 0) {
                 Log.d(TAG, "...Список пуст, добавляю устройство...");

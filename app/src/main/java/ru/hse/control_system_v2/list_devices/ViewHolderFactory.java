@@ -22,10 +22,12 @@ public class ViewHolderFactory {
     public static class ButtonViewHolder extends RecyclerView.ViewHolder {
 
         public ConstraintLayout buttonLayout;
+        TextView buttonTextInfo;
 
         public ButtonViewHolder(View itemView) {
             super(itemView);
             buttonLayout = (ConstraintLayout) itemView.findViewById(R.id.button_add_layout);
+            buttonTextInfo = itemView.findViewById(R.id.button_add_device_text);
         }
     }
 

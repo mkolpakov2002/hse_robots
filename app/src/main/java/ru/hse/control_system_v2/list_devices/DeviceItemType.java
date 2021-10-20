@@ -200,4 +200,9 @@ public class DeviceItemType implements ItemType{
         mViewHolder.deviceImage.setVisibility(View.VISIBLE);
 
     }
+
+    @Override
+    public String getTextInfo() {
+        return name;
+    }
 }

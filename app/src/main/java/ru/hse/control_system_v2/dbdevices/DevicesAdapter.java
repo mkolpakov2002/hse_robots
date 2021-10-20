@@ -17,15 +17,15 @@ import java.util.List;
 
 import ru.hse.control_system_v2.R;
 
-public class DevicesAdapter extends RecyclerView.Adapter<DevicesAdapter.DevicesAdapterVh> implements Filterable {
+public class DevicesAdapter extends RecyclerView.Adapter<DevicesAdapter.DevicesAdapterVh> {
 
     private List<DeviceModel> deviceModelList;
-    private final List<DeviceModel> getUserModelListFiltered;
+
     private final SelectedDevice selectedDevice;
 
     public DevicesAdapter(List<DeviceModel> deviceModelList, SelectedDevice selectedDevice) {
         this.deviceModelList = deviceModelList;
-        this.getUserModelListFiltered = deviceModelList;
+
         this.selectedDevice = selectedDevice;
     }
 
@@ -51,46 +51,6 @@ public class DevicesAdapter extends RecyclerView.Adapter<DevicesAdapter.DevicesA
     @Override
     public int getItemCount() {
         return deviceModelList.size();
-    }
-
-    @Override
-    public Filter getFilter() {
-
-        return new Filter() {
-            @Override
-            protected FilterResults performFiltering(CharSequence charSequence) {
-                FilterResults filterResults = new FilterResults();
-
-                if(charSequence == null | charSequence.length() == 0){
-                    filterResults.count = getUserModelListFiltered.size();
-                    filterResults.values = getUserModelListFiltered;
-
-                }else{
-                    String searchChr = charSequence.toString().toLowerCase();
-
-                    List<DeviceModel> resultData = new ArrayList<>();
-
-                    for(DeviceModel userModel: getUserModelListFiltered){
-                        if(userModel.getDeviceName().toLowerCase().contains(searchChr)){
-                            resultData.add(userModel);
-                        }
-                    }
-                    filterResults.count = resultData.size();
-                    filterResults.values = resultData;
-
-                }
-
-                return filterResults;
-            }
-
-            @Override
-            protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-
-                deviceModelList = (List<DeviceModel>) filterResults.values;
-                notifyDataSetChanged();
-
-            }
-        };
     }
 
 

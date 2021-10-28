@@ -5,7 +5,7 @@ import androidx.recyclerview.widget.RecyclerView;
 public interface ItemType {
     int BUTTON_ITEM_TYPE = 0;
     int DEVICE_ITEM_TYPE = 1;
-    int getId();
+    int getDevId();
     int getItemViewType();
     void onBindViewHolder(RecyclerView.ViewHolder viewHolder);
     String getTextInfo();

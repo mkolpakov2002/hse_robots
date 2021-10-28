@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -20,17 +19,7 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.android.material.button.MaterialButton;
 
-import java.sql.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-
-import ru.hse.control_system_v2.dbdevices.DeviceDBHelper;
-import ru.hse.control_system_v2.dbprotocol.ProtocolDBHelper;
 import ru.hse.control_system_v2.list_devices.DeviceItemType;
 
 
@@ -38,7 +27,6 @@ public class DialogDevice extends DialogFragment {
     private String name, MAC, protocol, devClass, devType;
     private int id;
     private Context c;
-    private DeviceDBHelper dbdevice;
     private final DeviceItemType currentDevice;
 
     @Override
@@ -54,10 +42,10 @@ public class DialogDevice extends DialogFragment {
     }
 
     void getDeviceInformation(){
-        id = currentDevice.getId();
-        name = currentDevice.getName();
-        MAC = currentDevice.getMAC();
-        protocol = currentDevice.getProtocol();
+        id = currentDevice.getDevId();
+        name = currentDevice.getDevName();
+        MAC = currentDevice.getDeviceMAC();
+        protocol = currentDevice.getDevProtocol();
         devClass = currentDevice.getDevClass();
         devType = currentDevice.getDevType();
     }
@@ -96,7 +84,6 @@ public class DialogDevice extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        dbdevice = DeviceDBHelper.getInstance(c);
         getDeviceInformation();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(c, R.style.dialogTheme);
@@ -118,7 +105,7 @@ public class DialogDevice extends DialogFragment {
             deviceItemTypeArrayList.add(currentDevice);
             DeviceHandler.setDevicesList(deviceItemTypeArrayList);
             Intent startBluetoothConnectionService = new Intent(c, BluetoothConnectionService.class);
-            startBluetoothConnectionService.putExtra("protocol", currentDevice.getProtocol());
+            startBluetoothConnectionService.putExtra("protocol", currentDevice.getDevProtocol());
             c.startService(startBluetoothConnectionService);
         });
 
@@ -127,7 +114,9 @@ public class DialogDevice extends DialogFragment {
             if(alertDialog != null && alertDialog.isShowing()){
                 alertDialog.dismiss();
             }
-            dbdevice.deleteDevice(id);
+            AppDataBase dbDevices = App.getDatabase();
+            DeviceItemTypeDao devicesDao = dbDevices.getDeviceItemTypeDao();
+            devicesDao.delete(id);
             updateMainScreen();
         });
 

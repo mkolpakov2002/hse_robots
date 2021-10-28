@@ -7,15 +7,19 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import androidx.room.Room;
+
 import java.io.File;
 import java.util.ArrayList;
 
+import ru.hse.control_system_v2.App;
+import ru.hse.control_system_v2.AppDataBase;
+import ru.hse.control_system_v2.DeviceItemTypeDao;
 import ru.hse.control_system_v2.R;
-import ru.hse.control_system_v2.dbdevices.DeviceDBHelper;
+import ru.hse.control_system_v2.list_devices.DeviceItemType;
 
 public class ProtocolDBHelper extends SQLiteOpenHelper {
 
-    public static ProtocolDBHelper instance = null;
 
     public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "addedProtocols";
@@ -26,11 +30,14 @@ public class ProtocolDBHelper extends SQLiteOpenHelper {
     public static final String KEY_LEN = "length";
     public static final String KEY_CODE = "code";
     SQLiteDatabase db;
-    DeviceDBHelper deviceDBHelper;
+    static ProtocolDBHelper instance;
 
     Context context;
 
-    public ProtocolDBHelper(Context context) {super(context, DATABASE_NAME, null, DATABASE_VERSION); this.context = context; deviceDBHelper = DeviceDBHelper.getInstance(context); }
+    public ProtocolDBHelper(Context context) {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        this.context = context;
+    }
 
     @Override
     public void onCreate(SQLiteDatabase dataBase) {
@@ -54,12 +61,16 @@ public class ProtocolDBHelper extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery(query, null);
         cursor.moveToFirst();
         File dir = context.getFilesDir();
+        AppDataBase dbDevices = App.getDatabase();
+        DeviceItemTypeDao devicesDao = dbDevices.getDeviceItemTypeDao();
+
+
         for (int i = 0; i < cursor.getCount(); i++) {
             String fileName = cursor.getString(3);
             Log.d("SQL",  fileName + " deleting");
             File file = new File(dir, fileName);
             Log.d("delpro", cursor.getString(1));
-            deviceDBHelper.deleteProto(cursor.getString(1) );
+            devicesDao.deleteProto(cursor.getString(1),context.getResources().getString(R.string.TAG_default_protocol) );
             boolean result = file.delete();
             Log.d("SQL", cursor.getString(3) + " deleting " + (result ? "yes" : "no"));
             cursor.moveToNext();

@@ -2,8 +2,6 @@ package ru.hse.control_system_v2.list_devices;
 
 import static android.view.View.VISIBLE;
 
-import static ru.hse.control_system_v2.Constants.APP_LOG_TAG;
-
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
@@ -16,8 +14,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.content.res.AppCompatResources;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.navigation.fragment.NavHostFragment;
@@ -27,8 +23,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.card.MaterialCardView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -113,7 +107,7 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
             if(selectedDevicesList.size() != 0) {
                 Log.d(TAG, "...Список не пуст, нажато устройство...");
                 //список не пуст
-                if (!selectedDevicesList.get(0).getProtocol().equals(item.getProtocol())||
+                if (!selectedDevicesList.get(0).getDevProtocol().equals(item.getDevProtocol())||
                         !selectedDevicesList.get(0).getDevClass().equals(item.getDevClass())||
                         !selectedDevicesList.get(0).getDevType().equals(item.getDevType()))
                     ma.showToast("Нужны устройства с одним протоколом, классом, типом");
@@ -122,7 +116,7 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
                     boolean wasAlreadySelected = false;
 
                     for (DeviceItemType currentDevice: selectedDevicesList) {
-                        if (currentDevice.getMAC().equals(item.getMAC())) {
+                        if (currentDevice.getDeviceMAC().equals(item.getDeviceMAC())) {
                             selectedDevicesList.remove(currentDevice);
                             wasAlreadySelected = true;
                             Log.d(TAG, "...В списке нашлось это устройство, удаляю...");
@@ -173,14 +167,14 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
                 ((Animatable) checkMark.getDrawable()).start();
 
             } else {
-                if (!selectedDevicesList.get(0).getProtocol().equals(item.getProtocol())||
+                if (!selectedDevicesList.get(0).getDevProtocol().equals(item.getDevProtocol())||
                         !selectedDevicesList.get(0).getDevClass().equals(item.getDevClass())||
                         !selectedDevicesList.get(0).getDevType().equals(item.getDevType())) {
                     ma.showToast("Нужны устройства с одним протоколом, классом, типом");
                 } else {
                     boolean wasAlreadySelected = false;
                     for (int i = 0; i < selectedDevicesList.size(); i++) {
-                        if (selectedDevicesList.get(i).getMAC().equals(item.getMAC())) {
+                        if (selectedDevicesList.get(i).getDeviceMAC().equals(item.getDeviceMAC())) {
                             wasAlreadySelected = true;
                         }
                     }
@@ -229,7 +223,7 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
     }
 
     public String getSelectedProto(){
-        return selectedDevicesList.get(0).getProtocol();
+        return selectedDevicesList.get(0).getDevProtocol();
     }
 
     public List<DeviceItemType> getSelectedDevices(){

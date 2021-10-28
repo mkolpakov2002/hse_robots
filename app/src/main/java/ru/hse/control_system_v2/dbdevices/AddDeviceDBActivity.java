@@ -32,15 +32,13 @@ import ru.hse.control_system_v2.R;
 import ru.hse.control_system_v2.dbprotocol.ProtocolDBHelper;
 
 public class AddDeviceDBActivity extends AppCompatActivity implements DevicesAdapter.SelectedDevice, SwipeRefreshLayout.OnRefreshListener{
-    DeviceDBHelper deviceDBHelper;
     ProtocolDBHelper protocolDBHelper;
     ExtendedFloatingActionButton fabToOpenSettings;
     RecyclerView pairedList;
     BluetoothAdapter btAdapter;
     String selectedDeviceInfo;
-    DevicesAdapter devicesAdapter;
     String deviceHardwareAddress;
-
+    DevicesAdapter devicesAdapter;
     TextView pairedDevicesTitleTextView;
     LayoutInflater inflater;
     String name;
@@ -61,7 +59,6 @@ public class AddDeviceDBActivity extends AppCompatActivity implements DevicesAda
         fabToOpenSettings = findViewById(R.id.floating_action_button_open_settings);
         fabToOpenSettings.setOnClickListener(this::openSettings);
 
-        deviceDBHelper = new DeviceDBHelper(this);
         protocolDBHelper = new ProtocolDBHelper(this);
 
         stateOfAlert = false;

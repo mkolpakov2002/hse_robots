@@ -39,7 +39,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import ru.hse.control_system_v2.dbdevices.DeviceDBHelper;
 import ru.hse.control_system_v2.dbprotocol.ProtocolDBHelper;
 import ru.hse.control_system_v2.dbprotocol.ProtocolRepo;
 
@@ -152,15 +151,13 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
             buttonAdd.setBackgroundColor(fragmentContext.getColor(R.color.foregroundColor));
         }
     }
-    DeviceDBHelper dbdevice;
     @Override
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.button_delete_devices:
-                dbdevice = DeviceDBHelper.getInstance(fragmentContext);
-                DeviceDBHelper helper = new DeviceDBHelper(fragmentContext);
-                dbdevice.onUpgrade(helper.getReadableDatabase(), DeviceDBHelper.DATABASE_VERSION, DeviceDBHelper.DATABASE_VERSION + 1);
-                dbdevice = helper;
+                AppDataBase dbDevices = App.getDatabase();
+                DeviceItemTypeDao devicesDao = dbDevices.getDeviceItemTypeDao();
+                devicesDao.deleteAll();
             case R.id.button_add_protocol:
                 String name = editTextName.getText().toString();
                 String slength = editTextLen.getText().toString();

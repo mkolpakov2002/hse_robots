@@ -31,7 +31,7 @@ public class ButtonItemType implements ItemType {
     }
 
     @Override
-    public int getId() {
+    public int getDevId() {
         return -1;
     }
 

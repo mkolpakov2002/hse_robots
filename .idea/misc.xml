@@ -25,9 +25,11 @@
         <entry key="..\:/Users/mkolp/AndroidStudioProjects/436-remote-control-of-robotic-devices/app/src/main/res/layout/dialog_enter_mac.xml" value="0.25" />
         <entry key="..\:/Users/mkolp/AndroidStudioProjects/436-remote-control-of-robotic-devices/app/src/main/res/layout/dialog_simple_tip.xml" value="0.25" />
         <entry key="..\:/Users/mkolp/AndroidStudioProjects/436-remote-control-of-robotic-devices/app/src/main/res/layout/main.xml" value="0.25" />
+        <entry key="..\:/Users/mkolp/StudioProjects/hse_robots/app/src/main/res/drawable/background_bg.xml" value="0.26614583333333336" />
         <entry key="..\:/Users/mkolp/StudioProjects/hse_robots/app/src/main/res/drawable/bg_start.xml" value="0.26614583333333336" />
         <entry key="..\:/Users/mkolp/StudioProjects/hse_robots/app/src/main/res/drawable/frame_device_item_view.xml" value="0.26614583333333336" />
         <entry key="..\:/Users/mkolp/StudioProjects/hse_robots/app/src/main/res/drawable/ic_home.xml" value="0.26614583333333336" />
+        <entry key="..\:/Users/mkolp/StudioProjects/hse_robots/app/src/main/res/drawable/ic_settings.xml" value="0.26614583333333336" />
         <entry key="..\:/Users/mkolp/StudioProjects/hse_robots/app/src/main/res/drawable/white_bg.xml" value="0.26614583333333336" />
         <entry key="..\:/Users/mkolp/StudioProjects/hse_robots/app/src/main/res/layout/activity_add_bd_device.xml" value="0.24094202898550723" />
         <entry key="..\:/Users/mkolp/StudioProjects/hse_robots/app/src/main/res/layout/activity_bluetooth_device.xml" value="0.24094202898550723" />
@@ -39,6 +41,7 @@
         <entry key="..\:/Users/mkolp/StudioProjects/hse_robots/app/src/main/res/layout/fragment_settings.xml" value="0.1793478260869565" />
         <entry key="..\:/Users/mkolp/StudioProjects/hse_robots/app/src/main/res/layout/item_list_devices.xml" value="0.17300724637681159" />
         <entry key="..\:/Users/mkolp/StudioProjects/hse_robots/app/src/main/res/layout/item_main_list_button_add.xml" value="0.128" />
+        <entry key="..\:/Users/mkolp/StudioProjects/hse_robots/app/src/main/res/layout/item_main_list_device.xml" value="0.22735507246376813" />
         <entry key="..\:/Users/mkolp/StudioProjects/hse_robots/app/src/main/res/layout/main.xml" value="0.264" />
         <entry key="..\:/Users/mkolp/StudioProjects/hse_robots/app/src/main/res/layout/row_devices.xml" value="0.15760869565217392" />
       </map>

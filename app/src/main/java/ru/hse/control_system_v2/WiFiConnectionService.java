@@ -3,20 +3,12 @@ package ru.hse.control_system_v2;
 import static ru.hse.control_system_v2.Constants.APP_LOG_TAG;
 
 import android.app.Service;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
-import android.net.wifi.WifiInfo;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
@@ -70,15 +62,9 @@ public class WiFiConnectionService extends Service {
 
         public void run() {
             try {
-                currentDevice.setWifiSocket(new Socket(currentDevice.getIp(),currentDevice.getPort()));
+                currentDevice.setWifiSocket(new Socket(currentDevice.getDevIp(),currentDevice.getDevPort()));
             } catch (IOException e) {
                 e.printStackTrace();
-            }
-            if (currentDevice.isConnected()){
-                currentDevice.openWifiConnection();
-                // Отключаем поиск устройств для сохранения заряда батареи
-                BluetoothAdapter.getDefaultAdapter().cancelDiscovery();
-                Log.d(APP_LOG_TAG, "Подключаюсь к WiFi сокету...");
             }
             resultOfConnection(currentDevice);
 

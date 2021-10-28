@@ -3,6 +3,7 @@ package ru.hse.control_system_v2;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -140,6 +141,7 @@ public class MainActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
         checkForBtAdapter();
+        Context c = App.getContext();
     }
 
     private void requestPerms(){

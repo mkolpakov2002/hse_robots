@@ -30,7 +30,6 @@ import java.util.List;
 
 import ru.hse.control_system_v2.list_devices.ButtonItemType;
 import ru.hse.control_system_v2.list_devices.DeviceItemType;
-import ru.hse.control_system_v2.list_devices.DeviceRepository;
 import ru.hse.control_system_v2.list_devices.ItemType;
 import ru.hse.control_system_v2.list_devices.MultipleTypesAdapter;
 
@@ -43,7 +42,6 @@ public class MainMenuFragment extends Fragment implements SwipeRefreshLayout.OnR
     private RecyclerView recycler;
     private MultipleTypesAdapter adapter = null;
     private TextView headerText;
-    private ArrayList<ItemType> items = new ArrayList<>();
     private ArrayList<DeviceItemType> allDevicesList = new ArrayList<>();
     private Context fragmentContext;
     private MainActivity ma;
@@ -152,10 +150,6 @@ public class MainMenuFragment extends Fragment implements SwipeRefreshLayout.OnR
         onRefresh();
     }
 
-    boolean areListsEqual(List<DeviceItemType> list1, List<DeviceItemType> list2){
-        return (list1.containsAll(list2) && list2.containsAll(list1) && list1.size() == list2.size());
-    }
-
     //Обновляем внешний вид приложения, скрываем и добавляем нужные элементы интерфейса
     @Override
     public void onRefresh() {
@@ -164,26 +158,21 @@ public class MainMenuFragment extends Fragment implements SwipeRefreshLayout.OnR
         if (btIsEnabledFlagVoid()) {
             headerText.setText(R.string.favorites_devices);
             // Bluetooth включён, надо показать кнопку добавления устройств и другую информацию
-            ArrayList<DeviceItemType> newDevicesList = new ArrayList<>(DeviceRepository.getInstance(fragmentContext).list());
+            AppDataBase dbDevices = App.getDatabase();
+            DeviceItemTypeDao devicesDao = dbDevices.getDeviceItemTypeDao();
+            ArrayList<DeviceItemType> newDevicesList = new ArrayList<>(devicesDao.getAll());
 
 
             if (adapter == null){ // it works first time
                 allDevicesList = new ArrayList<>();
                 allDevicesList.addAll(newDevicesList);
-                items = new ArrayList<>();
+                ArrayList<ItemType> items = new ArrayList<>();
                 items.add(new ButtonItemType(ma));
                 items.addAll(allDevicesList);
                 adapter = new MultipleTypesAdapter(items, fragmentContext, allDevicesList);
                 recycler.setAdapter(adapter);
-            } else if(!areListsEqual(newDevicesList,allDevicesList)){
+            } else {
                 // it works second time and later
-                //items.subList(1, items.size()).clear();
-                //items.addAll(newDevicesList);
-                //adapter.setItems(newDevicesList);
-                //allDevicesList.clear();
-                //allDevicesList.addAll(newDevicesList);
-                //adapter.clearSelected();
-                //adapter.notifyDataSetChanged();
                 adapter.onNewData(newDevicesList);
             }
         } else {

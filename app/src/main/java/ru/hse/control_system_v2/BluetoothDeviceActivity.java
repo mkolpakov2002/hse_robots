@@ -61,7 +61,7 @@ public class BluetoothDeviceActivity extends Activity implements View.OnClickLis
         outputText.append("\n"+ "Подключено " + devicesList.size() + " из " + (devicesList.size()+disconnectedDevicesList.size()) + " устройств;");
         outputText.append("\n"+ "Список успешных подключений:");
         for(int i = 0; i < devicesList.size(); i++){
-            outputText.append("\n"+ "Устройство " + devicesList.get(i).getName() + " подключено;");
+            outputText.append("\n"+ "Устройство " + devicesList.get(i).getDevName() + " подключено;");
             BluetoothDataThread bluetoothDataThreadForArduino = new BluetoothDataThread(this, devicesList.get(i));
             bluetoothDataThreadForArduinoList.add(bluetoothDataThreadForArduino);
             bluetoothDataThreadForArduinoList.get(i).start();
@@ -77,7 +77,7 @@ public class BluetoothDeviceActivity extends Activity implements View.OnClickLis
         countCommands = 0;
 
         for(DeviceItemType currentDevice: devicesList) {
-            if (!BluetoothAdapter.checkBluetoothAddress(currentDevice.getMAC())) {
+            if (!BluetoothAdapter.checkBluetoothAddress(currentDevice.getDeviceMAC())) {
                 showToast("Wrong MAC address");
                 BluetoothDeviceActivity.this.finish();
             }

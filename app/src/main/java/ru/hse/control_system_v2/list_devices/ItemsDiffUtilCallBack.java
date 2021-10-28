@@ -1,11 +1,5 @@
 package ru.hse.control_system_v2.list_devices;
 
-import static ru.hse.control_system_v2.Constants.APP_LOG_TAG;
-
-import android.os.Bundle;
-import android.util.Log;
-
-import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.DiffUtil;
 
 import java.util.ArrayList;
@@ -32,7 +26,7 @@ public class ItemsDiffUtilCallBack extends DiffUtil.Callback{
     @Override
     public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
         // In the real world you need to compare something unique like id
-        return oldList.get(oldItemPosition).getId() == newList.get(newItemPosition).getId();
+        return oldList.get(oldItemPosition).getDevId() == newList.get(newItemPosition).getDevId();
     }
 
     @Override

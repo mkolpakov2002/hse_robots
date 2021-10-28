@@ -32,7 +32,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import ru.hse.control_system_v2.dbdevices.AddDeviceDBActivity;
-import ru.hse.control_system_v2.dbdevices.DeviceDBHelper;
 import ru.hse.control_system_v2.dbprotocol.ProtocolDBHelper;
 import ru.hse.control_system_v2.list_devices.DeviceItemType;
 
@@ -49,7 +48,6 @@ public class DialogDeviceEdit extends DialogFragment {
     private String devClass;
     private String devType;
     private int id;
-    private DeviceDBHelper dbHelper;
     private boolean isNewDev = false;
     private EditText editTextNameAlert;
     @Override
@@ -61,10 +59,10 @@ public class DialogDeviceEdit extends DialogFragment {
     }
 
     void getDeviceInformation(){
-        id = currentDevice.getId();
-        name = currentDevice.getName();
-        MAC = currentDevice.getMAC();
-        protocol = currentDevice.getProtocol();
+        id = currentDevice.getDevId();
+        name = currentDevice.getDevName();
+        MAC = currentDevice.getDeviceMAC();
+        protocol = currentDevice.getDevProtocol();
         devClass = currentDevice.getDevClass();
         devType = currentDevice.getDevType();
     }
@@ -87,7 +85,6 @@ public class DialogDeviceEdit extends DialogFragment {
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
 
-        dbHelper = new DeviceDBHelper(c);
         ProtocolDBHelper protocolDBHelper = new ProtocolDBHelper(c);
         data = protocolDBHelper.getProtocolNames();
         listClasses = Arrays.asList("class_android", "class_computer", "class_arduino", "no_class");
@@ -200,21 +197,22 @@ public class DialogDeviceEdit extends DialogFragment {
         else
             typeDevice = "no_type";
 
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(DeviceDBHelper.KEY_MAC, MAC);
-        contentValues.put(DeviceDBHelper.KEY_NAME, newName);
-        contentValues.put(DeviceDBHelper.KEY_PROTO, protocol);
-        contentValues.put(DeviceDBHelper.KEY_CLASS, classDevice);
-        contentValues.put(DeviceDBHelper.KEY_TYPE, typeDevice);
-
-        dbHelper.update(contentValues, id);
-        dbHelper.viewData();
+        AppDataBase dbDevices = App.getDatabase();
+        DeviceItemTypeDao devicesDao = dbDevices.getDeviceItemTypeDao();
+        currentDevice.setDevName(newName);
+        currentDevice.setDeviceMAC(MAC);
+        currentDevice.setDevClass(classDevice);
+        currentDevice.setDevType(typeDevice);
+        currentDevice.setDevProtocol(protocol);
+        //TODO
+        //currentDevice.setDevIp();
+        //currentDevice.setDevPort();
+        devicesDao.update(currentDevice);
         //Обновление MainActivity
         updateMainScreen();
     }
 
     void saveNewDevice(){
-        DeviceDBHelper deviceDBHelper = new DeviceDBHelper(c);
         name = editTextNameAlert.getText().toString();
         protocol = data.get((int) spinnerProtocol.getSelectedItemId());
         String classDevice = listClasses.get((int) spinnerClass.getSelectedItemId());
@@ -225,24 +223,18 @@ public class DialogDeviceEdit extends DialogFragment {
             typeDevice = "no_type";
 
         if (BluetoothAdapter.checkBluetoothAddress(MAC)) {
-            ContentValues contentValues = new ContentValues();
 
-            contentValues.put(DeviceDBHelper.KEY_MAC, MAC);
-            contentValues.put(DeviceDBHelper.KEY_NAME, name);
-            contentValues.put(DeviceDBHelper.KEY_PROTO, protocol);
-            contentValues.put(DeviceDBHelper.KEY_CLASS, classDevice);
-            contentValues.put(DeviceDBHelper.KEY_TYPE, typeDevice);
-
-            int res = deviceDBHelper.insert(contentValues);
-            if (res == 1) {
-                Toast.makeText(c, "Accepted", Toast.LENGTH_LONG).show();
-                Log.d("Add device", "Device accepted");
+            AppDataBase dbDevices = App.getDatabase();
+            DeviceItemTypeDao devicesDao = dbDevices.getDeviceItemTypeDao();
+            List<DeviceItemType> devicesWithMAC;
+            devicesWithMAC = devicesDao.getAllDevicesWithSuchMAC(MAC);
+            if(devicesWithMAC.size()!=0){
+                Toast.makeText(c, "Already added MAC address", Toast.LENGTH_LONG).show();
+                Log.d("Add device", "Device denied");
+            } else {
+                currentDevice = new DeviceItemType(name,MAC,protocol,classDevice,typeDevice);
+                devicesDao.insertAll(currentDevice);
             }
-            else {
-                Toast.makeText(c, "MAC has already been registered", Toast.LENGTH_LONG).show();
-                Log.d("Add device", "MAC is in database");
-            }
-            deviceDBHelper.viewData();
         }
         else {
             Toast.makeText(c, "Wrong MAC address", Toast.LENGTH_LONG).show();

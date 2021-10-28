@@ -13,7 +13,6 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.UUID;
@@ -68,7 +67,7 @@ public class BluetoothConnectionService extends Service {
 
         public MyRun(DeviceItemType currentDevice) {
             this.currentDevice = currentDevice;
-            this.deviceMAC = currentDevice.getMAC();
+            this.deviceMAC = currentDevice.getDeviceMAC();
         }
 
         public void run() {

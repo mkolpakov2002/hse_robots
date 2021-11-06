@@ -20,6 +20,7 @@ import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import ru.hse.control_system_v2.dbprotocol.ProtocolDBHelper;
 import ru.hse.control_system_v2.dbprotocol.ProtocolRepo;
@@ -31,7 +32,7 @@ public class BluetoothDeviceActivity extends Activity implements View.OnClickLis
     private byte[] message;      // комманда посылаемая на arduino
     private byte prevCommand = 0;
     private ArrayList<BluetoothDataThread> bluetoothDataThreadForArduinoList;
-    private ArrayList<DeviceItemType> devicesList;
+    private List<DeviceItemType> devicesList;
     private ArrayList<DeviceItemType> disconnectedDevicesList;
     private TextView outputText;
     ProtocolRepo getDevicesID;
@@ -47,15 +48,14 @@ public class BluetoothDeviceActivity extends Activity implements View.OnClickLis
         findViewById(R.id.button_stop).setEnabled(false);
 
         disconnectedDevicesList = new ArrayList<>();
-
+        devicesList = new ArrayList<>();
         devicesList = DeviceHandler.getDevicesList();
         checkForActiveDevices();
 
         outputText = findViewById(R.id.incoming_data);
         outputText.setMovementMethod(new ScrollingMovementMethod());
+        String devProtocol = devicesList.get(0).getDevProtocol();
 
-        Bundle b = getIntent().getExtras();
-        String classDevice = b.get("protocol").toString();
 
         bluetoothDataThreadForArduinoList = new ArrayList<>();
         outputText.append("\n"+ "Подключено " + devicesList.size() + " из " + (devicesList.size()+disconnectedDevicesList.size()) + " устройств;");
@@ -69,10 +69,10 @@ public class BluetoothDeviceActivity extends Activity implements View.OnClickLis
 
         res = getResources();
         isHoldCommand = false;
-        String protocolName = b.getString("protocol");
-        getDevicesID = new ProtocolRepo(getApplicationContext(), protocolName);
+
+        getDevicesID = new ProtocolRepo(getApplicationContext(), devProtocol);
         ProtocolDBHelper protocolDBHelper = ProtocolDBHelper.getInstance(getApplicationContext());
-        lengthMes = protocolDBHelper.getLength(classDevice);
+        lengthMes = protocolDBHelper.getLength(devProtocol);
         message = new byte[lengthMes];
         countCommands = 0;
 

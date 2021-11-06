@@ -129,17 +129,17 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
                     if (!wasAlreadySelected) {
                         Log.d(TAG, "...В списке не нашлось это устройство, добавляю...");
                         selectedDevicesList.add(item);
-                        mainMenuFragment.showDeviceSelectedItems();
+                        item.setIsSelectedOnScreen(true);
+                        mainMenuFragment.showFabToStartConnecting();
                         materialCardView.setStrokeColor(ma.getResources().getColor(R.color.colorAccent));
                         checkMark.setVisibility(VISIBLE);
                         ((Animatable) checkMark.getDrawable()).start();
 
                     } else {
+                        item.setIsSelectedOnScreen(false);
                         if(selectedDevicesList.size() == 0) {
                             Log.d(TAG, "...Список очищен...");
-
-                            mainMenuFragment.hideDeviceSelectedItems();
-
+                            mainMenuFragment.hideFabToStartConnecting();
                         }
                     }
                 }
@@ -161,7 +161,8 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
             if (selectedDevicesList.size() == 0) {
                 Log.d(TAG, "...Список пуст, добавляю устройство...");
                 selectedDevicesList.add(item);
-                mainMenuFragment.showDeviceSelectedItems();
+                item.setIsSelectedOnScreen(true);
+                mainMenuFragment.showFabToStartConnecting();
                 materialCardView.setStrokeColor(ma.getResources().getColor(R.color.colorAccent));
                 checkMark.setVisibility(VISIBLE);
                 ((Animatable) checkMark.getDrawable()).start();
@@ -180,6 +181,7 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
                     }
                     if (!wasAlreadySelected) {
                         selectedDevicesList.add(item);
+                        item.setIsSelectedOnScreen(true);
                         materialCardView.setStrokeColor(ma.getResources().getColor(R.color.colorAccent));
                         checkMark.setVisibility(VISIBLE);
                         ((Animatable) checkMark.getDrawable()).start();
@@ -202,10 +204,6 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         dataSet.get(position).onBindViewHolder(holder);
-    }
-
-    private void performVibrate(View v) {
-        v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
     }
 
     @Override

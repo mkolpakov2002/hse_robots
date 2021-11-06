@@ -16,6 +16,8 @@ public class ButtonItemType implements ItemType {
 
     MainActivity ma;
     String textInfo;
+    final String IMAGE_TYPE = "button_type";
+
     public ButtonItemType(MainActivity ma){
         this.ma = ma;
         this.textInfo = ma.getResources().getString(R.string.button_add_device);
@@ -38,6 +40,21 @@ public class ButtonItemType implements ItemType {
     @Override
     public int getItemViewType() {
         return ItemType.BUTTON_ITEM_TYPE;
+    }
+
+    @Override
+    public void setIsSelectedOnScreen(boolean isSelectedOnScreen) {
+        //button can not be selected
+    }
+
+    @Override
+    public boolean getIsSelectedOnScreen() {
+        return false;
+    }
+
+    @Override
+    public String getImageType() {
+        return IMAGE_TYPE;
     }
 
     @Override

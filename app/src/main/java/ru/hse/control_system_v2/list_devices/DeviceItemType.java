@@ -36,6 +36,10 @@ public class DeviceItemType implements ItemType{
     private Socket wifiSocket;
     @Ignore
     private BluetoothSocket bluetoothSocket;
+    @Ignore
+    private boolean isSelectedOnScreen = false;
+    @Ignore
+    private String imageType = "default";
 
     public DeviceItemType(String devName, String deviceMAC, String devProtocol, String devClass, String devType) {
         this.devName = devName;
@@ -43,13 +47,57 @@ public class DeviceItemType implements ItemType{
         this.devProtocol = devProtocol;
         this.devClass = devClass;
         this.devType = devType;
-        //подгружаем картинку в зависимости от типа робота (а не храним отдельно)
-        //this.devImage = devImage;
-        //TODO
         //Ip и порт
         //this.devIp = devIp;
         //this.devIp = "192.168.1.138";
         //this.devPort = 9002;
+
+        switch (devClass) {
+            case "class_android":
+                imageType = "class_android";
+                break;
+            case "class_computer":
+
+            case "type_computer":
+                imageType = "class_computer";
+                break;
+            case "no_class":
+                imageType = "no_class";
+                break;
+        }
+
+        switch (devType) {
+            case "type_sphere":
+                //mViewHolder.deviceImage.setImageResource(R.drawable.type_computer);
+                //imageType = "type_sphere";
+                break;
+            case "type_anthropomorphic":
+                //mViewHolder.deviceImage.setImageResource(R.drawable.type_computer);
+                //imageType = "type_anthropomorphic";
+                break;
+            case "type_cubbi":
+                imageType = "type_cubbi";
+                break;
+        }
+        //mViewHolder.deviceImage.setImageResource(R.drawable.type_computer);
+        //imageType = "class_android";
+        //else {
+        //mViewHolder.deviceImage.setImageResource(R.drawable.type_no_type);
+        //imageType = "class_android";
+        //}
+    }
+
+    public void setIsSelectedOnScreen(boolean isSelectedOnScreen){
+        this.isSelectedOnScreen = isSelectedOnScreen;
+    }
+
+    public boolean getIsSelectedOnScreen(){
+        return isSelectedOnScreen;
+    }
+
+    @Override
+    public String getImageType() {
+        return imageType;
     }
 
     public void setDevIp(String devIp){
@@ -57,7 +105,7 @@ public class DeviceItemType implements ItemType{
     }
 
     public void setDevPort(int devPort){
-        this.devPort = 9002;
+        this.devPort = 4141;
     }
 
     public void setDevId(int devId){ this.devId = devId; }
@@ -209,26 +257,39 @@ public class DeviceItemType implements ItemType{
         mViewHolder.mName.setText(devName);
         mViewHolder.checkMark.setVisibility(View.GONE);
         mViewHolder.materialCardView.setStrokeColor(Color.TRANSPARENT);
-
-        if(devClass.equals("class_android")){
-            mViewHolder.deviceImage.setImageResource(R.drawable.class_android);
-        } else if (devClass.equals("class_computer")||devClass.equals("type_computer")){
-            mViewHolder.deviceImage.setImageResource(R.drawable.type_computer);
-        } else if (devClass.equals("no_class")){
-            mViewHolder.deviceImage.setImageResource(R.drawable.type_no_type);
+        switch (devClass) {
+            case "class_android":
+                mViewHolder.deviceImage.setImageResource(R.drawable.class_android);
+                break;
+            case "class_computer":
+            case "type_computer":
+                mViewHolder.deviceImage.setImageResource(R.drawable.type_computer);
+                break;
+            case "no_class":
+                mViewHolder.deviceImage.setImageResource(R.drawable.type_no_type);
+                break;
         }
 
-        if(devType.equals("type_sphere")){
-            //mViewHolder.deviceImage.setImageResource(R.drawable.type_computer);
-        } else if (devType.equals("type_anthropomorphic")){
-            //mViewHolder.deviceImage.setImageResource(R.drawable.type_computer);
-        } else if (devType.equals("type_cubbi")){
-            mViewHolder.deviceImage.setImageResource(R.drawable.type_cubbi);
-        } //else if (devType.equals("type_computer")){
-            //mViewHolder.deviceImage.setImageResource(R.drawable.type_computer);
+        switch (devType) {
+            case "type_sphere":
+                //mViewHolder.deviceImage.setImageResource(R.drawable.type_computer);
+                //imageType = "type_sphere";
+                break;
+            case "type_anthropomorphic":
+                //mViewHolder.deviceImage.setImageResource(R.drawable.type_computer);
+                //imageType = "type_anthropomorphic";
+                break;
+            case "type_cubbi":
+                mViewHolder.deviceImage.setImageResource(R.drawable.type_cubbi);
+                break;
+        }
+        //mViewHolder.deviceImage.setImageResource(R.drawable.type_computer);
+        //imageType = "class_android";
         //else {
-            //mViewHolder.deviceImage.setImageResource(R.drawable.type_no_type);
+        //mViewHolder.deviceImage.setImageResource(R.drawable.type_no_type);
+        //imageType = "class_android";
         //}
+
         mViewHolder.deviceImage.setVisibility(View.VISIBLE);
 
     }

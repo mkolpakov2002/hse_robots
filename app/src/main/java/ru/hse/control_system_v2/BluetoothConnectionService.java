@@ -30,9 +30,8 @@ public class BluetoothConnectionService extends Service {
      */
     private final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     private BluetoothAdapter btAdapter;
-    private String classDevice;
     private ArrayList<DeviceItemType> devicesList;
-    private ArrayList<DeviceItemType> devicesListConnected;
+    private int devicesListConnectedSize;
     private boolean isSuccess = false;
     private Intent intentService;
 
@@ -41,10 +40,9 @@ public class BluetoothConnectionService extends Service {
         intentService = intent;
         ArrayList<MyRun> treadList = new ArrayList<>();
         devicesList = new ArrayList<>();
-        devicesListConnected = new ArrayList<>();
+        devicesListConnectedSize = 0;
         devicesList.addAll(DeviceHandler.getDevicesList());
         Bundle arguments = intent.getExtras();
-        classDevice = arguments.get("protocol").toString();
 
         ExecutorService executorService = Executors.newFixedThreadPool(devicesList.size());
         Log.d(APP_LOG_TAG, "Соединение по Bt начато...");
@@ -112,15 +110,16 @@ public class BluetoothConnectionService extends Service {
 
     // Передаём данные о статусе соединения в Main Activity
     synchronized void resultOfConnection(DeviceItemType currentDevice) {
-        devicesListConnected.add(currentDevice);
+        devicesListConnectedSize++;
         if(currentDevice.isConnected()){
             isSuccess = true;
         }
-        if(devicesListConnected.size() == devicesList.size()){
+        if(devicesListConnectedSize == devicesList.size()){
             Intent resultOfConnectionIntent;
             if(isSuccess){
                 resultOfConnectionIntent = new Intent("success");
-                resultOfConnectionIntent.putExtra("protocol", classDevice);
+                DeviceHandler.setDevicesList(devicesList);
+                Log.d(APP_LOG_TAG, "getter " +String.valueOf(DeviceHandler.getDevicesList().size()));
                 Log.d(APP_LOG_TAG, "Bt соединение успешно, передаю результат в Main Activity...");
             } else {
                 resultOfConnectionIntent = new Intent("not_success");

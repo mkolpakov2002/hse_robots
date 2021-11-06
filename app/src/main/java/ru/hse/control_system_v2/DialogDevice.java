@@ -37,6 +37,21 @@ public class DialogDevice extends DialogFragment {
         }
     }
 
+    Fragment getCurrentFragment(){
+        NavHostFragment navHostFragment = (NavHostFragment)((MainActivity) c).getSupportFragmentManager().getPrimaryNavigationFragment();
+
+        FragmentManager fragmentManager = null;
+        if (navHostFragment != null) {
+            fragmentManager = navHostFragment.getChildFragmentManager();
+        }
+
+        Fragment current = null;
+        if (fragmentManager != null) {
+            current = fragmentManager.getPrimaryNavigationFragment();
+        }
+        return current;
+    }
+
     public DialogDevice(DeviceItemType currentDevice){
         this.currentDevice = currentDevice;
     }
@@ -63,24 +78,6 @@ public class DialogDevice extends DialogFragment {
         deviceProtoView.setText(protocol);
     }
 
-    private void updateMainScreen(){
-        NavHostFragment navHostFragment = (NavHostFragment)((MainActivity) c).getSupportFragmentManager().getPrimaryNavigationFragment();
-
-        FragmentManager fragmentManager = null;
-        if (navHostFragment != null) {
-            fragmentManager = navHostFragment.getChildFragmentManager();
-        }
-
-        Fragment current = null;
-        if (fragmentManager != null) {
-            current = fragmentManager.getPrimaryNavigationFragment();
-        }
-        if(current instanceof MainMenuFragment){
-            MainMenuFragment mainMenuFragment = (MainMenuFragment) current;
-            mainMenuFragment.onRefresh();
-        }
-    }
-
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
@@ -99,7 +96,11 @@ public class DialogDevice extends DialogFragment {
             if(alertDialog != null && alertDialog.isShowing()){
                 alertDialog.dismiss();
             }
-            updateMainScreen();
+            Fragment current = getCurrentFragment();
+            if(current instanceof MainMenuFragment){
+                MainMenuFragment mainMenuFragment = (MainMenuFragment) current;
+                mainMenuFragment.showStartOfConnection();
+            }
             //запуск подключения происходит ниже
             ArrayList<DeviceItemType> deviceItemTypeArrayList = new ArrayList<>();
             deviceItemTypeArrayList.add(currentDevice);
@@ -117,7 +118,11 @@ public class DialogDevice extends DialogFragment {
             AppDataBase dbDevices = App.getDatabase();
             DeviceItemTypeDao devicesDao = dbDevices.getDeviceItemTypeDao();
             devicesDao.delete(id);
-            updateMainScreen();
+            Fragment current = getCurrentFragment();
+            if(current instanceof MainMenuFragment){
+                MainMenuFragment mainMenuFragment = (MainMenuFragment) current;
+                mainMenuFragment.onRefresh();
+            }
         });
 
         MaterialButton buttonToChangeDevice = dialogView.findViewById(R.id.dialog_device_change);

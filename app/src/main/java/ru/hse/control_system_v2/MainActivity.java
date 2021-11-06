@@ -3,8 +3,10 @@ package ru.hse.control_system_v2;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -85,7 +87,9 @@ public class MainActivity extends AppCompatActivity {
                 hideBottomSheet();
             });
         }
+        this.registerReceiver(BluetoothStateChanged, new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
         setUpNavigation();
+        checkForBtAdapter();
     }
 
     void setUpNavigation(){
@@ -203,4 +207,18 @@ public class MainActivity extends AppCompatActivity {
     public synchronized void hideMainMenu(){
         main_bottom_menu.setVisibility(View.INVISIBLE);
     }
+
+    //выполняемый код при изменении состояния bluetooth
+    private final BroadcastReceiver BluetoothStateChanged = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(btIsEnabledFlagVoid()){
+                // Bluetooth включён, надо скрыть кнопку включения Bluetooth
+                hideFabToEnBt();
+            } else {
+                // Bluetooth выключён, надо показать кнопку включения Bluetooth
+                showFabToEnBt();
+            }
+        }
+    };
 }

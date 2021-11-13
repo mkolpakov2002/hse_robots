@@ -1,7 +1,7 @@
 package ru.hse.control_system_v2;
 
 import android.Manifest;
-import android.app.AlertDialog;
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -9,30 +9,26 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
-import com.google.android.material.button.MaterialButton;
-import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import ru.hse.control_system_v2.dbdevices.AddDeviceDBActivity;
 
 
 public class MainActivity extends AppCompatActivity {
 
-    private ExtendedFloatingActionButton fabToEnBt;
+    private FloatingActionButton fabToEnBt;
     private int isFirstLaunch;
     private SharedPreferences sPref;
     private BluetoothAdapter btAdapter;
@@ -42,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.getDefaultNightMode());
+        ThemeUtils.onActivityCreateSetTheme(this);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -58,12 +54,12 @@ public class MainActivity extends AppCompatActivity {
         isFirstLaunch = sPref.getInt("isFirstLaunch", 1);
         ////////////////////////////////////
         // настройка поведения нижнего экрана
-        bottomSheetBehavior = new BottomSheetDialog(this,R.style.BottomSheetDialog);
-
+        bottomSheetBehavior = new BottomSheetDialog(this,R.style.SAIBottomSheetDialog_Backup_Light);
         bottomSheetBehavior.setContentView(R.layout.bottom_sheet_dialog_add_device);
         bottomSheetBehavior.setCancelable(true);
         bottomSheetBehavior.dismiss();
         hideBottomSheet();
+
         Button buttonToAddDeviceViaMAC = bottomSheetBehavior.findViewById(R.id.button_manual_mac);
         Button buttonToAddDevice = bottomSheetBehavior.findViewById(R.id.button_add_device);
         if (buttonToAddDevice != null) {
@@ -81,19 +77,13 @@ public class MainActivity extends AppCompatActivity {
             });
         }
 
-        ImageButton closeBottomSheet = bottomSheetBehavior.findViewById(R.id.close_bottom_sheet);
-        if (closeBottomSheet != null) {
-            closeBottomSheet.setOnClickListener(view -> {
-                hideBottomSheet();
-            });
-        }
         this.registerReceiver(BluetoothStateChanged, new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
         setUpNavigation();
         checkForBtAdapter();
     }
 
     void setUpNavigation(){
-        main_bottom_menu =findViewById(R.id.bottomnav);
+        main_bottom_menu = findViewById(R.id.bottomnav);
         NavHostFragment navHostFragment = (NavHostFragment)getSupportFragmentManager()
                 .findFragmentById(R.id.nav_host_fragment);
         if(navHostFragment != null){
@@ -102,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
     // проверка на наличие Bluetooth адаптера; дальнейшее продолжение работы в случае наличия
     public void checkForBtAdapter() {
         btAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -109,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
             System.out.println("There is no bluetooth adapter on device!");
             // объект Builder для создания диалогового окна
             //suggestionNoBtAdapter
-            androidx.appcompat.app.AlertDialog dialog = new androidx.appcompat.app.AlertDialog.Builder(this).create();
+            androidx.appcompat.app.AlertDialog dialog = new androidx.appcompat.app.AlertDialog.Builder(this,R.style.AlertDialog_AppCompat).create();
             dialog.setTitle(getString(R.string.error));
             dialog.setMessage(getString(R.string.suggestionNoBtAdapter));
             dialog.setButton(androidx.appcompat.app.AlertDialog.BUTTON_NEUTRAL, "OK",
@@ -118,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
                         dialog1.dismiss();
                         this.finish();
                     });
-        } else {
+        } else if(btIsEnabledFlagVoid()){
             if (isFirstLaunch == 1){
                 sPref = getPreferences(MODE_PRIVATE);
                 SharedPreferences.Editor ed = sPref.edit();
@@ -126,11 +117,12 @@ public class MainActivity extends AppCompatActivity {
                 ed.apply();
                 isFirstLaunch = 0;
                 requestPerms();
-                if (btIsEnabledFlagVoid()){
-                    createOneButtonAlertDialog(getResources().getString(R.string.instruction_alert),
+                createOneButtonAlertDialog(getResources().getString(R.string.instruction_alert),
                             getResources().getString(R.string.other_discoverable_devices));
-                }
+
             }
+        } else {
+            showFabToEnBt();
         }
     }
 
@@ -162,33 +154,14 @@ public class MainActivity extends AppCompatActivity {
 
     // создает диалоговое окно с 1й кнопкой
     private void createOneButtonAlertDialog(String title, String content) {
-        // объект Builder для создания диалогового окна
-        //TODO
-        //ошибка как тут - https://habr.com/ru/company/mobileup/blog/440284/
-
-        AlertDialog.Builder builder;
-        builder = new AlertDialog.Builder(this,R.style.dialogTheme);
-        LayoutInflater inflater = this.getLayoutInflater();
-        View dialogView = inflater.inflate(R.layout.dialog_simple_tip, null);
-
-        builder.setView(dialogView);
-        TextView dialogTitle = dialogView.findViewById(R.id.dialog_tip_title);
-        dialogTitle.setText(title);
-        TextView dialogMessage = dialogView.findViewById(R.id.dialog_tip);
-        dialogMessage.setText(content);
-        final AlertDialog alertDialog = builder.create();
-        MaterialButton buttonToDismiss = dialogView.findViewById(R.id.dialog_tip_ok);
-        buttonToDismiss.setOnClickListener(view -> {
-            alertDialog.dismiss();
-        });
-        alertDialog.show();
+        OneButtonAlertDialogFragment.newInstance(title, content).show(this.getSupportFragmentManager(), "dialog_alert");
     }
 
-    public synchronized void showFabToEnBt(){
+    private synchronized void showFabToEnBt(){
         fabToEnBt.show();
     }
 
-    public synchronized void hideFabToEnBt(){
+    private synchronized void hideFabToEnBt(){
         fabToEnBt.hide();
     }
 
@@ -221,4 +194,10 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     };
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+    }
 }

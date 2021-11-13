@@ -40,7 +40,7 @@ public class DialogSaveDeviceWithMAC extends DialogFragment {
         LayoutInflater inflater = this.getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.dialog_enter_mac, null);
 
-        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(c,R.style.dialogTheme);
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(c, R.style.AlertDialog_AppTheme);
         builder.setView(dialogView);
         EditText editTextMACAlert = dialogView.findViewById(R.id.editDeviceMAC);
         editTextMACAlert.setInputType(InputType.TYPE_CLASS_TEXT);

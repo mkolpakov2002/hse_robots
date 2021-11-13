@@ -1,7 +1,6 @@
 package ru.hse.control_system_v2;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.ContentValues;
@@ -20,6 +19,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -93,7 +93,7 @@ public class DialogDeviceEdit extends DialogFragment {
         LayoutInflater inflater = this.getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.dialog_edit_device, null);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(c,R.style.dialogTheme);
+        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(c, R.style.AlertDialog_AppTheme);
         builder.setView(dialogView);
 
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(c, android.R.layout.simple_spinner_item, data);
@@ -240,6 +240,7 @@ public class DialogDeviceEdit extends DialogFragment {
             Toast.makeText(c, "Wrong MAC address", Toast.LENGTH_LONG).show();
             Log.d("Add device", "Device denied");
         }
+
         //Обновление MainActivity
         if(!isNewDev){
             updateMainScreen();

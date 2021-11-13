@@ -1,12 +1,15 @@
 package ru.hse.control_system_v2.dbdevices;
 
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
@@ -27,8 +30,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+import ru.hse.control_system_v2.App;
 import ru.hse.control_system_v2.DialogDeviceEdit;
 import ru.hse.control_system_v2.R;
+import ru.hse.control_system_v2.ThemeUtils;
 import ru.hse.control_system_v2.dbprotocol.ProtocolDBHelper;
 
 public class AddDeviceDBActivity extends AppCompatActivity implements DevicesAdapter.SelectedDevice, SwipeRefreshLayout.OnRefreshListener{
@@ -40,7 +45,7 @@ public class AddDeviceDBActivity extends AppCompatActivity implements DevicesAda
     String deviceHardwareAddress;
     DevicesAdapter devicesAdapter;
     TextView pairedDevicesTitleTextView;
-    LayoutInflater inflater;
+
     String name;
     //инициализация swipe refresh
     SwipeRefreshLayout swipeToRefreshLayout;
@@ -49,9 +54,9 @@ public class AddDeviceDBActivity extends AppCompatActivity implements DevicesAda
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        ThemeUtils.onActivityCreateSetTheme(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_bd_device);
-        inflater = this.getLayoutInflater();
 
         swipeToRefreshLayout = findViewById(R.id.swipeRefreshLayout_add_device);
         swipeToRefreshLayout.setOnRefreshListener(this);
@@ -135,7 +140,6 @@ public class AddDeviceDBActivity extends AppCompatActivity implements DevicesAda
         outputInfoToast.show();
     }
 
-
     @Override
     public void selectedDevice(DeviceModel deviceModel) {
         checkDeviceAddress(deviceModel);
@@ -184,44 +188,6 @@ public class AddDeviceDBActivity extends AppCompatActivity implements DevicesAda
             showToast("Please, enable bluetooth");
         }
     }
-    //Обновляем внешний вид приложения, скрываем и добавляем нужные элементы интерфейса
 
-    public static class MaskWatcher implements TextWatcher {
-        private boolean isRunning = false;
-        private boolean isDeleting = false;
-        private final String mask;
-
-        public MaskWatcher(String mask) {
-            this.mask = mask;
-        }
-
-        @Override
-        public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) {
-            isDeleting = count > after;
-        }
-
-        @Override
-        public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
-        }
-
-        @Override
-        public void afterTextChanged(Editable editable) {
-            if (isRunning || isDeleting) {
-                return;
-            }
-            isRunning = true;
-
-            int editableLength = editable.length();
-            if (editableLength < mask.length()) {
-                if (mask.charAt(editableLength) != '#') {
-                    editable.append(mask.charAt(editableLength));
-                } else if (mask.charAt(editableLength-1) != '#') {
-                    editable.insert(editableLength-1, mask, editableLength-1, editableLength);
-                }
-            }
-
-            isRunning = false;
-        }
-    }
 
 }

@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.navigation.fragment.NavHostFragment;
@@ -131,7 +132,7 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
                         selectedDevicesList.add(item);
                         item.setIsSelectedOnScreen(true);
                         mainMenuFragment.showFabToStartConnecting();
-                        materialCardView.setStrokeColor(ma.getResources().getColor(R.color.colorAccent));
+                        materialCardView.setStrokeColor(ContextCompat.getColor(ma,R.color.colorAccent));
                         checkMark.setVisibility(VISIBLE);
                         ((Animatable) checkMark.getDrawable()).start();
 
@@ -163,7 +164,7 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
                 selectedDevicesList.add(item);
                 item.setIsSelectedOnScreen(true);
                 mainMenuFragment.showFabToStartConnecting();
-                materialCardView.setStrokeColor(ma.getResources().getColor(R.color.colorAccent));
+                materialCardView.setStrokeColor(ContextCompat.getColor(ma,R.color.colorAccent));
                 checkMark.setVisibility(VISIBLE);
                 ((Animatable) checkMark.getDrawable()).start();
 
@@ -182,7 +183,7 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
                     if (!wasAlreadySelected) {
                         selectedDevicesList.add(item);
                         item.setIsSelectedOnScreen(true);
-                        materialCardView.setStrokeColor(ma.getResources().getColor(R.color.colorAccent));
+                        materialCardView.setStrokeColor(ContextCompat.getColor(ma,R.color.colorAccent));
                         checkMark.setVisibility(VISIBLE);
                         ((Animatable) checkMark.getDrawable()).start();
                     }

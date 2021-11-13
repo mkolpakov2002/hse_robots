@@ -83,7 +83,7 @@ public class DialogDevice extends DialogFragment {
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         getDeviceInformation();
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(c, R.style.dialogTheme);
+        AlertDialog.Builder builder = new AlertDialog.Builder(c, R.style.AlertDialog_AppTheme);
         LayoutInflater inflater = this.getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.dialog_device_menu, null);
 

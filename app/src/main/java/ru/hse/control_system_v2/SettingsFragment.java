@@ -1,36 +1,51 @@
 package ru.hse.control_system_v2;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.text.Editable;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.textfield.MaterialAutoCompleteTextView;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -38,15 +53,19 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Arrays;
 
+import fr.ganfra.materialspinner.MaterialSpinner;
 import ru.hse.control_system_v2.dbprotocol.ProtocolDBHelper;
 import ru.hse.control_system_v2.dbprotocol.ProtocolRepo;
 
 import static android.app.Activity.RESULT_OK;
+import static android.content.Context.MODE_PRIVATE;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
-public class SettingsFragment extends Fragment implements View.OnClickListener {
+public class SettingsFragment extends Fragment {
 
     private ProtocolDBHelper dbHelper;
     private EditText editTextName, editTextLen, editTextCode;
@@ -60,6 +79,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
     private BluetoothAdapter btAdapter;
     private Context fragmentContext;
     private MainActivity ma;
+    private LinearLayout ll_hint_spinner;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -84,12 +104,118 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
         super.onViewCreated(view, savedInstanceState);
         dbHelper = new ProtocolDBHelper(fragmentContext);
 
-        fragmentContext.registerReceiver(BluetoothStateChanged, new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
-
         buttonAdd = view.findViewById(R.id.button_add_protocol);
-        buttonAdd.setOnClickListener(this);
+        buttonAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String name = editTextName.getText().toString();
+                String slength = editTextLen.getText().toString();
+                int length;
+                String code = editTextCode.getText().toString();
+                ProtocolRepo protocolRepo = new ProtocolRepo(fragmentContext, "");
+                int result = protocolRepo.stringXMLparser(code);
+                if (result > 0) {
+                    Toast.makeText(fragmentContext, "Invalid XML code", Toast.LENGTH_LONG).show();
+                } else if (name.isEmpty()) {
+                    Toast.makeText(fragmentContext, "Invalid name", Toast.LENGTH_LONG).show();
+                } else if (slength.isEmpty()) {
+                    Toast.makeText(fragmentContext, "Invalid length", Toast.LENGTH_LONG).show();
+                } else {
+                    length = Integer.parseInt(slength);
+                    ContentValues contentValues = new ContentValues();
+                    contentValues.put(ProtocolDBHelper.KEY_NAME, name);
+                    contentValues.put(ProtocolDBHelper.KEY_LEN, length);
+                    try {
+                        contentValues.put(ProtocolDBHelper.KEY_CODE, saveToFile(name,code));
+                    } catch (IOException e) {
+                        Toast.makeText(fragmentContext, "Error saving: try again", Toast.LENGTH_LONG).show();
+                        e.printStackTrace();
+                    }
+
+                    if (dbHelper.insert(contentValues) == 0)
+                        Toast.makeText(fragmentContext, "Protocol has already been registered", Toast.LENGTH_LONG).show();
+                    else {
+                        editTextName.setText("");
+                        editTextLen.setText("");
+                        editTextCode.setText("");
+                        Toast.makeText(fragmentContext, "Accepted", Toast.LENGTH_LONG).show();
+                        showProtocols();
+                    }
+                }
+
+            }
+        });
         buttonAdd.setBackgroundColor(getResources().getColor(R.color.foregroundColor));
         buttonAdd.setEnabled(false);
+
+        ArrayList<String> themes = new ArrayList<String>(Arrays.asList(Constants.THEMES_LIST));
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(fragmentContext, android.R.layout.simple_spinner_item, themes);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        MaterialAutoCompleteTextView autoCompleteTextView = view.findViewById(R.id.theme_menu);
+        autoCompleteTextView.setThreshold(themes.size());
+        SharedPreferences sPref = PreferenceManager.getDefaultSharedPreferences(ma);
+        String sTheme = sPref.getString("theme", "Light");
+        autoCompleteTextView.setText(sTheme);
+        autoCompleteTextView.setAdapter(adapter);
+        autoCompleteTextView.setOnItemClickListener ((adapterView, view1, position, l) -> {
+            SharedPreferences.Editor ed = sPref.edit();
+            Log.d("App", String.valueOf(position));
+            switch (position) {
+                case 0:
+                    ed.putString("theme", "Light");
+                    ed.apply();
+                    break;
+                case 1:
+                    ed.putString("theme", "Dark");
+                    ed.apply();
+                    break;
+                case 2:
+                    ed.putString("theme", "Rena");
+                    ed.apply();
+                    break;
+                case 3:
+                    ed.putString("theme", "Rooter");
+                    ed.apply();
+                    break;
+                case 4:
+                    ed.putString("theme", "Omelette");
+                    ed.apply();
+                    break;
+                case 5:
+                    ed.putString("theme", "Pixel");
+                    ed.apply();
+                    break;
+                case 6:
+                    ed.putString("theme", "FDroid");
+                    ed.apply();
+                    break;
+                case 7:
+                    ed.putString("theme", "Dark2");
+                    ed.apply();
+                    break;
+                case 8:
+                    ed.putString("theme", "Gold");
+                    ed.apply();
+                    break;
+                case 9:
+                    ed.putString("theme", "RenaLight");
+                    ed.apply();
+                    break;
+                case 10:
+                    ed.putString("theme", "Mint");
+                    ed.apply();
+                    break;
+                case 11:
+                    ed.putString("theme", "FDroidDark");
+                    ed.apply();
+                    break;
+            }
+            if (position<=11&&position>=0){
+                Log.d("changeTheme", String.valueOf(position));
+                ThemeUtils.changeToTheme(ma);
+            }
+        });
 
         editTextName = view.findViewById(R.id.editTextProtocolName);
         editTextName.addTextChangedListener(new TextChangedListener<EditText>(editTextName) {
@@ -127,85 +253,14 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
         database = dbHelper.getWritableDatabase();
 
         Button buttonCancel = view.findViewById(R.id.button_delete_protos);
-        buttonCancel.setOnClickListener(this);
-
-        Button buttonDeleteDevices = view.findViewById(R.id.button_delete_devices);
-        buttonDeleteDevices.setOnClickListener(this);
-
-        buttonShowProtoMenu = view.findViewById(R.id.button_show_add_proto);
-        buttonShowProtoMenu.setOnClickListener(this);
-
-        Button buttonFile = view.findViewById(R.id.button_choose_file);
-        buttonFile.setOnClickListener(this);
-        btAdapter = BluetoothAdapter.getDefaultAdapter();
-        showProtocols();
-    }
-
-
-    void canShowSaveButton(){
-        if (isEditTextNameChanged && isEditTextLenChanged && isEditTextCodeChanged){
-            buttonAdd.setEnabled(true);
-            buttonAdd.setBackgroundColor(fragmentContext.getColor(R.color.white));
-        } else {
-            buttonAdd.setEnabled(false);
-            buttonAdd.setBackgroundColor(fragmentContext.getColor(R.color.foregroundColor));
-        }
-    }
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.button_delete_devices:
-                AppDataBase dbDevices = App.getDatabase();
-                DeviceItemTypeDao devicesDao = dbDevices.getDeviceItemTypeDao();
-                devicesDao.deleteAll();
-            case R.id.button_add_protocol:
-                String name = editTextName.getText().toString();
-                String slength = editTextLen.getText().toString();
-                int length;
-                String code = editTextCode.getText().toString();
-                ProtocolRepo protocolRepo = new ProtocolRepo(fragmentContext, "");
-                int result = protocolRepo.stringXMLparser(code);
-                if (result > 0) {
-                    Toast.makeText(fragmentContext, "Invalid XML code", Toast.LENGTH_LONG).show();
-                    break;
-                }
-                if (name.isEmpty()) {
-                    Toast.makeText(fragmentContext, "Invalid name", Toast.LENGTH_LONG).show();
-                    break;
-                }
-                if (slength.isEmpty()) {
-                    Toast.makeText(fragmentContext, "Invalid length", Toast.LENGTH_LONG).show();
-                    break;
-                }
-                else
-                    length = Integer.parseInt(slength);
-                ContentValues contentValues = new ContentValues();
-                contentValues.put(ProtocolDBHelper.KEY_NAME, name);
-                contentValues.put(ProtocolDBHelper.KEY_LEN, length);
-                try {
-                    contentValues.put(ProtocolDBHelper.KEY_CODE, saveToFile(name,code));
-                } catch (IOException e) {
-                    Toast.makeText(fragmentContext, "Error saving: try again", Toast.LENGTH_LONG).show();
-                    e.printStackTrace();
-                }
-
-                if (dbHelper.insert(contentValues) == 0)
-                    Toast.makeText(fragmentContext, "Protocol has already been registered", Toast.LENGTH_LONG).show();
-                else {
-                    editTextName.setText("");
-                    editTextLen.setText("");
-                    editTextCode.setText("");
-                    Toast.makeText(fragmentContext, "Accepted", Toast.LENGTH_LONG).show();
-                    showProtocols();
-                }
-
-                break;
-
-            case R.id.button_delete_protos:
-                AlertDialog dialog =new AlertDialog.Builder(fragmentContext)
-                        .setTitle("Подтверждение")
-                        .setIcon(android.R.drawable.ic_dialog_alert)
+        buttonCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ContextThemeWrapper newContext = new ContextThemeWrapper(ma, R.style.HSERobotsMaterialButton);
+                MaterialAlertDialogBuilder materialAlertDialogBuilder = new MaterialAlertDialogBuilder(fragmentContext, R.style.AlertDialog_AppTheme);
+                materialAlertDialogBuilder.setTitle("Подтверждение")
                         .setMessage("Вы действительно хотите удалить все кастомные протоколы?")
+                        .setIcon(R.drawable.ic_baseline_warning_24)
                         .setPositiveButton("OK", (dialog1, whichButton) -> {
                             ProtocolDBHelper dbHelper = new ProtocolDBHelper(fragmentContext);
                             dbHelper.onUpgrade(dbHelper.getWritableDatabase(), 1,1);
@@ -213,10 +268,48 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
                         })
                         .setNegativeButton("Отмена", null)
                         .create();
-                dialog.show();
-                break;
+                materialAlertDialogBuilder.show();
 
-            case R.id.button_choose_file:
+            }
+        });
+
+        Button buttonDeleteDevices = view.findViewById(R.id.button_delete_devices);
+        buttonDeleteDevices.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AppDataBase dbDevices = App.getDatabase();
+                DeviceItemTypeDao devicesDao = dbDevices.getDeviceItemTypeDao();
+                devicesDao.deleteAll();
+            }
+        });
+
+        buttonShowProtoMenu = view.findViewById(R.id.button_show_add_proto);
+        buttonShowProtoMenu
+                .setCompoundDrawablesWithIntrinsicBounds(0, 0,
+                        R.drawable.ic_baseline_keyboard_arrow_right_24, 0);
+        buttonShowProtoMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (menuProto.getVisibility() == VISIBLE) {
+                    menuProto.setVisibility(GONE);
+                    buttonShowProtoMenu
+                            .setCompoundDrawablesWithIntrinsicBounds(0, 0,
+                                    R.drawable.ic_baseline_keyboard_arrow_right_24, 0);
+                    Log.d("Button", "hide menu");
+                } else {
+                    Log.d("Button", "show menu");
+                    menuProto.setVisibility(VISIBLE);
+                    buttonShowProtoMenu
+                            .setCompoundDrawablesWithIntrinsicBounds(0, 0,
+                                    R.drawable.ic_baseline_keyboard_arrow_down_24, 0);
+                }
+            }
+        });
+
+        Button buttonFile = view.findViewById(R.id.button_choose_file);
+        buttonFile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
                 if (hasPermissions()){
                     Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                     intent.addCategory(Intent.CATEGORY_OPENABLE);
@@ -228,22 +321,19 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
                 else {
                     requestPermissionWithRationale();
                 }
+            }
+        });
+        btAdapter = BluetoothAdapter.getDefaultAdapter();
+        showProtocols();
+    }
 
-                break;
-
-            case R.id.button_show_add_proto:
-                if (menuProto.getVisibility() == VISIBLE) {
-                    menuProto.setVisibility(GONE);
-                    buttonShowProtoMenu
-                            .setCompoundDrawablesWithIntrinsicBounds(0, 0,
-                                    R.drawable.ic_baseline_keyboard_arrow_right_24, 0);
-                } else if (menuProto.getVisibility() == GONE){
-                    menuProto.setVisibility(VISIBLE);
-                    buttonShowProtoMenu
-                            .setCompoundDrawablesWithIntrinsicBounds(0, 0,
-                                    R.drawable.ic_baseline_keyboard_arrow_down_24, 0);
-                }
-                break;
+    void canShowSaveButton(){
+        if (isEditTextNameChanged && isEditTextLenChanged && isEditTextCodeChanged){
+            buttonAdd.setEnabled(true);
+            buttonAdd.setBackgroundColor(fragmentContext.getColor(R.color.white));
+        } else {
+            buttonAdd.setEnabled(false);
+            buttonAdd.setBackgroundColor(fragmentContext.getColor(R.color.foregroundColor));
         }
     }
 
@@ -400,18 +490,5 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
         return btAdapter.isEnabled();
     }
 
-    //выполняемый код при изменении состояния bluetooth
-    private final BroadcastReceiver BluetoothStateChanged = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if(btIsEnabledFlagVoid()){
-                // Bluetooth включён, надо скрыть кнопку включения Bluetooth
-                ma.hideFabToEnBt();
-            } else {
-                // Bluetooth выключён, надо показать кнопку включения Bluetooth
-                ma.showFabToEnBt();
-            }
-        }
-    };
 
 }

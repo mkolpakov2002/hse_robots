@@ -2,7 +2,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_centerHorizontal="true"
-    android:background="@drawable/dialog_bg"
+    android:background="@drawable/bg_rounded_popup"
     android:orientation="horizontal"
     android:padding="16dp">
 
@@ -19,6 +19,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:text="@string/alert_connection_attempt"
-        android:textAppearance="@style/TextAppearance.AppCompat.SearchResult.Subtitle" />
+        android:textColor="?android:attr/textColorSecondary"
+        android:textSize="20sp" />
 
 </LinearLayout>

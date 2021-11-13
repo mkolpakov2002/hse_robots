@@ -24,8 +24,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:titleTextColor="#FFFFFF"
-            app:theme="@style/ToolbarColoredBackArrow"/>
+            app:theme="@style/HSERobotsToolbar"/>
 
         <TextView
             android:id="@+id/paired_devices_title_add_activity"
@@ -33,12 +32,7 @@
             android:layout_height="wrap_content"
             android:text="@string/paired_devices"
             android:textAlignment="center"
-            android:textColor="#FFFFFF"
-            android:visibility="visible"
-            android:autoSizeTextType="uniform"
-            android:autoSizeMinTextSize="16sp"
-            android:autoSizeMaxTextSize="100sp"
-            app:autoSizeStepGranularity="2sp"/>
+            android:visibility="visible" />
 
         <Space
             android:layout_width="match_parent"
@@ -81,12 +75,10 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_marginBottom="16dp"
-        android:backgroundTint="@color/white"
         android:contentDescription="@string/suggestionEnableBluetooth"
         android:text="@string/go_to_settings"
-        android:theme="@style/Theme.Control_system_v2"
+        style="@style/HSERobotsMaterialButton.ExtendedFab"
         app:icon="@drawable/ic_settings"
-        app:iconTint="@color/colorAccent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

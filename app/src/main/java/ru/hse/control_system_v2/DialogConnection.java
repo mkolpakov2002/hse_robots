@@ -20,10 +20,16 @@ public class DialogConnection extends DialogFragment {
         }
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setCancelable(false);
+    }
+
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(c, R.style.dialogTheme);
+        AlertDialog.Builder builder = new AlertDialog.Builder(c, R.style.AlertDialog_AppTheme);
         builder.setView(R.layout.dialog_connection);
         return builder.create();
     }

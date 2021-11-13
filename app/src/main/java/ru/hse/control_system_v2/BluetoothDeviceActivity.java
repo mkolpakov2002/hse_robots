@@ -6,6 +6,7 @@ import static ru.hse.control_system_v2.Constants.APP_LOG_TAG;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
@@ -15,6 +16,8 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
@@ -26,7 +29,7 @@ import ru.hse.control_system_v2.dbprotocol.ProtocolDBHelper;
 import ru.hse.control_system_v2.dbprotocol.ProtocolRepo;
 import ru.hse.control_system_v2.list_devices.DeviceItemType;
 
-public class BluetoothDeviceActivity extends Activity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
+public class BluetoothDeviceActivity extends AppCompatActivity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
 
     private boolean isHoldCommand;
     private byte[] message;      // комманда посылаемая на arduino
@@ -44,6 +47,7 @@ public class BluetoothDeviceActivity extends Activity implements View.OnClickLis
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ThemeUtils.onActivityCreateSetTheme(this);
         setContentView(R.layout.activity_bluetooth_device);
         findViewById(R.id.button_stop).setEnabled(false);
 
@@ -98,7 +102,8 @@ public class BluetoothDeviceActivity extends Activity implements View.OnClickLis
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (data==null) return;
+        super.onActivityResult(requestCode, resultCode, data);
+        if (data == null) return;
         String message = data.getStringExtra("message");
         Intent intent = new Intent();
         intent.putExtra("message", message);
@@ -139,7 +144,7 @@ public class BluetoothDeviceActivity extends Activity implements View.OnClickLis
     }
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
         active = true;
         checkForActiveDevices();

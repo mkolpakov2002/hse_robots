@@ -17,6 +17,8 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
@@ -27,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import ru.hse.control_system_v2.DeviceHandler;
 import ru.hse.control_system_v2.DialogDevice;
 import ru.hse.control_system_v2.MainActivity;
 import ru.hse.control_system_v2.MainMenuFragment;
@@ -66,10 +69,6 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
         }
         listener = new MyListener();
         selectedDevicesList = new ArrayList<>();
-    }
-
-    public void setItems(ArrayList<DeviceItemType> mData) {
-        this.mData = mData;
     }
 
     public void onNewData(ArrayList<DeviceItemType> newDevicesList) {
@@ -115,7 +114,6 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
                 else {
                     //необходимо проверить на присутствие в списке
                     boolean wasAlreadySelected = false;
-
                     for (DeviceItemType currentDevice: selectedDevicesList) {
                         if (currentDevice.getDeviceMAC().equals(item.getDeviceMAC())) {
                             selectedDevicesList.remove(currentDevice);
@@ -146,11 +144,10 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
                 }
             } else {
                 Log.d(TAG, "...Список пуст, открываю диалог...");
+                DeviceHandler.setDevicesList(item);
                 //список пуст, открываем диалог для одного устройства
-                DialogDevice dialog = new DialogDevice(item);
-                Bundle args = new Bundle();
-                dialog.setArguments(args);
-                dialog.show(ma.getSupportFragmentManager(), "dialog");
+                Navigation.findNavController(mainMenuFragment.requireParentFragment().requireView()).navigateUp();
+                Navigation.findNavController(mainMenuFragment.requireParentFragment().requireView()).navigate(R.id.action_mainMenuFragment_to_device_dialog);
             }
         }
 
@@ -197,8 +194,6 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-
-
         return Objects.requireNonNull(ViewHolderFactory.create(parent, viewType, context, this));
     }
 
@@ -219,10 +214,6 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     public void clearSelected(){
         selectedDevicesList.clear();
-    }
-
-    public String getSelectedProto(){
-        return selectedDevicesList.get(0).getDevProtocol();
     }
 
     public List<DeviceItemType> getSelectedDevices(){

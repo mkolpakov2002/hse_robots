@@ -33,7 +33,6 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences sPref;
     private BluetoothAdapter btAdapter;
     private BottomNavigationView main_bottom_menu;
-    private BottomSheetDialog bottomSheetBehavior;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -54,28 +53,7 @@ public class MainActivity extends AppCompatActivity {
         isFirstLaunch = sPref.getInt("isFirstLaunch", 1);
         ////////////////////////////////////
         // настройка поведения нижнего экрана
-        bottomSheetBehavior = new BottomSheetDialog(this,R.style.SAIBottomSheetDialog_Backup_Light);
-        bottomSheetBehavior.setContentView(R.layout.bottom_sheet_dialog_add_device);
-        bottomSheetBehavior.setCancelable(true);
-        bottomSheetBehavior.dismiss();
-        hideBottomSheet();
 
-        Button buttonToAddDeviceViaMAC = bottomSheetBehavior.findViewById(R.id.button_manual_mac);
-        Button buttonToAddDevice = bottomSheetBehavior.findViewById(R.id.button_add_device);
-        if (buttonToAddDevice != null) {
-            buttonToAddDevice.setOnClickListener(view -> {
-                Intent intent = new Intent(this, AddDeviceDBActivity.class);
-                bottomSheetBehavior.dismiss();
-                startActivity(intent);
-            });
-        }
-        if (buttonToAddDeviceViaMAC != null) {
-            buttonToAddDeviceViaMAC.setOnClickListener(view -> {
-                bottomSheetBehavior.dismiss();
-                DialogSaveDeviceWithMAC dialog = new DialogSaveDeviceWithMAC();
-                dialog.show(this.getSupportFragmentManager(), "dialog");
-            });
-        }
 
         this.registerReceiver(BluetoothStateChanged, new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
         setUpNavigation();
@@ -163,14 +141,6 @@ public class MainActivity extends AppCompatActivity {
 
     private synchronized void hideFabToEnBt(){
         fabToEnBt.hide();
-    }
-
-    public synchronized void showBottomSheet(){
-        bottomSheetBehavior.show();
-    }
-
-    public synchronized void hideBottomSheet(){
-        bottomSheetBehavior.cancel();
     }
 
     public synchronized void showMainMenu(){

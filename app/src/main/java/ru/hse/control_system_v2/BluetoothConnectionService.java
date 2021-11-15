@@ -13,8 +13,11 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
+import com.google.firebase.crashlytics.buildtools.reloc.com.google.common.collect.Iterables;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -30,7 +33,7 @@ public class BluetoothConnectionService extends Service {
      */
     private final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     private BluetoothAdapter btAdapter;
-    private ArrayList<DeviceItemType> devicesList;
+    private List<DeviceItemType> devicesList;
     private int devicesListConnectedSize;
     private boolean isSuccess = false;
     private Intent intentService;
@@ -118,7 +121,7 @@ public class BluetoothConnectionService extends Service {
             Intent resultOfConnectionIntent;
             if(isSuccess){
                 resultOfConnectionIntent = new Intent("success");
-                DeviceHandler.setDevicesList(devicesList);
+                DeviceHandler.setDevicesList(Iterables.toArray(devicesList, DeviceItemType.class));
                 Log.d(APP_LOG_TAG, "getter " +String.valueOf(DeviceHandler.getDevicesList().size()));
                 Log.d(APP_LOG_TAG, "Bt соединение успешно, передаю результат в Main Activity...");
             } else {

@@ -6,6 +6,6 @@
     <attr name="simpleThemeAccentColor" format="color" />
     <attr name="simpleThemeTextPrimaryColor" format="color" />
     <attr name="simpleThemeTextSecondaryColor" format="color" />
-
+    <attr name="simpleThemeWindowSecondaryColor" format="color" />
     <attr name="popupMenuBackgroundTint" format="color" />
 </resources>

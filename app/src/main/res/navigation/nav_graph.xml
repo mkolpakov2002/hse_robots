@@ -14,6 +14,21 @@
         <action
             android:id="@+id/action_mainMenuFragment_to_settings_Fragment"
             app:destination="@id/settingsFragment" />
+        <action
+            android:id="@+id/action_mainMenuFragment_to_connection_dialog"
+            app:destination="@id/connection_dialog" />
+        <action
+            android:id="@+id/action_mainMenuFragment_to_device_dialog"
+            app:destination="@id/device_dialog" />
+        <action
+            android:id="@+id/action_mainMenuFragment_to_device_entering_mac"
+            app:destination="@id/device_entering_mac" />
+        <action
+            android:id="@+id/action_mainMenuFragment_to_bluetoothDeviceActivity"
+            app:destination="@id/bluetoothDeviceActivity" />
+        <action
+            android:id="@+id/action_mainMenuFragment_to_addDeviceDBActivity2"
+            app:destination="@id/addDeviceDBActivity2" />
     </fragment>
     <fragment
         android:id="@+id/settingsFragment"
@@ -24,4 +39,36 @@
             android:id="@+id/action_settings_Fragment_to_mainMenuFragment"
             app:destination="@id/mainMenuFragment" />
     </fragment>
+    <dialog
+        android:id="@+id/connection_dialog"
+        android:name="ru.hse.control_system_v2.DialogConnection"
+        tools:layout="@layout/dialog_connection" >
+        <action
+            android:id="@+id/action_connection_dialog_to_mainMenuFragment"
+            app:destination="@id/mainMenuFragment" />
+    </dialog>
+    <dialog
+        android:id="@+id/device_dialog"
+        android:name="ru.hse.control_system_v2.DialogDevice"
+        tools:layout="@layout/dialog_device_menu" >
+        <action
+            android:id="@+id/action_device_dialog_to_mainMenuFragment"
+            app:destination="@id/mainMenuFragment" />
+    </dialog>
+    <dialog
+        android:id="@+id/device_entering_mac"
+        android:name="ru.hse.control_system_v2.DialogSaveDeviceWithMAC"
+        tools:layout="@layout/dialog_enter_mac" >
+        <action
+            android:id="@+id/action_device_entering_mac_to_mainMenuFragment"
+            app:destination="@id/mainMenuFragment" />
+    </dialog>
+    <activity
+        android:id="@+id/bluetoothDeviceActivity"
+        android:name="ru.hse.control_system_v2.BluetoothDeviceActivity"
+        android:label="BluetoothDeviceActivity" />
+    <activity
+        android:id="@+id/addDeviceDBActivity2"
+        android:name="ru.hse.control_system_v2.dbdevices.AddDeviceDBActivity"
+        android:label="AddDeviceDBActivity" />
 </navigation>

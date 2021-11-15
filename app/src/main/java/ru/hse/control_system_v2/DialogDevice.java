@@ -18,6 +18,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.firebase.crashlytics.buildtools.reloc.com.google.common.collect.Iterables;
 
 import java.util.ArrayList;
 import ru.hse.control_system_v2.list_devices.DeviceItemType;
@@ -27,7 +28,7 @@ public class DialogDevice extends DialogFragment {
     private String name, MAC, protocol, devClass, devType;
     private int id;
     private Context c;
-    private final DeviceItemType currentDevice;
+    private DeviceItemType currentDevice;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -52,11 +53,8 @@ public class DialogDevice extends DialogFragment {
         return current;
     }
 
-    public DialogDevice(DeviceItemType currentDevice){
-        this.currentDevice = currentDevice;
-    }
-
     void getDeviceInformation(){
+        currentDevice = DeviceHandler.getDevicesList().get(0);
         id = currentDevice.getDevId();
         name = currentDevice.getDevName();
         MAC = currentDevice.getDeviceMAC();
@@ -104,7 +102,7 @@ public class DialogDevice extends DialogFragment {
             //запуск подключения происходит ниже
             ArrayList<DeviceItemType> deviceItemTypeArrayList = new ArrayList<>();
             deviceItemTypeArrayList.add(currentDevice);
-            DeviceHandler.setDevicesList(deviceItemTypeArrayList);
+            DeviceHandler.setDevicesList(Iterables.toArray(deviceItemTypeArrayList, DeviceItemType.class));
             Intent startBluetoothConnectionService = new Intent(c, BluetoothConnectionService.class);
             startBluetoothConnectionService.putExtra("protocol", currentDevice.getDevProtocol());
             c.startService(startBluetoothConnectionService);

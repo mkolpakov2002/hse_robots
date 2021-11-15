@@ -47,7 +47,6 @@ public class DialogDeviceEdit extends DialogFragment {
     private String protocol;
     private String devClass;
     private String devType;
-    private int id;
     private boolean isNewDev = false;
     private EditText editTextNameAlert;
     @Override
@@ -59,7 +58,6 @@ public class DialogDeviceEdit extends DialogFragment {
     }
 
     void getDeviceInformation(){
-        id = currentDevice.getDevId();
         name = currentDevice.getDevName();
         MAC = currentDevice.getDeviceMAC();
         protocol = currentDevice.getDevProtocol();
@@ -75,7 +73,11 @@ public class DialogDeviceEdit extends DialogFragment {
             i = i - 2;
             //В текущем пункте List View находим первый символ ":", всё после него, а также два символа до него - адрес выбранного устройства
             this.MAC = deviceInfo.substring(i);
-            this.name = deviceInfo.substring(0,i-1);
+            if(i==0){
+                this.name = "";
+            } else {
+                this.name = deviceInfo.substring(0,i-1);
+            }
         } else {
             this.currentDevice = currentDevice;
             getDeviceInformation();

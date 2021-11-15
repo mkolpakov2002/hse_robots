@@ -5,6 +5,7 @@ import static ru.hse.control_system_v2.Constants.APP_LOG_TAG;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import ru.hse.control_system_v2.list_devices.DeviceItemType;
@@ -16,8 +17,8 @@ public class DeviceHandler {
         return DeviceHandler.devicesList;
     }
 
-    public static synchronized void setDevicesList(List<DeviceItemType> devicesList){
-        DeviceHandler.devicesList = devicesList;
+    public static synchronized void setDevicesList(DeviceItemType... devicesList){
+        DeviceHandler.devicesList = Arrays.asList(devicesList);
     }
 
 }

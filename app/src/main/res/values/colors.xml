@@ -22,6 +22,8 @@
 
     <color name="dialogButtonText">#008577</color>
 
+    <color name="colorWindowSecondaryLight">#e2e2e2</color>
+
     <color name="colorNeutralGray">#9e9e9e</color>
 
     <color name="colorCoolBlue">#507FCC</color>

@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,15 +19,20 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.crashlytics.buildtools.reloc.com.google.common.collect.Iterables;
 
 import java.util.ArrayList;
 
+import ru.hse.control_system_v2.dbdevices.AddDeviceDBActivity;
 import ru.hse.control_system_v2.list_devices.ButtonItemType;
 import ru.hse.control_system_v2.list_devices.DeviceItemType;
 import ru.hse.control_system_v2.list_devices.ItemType;
@@ -46,6 +52,7 @@ public class MainMenuFragment extends Fragment implements SwipeRefreshLayout.OnR
     private MainActivity ma;
     private DialogConnection progressOfConnectionDialog;
     private View view;
+    private BottomSheetDialog bottomSheetBehavior;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -101,7 +108,7 @@ public class MainMenuFragment extends Fragment implements SwipeRefreshLayout.OnR
         fabToStartConnecting.setOnClickListener(v -> {
             showStartOfConnection();
             Intent startBluetoothConnectionService = new Intent(fragmentContext, BluetoothConnectionService.class);
-            DeviceHandler.setDevicesList(multipleTypesAdapter.getSelectedDevices());
+            DeviceHandler.setDevicesList(Iterables.toArray(multipleTypesAdapter.getSelectedDevices(), DeviceItemType.class));
             fragmentContext.startService(startBluetoothConnectionService);
         });
 
@@ -119,6 +126,28 @@ public class MainMenuFragment extends Fragment implements SwipeRefreshLayout.OnR
         recycler = view.findViewById(R.id.recycler_main);
         recycler.setLayoutManager(gridLayoutManager);
 
+        bottomSheetBehavior = new BottomSheetDialog(ma,R.style.SAIBottomSheetDialog_Backup_Light);
+        bottomSheetBehavior.setContentView(R.layout.bottom_sheet_dialog_add_device);
+        bottomSheetBehavior.setCancelable(true);
+        bottomSheetBehavior.dismiss();
+        hideBottomSheet();
+
+        Button buttonToAddDeviceViaMAC = bottomSheetBehavior.findViewById(R.id.button_manual_mac);
+        Button buttonToAddDevice = bottomSheetBehavior.findViewById(R.id.button_add_device);
+        if (buttonToAddDevice != null) {
+            buttonToAddDevice.setOnClickListener(view1 -> {
+                bottomSheetBehavior.dismiss();
+                Navigation.findNavController(requireParentFragment().requireView()).navigateUp();
+                Navigation.findNavController(requireParentFragment().requireView()).navigate(R.id.action_mainMenuFragment_to_addDeviceDBActivity2);
+            });
+        }
+        if (buttonToAddDeviceViaMAC != null) {
+            buttonToAddDeviceViaMAC.setOnClickListener(view1 -> {
+                bottomSheetBehavior.dismiss();
+                Navigation.findNavController(requireParentFragment().requireView()).navigate(R.id.action_mainMenuFragment_to_device_entering_mac);
+            });
+        }
+
         if(savedInstanceState!=null){
             //recycler.getLayoutManager().onRestoreInstanceState(recylerViewState);
         }
@@ -126,11 +155,8 @@ public class MainMenuFragment extends Fragment implements SwipeRefreshLayout.OnR
 
     public void showStartOfConnection(){
         fabToStartConnecting.hide();
-        DialogFragment existingDialog = (DialogFragment) getParentFragmentManager().findFragmentByTag("progressOfConnectionDialog");
-        if (existingDialog != null)
-            existingDialog.dismiss();
-
-        new DialogConnection().show(getParentFragmentManager(), "progressOfConnectionDialog");
+        Navigation.findNavController(requireParentFragment().requireView()).navigateUp();
+        Navigation.findNavController(requireParentFragment().requireView()).navigate(R.id.action_mainMenuFragment_to_connection_dialog);
         showToast("Соединение начато");
     }
 
@@ -140,9 +166,7 @@ public class MainMenuFragment extends Fragment implements SwipeRefreshLayout.OnR
         @Override
         public void onReceive(Context context, Intent intent) {
             showToast("Подключение не успешно");
-            DialogFragment existingDialog = (DialogFragment) getParentFragmentManager().findFragmentByTag("progressOfConnectionDialog");
-            if (existingDialog != null)
-                existingDialog.dismiss();
+            Navigation.findNavController(requireParentFragment().requireView()).navigateUp();
             onRefresh();
         }
     };
@@ -153,14 +177,8 @@ public class MainMenuFragment extends Fragment implements SwipeRefreshLayout.OnR
         public void onReceive(Context context, Intent intent) {
             //Устройство подключено, Service выполнился успешно
             multipleTypesAdapter.clearSelected();
-            Bundle arguments = intent.getExtras();
-            String classDevice = arguments.get("protocol").toString();
-            Intent startSendingData = new Intent(fragmentContext, BluetoothDeviceActivity.class);
-            startSendingData.putExtra("protocol", classDevice);
-            startActivity(startSendingData);
-            DialogFragment existingDialog = (DialogFragment) getParentFragmentManager().findFragmentByTag("progressOfConnectionDialog");
-            if (existingDialog != null)
-                existingDialog.dismiss();
+            Navigation.findNavController(requireParentFragment().requireView()).navigateUp();
+            Navigation.findNavController(requireParentFragment().requireView()).navigate(R.id.action_mainMenuFragment_to_bluetoothDeviceActivity);
         }
     };
 
@@ -173,7 +191,7 @@ public class MainMenuFragment extends Fragment implements SwipeRefreshLayout.OnR
     //Обновляем внешний вид приложения, скрываем и добавляем нужные элементы интерфейса
     @Override
     public void onRefresh() {
-        ma.hideBottomSheet();
+        hideBottomSheet();
         ma.showMainMenu();
         hideFabToStartConnecting();
         if (BluetoothAdapter.getDefaultAdapter() != null && btIsEnabledFlagVoid()) {
@@ -254,5 +272,13 @@ public class MainMenuFragment extends Fragment implements SwipeRefreshLayout.OnR
         super.onSaveInstanceState(outState);
         //TODO
         //Parcelable recylerViewState = Objects.requireNonNull(recycler.getLayoutManager()).onSaveInstanceState();
+    }
+
+    public synchronized void showBottomSheet(){
+        bottomSheetBehavior.show();
+    }
+
+    public synchronized void hideBottomSheet(){
+        bottomSheetBehavior.cancel();
     }
 }

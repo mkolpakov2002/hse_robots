@@ -35,6 +35,7 @@ import ru.hse.control_system_v2.DialogDeviceEdit;
 import ru.hse.control_system_v2.R;
 import ru.hse.control_system_v2.ThemeUtils;
 import ru.hse.control_system_v2.dbprotocol.ProtocolDBHelper;
+import ru.hse.control_system_v2.list_devices.DeviceItemType;
 
 public class AddDeviceDBActivity extends AppCompatActivity implements DevicesAdapter.SelectedDevice, SwipeRefreshLayout.OnRefreshListener{
     ProtocolDBHelper protocolDBHelper;

@@ -56,12 +56,10 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import fr.ganfra.materialspinner.MaterialSpinner;
 import ru.hse.control_system_v2.dbprotocol.ProtocolDBHelper;
 import ru.hse.control_system_v2.dbprotocol.ProtocolRepo;
 
 import static android.app.Activity.RESULT_OK;
-import static android.content.Context.MODE_PRIVATE;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
@@ -79,7 +77,6 @@ public class SettingsFragment extends Fragment {
     private BluetoothAdapter btAdapter;
     private Context fragmentContext;
     private MainActivity ma;
-    private LinearLayout ll_hint_spinner;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -155,63 +152,14 @@ public class SettingsFragment extends Fragment {
         MaterialAutoCompleteTextView autoCompleteTextView = view.findViewById(R.id.theme_menu);
         autoCompleteTextView.setThreshold(themes.size());
         SharedPreferences sPref = PreferenceManager.getDefaultSharedPreferences(ma);
-        String sTheme = sPref.getString("theme", "Light");
+        String sTheme = sPref.getString("theme", themes.get(0));
         autoCompleteTextView.setText(sTheme);
         autoCompleteTextView.setAdapter(adapter);
         autoCompleteTextView.setOnItemClickListener ((adapterView, view1, position, l) -> {
-            SharedPreferences.Editor ed = sPref.edit();
-            Log.d("App", String.valueOf(position));
-            switch (position) {
-                case 0:
-                    ed.putString("theme", "Light");
-                    ed.apply();
-                    break;
-                case 1:
-                    ed.putString("theme", "Dark");
-                    ed.apply();
-                    break;
-                case 2:
-                    ed.putString("theme", "Rena");
-                    ed.apply();
-                    break;
-                case 3:
-                    ed.putString("theme", "Rooter");
-                    ed.apply();
-                    break;
-                case 4:
-                    ed.putString("theme", "Omelette");
-                    ed.apply();
-                    break;
-                case 5:
-                    ed.putString("theme", "Pixel");
-                    ed.apply();
-                    break;
-                case 6:
-                    ed.putString("theme", "FDroid");
-                    ed.apply();
-                    break;
-                case 7:
-                    ed.putString("theme", "Dark2");
-                    ed.apply();
-                    break;
-                case 8:
-                    ed.putString("theme", "Gold");
-                    ed.apply();
-                    break;
-                case 9:
-                    ed.putString("theme", "RenaLight");
-                    ed.apply();
-                    break;
-                case 10:
-                    ed.putString("theme", "Mint");
-                    ed.apply();
-                    break;
-                case 11:
-                    ed.putString("theme", "FDroidDark");
-                    ed.apply();
-                    break;
-            }
-            if (position<=11&&position>=0){
+            if (position<themes.size()&&position>=0){
+                SharedPreferences.Editor ed = sPref.edit();
+                ed.putString("theme", themes.get(position));
+                ed.apply();
                 Log.d("changeTheme", String.valueOf(position));
                 ThemeUtils.changeToTheme(ma);
             }

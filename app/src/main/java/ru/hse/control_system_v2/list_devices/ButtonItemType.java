@@ -17,17 +17,32 @@ public class ButtonItemType implements ItemType {
     MainActivity ma;
     String textInfo;
     final String IMAGE_TYPE = "button_type";
+    MainMenuFragment mainMenuFragment;
 
     public ButtonItemType(MainActivity ma){
         this.ma = ma;
         this.textInfo = ma.getResources().getString(R.string.button_add_device);
+        NavHostFragment navHostFragment = (NavHostFragment)(ma).getSupportFragmentManager().getPrimaryNavigationFragment();
+
+        FragmentManager fragmentManager = null;
+        if (navHostFragment != null) {
+            fragmentManager = navHostFragment.getChildFragmentManager();
+        }
+
+        Fragment current = null;
+        if (fragmentManager != null) {
+            current = fragmentManager.getPrimaryNavigationFragment();
+        }
+        if(current instanceof MainMenuFragment){
+            mainMenuFragment = (MainMenuFragment) current;
+        }
     }
     public View.OnClickListener getOnClickListener() {
 
        return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ma.showBottomSheet();
+                mainMenuFragment.showBottomSheet();
             }
         };
     }

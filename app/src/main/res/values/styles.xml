@@ -5,7 +5,7 @@
         <item name="colorPrimaryDark">@color/colorPureWhite</item>
         <item name="colorPrimaryLight">@color/colorPrimaryLightSai</item>
         <item name="colorAccent">@color/colorCoolBlue</item>
-        <item name="android:windowBackground">@color/colorPureWhite</item>
+        <item name="android:windowBackground">@color/colorWindowSecondaryLight</item>
         <item name="titleTextColor">@color/colorFineGrey</item>
         <item name="android:textColorPrimary">@color/colorFineGrey</item>
         <item name="android:textColorSecondary">@color/colorFineGrey</item>
@@ -46,7 +46,7 @@
         <item name="colorPrimaryDark">?attr/simpleThemePrimaryColor</item>
         <item name="colorPrimaryLight">?attr/simpleThemePrimaryLightColor</item>
         <item name="colorAccent">?attr/simpleThemeAccentColor</item>
-        <item name="android:windowBackground">?attr/simpleThemePrimaryColor</item>
+        <item name="android:windowBackground">?attr/simpleThemeWindowSecondaryColor</item>
         <item name="titleTextColor">?attr/simpleThemeTextPrimaryColor</item>
         <item name="android:textColorPrimary">?attr/simpleThemeTextPrimaryColor</item>
         <item name="android:textColorSecondary">?attr/simpleThemeTextSecondaryColor</item>
@@ -58,7 +58,7 @@
         <item name="colorPrimaryDark">?attr/simpleThemePrimaryColor</item>
         <item name="colorPrimaryLight">?attr/simpleThemePrimaryLightColor</item>
         <item name="colorAccent">?attr/simpleThemeAccentColor</item>
-        <item name="android:windowBackground">?attr/simpleThemePrimaryColor</item>
+        <item name="android:windowBackground">?attr/simpleThemeWindowSecondaryColor</item>
         <item name="titleTextColor">?attr/simpleThemeTextPrimaryColor</item>
         <item name="android:textColorPrimary">?attr/simpleThemeTextPrimaryColor</item>
         <item name="android:textColorSecondary">?attr/simpleThemeTextSecondaryColor</item>
@@ -66,6 +66,7 @@
     </style>
 
     <style name="AppTheme.Rena" parent="AppTheme.Simple.Dark">
+        <item name="simpleThemeWindowSecondaryColor">@color/colorPrimaryRena</item>
         <item name="simpleThemePrimaryColor">@color/colorPrimaryRena</item>
         <item name="simpleThemePrimaryLightColor">@color/colorPrimaryLightRena</item>
         <item name="simpleThemeAccentColor">@color/colorAccentRena</item>
@@ -73,15 +74,8 @@
         <item name="simpleThemeTextSecondaryColor">@color/colorTextSecondaryRena</item>
     </style>
 
-    <style name="AppTheme.Rooter" parent="AppTheme.Simple.Dark">
-        <item name="simpleThemePrimaryColor">@color/colorPrimaryRooter</item>
-        <item name="simpleThemePrimaryLightColor">@color/colorPrimaryLightRooter</item>
-        <item name="simpleThemeAccentColor">@color/colorAccentRooter</item>
-        <item name="simpleThemeTextPrimaryColor">@color/colorTextPrimaryRooter</item>
-        <item name="simpleThemeTextSecondaryColor">@color/colorTextSecondaryRooter</item>
-    </style>
-
     <style name="AppTheme.Omelette" parent="AppTheme.Simple.Dark">
+        <item name="simpleThemeWindowSecondaryColor">@color/colorPrimaryOmelette</item>
         <item name="simpleThemePrimaryColor">@color/colorPrimaryOmelette</item>
         <item name="simpleThemePrimaryLightColor">@color/colorPrimaryLightOmelette</item>
         <item name="simpleThemeAccentColor">@color/colorAccentOmelette</item>
@@ -90,6 +84,7 @@
     </style>
 
     <style name="AppTheme.Pixel" parent="AppTheme.Simple.Light">
+        <item name="simpleThemeWindowSecondaryColor">@color/colorWindowSecondaryLight</item>
         <item name="simpleThemePrimaryColor">@color/colorPrimaryPixel</item>
         <item name="simpleThemePrimaryLightColor">@color/colorPrimaryLightPixel</item>
         <item name="simpleThemeAccentColor">@color/colorAccentPixel</item>
@@ -98,6 +93,7 @@
     </style>
 
     <style name="AppTheme.FDroid" parent="AppTheme.Simple.Light">
+        <item name="simpleThemeWindowSecondaryColor">@color/colorWindowSecondaryLight</item>
         <item name="simpleThemePrimaryColor">@color/colorPrimaryFDroid</item>
         <item name="simpleThemePrimaryLightColor">@color/colorPrimaryLightFDroid</item>
         <item name="simpleThemeAccentColor">@color/colorAccentFDroid</item>
@@ -106,6 +102,7 @@
     </style>
 
     <style name="AppTheme.Dark2" parent="AppTheme.Simple.Dark">
+        <item name="simpleThemeWindowSecondaryColor">@color/colorPrimaryDark2</item>
         <item name="simpleThemePrimaryColor">@color/colorPrimaryDark2</item>
         <item name="simpleThemePrimaryLightColor">@color/colorPrimaryLightDark2</item>
         <item name="simpleThemeAccentColor">@color/colorAccentDark2</item>
@@ -114,6 +111,7 @@
     </style>
 
     <style name="AppTheme.Gold" parent="AppTheme.Simple.Dark">
+        <item name="simpleThemeWindowSecondaryColor">@color/colorPrimaryGold</item>
         <item name="simpleThemePrimaryColor">@color/colorPrimaryGold</item>
         <item name="simpleThemePrimaryLightColor">@color/colorPrimaryLightGold</item>
         <item name="simpleThemeAccentColor">@color/colorAccentGold</item>
@@ -122,6 +120,7 @@
     </style>
 
     <style name="AppTheme.RenaLight" parent="AppTheme.Simple.Light">
+        <item name="simpleThemeWindowSecondaryColor">@color/colorWindowSecondaryLight</item>
         <item name="simpleThemePrimaryColor">@color/colorPrimaryRenaLight</item>
         <item name="simpleThemePrimaryLightColor">@color/colorPrimaryLightRenaLight</item>
         <item name="simpleThemeAccentColor">@color/colorAccentRenaLight</item>
@@ -130,6 +129,7 @@
     </style>
 
     <style name="AppTheme.Mint" parent="AppTheme.Simple.Dark">
+        <item name="simpleThemeWindowSecondaryColor">@color/colorPrimaryMint</item>
         <item name="simpleThemePrimaryColor">@color/colorPrimaryMint</item>
         <item name="simpleThemePrimaryLightColor">@color/colorPrimaryLightMint</item>
         <item name="simpleThemeAccentColor">@color/colorAccentMint</item>
@@ -138,6 +138,7 @@
     </style>
 
     <style name="AppTheme.FDroidDark" parent="AppTheme.Simple.Dark">
+        <item name="simpleThemeWindowSecondaryColor">@color/colorPrimaryFDroidDark</item>
         <item name="simpleThemePrimaryColor">@color/colorPrimaryFDroidDark</item>
         <item name="simpleThemePrimaryLightColor">@color/colorPrimaryLightFDroidDark</item>
         <item name="simpleThemeAccentColor">@color/colorAccentFDroidDark</item>
@@ -254,10 +255,10 @@
         <item name="android:textAllCaps">true</item>
         <item name="android:layout_gravity">center</item>
         <item name="android:singleLine">true</item>
-        <item name="android:textColorPrimary">?attr/simpleThemeTextSecondaryColor</item>
-        <item name="android:textColorSecondary">?attr/simpleThemeTextSecondaryColor</item>
+        <item name="android:textColorPrimary">?attr/colorAccent</item>
+        <item name="android:textColorSecondary">?attr/colorAccent</item>
         <item name="actionMenuTextColor">?attr/simpleThemeTextSecondaryColor</item>
-        <item name="android:background">?attr/colorAccent</item>
+        <item name="android:background">?android:attr/windowBackground</item>
         <item name="colorOnPrimary">?attr/colorPrimaryDark</item>
         <item name="contentScrim">?attr/colorAccent</item>
     </style>

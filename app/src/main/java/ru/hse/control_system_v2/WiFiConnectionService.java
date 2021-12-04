@@ -31,12 +31,10 @@ public class WiFiConnectionService extends Service {
 
         devicesList = new ArrayList<>();
         devicesListConnected = new ArrayList<>();
+        devicesList.addAll(DeviceHandler.getDevicesList());
         ExecutorService executorService = Executors.newFixedThreadPool(devicesList.size());
 
         devicesList.addAll(DeviceHandler.getDevicesList());
-
-        Bundle arguments = intent.getExtras();
-        classDevice = arguments.get("protocol").toString();
 
         for(int i = 0; i < devicesList.size(); i++){
             Log.d(APP_LOG_TAG, "Создаю потоки для подключений...");
@@ -45,10 +43,7 @@ public class WiFiConnectionService extends Service {
             executorService.execute(treadList.get(i));
         }
 
-        Intent serviceStarted;
-        serviceStarted = new Intent("serviceStarted");
         Log.d(APP_LOG_TAG, "WiFi соединение начато...");
-        sendBroadcast(serviceStarted);
         return Service.START_NOT_STICKY;
     }
 
@@ -65,6 +60,7 @@ public class WiFiConnectionService extends Service {
                 currentDevice.setWifiSocket(new Socket(currentDevice.getDevIp(),currentDevice.getDevPort()));
             } catch (IOException e) {
                 e.printStackTrace();
+                currentDevice.closeConnection();
             }
             resultOfConnection(currentDevice);
 

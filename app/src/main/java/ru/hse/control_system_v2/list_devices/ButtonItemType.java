@@ -1,11 +1,7 @@
 package ru.hse.control_system_v2.list_devices;
 
-import android.content.Context;
 import android.view.View;
 
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import ru.hse.control_system_v2.MainActivity;
@@ -22,27 +18,17 @@ public class ButtonItemType implements ItemType {
     public ButtonItemType(MainActivity ma){
         this.ma = ma;
         this.textInfo = ma.getResources().getString(R.string.button_add_device);
-        NavHostFragment navHostFragment = (NavHostFragment)(ma).getSupportFragmentManager().getPrimaryNavigationFragment();
-
-        FragmentManager fragmentManager = null;
-        if (navHostFragment != null) {
-            fragmentManager = navHostFragment.getChildFragmentManager();
-        }
-
-        Fragment current = null;
-        if (fragmentManager != null) {
-            current = fragmentManager.getPrimaryNavigationFragment();
-        }
-        if(current instanceof MainMenuFragment){
-            mainMenuFragment = (MainMenuFragment) current;
-        }
     }
+
     public View.OnClickListener getOnClickListener() {
 
        return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mainMenuFragment.showBottomSheet();
+                mainMenuFragment = ma.getMainMenuFragment();
+                if(mainMenuFragment!=null){
+                    mainMenuFragment.showBottomSheetToAdd();
+                }
             }
         };
     }

@@ -14,9 +14,11 @@ import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import ru.hse.control_system_v2.dbprotocol.ProtocolDBHelper;
 
@@ -24,6 +26,10 @@ import ru.hse.control_system_v2.dbprotocol.ProtocolDBHelper;
 public class DialogSaveDeviceWithMAC extends DialogFragment {
     private Context c;
     private String mPreviousMac = null;
+
+    public DialogSaveDeviceWithMAC(){
+        //nothing
+    }
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -40,7 +46,7 @@ public class DialogSaveDeviceWithMAC extends DialogFragment {
         LayoutInflater inflater = this.getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.dialog_enter_mac, null);
 
-        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(c, R.style.AlertDialog_AppTheme);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(c, R.style.AlertDialogStyle);
         builder.setView(dialogView);
         EditText editTextMACAlert = dialogView.findViewById(R.id.editDeviceMAC);
         editTextMACAlert.setInputType(InputType.TYPE_CLASS_TEXT);
@@ -87,7 +93,7 @@ public class DialogSaveDeviceWithMAC extends DialogFragment {
         MaterialButton buttonToCancel = dialogView.findViewById(R.id.dialog_mac_cancel);
         MaterialButton buttonToAccept = dialogView.findViewById(R.id.dialog_mac_accept);
 
-        android.app.AlertDialog alertDialog = builder.create();
+        AlertDialog alertDialog = builder.create();
 
         buttonToCancel.setOnClickListener(view -> {
             alertDialog.dismiss();

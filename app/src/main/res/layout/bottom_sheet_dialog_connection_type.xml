@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/bottom_sheet"
+    android:id="@+id/bottom_sheet_connection"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     app:behavior_hideable="true"
-    android:background="@drawable/bg_rounded_popup"
     android:animateLayoutChanges="true"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
@@ -14,22 +13,22 @@
         android:layout_height="match_parent">
 
         <TextView
-            android:id="@+id/bottom_sheet_connection_type"
+            android:id="@+id/bottom_sheet_connection_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
             android:gravity="center"
-            android:padding="16dp"
             android:text="Выберите тип подключения"
-            android:textColor="?attr/simpleThemeTextPrimaryColor"
             android:textSize="20sp"
+            app:layout_constrainedWidth="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/button_bluetooth"
-            style="@style/HSERobotsMaterialButton.Outlined"
+            android:id="@+id/button_wifi"
+            style="@style/MaterialButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -37,15 +36,16 @@
             android:layout_marginEnd="8dp"
             android:contentDescription="@string/add_device"
             android:gravity="center"
-            android:text="Bluetooth соединение"
-            app:icon="@drawable/ic_baseline_bluetooth_24"
+            android:singleLine="false"
+            android:text="подключение по Wi-Fi"
+            app:icon="@drawable/ic_baseline_wifi_24"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/bottom_sheet_connection_type"/>
+            app:layout_constraintTop_toBottomOf="@+id/bottom_sheet_connection_text_view" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/button_wifi"
-            style="@style/HSERobotsMaterialButton.Outlined"
+            android:id="@+id/button_bt"
+            style="@style/MaterialButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -53,12 +53,13 @@
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="16dp"
             android:gravity="center"
-            android:text="Wi-Fi соединение"
-            app:icon="@drawable/ic_baseline_wifi_24"
+            android:singleLine="false"
+            android:text="подключение по Bluetooth"
+            app:icon="@drawable/ic_baseline_bluetooth_connected_24"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/button_bluetooth"/>
+            app:layout_constraintTop_toBottomOf="@+id/button_wifi" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </LinearLayout>

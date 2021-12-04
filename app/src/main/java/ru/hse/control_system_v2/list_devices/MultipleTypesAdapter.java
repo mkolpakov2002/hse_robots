@@ -6,78 +6,72 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Animatable;
-import android.os.Bundle;
 import android.util.Log;
-import android.view.HapticFeedbackConstants;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
-import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.card.MaterialCardView;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
+import ru.hse.control_system_v2.App;
+import ru.hse.control_system_v2.AppDataBase;
 import ru.hse.control_system_v2.DeviceHandler;
-import ru.hse.control_system_v2.DialogDevice;
+import ru.hse.control_system_v2.DeviceItemTypeDao;
 import ru.hse.control_system_v2.MainActivity;
 import ru.hse.control_system_v2.MainMenuFragment;
 import ru.hse.control_system_v2.R;
 
 public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements ViewHolderFactory.ListDevicesHolder.IListener {
 
-    public ArrayList<ItemType> dataSet;
-    public ArrayList<DeviceItemType> mData;
-    Context context;
-    MainActivity ma;
-    MainMenuFragment mainMenuFragment;
-    DeviceClickedListener listener;
-    ArrayList<DeviceItemType> selectedDevicesList;
+    private ArrayList<ItemType> itemTypeArrayList;
+    private ArrayList<DeviceItemType> mData;
+    private final Context context;
+    private MainActivity ma;
+    private MainMenuFragment mainMenuFragment;
+    private final DeviceClickedListener listener;
 
 
-    public MultipleTypesAdapter(ArrayList<ItemType> dataSet, @NonNull Context context, ArrayList <DeviceItemType> mData){
+    public MultipleTypesAdapter(@NonNull Context context){
         super();
-        this.dataSet = dataSet;
-        this.mData = mData;
-        this.context = context;
         if (context instanceof Activity){
             ma = (MainActivity) context;
         }
-        NavHostFragment navHostFragment = (NavHostFragment)(ma).getSupportFragmentManager().getPrimaryNavigationFragment();
-
-        FragmentManager fragmentManager = null;
-        if (navHostFragment != null) {
-            fragmentManager = navHostFragment.getChildFragmentManager();
-        }
-        Fragment current = null;
-        if (fragmentManager != null) {
-            current = fragmentManager.getPrimaryNavigationFragment();
-        }
-        if(current instanceof MainMenuFragment){
-            mainMenuFragment = (MainMenuFragment) current;
-        }
+        this.mData = getDevicesArrayList();
+        this.itemTypeArrayList = new ArrayList<ItemType>();
+        itemTypeArrayList.add(new ButtonItemType(ma));
+        itemTypeArrayList.addAll(mData);
+        this.context = context;
         listener = new MyListener();
-        selectedDevicesList = new ArrayList<>();
     }
 
-    public void onNewData(ArrayList<DeviceItemType> newDevicesList) {
+    public ArrayList<DeviceItemType> getDevicesArrayList() {
+        AppDataBase dbDevices = App.getDatabase();
+        DeviceItemTypeDao devicesDao = dbDevices.getDeviceItemTypeDao();
+        return (ArrayList<DeviceItemType>) devicesDao.getAll();
+    }
+
+    public void refreshAdapterData() {
         ArrayList<ItemType> newDataSet = new ArrayList<>();
-        newDataSet.add(dataSet.get(0));
-        newDataSet.addAll(newDevicesList);
-        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new ItemsDiffUtilCallBack(newDataSet,dataSet),true);
-        this.dataSet = newDataSet;
-        this.mData = newDevicesList;
+        newDataSet.add(itemTypeArrayList.get(0));
+        var newData = getDevicesArrayList();
+        newDataSet.addAll(newData);
+
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new ItemsDiffUtilCallBack(newDataSet, itemTypeArrayList),true);
+        this.itemTypeArrayList = newDataSet;
+        this.mData = getDevicesArrayList();
         diffResult.dispatchUpdatesTo(this);
     }
 
@@ -102,7 +96,14 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
         public void deviceClicked(DeviceItemType item, View itemView) {
             ImageView checkMark = (ImageView) itemView.findViewById(R.id.check_mark);
             MaterialCardView materialCardView = itemView.findViewById(R.id.device_item_card_view);
+            mainMenuFragment = ma.getMainMenuFragment();
 
+            var selectedDevicesList = new ArrayList<DeviceItemType>();
+            for(var i = 1; i<itemTypeArrayList.size(); i++){
+                if(itemTypeArrayList.get(i).getIsSelectedOnScreen()){
+                    selectedDevicesList.add(mData.get(i-1));
+                }
+            }
             //проверяю происходит ли выбор списка устройств
             if(selectedDevicesList.size() != 0) {
                 Log.d(TAG, "...Список не пуст, нажато устройство...");
@@ -117,51 +118,69 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
                     for (DeviceItemType currentDevice: selectedDevicesList) {
                         if (currentDevice.getDeviceMAC().equals(item.getDeviceMAC())) {
                             selectedDevicesList.remove(currentDevice);
+                            itemTypeArrayList.get(itemTypeArrayList.indexOf(item)).setIsSelectedOnScreen(false);
                             wasAlreadySelected = true;
                             Log.d(TAG, "...В списке нашлось это устройство, удаляю...");
                             checkMark.setVisibility(View.GONE);
                             materialCardView.setStrokeColor(Color.TRANSPARENT);
+
                             break;
                         }
                     }
 
                     if (!wasAlreadySelected) {
                         Log.d(TAG, "...В списке не нашлось это устройство, добавляю...");
+
+                        itemTypeArrayList.get(itemTypeArrayList.indexOf(item)).setIsSelectedOnScreen(true);
                         selectedDevicesList.add(item);
-                        item.setIsSelectedOnScreen(true);
-                        mainMenuFragment.showFabToStartConnecting();
-                        materialCardView.setStrokeColor(ContextCompat.getColor(ma,R.color.colorAccent));
+
+                        if(mainMenuFragment!=null){
+                            mainMenuFragment.showItemSelectionMenu();
+                        }
+                        materialCardView.setStrokeColor(ContextCompat.getColor(ma,R.color.color_accent));
                         checkMark.setVisibility(VISIBLE);
                         ((Animatable) checkMark.getDrawable()).start();
 
                     } else {
-                        item.setIsSelectedOnScreen(false);
                         if(selectedDevicesList.size() == 0) {
                             Log.d(TAG, "...Список очищен...");
-                            mainMenuFragment.hideFabToStartConnecting();
+                            if(mainMenuFragment!=null){
+                                mainMenuFragment.onRefresh();
+                            }
                         }
                     }
                 }
             } else {
+                selectedDevicesList.add(item);
                 Log.d(TAG, "...Список пуст, открываю диалог...");
-                DeviceHandler.setDevicesList(item);
                 //список пуст, открываем диалог для одного устройства
                 Navigation.findNavController(mainMenuFragment.requireParentFragment().requireView()).navigateUp();
                 Navigation.findNavController(mainMenuFragment.requireParentFragment().requireView()).navigate(R.id.action_mainMenuFragment_to_device_dialog);
             }
+            DeviceHandler.setDevicesList(selectedDevicesList);
         }
 
         @Override
         public void deviceLongClicked(DeviceItemType item, View itemView) {
-
             MaterialCardView materialCardView = itemView.findViewById(R.id.device_item_card_view);
             ImageView checkMark = (ImageView) itemView.findViewById(R.id.check_mark);
+            mainMenuFragment = ma.getMainMenuFragment();
+
+            var selectedDevicesList = new ArrayList<DeviceItemType>();
+            for(var i = 1; i<itemTypeArrayList.size(); i++){
+                if(itemTypeArrayList.get(i).getIsSelectedOnScreen()){
+                    selectedDevicesList.add(mData.get(i-1));
+                }
+            }
+
             if (selectedDevicesList.size() == 0) {
                 Log.d(TAG, "...Список пуст, добавляю устройство...");
+                itemTypeArrayList.get(itemTypeArrayList.indexOf(item)).setIsSelectedOnScreen(true);
                 selectedDevicesList.add(item);
-                item.setIsSelectedOnScreen(true);
-                mainMenuFragment.showFabToStartConnecting();
-                materialCardView.setStrokeColor(ContextCompat.getColor(ma,R.color.colorAccent));
+                if(mainMenuFragment!=null){
+                    mainMenuFragment.showItemSelectionMenu();
+                }
+                materialCardView.setStrokeColor(ContextCompat.getColor(ma,R.color.color_accent));
                 checkMark.setVisibility(VISIBLE);
                 ((Animatable) checkMark.getDrawable()).start();
 
@@ -178,15 +197,16 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
                         }
                     }
                     if (!wasAlreadySelected) {
+                        itemTypeArrayList.get(itemTypeArrayList.indexOf(item)).setIsSelectedOnScreen(true);
                         selectedDevicesList.add(item);
-                        item.setIsSelectedOnScreen(true);
-                        materialCardView.setStrokeColor(ContextCompat.getColor(ma,R.color.colorAccent));
+                        materialCardView.setStrokeColor(ContextCompat.getColor(ma,R.color.color_accent));
                         checkMark.setVisibility(VISIBLE);
                         ((Animatable) checkMark.getDrawable()).start();
                     }
                 }
 
             }
+            DeviceHandler.setDevicesList(selectedDevicesList);
         }
 
     }
@@ -199,25 +219,17 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        dataSet.get(position).onBindViewHolder(holder);
+        itemTypeArrayList.get(position).onBindViewHolder(holder);
     }
 
     @Override
     public int getItemCount() {
-        return dataSet.size();
+        return itemTypeArrayList.size();
     }
 
     @Override
     public int getItemViewType(int position) {
-        return dataSet.get(position).getItemViewType();
-    }
-
-    public void clearSelected(){
-        selectedDevicesList.clear();
-    }
-
-    public List<DeviceItemType> getSelectedDevices(){
-        return selectedDevicesList;
+        return itemTypeArrayList.get(position).getItemViewType();
     }
 
 }

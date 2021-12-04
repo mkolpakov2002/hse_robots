@@ -11,29 +11,30 @@
     app:layout_constraintTop_toTopOf="parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/floating_action_button_start_sending_data"
+        style="@style/MaterialButton.ExtendedFab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
-        style="@style/HSERobotsMaterialButton.Fab"
         android:contentDescription=""
-        android:src="@drawable/ic_baseline_bluetooth_connected_24"
+        app:icon="@drawable/ic_connection"
+        android:text="Подключение"
         android:textAlignment="center"
-        app:layout_constraintBottom_toTopOf="@+id/floating_action_button_delete_selected"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         tools:ignore="SpeakableTextPresentCheck" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floating_action_button_delete_selected"
+        style="@style/MaterialButton.Fab.Secondary"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:src="@drawable/ic_baseline_delete_outline_24"
-        style="@style/HSERobotsMaterialButton.Fab"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/floating_action_button_start_sending_data"
         app:layout_constraintEnd_toEndOf="parent"
         tools:ignore="SpeakableTextPresentCheck" />
 
@@ -55,7 +56,6 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="8dp"
-        android:background="@drawable/white_bg"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -68,8 +68,7 @@
             android:clickable="true"
             android:clipToPadding="false"
             android:focusable="true"
-            android:foreground="?android:attr/selectableItemBackground"
-            android:paddingBottom="48dp" />
+            android:foreground="?android:attr/selectableItemBackground" />
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 

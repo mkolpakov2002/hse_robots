@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     app:behavior_hideable="true"
-    android:background="@drawable/bg_rounded_popup"
     android:animateLayoutChanges="true"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
@@ -20,7 +19,6 @@
             android:layout_marginTop="16dp"
             android:gravity="center"
             android:text="Добавление новых устройств"
-            android:textColor="?attr/simpleThemeTextPrimaryColor"
             android:textSize="20sp"
             app:layout_constrainedWidth="true"
             app:layout_constraintEnd_toEndOf="parent"
@@ -30,7 +28,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button_add_device"
-            style="@style/HSERobotsMaterialButton.Outlined"
+            style="@style/MaterialButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -40,7 +38,6 @@
             android:gravity="center"
             android:singleLine="false"
             android:text="из списка сопряжённых"
-            app:iconTint="?attr/colorAccent"
             app:icon="@drawable/ic_baseline_add_24"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -48,7 +45,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button_manual_mac"
-            style="@style/HSERobotsMaterialButton.Outlined"
+            style="@style/MaterialButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -58,7 +55,6 @@
             android:gravity="center"
             android:singleLine="false"
             android:text="вручную по MAC"
-            app:iconTint="?attr/colorAccent"
             app:icon="@drawable/ic_baseline_keyboard_24"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

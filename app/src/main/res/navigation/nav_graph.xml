@@ -29,6 +29,12 @@
         <action
             android:id="@+id/action_mainMenuFragment_to_addDeviceDBActivity2"
             app:destination="@id/addDeviceDBActivity2" />
+        <action
+            android:id="@+id/action_mainMenuFragment_to_oneButtonAlertDialogFragment"
+            app:destination="@id/oneButtonAlertDialogFragment" />
+        <action
+            android:id="@+id/action_mainMenuFragment_to_wiFiDeviceActivity"
+            app:destination="@id/wiFiDeviceActivity" />
     </fragment>
     <fragment
         android:id="@+id/settingsFragment"
@@ -71,4 +77,15 @@
         android:id="@+id/addDeviceDBActivity2"
         android:name="ru.hse.control_system_v2.dbdevices.AddDeviceDBActivity"
         android:label="AddDeviceDBActivity" />
+    <dialog
+        android:id="@+id/oneButtonAlertDialogFragment"
+        android:name="ru.hse.control_system_v2.OneButtonAlertDialogFragment"
+        android:label="OneButtonAlertDialogFragment">
+
+    </dialog>
+    <activity
+        android:id="@+id/wiFiDeviceActivity"
+        android:name="ru.hse.control_system_v2.WiFiDeviceActivity"
+        android:label="activity_wifi_device"
+        tools:layout="@layout/activity_wifi_device" />
 </navigation>

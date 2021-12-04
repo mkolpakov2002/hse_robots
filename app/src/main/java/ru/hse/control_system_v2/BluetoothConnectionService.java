@@ -2,6 +2,9 @@ package ru.hse.control_system_v2;
 
 import static ru.hse.control_system_v2.Constants.APP_LOG_TAG;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -12,6 +15,7 @@ import android.os.IBinder;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
 
 import com.google.firebase.crashlytics.buildtools.reloc.com.google.common.collect.Iterables;
 
@@ -33,10 +37,11 @@ public class BluetoothConnectionService extends Service {
      */
     private final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     private BluetoothAdapter btAdapter;
-    private List<DeviceItemType> devicesList;
+    private ArrayList<DeviceItemType> devicesList;
     private int devicesListConnectedSize;
     private boolean isSuccess = false;
     private Intent intentService;
+    private static final int FOREGROUND_ID=1338;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -45,7 +50,6 @@ public class BluetoothConnectionService extends Service {
         devicesList = new ArrayList<>();
         devicesListConnectedSize = 0;
         devicesList.addAll(DeviceHandler.getDevicesList());
-        Bundle arguments = intent.getExtras();
 
         ExecutorService executorService = Executors.newFixedThreadPool(devicesList.size());
         Log.d(APP_LOG_TAG, "Соединение по Bt начато...");
@@ -56,9 +60,6 @@ public class BluetoothConnectionService extends Service {
             treadList.add(i, mr);
             executorService.execute(treadList.get(i));
         }
-        Intent serviceStarted;
-        serviceStarted = new Intent("serviceStarted");
-        sendBroadcast(serviceStarted);
         return Service.START_NOT_STICKY;
     }
 
@@ -82,13 +83,11 @@ public class BluetoothConnectionService extends Service {
                     Log.d("BLUETOOTH", e.getMessage());
                     Log.d(APP_LOG_TAG, "Создание Bt сокета неуспешно...");
                     e.printStackTrace();
+                    currentDevice.closeConnection();
                 }
-                if (currentDevice.isConnected()){
-                    currentDevice.openBtConnection();
-                    // Отключаем поиск устройств для сохранения заряда батареи
-                    BluetoothAdapter.getDefaultAdapter().cancelDiscovery();
-                    Log.d(APP_LOG_TAG, "Подключаюсь к Bt сокету...");
-                }
+                // Отключаем поиск устройств для сохранения заряда батареи
+                BluetoothAdapter.getDefaultAdapter().cancelDiscovery();
+
             }
             resultOfConnection(currentDevice);
             Log.d(APP_LOG_TAG, "Попытка подключения для текущего устройства завершена...");
@@ -121,7 +120,7 @@ public class BluetoothConnectionService extends Service {
             Intent resultOfConnectionIntent;
             if(isSuccess){
                 resultOfConnectionIntent = new Intent("success");
-                DeviceHandler.setDevicesList(Iterables.toArray(devicesList, DeviceItemType.class));
+                DeviceHandler.setDevicesList(devicesList);
                 Log.d(APP_LOG_TAG, "getter " +String.valueOf(DeviceHandler.getDevicesList().size()));
                 Log.d(APP_LOG_TAG, "Bt соединение успешно, передаю результат в Main Activity...");
             } else {
@@ -132,4 +131,6 @@ public class BluetoothConnectionService extends Service {
             stopService(intentService);
         }
     }
+
+
 }

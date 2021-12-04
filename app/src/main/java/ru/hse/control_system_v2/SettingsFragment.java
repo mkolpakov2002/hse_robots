@@ -15,6 +15,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
@@ -62,6 +63,8 @@ import ru.hse.control_system_v2.dbprotocol.ProtocolRepo;
 import static android.app.Activity.RESULT_OK;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
+import static ru.hse.control_system_v2.Constants.THEMES_LIST;
+import static ru.hse.control_system_v2.Constants.THEMES_LIST_ANDROID_S;
 
 public class SettingsFragment extends Fragment {
 
@@ -142,10 +145,15 @@ public class SettingsFragment extends Fragment {
 
             }
         });
-        buttonAdd.setBackgroundColor(getResources().getColor(R.color.foregroundColor));
+        buttonAdd.setBackgroundColor(getResources().getColor(R.color.colorPrimaryLightDark));
         buttonAdd.setEnabled(false);
 
-        ArrayList<String> themes = new ArrayList<String>(Arrays.asList(Constants.THEMES_LIST));
+        ArrayList<String> themes;
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            themes = new ArrayList<String>(Arrays.asList(THEMES_LIST_ANDROID_S));
+        } else {
+            themes = new ArrayList<String>(Arrays.asList(Constants.THEMES_LIST));
+        }
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(fragmentContext, android.R.layout.simple_spinner_item, themes);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
@@ -156,7 +164,7 @@ public class SettingsFragment extends Fragment {
         autoCompleteTextView.setText(sTheme);
         autoCompleteTextView.setAdapter(adapter);
         autoCompleteTextView.setOnItemClickListener ((adapterView, view1, position, l) -> {
-            if (position<themes.size()&&position>=0){
+            if (position<themes.size()&&position>=0 && !ThemeUtils.getCurrentTheme().equals(autoCompleteTextView.getText().toString())){
                 SharedPreferences.Editor ed = sPref.edit();
                 ed.putString("theme", themes.get(position));
                 ed.apply();
@@ -166,7 +174,7 @@ public class SettingsFragment extends Fragment {
         });
 
         editTextName = view.findViewById(R.id.editTextProtocolName);
-        editTextName.addTextChangedListener(new TextChangedListener<EditText>(editTextName) {
+        editTextName.addTextChangedListener(new TextChangedListener<>(editTextName) {
             @Override
             public void onTextChanged(EditText target, Editable s) {
                 isEditTextNameChanged = s.toString().trim().length() != 0;
@@ -174,7 +182,7 @@ public class SettingsFragment extends Fragment {
             }
         });
         editTextLen = view.findViewById(R.id.editTextLength);
-        editTextLen.addTextChangedListener(new TextChangedListener<EditText>(editTextLen) {
+        editTextLen.addTextChangedListener(new TextChangedListener<>(editTextLen) {
             @Override
             public void onTextChanged(EditText target, Editable s) {
                 isEditTextLenChanged = s.toString().trim().length() != 0;
@@ -182,7 +190,7 @@ public class SettingsFragment extends Fragment {
             }
         });
         editTextCode = view.findViewById(R.id.editTextCode);
-        editTextCode.addTextChangedListener(new TextChangedListener<EditText>(editTextCode) {
+        editTextCode.addTextChangedListener(new TextChangedListener<>(editTextCode) {
             @Override
             public void onTextChanged(EditText target, Editable s) {
                 isEditTextCodeChanged = s.toString().trim().length() != 0;
@@ -204,8 +212,7 @@ public class SettingsFragment extends Fragment {
         buttonCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ContextThemeWrapper newContext = new ContextThemeWrapper(ma, R.style.HSERobotsMaterialButton);
-                MaterialAlertDialogBuilder materialAlertDialogBuilder = new MaterialAlertDialogBuilder(fragmentContext, R.style.AlertDialog_AppTheme);
+                MaterialAlertDialogBuilder materialAlertDialogBuilder = new MaterialAlertDialogBuilder(fragmentContext, R.style.AlertDialogStyle);
                 materialAlertDialogBuilder.setTitle("Подтверждение")
                         .setMessage("Вы действительно хотите удалить все кастомные протоколы?")
                         .setIcon(R.drawable.ic_baseline_warning_24)
@@ -281,7 +288,7 @@ public class SettingsFragment extends Fragment {
             buttonAdd.setBackgroundColor(fragmentContext.getColor(R.color.white));
         } else {
             buttonAdd.setEnabled(false);
-            buttonAdd.setBackgroundColor(fragmentContext.getColor(R.color.foregroundColor));
+            buttonAdd.setBackgroundColor(fragmentContext.getColor(R.color.colorPrimaryLightDark));
         }
     }
 

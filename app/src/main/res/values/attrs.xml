@@ -2,10 +2,11 @@
 <resources>
     <attr name="colorPrimaryLight" format="color" />
     <attr name="simpleThemePrimaryColor" format="color" />
+    <attr name="simpleThemeOnPrimaryColor" format="color" />
+    <attr name="simpleThemeSecondaryColor" format="color" />
+    <attr name="simpleThemeOnSecondaryColor" format="color" />
     <attr name="simpleThemePrimaryLightColor" format="color" />
     <attr name="simpleThemeAccentColor" format="color" />
-    <attr name="simpleThemeTextPrimaryColor" format="color" />
-    <attr name="simpleThemeTextSecondaryColor" format="color" />
     <attr name="simpleThemeWindowSecondaryColor" format="color" />
     <attr name="popupMenuBackgroundTint" format="color" />
 </resources>

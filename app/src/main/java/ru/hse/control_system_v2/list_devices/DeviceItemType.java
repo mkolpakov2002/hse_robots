@@ -140,8 +140,8 @@ public class DeviceItemType implements ItemType{
 
     public void setBtSocket(BluetoothSocket socket) {
         if(socket != null){
-            isConnected = true;
             bluetoothSocket = socket;
+            openBtConnection();
         } else
             isConnected = false;
     }
@@ -150,12 +150,10 @@ public class DeviceItemType implements ItemType{
         SocketAddress addr;
         addr = new InetSocketAddress(devIp, devPort);
         if(socket != null){
-            isConnected = true;
             wifiSocket = socket;
             openWifiConnection(addr);
 
-        } else
-            isConnected = false;
+        } else isConnected = false;
     }
 
     public void closeConnection(){
@@ -167,7 +165,6 @@ public class DeviceItemType implements ItemType{
                 e.printStackTrace();
                 Log.d("bluetoothSocket", e.getMessage());
             }
-            isConnected = false;
         }
         if(wifiSocket!=null && wifiSocket.isConnected()){
             try {
@@ -177,21 +174,22 @@ public class DeviceItemType implements ItemType{
                 e.printStackTrace();
                 Log.d("wifiSocket", e.getMessage());
             }
-            isConnected = false;
         }
+        isConnected = false;
     }
 
     public void openBtConnection(){
         if (bluetoothSocket!=null){
             try {
                 bluetoothSocket.connect();
+                isConnected = true;
             } catch (IOException e) {
                 e.printStackTrace();
                 Log.d("BLUETOOTH", e.getMessage());
                 closeConnection();
                 isConnected = false;
             }
-        }
+        } else isConnected = false;
     }
 
     private void openWifiConnection(SocketAddress addr){
@@ -200,13 +198,14 @@ public class DeviceItemType implements ItemType{
             //проверить корректность ip и порта
             try {
                 wifiSocket.connect(addr);
+                isConnected = true;
             } catch (IOException e) {
                 e.printStackTrace();
                 Log.d("WiFi", e.getMessage());
                 closeConnection();
                 isConnected = false;
             }
-        }
+        } else isConnected = false;
     }
 
 

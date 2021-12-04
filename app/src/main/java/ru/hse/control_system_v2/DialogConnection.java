@@ -10,8 +10,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
 public class DialogConnection extends DialogFragment {
     Context c;
+
+    public DialogConnection(){
+        //nothing
+    }
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -29,7 +35,7 @@ public class DialogConnection extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(c, R.style.AlertDialog_AppTheme);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(c, R.style.AlertDialogStyle);
         builder.setView(R.layout.dialog_connection);
         return builder.create();
     }

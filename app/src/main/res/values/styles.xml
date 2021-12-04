@@ -1,362 +1,273 @@
 <resources>
-
-    <style name="AppTheme.Light" parent="Theme.MaterialComponents.Light.NoActionBar">
-        <item name="colorPrimary">@color/colorPureWhite</item>
+    <style name="AppTheme.Light" parent="Theme.Material3.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimaryLight</item>
+        <item name="colorOnPrimary">@color/black</item>
         <item name="colorPrimaryDark">@color/colorPureWhite</item>
         <item name="colorPrimaryLight">@color/colorPrimaryLightSai</item>
-        <item name="colorAccent">@color/colorCoolBlue</item>
+        <item name="colorAccent">@color/colorPrimaryLight</item>
         <item name="android:windowBackground">@color/colorWindowSecondaryLight</item>
-        <item name="titleTextColor">@color/colorFineGrey</item>
-        <item name="android:textColorPrimary">@color/colorFineGrey</item>
-        <item name="android:textColorSecondary">@color/colorFineGrey</item>
-        <item name="alertDialogTheme">@style/AlertDialog.AppTheme</item>
+        <item name="titleTextColor">@color/colorPrimaryDark</item>
+        <item name="android:textColorPrimary">@color/colorPrimaryDark</item>
+        <item name="android:textColorSecondary">@color/colorPrimaryDark</item>
+        <item name="alertDialogTheme">@style/AlertDialogStyle</item>
+        <item name="android:alertDialogTheme">@style/AlertDialogStyle</item>
+        <item name="dialogTheme">@style/AlertDialogStyle</item>
+        <item name="android:dialogTheme">@style/AlertDialogStyle</item>
         <item name="android:textViewStyle">@style/HSERobotsTextViewStyle</item>
         <item name="colorControlActivated">?attr/colorAccent</item>
         <item name="android:colorControlActivated">?attr/colorAccent</item>
-        <item name="popupMenuStyle">@style/HSERobotsPopupMenu.Light</item>
+        <item name="popupMenuStyle">@style/PopupMenu</item>
         <item name="popupMenuBackgroundTint">?colorPrimaryLight</item>
         <item name="android:windowLightNavigationBar">true</item>
         <item name="android:windowLightStatusBar">true</item>
-        <item name="simpleThemeTextPrimaryColor">@color/colorFineGrey</item>
-        <item name="simpleThemeTextSecondaryColor">@color/colorFineGrey</item>
+        <item name="colorPrimaryContainer">@color/colorPureWhite</item>
+        <item name="colorOnPrimaryContainer">@color/colorPrimaryDark</item>
+        <item name="android:statusBarColor">?android:attr/windowBackground</item>
+        <item name="bottomSheetDialogTheme">@style/BottomSheetDialogStyle</item>
+        <item name="floatingActionButtonPrimaryStyle">@style/MaterialButton.Fab.Main</item>
+        <item name="floatingActionButtonSecondaryStyle">@style/MaterialButton.Fab.Secondary</item>
+        <item name="buttonStyle">@style/MaterialButton</item>
+
     </style>
 
-    <style name="AppTheme.Dark" parent="Theme.MaterialComponents.NoActionBar">
-        <item name="colorPrimary">@color/colorGreaterGrey</item>
-        <item name="colorPrimaryDark">@color/colorGreaterGrey</item>
+    <style name="AppTheme.Dark" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="android:statusBarColor">?android:attr/windowBackground</item>
+        <item name="colorPrimary">@color/colorPerfectPink</item>
+        <item name="colorOnPrimary">@color/colorOnPerfectPink</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorPrimaryLight">@color/colorPrimaryLightRuby</item>
         <item name="colorAccent">@color/colorPerfectPink</item>
-        <item name="android:windowBackground">@color/colorGreaterGrey</item>
+        <item name="android:windowBackground">@color/colorPrimaryDark</item>
         <item name="titleTextColor">@color/colorAlmostWhite</item>
-        <item name="android:textColorPrimary">@color/colorFineGrey</item>
+        <item name="android:textColorPrimary">@color/colorPrimaryDark</item>
         <item name="android:textColorSecondary">@color/colorAlmostWhite</item>
-        <item name="alertDialogTheme">@style/AlertDialog.AppTheme</item>
+        <item name="alertDialogTheme">@style/BottomSheetDialogStyle</item>
+        <item name="android:alertDialogTheme">@style/BottomSheetDialogStyle</item>
+        <item name="dialogTheme">@style/BottomSheetDialogStyle</item>
+        <item name="android:dialogTheme">@style/BottomSheetDialogStyle</item>
         <item name="android:textViewStyle">@style/HSERobotsTextViewStyle</item>
         <item name="colorControlActivated">?attr/colorAccent</item>
         <item name="android:colorControlActivated">?attr/colorAccent</item>
-        <item name="popupMenuStyle">@style/HSERobotsPopupMenu.Dark</item>
+        <item name="popupMenuStyle">@style/PopupMenu</item>
         <item name="popupMenuBackgroundTint">?colorPrimaryLight</item>
-        <item name="simpleThemeTextPrimaryColor">@color/colorFineGrey</item>
-        <item name="simpleThemeTextSecondaryColor">@color/colorAlmostWhite</item>
+        <item name="bottomSheetDialogTheme">@style/BottomSheetDialogStyle</item>
+        <item name="colorSecondary">?attr/simpleThemeSecondaryColor</item>
+        <item name="colorOnSecondary">?attr/simpleThemeOnSecondaryColor</item>
+        <item name="buttonStyle">@style/MaterialButton</item>
 
     </style>
 
     <style name="AppTheme.Simple.Dark" parent="AppTheme.Dark">
         <item name="colorPrimary">?attr/simpleThemePrimaryColor</item>
+        <item name="colorOnPrimary">?attr/simpleThemeOnPrimaryColor</item>
         <item name="colorPrimaryDark">?attr/simpleThemePrimaryColor</item>
         <item name="colorPrimaryLight">?attr/simpleThemePrimaryLightColor</item>
-        <item name="colorAccent">?attr/simpleThemeAccentColor</item>
+        <item name="colorSecondary">?attr/simpleThemeSecondaryColor</item>
+        <item name="colorOnSecondary">?attr/simpleThemeOnSecondaryColor</item>
         <item name="android:windowBackground">?attr/simpleThemeWindowSecondaryColor</item>
-        <item name="titleTextColor">?attr/simpleThemeTextPrimaryColor</item>
-        <item name="android:textColorPrimary">?attr/simpleThemeTextPrimaryColor</item>
-        <item name="android:textColorSecondary">?attr/simpleThemeTextSecondaryColor</item>
+        <item name="titleTextColor">?attr/simpleThemeOnPrimaryColor</item>
+        <item name="android:textColorPrimary">?attr/simpleThemeOnPrimaryColor</item>
+        <item name="android:textColorSecondary">?attr/simpleThemeOnSecondaryColor</item>
         <item name="alertDialogTheme">@style/AlertDialog.AppTheme.Simple</item>
+        <item name="android:alertDialogTheme">@style/AlertDialog.AppTheme.Simple</item>
+        <item name="dialogTheme">@style/AlertDialog.AppTheme.Simple</item>
+        <item name="android:dialogTheme">@style/AlertDialog.AppTheme.Simple</item>
+        <item name="colorAccent">?attr/simpleThemeAccentColor</item>
     </style>
 
     <style name="AppTheme.Simple.Light" parent="AppTheme.Light">
         <item name="colorPrimary">?attr/simpleThemePrimaryColor</item>
+        <item name="colorOnPrimary">?attr/simpleThemeOnPrimaryColor</item>
         <item name="colorPrimaryDark">?attr/simpleThemePrimaryColor</item>
         <item name="colorPrimaryLight">?attr/simpleThemePrimaryLightColor</item>
         <item name="colorAccent">?attr/simpleThemeAccentColor</item>
         <item name="android:windowBackground">?attr/simpleThemeWindowSecondaryColor</item>
-        <item name="titleTextColor">?attr/simpleThemeTextPrimaryColor</item>
-        <item name="android:textColorPrimary">?attr/simpleThemeTextPrimaryColor</item>
-        <item name="android:textColorSecondary">?attr/simpleThemeTextSecondaryColor</item>
+        <item name="titleTextColor">?attr/simpleThemeOnPrimaryColor</item>
+        <item name="android:textColorPrimary">?attr/simpleThemeOnPrimaryColor</item>
+        <item name="android:textColorSecondary">?attr/simpleThemeOnSecondaryColor</item>
         <item name="alertDialogTheme">@style/AlertDialog.AppTheme.Simple</item>
+        <item name="android:alertDialogTheme">@style/AlertDialog.AppTheme.Simple</item>
+        <item name="dialogTheme">@style/AlertDialog.AppTheme.Simple</item>
+        <item name="android:dialogTheme">@style/AlertDialog.AppTheme.Simple</item>
     </style>
 
     <style name="AppTheme.Rena" parent="AppTheme.Simple.Dark">
-        <item name="simpleThemeWindowSecondaryColor">@color/colorPrimaryRena</item>
+        <item name="simpleThemeWindowSecondaryColor">@color/colorPrimaryDark</item>
         <item name="simpleThemePrimaryColor">@color/colorPrimaryRena</item>
+        <item name="simpleThemeOnPrimaryColor">@color/colorAlmostWhite</item>
         <item name="simpleThemePrimaryLightColor">@color/colorPrimaryLightRena</item>
-        <item name="simpleThemeAccentColor">@color/colorAccentRena</item>
-        <item name="simpleThemeTextPrimaryColor">@color/colorTextPrimaryRena</item>
-        <item name="simpleThemeTextSecondaryColor">@color/colorTextSecondaryRena</item>
+        <item name="simpleThemeAccentColor">@color/colorPrimaryRena</item>
+        <item name="simpleThemeOnSecondaryColor">@color/colorAlmostWhite</item>
+        <item name="simpleThemeSecondaryColor">@color/colorSecondaryRena</item>
     </style>
 
     <style name="AppTheme.Omelette" parent="AppTheme.Simple.Dark">
-        <item name="simpleThemeWindowSecondaryColor">@color/colorPrimaryOmelette</item>
-        <item name="simpleThemePrimaryColor">@color/colorPrimaryOmelette</item>
-        <item name="simpleThemePrimaryLightColor">@color/colorPrimaryLightOmelette</item>
-        <item name="simpleThemeAccentColor">@color/colorAccentOmelette</item>
-        <item name="simpleThemeTextPrimaryColor">@color/colorTextPrimaryOmelette</item>
-        <item name="simpleThemeTextSecondaryColor">@color/colorTextSecondaryOmelette</item>
+        <item name="simpleThemeWindowSecondaryColor">@color/black</item>
+        <item name="simpleThemePrimaryColor">@color/colorAlmostWhite</item>
+        <item name="simpleThemeOnPrimaryColor">@color/colorOnPrimaryOmelette</item>
+        <item name="simpleThemePrimaryLightColor">@color/black</item>
+        <item name="simpleThemeAccentColor">@color/colorAlmostWhite</item>
+        <item name="simpleThemeOnSecondaryColor">@color/colorOnSecondaryOmelette</item>
+        <item name="simpleThemeSecondaryColor">@color/black</item>
     </style>
 
     <style name="AppTheme.Pixel" parent="AppTheme.Simple.Light">
         <item name="simpleThemeWindowSecondaryColor">@color/colorWindowSecondaryLight</item>
         <item name="simpleThemePrimaryColor">@color/colorPrimaryPixel</item>
+        <item name="simpleThemeOnPrimaryColor">@color/colorOnPrimaryPixel</item>
         <item name="simpleThemePrimaryLightColor">@color/colorPrimaryLightPixel</item>
-        <item name="simpleThemeAccentColor">@color/colorAccentPixel</item>
-        <item name="simpleThemeTextPrimaryColor">@color/colorTextPrimaryPixel</item>
-        <item name="simpleThemeTextSecondaryColor">@color/colorTextSecondaryPixel</item>
+        <item name="simpleThemeAccentColor">@color/colorPrimaryPixel</item>
+        <item name="simpleThemeOnSecondaryColor">@color/colorOnSecondaryPixel</item>
+        <item name="simpleThemeSecondaryColor">@color/colorSecondaryPixel</item>
     </style>
 
     <style name="AppTheme.FDroid" parent="AppTheme.Simple.Light">
         <item name="simpleThemeWindowSecondaryColor">@color/colorWindowSecondaryLight</item>
         <item name="simpleThemePrimaryColor">@color/colorPrimaryFDroid</item>
+        <item name="simpleThemeOnPrimaryColor">@color/black</item>
         <item name="simpleThemePrimaryLightColor">@color/colorPrimaryLightFDroid</item>
-        <item name="simpleThemeAccentColor">@color/colorAccentFDroid</item>
-        <item name="simpleThemeTextPrimaryColor">@color/colorTextPrimaryFDroid</item>
-        <item name="simpleThemeTextSecondaryColor">@color/colorTextSecondaryFDroid</item>
+        <item name="simpleThemeAccentColor">@color/colorPrimaryFDroid</item>
+        <item name="simpleThemeOnSecondaryColor">@color/black</item>
+        <item name="simpleThemeSecondaryColor">@color/colorSecondaryFDroid</item>
     </style>
 
     <style name="AppTheme.Dark2" parent="AppTheme.Simple.Dark">
-        <item name="simpleThemeWindowSecondaryColor">@color/colorPrimaryDark2</item>
+        <item name="simpleThemeWindowSecondaryColor">@color/colorPrimaryDark</item>
         <item name="simpleThemePrimaryColor">@color/colorPrimaryDark2</item>
+        <item name="simpleThemeOnPrimaryColor">@color/colorOnPrimaryDark2</item>
         <item name="simpleThemePrimaryLightColor">@color/colorPrimaryLightDark2</item>
-        <item name="simpleThemeAccentColor">@color/colorAccentDark2</item>
-        <item name="simpleThemeTextPrimaryColor">@color/colorTextPrimaryDark2</item>
-        <item name="simpleThemeTextSecondaryColor">@color/colorTextSecondaryDark2</item>
+        <item name="simpleThemeAccentColor">@color/colorPrimaryDark2</item>
+        <item name="simpleThemeOnSecondaryColor">@color/colorOnSecondaryDark2</item>
+        <item name="simpleThemeSecondaryColor">@color/colorSecondaryDark2</item>
     </style>
 
     <style name="AppTheme.Gold" parent="AppTheme.Simple.Dark">
-        <item name="simpleThemeWindowSecondaryColor">@color/colorPrimaryGold</item>
+        <item name="simpleThemeWindowSecondaryColor">@color/colorPrimaryDark</item>
         <item name="simpleThemePrimaryColor">@color/colorPrimaryGold</item>
+        <item name="simpleThemeOnPrimaryColor">@color/colorOnPrimaryGold</item>
         <item name="simpleThemePrimaryLightColor">@color/colorPrimaryLightGold</item>
-        <item name="simpleThemeAccentColor">@color/colorAccentGold</item>
-        <item name="simpleThemeTextPrimaryColor">@color/colorTextPrimaryGold</item>
-        <item name="simpleThemeTextSecondaryColor">@color/colorTextSecondaryGold</item>
+        <item name="simpleThemeAccentColor">@color/colorPrimaryGold</item>
+        <item name="simpleThemeOnSecondaryColor">@color/colorOnSecondaryGold</item>
+        <item name="simpleThemeSecondaryColor">@color/colorSecondaryGold</item>
     </style>
 
     <style name="AppTheme.RenaLight" parent="AppTheme.Simple.Light">
         <item name="simpleThemeWindowSecondaryColor">@color/colorWindowSecondaryLight</item>
         <item name="simpleThemePrimaryColor">@color/colorPrimaryRenaLight</item>
+        <item name="simpleThemeOnPrimaryColor">@color/colorOnPrimaryRenaLight</item>
         <item name="simpleThemePrimaryLightColor">@color/colorPrimaryLightRenaLight</item>
-        <item name="simpleThemeAccentColor">@color/colorAccentRenaLight</item>
-        <item name="simpleThemeTextPrimaryColor">@color/colorTextPrimaryRenaLight</item>
-        <item name="simpleThemeTextSecondaryColor">@color/colorTextSecondaryRenaLight</item>
+        <item name="simpleThemeAccentColor">@color/colorPrimaryRenaLight</item>
+        <item name="simpleThemeOnSecondaryColor">@color/colorOnSecondaryRenaLight</item>
+        <item name="simpleThemeSecondaryColor">@color/colorSecondaryRenaLight</item>
     </style>
 
     <style name="AppTheme.Mint" parent="AppTheme.Simple.Dark">
-        <item name="simpleThemeWindowSecondaryColor">@color/colorPrimaryMint</item>
+        <item name="simpleThemeWindowSecondaryColor">@color/colorPrimaryDark</item>
         <item name="simpleThemePrimaryColor">@color/colorPrimaryMint</item>
+        <item name="simpleThemeOnPrimaryColor">@color/colorOnPrimaryMint</item>
         <item name="simpleThemePrimaryLightColor">@color/colorPrimaryLightMint</item>
-        <item name="simpleThemeAccentColor">@color/colorAccentMint</item>
-        <item name="simpleThemeTextPrimaryColor">@color/colorTextPrimaryMint</item>
-        <item name="simpleThemeTextSecondaryColor">@color/colorTextSecondaryMint</item>
+        <item name="simpleThemeAccentColor">@color/colorPrimaryMint</item>
+        <item name="simpleThemeOnSecondaryColor">@color/colorOnSecondaryMint</item>
+        <item name="simpleThemeSecondaryColor">@color/colorSecondaryMint</item>
     </style>
 
     <style name="AppTheme.FDroidDark" parent="AppTheme.Simple.Dark">
-        <item name="simpleThemeWindowSecondaryColor">@color/colorPrimaryFDroidDark</item>
+        <item name="simpleThemeWindowSecondaryColor">@color/colorPrimaryDark</item>
         <item name="simpleThemePrimaryColor">@color/colorPrimaryFDroidDark</item>
+        <item name="simpleThemeOnPrimaryColor">@color/colorOnPrimaryFDroidDark</item>
         <item name="simpleThemePrimaryLightColor">@color/colorPrimaryLightFDroidDark</item>
-        <item name="simpleThemeAccentColor">@color/colorAccentFDroidDark</item>
-        <item name="simpleThemeTextPrimaryColor">@color/colorTextPrimaryFDroidDark</item>
-        <item name="simpleThemeTextSecondaryColor">@color/colorTextSecondaryFDroidDark</item>
+        <item name="simpleThemeAccentColor">@color/colorPrimaryFDroidDark</item>
+        <item name="simpleThemeOnSecondaryColor">@color/colorOnSecondaryFDroidDark</item>
+        <item name="simpleThemeSecondaryColor">@color/colorSecondaryFDroidDark</item>
     </style>
 
 
-    <style name="HSERobotsMaterialButton" parent="Widget.MaterialComponents.Button.UnelevatedButton">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:paddingLeft">24dp</item>
-        <item name="android:paddingRight">24dp</item>
-        <item name="android:paddingTop">12dp</item>
-        <item name="android:paddingBottom">12dp</item>
+    <style name="MaterialButton" parent="Widget.Material3.Button.ElevatedButton.Icon">
         <item name="android:textSize">15sp</item>
-        <item name="android:textAllCaps">false</item>
         <item name="android:singleLine">true</item>
-        <item name="colorPrimary">?attr/colorAccent</item>
-        <item name="colorOnPrimary">?attr/colorPrimaryDark</item>
-        <item name="android:theme">@style/HSERobotsMaterialButton</item>
-        <item name="cornerRadius">20dp</item>
-        <item name="android:letterSpacing">0</item>
-        <item name="iconPadding">3dp</item>
-        <item name="iconSize">22dp</item>
-        <item name="iconGravity">textStart</item>
+        <item name="android:textAlignment">center</item>
     </style>
 
-    <style name="HSERobotsMaterialButton.Slim" parent="HSERobotsMaterialButton">
-        <item name="android:paddingLeft">12dp</item>
-        <item name="android:paddingRight">12dp</item>
-        <item name="android:paddingTop">6dp</item>
-        <item name="android:paddingBottom">6dp</item>
-        <item name="android:textSize">14sp</item>
-        <item name="cornerRadius">16dp</item>
-        <item name="iconPadding">1dp</item>
-        <item name="iconSize">18dp</item>
-    </style>
-
-    <style name="HSERobotsMaterialButton.Outlined" parent="Widget.MaterialComponents.Button.OutlinedButton">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:paddingLeft">24dp</item>
-        <item name="android:paddingRight">24dp</item>
-        <item name="android:paddingTop">12dp</item>
-        <item name="android:paddingBottom">12dp</item>
-        <item name="android:textColor">@color/selector_outlined_button_text_color</item>
+    <style name="MaterialButton.Outlined" parent="Widget.Material3.Button.OutlinedButton.Icon">
+        <item name="android:textAlignment">center</item>
         <item name="android:textSize">15sp</item>
-        <item name="android:textAllCaps">false</item>
         <item name="android:singleLine">true</item>
-        <item name="colorPrimary">?attr/colorAccent</item>
-        <item name="android:theme">@style/HSERobotsMaterialButton.Outlined</item>
-        <item name="cornerRadius">20dp</item>
-        <item name="android:letterSpacing">0</item>
-        <item name="strokeWidth">2dp</item>
-        <item name="strokeColor">@color/selector_outlined_button_outline_color</item>
-        <item name="iconPadding">3dp</item>
-        <item name="iconSize">22dp</item>
-        <item name="iconGravity">textStart</item>
     </style>
 
-    <style name="HSERobotsMaterialButton.Outlined.Slim" parent="HSERobotsMaterialButton.Outlined">
-        <item name="android:paddingLeft">12dp</item>
-        <item name="android:paddingRight">12dp</item>
-        <item name="android:paddingTop">6dp</item>
-        <item name="android:paddingBottom">6dp</item>
-        <item name="android:textSize">14sp</item>
-        <item name="cornerRadius">16dp</item>
-        <item name="iconPadding">1dp</item>
-        <item name="iconSize">18dp</item>
+    <style name="MaterialButton.ExtendedFab" parent="Widget.Material3.ExtendedFloatingActionButton.Icon.Primary">
+        <item name="backgroundTint">?attr/colorSurface</item>
+        <item name="android:textColor">?attr/colorPrimary</item>
+        <item name="iconTint">?attr/colorPrimary</item>
     </style>
 
-    <style name="HSERobotsMaterialButton.ExtendedFab" parent="Widget.MaterialComponents.Button">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">56dp</item>
-        <item name="android:paddingLeft">24dp</item>
-        <item name="android:paddingRight">24dp</item>
-        <item name="android:paddingTop">12dp</item>
-        <item name="android:paddingBottom">12dp</item>
-        <item name="android:textSize">14sp</item>
-        <item name="android:textAllCaps">false</item>
-        <item name="android:singleLine">true</item>
-        <item name="colorPrimary">?attr/colorAccent</item>
-        <item name="colorOnPrimary">?attr/colorPrimaryDark</item>
-        <item name="android:theme">@style/HSERobotsMaterialButton</item>
-        <item name="cornerRadius">24dp</item>
-        <item name="android:letterSpacing">0</item>
-    </style>
-
-    <style name="HSERobotsMaterialButton.Fab" parent="@style/Widget.MaterialComponents.FloatingActionButton">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">56dp</item>
-        <item name="android:paddingLeft">24dp</item>
-        <item name="android:paddingRight">24dp</item>
-        <item name="android:paddingTop">12dp</item>
-        <item name="android:paddingBottom">12dp</item>
-        <item name="cornerRadius">4dp</item>
-        <item name="borderWidth">0dp</item>
-        <item name="elevation">6dp</item>
-        <item name="fabSize">normal</item>
+    <style name="MaterialButton.Fab.Main" parent="Widget.Material3.FloatingActionButton.Primary">
+        <item name="backgroundTint">?attr/colorSurface</item>
         <item name="tint">?attr/colorPrimary</item>
-        <item name="backgroundTint">?attr/colorAccent</item>
-        <item name="shapeAppearanceOverlay">
-            @style/ShapeAppearance.App.SmallComponent
-        </item>
     </style>
 
-    <style name="ShapeAppearance.App.SmallComponent" parent="ShapeAppearance.MaterialComponents.SmallComponent">
-
-        <item name="cornerSize">20dp</item>
+    <style name="MaterialButton.Fab.Secondary" parent="Widget.Material3.FloatingActionButton.Secondary">
+        <item name="backgroundTint">?attr/colorSurface</item>
     </style>
 
-    <style name="HSERobotsToolbar">
-        <item name="android:textAllCaps">true</item>
-        <item name="android:layout_gravity">center</item>
-        <item name="android:singleLine">true</item>
-        <item name="android:textColorPrimary">?attr/colorAccent</item>
-        <item name="android:textColorSecondary">?attr/colorAccent</item>
-        <item name="actionMenuTextColor">?attr/simpleThemeTextSecondaryColor</item>
-        <item name="android:background">?android:attr/windowBackground</item>
-        <item name="colorOnPrimary">?attr/colorPrimaryDark</item>
-        <item name="contentScrim">?attr/colorAccent</item>
+    <style name="Toolbar" parent="Widget.Material3.Toolbar">
+
     </style>
 
     <style name="HSERobotsTextViewStyle" parent="Base.Widget.AppCompat.TextView">
-        <item name="android:textColor">?android:attr/textColorSecondary</item>
+        <item name="android:textColor">?attr/colorOnPrimary</item>
     </style>
 
-    <style name="HSERobotsBottomNavigationView" parent="Widget.MaterialComponents.BottomNavigationView">
+    <style name="BottomNavigationView" parent="@style/ThemeOverlay.Material3.BottomAppBar">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:background">?android:attr/windowBackground</item>
+
         <item name="itemIconTint">@color/selector_bottom_navigation</item>
-        <item name="itemTextColor">@color/selector_bottom_navigation</item>
     </style>
 
-    <style name="AlertDialog.AppTheme" parent="@style/ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+    <style name="AlertDialogStyle" parent="@style/ThemeOverlay.Material3.MaterialAlertDialog.Centered">
         <!-- Background Color-->
-        <item name="android:background">?attr/backgroundTint</item>
-        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowBackground">?android:attr/windowBackground</item>
         <!-- Text Color for title and message -->
-        <item name="colorOnSurface">?attr/simpleThemeTextPrimaryColor</item>
         <!-- Style for positive button -->
-        <item name="buttonBarPositiveButtonStyle">@style/HSERobotsMaterialButton.Slim</item>
+        <item name="buttonBarPositiveButtonStyle">@style/Widget.Material3.Button.OutlinedButton</item>
         <!-- Style for negative button -->
-        <item name="buttonBarNegativeButtonStyle">@style/HSERobotsTextButtonStyle</item>
+        <item name="buttonBarNegativeButtonStyle">@style/TextButtonStyle</item>
+        <item name="android:windowAnimationStyle">@style/Animation.MaterialComponents.BottomSheetDialog</item>
     </style>
 
-    <style name="HSERobotsTextButtonStyle" parent="@style/HSERobotsMaterialButton">
+    <style name="TextButtonStyle" parent="Widget.Material3.Button.TextButton">
         <!-- text color for the button -->
-        <item name="android:textColor">@color/selector_outlined_button_text_color</item>
-        <!-- Background tint for the button -->
-        <item name="backgroundTint">@android:color/transparent</item>
     </style>
 
 
-    <style name="AlertDialog.AppTheme.Simple" parent="AlertDialog.AppTheme">
-        <item name="android:textColorPrimary">?attr/simpleThemeTextSecondaryColor</item>
-        <item name="android:textColorSecondary">?attr/simpleThemeTextPrimaryColor</item>
+    <style name="AlertDialog.AppTheme.Simple" parent="AlertDialogStyle">
+        <item name="android:textColorPrimary">?attr/colorOnPrimary</item>
+        <item name="android:textColorSecondary">?attr/colorOnSecondary</item>
+        <item name="android:windowAnimationStyle">@style/Animation.MaterialComponents.BottomSheetDialog</item>
     </style>
 
-    <style name="HSERobotsPopupMenu.Light" parent="Widget.AppCompat.Light.PopupMenu">
-        <item name="android:popupBackground">@drawable/bg_rounded_popup</item>
+    <style name="PopupMenu" parent="Widget.Material3.PopupMenu">
     </style>
 
-    <style name="HSERobotsPopupMenu.Dark" parent="Widget.AppCompat.Light.PopupMenu">
-        <item name="android:popupBackground">@drawable/bg_rounded_popup</item>
+    <style name="TextInputLayout.OutlinedBox.Dense" parent="Widget.Material3.TextInputEditText.OutlinedBox.Dense">
+
     </style>
 
-    <style name="HSERobotsChip.Filter" parent="Widget.MaterialComponents.Chip.Action">
-        <item name="android:checkable">true</item>
-        <item name="android:textColor">?attr/colorPrimary</item>
+    <style name="TextInputSpinnerLayout" parent="Widget.Material3.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu">
+
     </style>
 
-    <style name="HSERobotsChip.Selection" parent="Widget.MaterialComponents.Chip.Choice">
-        <item name="android:checkable">true</item>
-        <item name="chipSurfaceColor">?colorPrimary</item>
-        <item name="checkedIconVisible">false</item>
-    </style>
-
-    <style name="HSERobotsTextInputLayout.OutlinedBox.Dense" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
-        <item name="boxCornerRadiusBottomEnd">@dimen/textinputlayout_box_corners_radius</item>
-        <item name="boxCornerRadiusBottomStart">@dimen/textinputlayout_box_corners_radius</item>
-        <item name="boxCornerRadiusTopEnd">@dimen/textinputlayout_box_corners_radius</item>
-        <item name="boxCornerRadiusTopStart">@dimen/textinputlayout_box_corners_radius</item>
-        <item name="android:backgroundTint">?attr/colorAccent</item>
-        <item name="boxStrokeColor">?attr/colorAccent</item>
-        <item name="hintTextColor">?attr/colorAccent</item>
-    </style>
-
-    <style name="TextInputSpinnerLayout" parent="Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu">
-        <item name="boxCornerRadiusTopEnd">@dimen/textinputlayout_box_corners_radius</item>
-        <item name="boxCornerRadiusTopStart">@dimen/textinputlayout_box_corners_radius</item>
-        <item name="android:backgroundTint">?attr/colorAccent</item>
-        <item name="boxStrokeColor">?attr/colorAccent</item>
-        <item name="hintTextColor">?attr/colorAccent</item>
-    </style>
-
-    <style name="HSERobotsCoolbarImageButton" parent="Widget.AppCompat.ImageButton">
+    <style name="CoolbarImageButton" parent="Widget.AppCompat.ImageButton">
         <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
         <item name="android:scaleType">fitCenter</item>
         <item name="android:padding">12dp</item>
-        <item name="android:tint">?attr/colorAccent</item>
+        <item name="android:tint">?attr/colorPrimary</item>
         <item name="android:layout_width">56dp</item>
         <item name="android:layout_height">56dp</item>
     </style>
 
-    <style name="SAIBottomSheetDialog.Backup" parent="Theme.Design.BottomSheetDialog">
-        <item name="bottomSheetStyle">@style/SAIBottomSheetDialogStyle.Backup</item>
-    </style>
+    <style name="BottomSheetDialogStyle" parent="ThemeOverlay.Material3.BottomSheetDialog">
 
-    <style name="SAIBottomSheetDialog.Backup.Light" parent="Theme.Design.Light.BottomSheetDialog">
-        <item name="bottomSheetStyle">@style/SAIBottomSheetDialogStyle.Backup</item>
-    </style>
-
-    <style name="SAIBottomSheetDialogStyle.Backup" parent="Widget.Design.BottomSheet.Modal">
-        <item name="android:background">@android:color/transparent</item>
-        <item name="android:padding">8dp</item>
     </style>
 
 
@@ -365,11 +276,11 @@
         <item name="android:fontFamily">sans-serif-medium</item>
     </style>
 
-    <style name="HSERobotsTooltipTextAppearance" parent="TextAppearance.AppCompat.Small">
+    <style name="TooltipTextAppearance" parent="TextAppearance.AppCompat.Small">
         <item name="android:textColor">?attr/colorPrimary</item>
     </style>
 
-    <style name="ThemeView.Normal.Interactive" parent="Widget.MaterialComponents.CardView">
+    <style name="ThemeView.Normal.Interactive" parent="Widget.Material3.CardView.Outlined">
         <item name="android:clickable">true</item>
         <item name="android:focusable">true</item>
         <item name="android:minHeight">88dp</item>
@@ -378,6 +289,7 @@
         <item name="cardUseCompatPadding">true</item>
         <item name="contentPadding">8dp</item>
         <item name="strokeWidth">2dp</item>
+        <item name="cardPreventCornerOverlap">true</item>
     </style>
 
 </resources>

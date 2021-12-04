@@ -1,7 +1,8 @@
 package ru.hse.control_system_v2;
 
+import static ru.hse.control_system_v2.Constants.APP_LOG_TAG;
+
 import android.Manifest;
-import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -9,21 +10,25 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.navigation.NavController;
+import androidx.navigation.NavDestination;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import ru.hse.control_system_v2.dbdevices.AddDeviceDBActivity;
+import java.util.Objects;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -33,6 +38,10 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences sPref;
     private BluetoothAdapter btAdapter;
     private BottomNavigationView main_bottom_menu;
+    private NavDestination currentVisibleFragment;
+    private NavHostFragment navHostFragment;
+    private NavController navController;
+    private boolean isBtConnection;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -41,6 +50,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        registerReceiver(mMessageReceiverBtServiceStarted, new IntentFilter("startingBtService"));
+        registerReceiver(mMessageReceiverWiFiServiceStarted, new IntentFilter("startingWiFiService"));
+        registerReceiver(mMessageReceiverNotSuccess, new IntentFilter("not_success"));
+        registerReceiver(mMessageReceiverSuccess, new IntentFilter("success"));
 
         fabToEnBt = findViewById(R.id.floating_action_button_En_Bt);
         fabToEnBt.setOnClickListener(v -> {
@@ -62,12 +76,47 @@ public class MainActivity extends AppCompatActivity {
 
     void setUpNavigation(){
         main_bottom_menu = findViewById(R.id.bottomnav);
-        NavHostFragment navHostFragment = (NavHostFragment)getSupportFragmentManager()
+        navHostFragment = (NavHostFragment)getSupportFragmentManager()
                 .findFragmentById(R.id.nav_host_fragment);
         if(navHostFragment != null){
             NavigationUI.setupWithNavController(main_bottom_menu,
                     (navHostFragment).getNavController());
         }
+
+        navController= Objects.requireNonNull(navHostFragment).getNavController();
+        currentVisibleFragment = navController.getCurrentDestination();
+        navController.addOnDestinationChangedListener(new NavController.OnDestinationChangedListener() {
+            @Override
+            public void onDestinationChanged(@NonNull NavController controller, @NonNull NavDestination destination, @Nullable Bundle arguments) {
+                Log.e(APP_LOG_TAG, "onDestinationChanged: "+destination.getLabel());
+                //отслеживания фпагмента на главном экране
+                if(destination.getId() == R.id.mainMenuFragment ||
+                        destination.getId() == R.id.settingsFragment){
+                    currentVisibleFragment = destination;
+                }
+            }
+        });
+    }
+
+    public final NavDestination getCurrentVisibleFragment(){
+        return currentVisibleFragment;
+    }
+
+    public MainMenuFragment getMainMenuFragment(){
+        if(getCurrentVisibleFragment().getId() == R.id.mainMenuFragment){
+            FragmentManager fragmentManager = null;
+            if (navHostFragment != null) {
+                fragmentManager = navHostFragment.getChildFragmentManager();
+            }
+            Fragment current = null;
+            if (fragmentManager != null) {
+                current = fragmentManager.getPrimaryNavigationFragment();
+            }
+            if(current instanceof MainMenuFragment){
+                return (MainMenuFragment) current;
+            }
+        }
+        return null;
     }
 
 
@@ -132,7 +181,11 @@ public class MainActivity extends AppCompatActivity {
 
     // создает диалоговое окно с 1й кнопкой
     private void createOneButtonAlertDialog(String title, String content) {
-        OneButtonAlertDialogFragment.newInstance(title, content).show(this.getSupportFragmentManager(), "dialog_alert");
+        navController.navigateUp();
+        Bundle message = new Bundle();
+        message.putString("dialogText",content);
+        message.putString("dialogTitle",title);
+        navController.navigate(R.id.action_mainMenuFragment_to_oneButtonAlertDialogFragment, message);
     }
 
     private synchronized void showFabToEnBt(){
@@ -148,7 +201,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public synchronized void hideMainMenu(){
-        main_bottom_menu.setVisibility(View.INVISIBLE);
+        main_bottom_menu.setVisibility(View.GONE);
     }
 
     //выполняемый код при изменении состояния bluetooth
@@ -170,4 +223,75 @@ public class MainActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
 
     }
+
+    public int getBottomAppBarSize(){
+        int resourceId = getResources().getIdentifier("design_bottom_navigation_height", "dimen", this.getPackageName());
+        int height = 0;
+        if (resourceId > 0) {
+            height = getResources().getDimensionPixelSize(resourceId);
+        }
+        return height;
+    }
+
+    private final BroadcastReceiver mMessageReceiverBtServiceStarted = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Intent startBluetoothConnectionService = new Intent(context.getApplicationContext(), BluetoothConnectionService.class);
+            context.getApplicationContext().startService(startBluetoothConnectionService);
+            navController.navigateUp();
+            getMainMenuFragment().onRefresh();
+            navController.navigate(R.id.action_mainMenuFragment_to_connection_dialog);
+            isBtConnection = true;
+
+        }
+    };
+
+    private final BroadcastReceiver mMessageReceiverWiFiServiceStarted = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Intent startWiFiConnectionService = new Intent(context.getApplicationContext(), WiFiConnectionService.class);
+            startService(startWiFiConnectionService);
+            navController.navigateUp();
+            getMainMenuFragment().onRefresh();
+            navController.navigate(R.id.action_mainMenuFragment_to_connection_dialog);
+            isBtConnection = false;
+        }
+    };
+
+    //Результат работы Service
+    private final BroadcastReceiver mMessageReceiverNotSuccess = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            navController.navigateUp();
+            createOneButtonAlertDialog("Ошибка", "Подключение не успешно.");
+            getMainMenuFragment().onRefresh();
+        }
+    };
+
+    private final BroadcastReceiver mMessageReceiverSuccess = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //Устройство подключено, Service выполнился успешно
+            navController.navigateUp();
+            getMainMenuFragment().onRefresh();
+            if(isBtConnection)
+                navController.navigate(R.id.action_mainMenuFragment_to_bluetoothDeviceActivity);
+            else
+                navController.navigate(R.id.action_mainMenuFragment_to_wiFiDeviceActivity);
+        }
+    };
+
+    @Override
+    public void onBackPressed() {
+        if(getCurrentVisibleFragment().getId()==R.id.mainMenuFragment && !main_bottom_menu.isShown()){
+            getMainMenuFragment().onRefresh();
+        } else {
+            super.onBackPressed();  // optional depending on your needs
+        }
+    }
+
 }

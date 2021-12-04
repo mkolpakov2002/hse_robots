@@ -5,7 +5,6 @@
     android:id="@+id/activity_explain_perms"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background_bg"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
@@ -26,7 +25,6 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="8dp"
-        android:background="@drawable/white_bg"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -53,16 +51,14 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_delete_protos"
-                style="@style/HSERobotsMaterialButton.Outlined"
+                style="@style/MaterialButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
-                android:gravity="start"
                 android:text="@string/button_delete_protocols"
-                app:cornerRadius="20dp"
                 app:icon="@drawable/ic_baseline_delete_outline_24"
                 app:iconGravity="end"
                 app:iconTint="?attr/colorAccent"
@@ -72,16 +68,14 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_delete_devices"
-                style="@style/HSERobotsMaterialButton.Outlined"
+                style="@style/MaterialButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
-                android:gravity="start"
                 android:text="@string/drawer_item_data_base"
-                app:cornerRadius="20dp"
                 app:icon="@drawable/ic_baseline_delete_outline_24"
                 app:iconGravity="end"
                 app:iconTint="?attr/colorAccent"
@@ -91,14 +85,12 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_show_add_proto"
-                style="@style/HSERobotsMaterialButton.Outlined"
+                style="@style/MaterialButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
-                android:gravity="start"
                 android:text="@string/button_add_protocol"
-                app:cornerRadius="20dp"
                 app:icon="@drawable/ic_baseline_keyboard_arrow_right_24"
                 app:iconGravity="end"
                 app:iconTint="?attr/colorAccent"
@@ -125,7 +117,7 @@
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/textFieldProtocolName"
-                        style="@style/HSERobotsTextInputLayout.OutlinedBox.Dense"
+                        style="@style/TextInputLayout.OutlinedBox.Dense"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
@@ -144,7 +136,7 @@
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/textFieldLength"
-                        style="@style/HSERobotsTextInputLayout.OutlinedBox.Dense"
+                        style="@style/TextInputLayout.OutlinedBox.Dense"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
@@ -165,7 +157,7 @@
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/textFieldCodeEdit"
-                        style="@style/HSERobotsTextInputLayout.OutlinedBox.Dense"
+                        style="@style/TextInputLayout.OutlinedBox.Dense"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
@@ -184,28 +176,26 @@
 
                     </com.google.android.material.textfield.TextInputLayout>
 
-                    <Button
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/button_choose_file"
-                        style="@style/HSERobotsMaterialButton.Outlined.Slim"
+                        style="@style/MaterialButton.Outlined"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
                         android:layout_marginTop="8dp"
                         android:layout_marginEnd="8dp"
-                        android:gravity="center"
-                        android:text="выбрать готовый файл"
+                        android:text="@string/button_choose_file"
                         app:icon="@drawable/ic_baseline_upload_file_24"
                         app:iconTint="?attr/colorAccent" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/button_add_protocol"
-                        style="@style/HSERobotsMaterialButton.Outlined"
+                        style="@style/MaterialButton"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="bottom"
                         android:layout_marginStart="8dp"
                         android:layout_marginEnd="8dp"
-                        android:gravity="center"
                         android:text="@string/button_save_protocol" />
                 </LinearLayout>
             </ScrollView>
@@ -218,7 +208,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
-                android:hint="Выберите тему приложения"
+                android:hint="@string/button_choose_theme"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/button_delete_devices"

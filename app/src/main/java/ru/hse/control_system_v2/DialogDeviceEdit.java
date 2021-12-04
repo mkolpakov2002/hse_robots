@@ -1,5 +1,7 @@
 package ru.hse.control_system_v2;
 
+import static ru.hse.control_system_v2.Constants.APP_LOG_TAG;
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.bluetooth.BluetoothAdapter;
@@ -26,6 +28,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -49,12 +52,15 @@ public class DialogDeviceEdit extends DialogFragment {
     private String devType;
     private boolean isNewDev = false;
     private EditText editTextNameAlert;
+    private MainActivity ma;
+
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        if (context instanceof Activity){
-            c = context;
+        if (context instanceof MainActivity){
+            ma = (MainActivity) context;
         }
+        c = context;
     }
 
     void getDeviceInformation(){
@@ -65,6 +71,9 @@ public class DialogDeviceEdit extends DialogFragment {
         devType = currentDevice.getDevType();
     }
 
+    public DialogDeviceEdit(){
+        //nothing
+    }
     public DialogDeviceEdit(DeviceItemType currentDevice, String deviceInfo){
         if(currentDevice == null){
             isNewDev = true;
@@ -95,7 +104,7 @@ public class DialogDeviceEdit extends DialogFragment {
         LayoutInflater inflater = this.getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.dialog_edit_device, null);
 
-        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(c, R.style.AlertDialog_AppTheme);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(c, R.style.AlertDialogStyle);
         builder.setView(dialogView);
 
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(c, android.R.layout.simple_spinner_item, data);
@@ -211,7 +220,10 @@ public class DialogDeviceEdit extends DialogFragment {
         //currentDevice.setDevPort();
         devicesDao.update(currentDevice);
         //Обновление MainActivity
-        updateMainScreen();
+        MainMenuFragment mainMenuFragment = ma.getMainMenuFragment();
+        if(mainMenuFragment != null){
+            mainMenuFragment.onRefresh();
+        }
     }
 
     void saveNewDevice(){
@@ -245,27 +257,13 @@ public class DialogDeviceEdit extends DialogFragment {
 
         //Обновление MainActivity
         if(!isNewDev){
-            updateMainScreen();
+            MainMenuFragment mainMenuFragment = ma.getMainMenuFragment();
+            if(mainMenuFragment != null){
+                mainMenuFragment.onRefresh();
+            }
         }
 
         ((AddDeviceDBActivity) c).exitActivity();
     }
 
-    private void updateMainScreen(){
-        NavHostFragment navHostFragment = (NavHostFragment)((MainActivity) c).getSupportFragmentManager().getPrimaryNavigationFragment();
-
-        FragmentManager fragmentManager = null;
-        if (navHostFragment != null) {
-            fragmentManager = navHostFragment.getChildFragmentManager();
-        }
-
-        Fragment current = null;
-        if (fragmentManager != null) {
-            current = fragmentManager.getPrimaryNavigationFragment();
-        }
-        if(current instanceof MainMenuFragment){
-            MainMenuFragment mainMenuFragment = (MainMenuFragment) current;
-            mainMenuFragment.onRefresh();
-        }
-    }
 }

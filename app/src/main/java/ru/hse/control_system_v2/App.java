@@ -5,6 +5,8 @@ import android.content.Context;
 
 import androidx.room.Room;
 
+import com.google.android.material.color.DynamicColors;
+
 public class App extends Application {
 
     public static App instance;
@@ -18,6 +20,7 @@ public class App extends Application {
         database = Room.databaseBuilder(this, AppDataBase.class, "devices")
                 .allowMainThreadQueries()
                 .build();
+        DynamicColors.applyToActivitiesIfAvailable(this);
     }
 
     public static App getInstance() {

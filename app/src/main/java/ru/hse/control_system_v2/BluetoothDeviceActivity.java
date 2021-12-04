@@ -155,6 +155,7 @@ public class BluetoothDeviceActivity extends AppCompatActivity implements View.O
 
     @Override
     protected void onPause() {
+
         super.onPause();
         active = false;
         completeDevicesInfo();
@@ -166,12 +167,12 @@ public class BluetoothDeviceActivity extends AppCompatActivity implements View.O
             message[countCommands++] = getDevicesID.get("type_move");
 
         message[countCommands++] = getDevicesID.get("STOP");
-        for(int i = 0; i < bluetoothDataThreadForArduinoList.size(); i++){
+        for (int i = 0; i < bluetoothDataThreadForArduinoList.size(); i++) {
             Log.d(APP_LOG_TAG, "BtDeviceActivity в onPause");
             bluetoothDataThreadForArduinoList.get(i).sendData(message, lengthMes);
         }
 
-        for(int i = 0; i < bluetoothDataThreadForArduinoList.size(); i++) {
+        for (int i = 0; i < bluetoothDataThreadForArduinoList.size(); i++) {
             bluetoothDataThreadForArduinoList.get(i).Disconnect();
         }
     }

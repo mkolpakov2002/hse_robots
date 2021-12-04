@@ -11,25 +11,11 @@ import androidx.annotation.StringRes;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
 public class OneButtonAlertDialogFragment extends DialogFragment {
-    private static final String ARG_TITLE = "title";
-    private static final String ARG_MESSAGE = "message";
-
-    private CharSequence mTitle;
-    private CharSequence mMessage;
-
-    public static OneButtonAlertDialogFragment newInstance(Context c, @StringRes int title, @StringRes int message) {
-        return newInstance(c.getText(title), c.getText(message));
-    }
-
-    public static OneButtonAlertDialogFragment newInstance(CharSequence title, CharSequence message) {
-        OneButtonAlertDialogFragment fragment = new OneButtonAlertDialogFragment();
-        Bundle args = new Bundle();
-        args.putCharSequence(ARG_TITLE, title);
-        args.putCharSequence(ARG_MESSAGE, message);
-        fragment.setArguments(args);
-        return fragment;
-    }
+    private static String mTitle = "title";
+    private static String mMessage = "message";
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -39,14 +25,14 @@ public class OneButtonAlertDialogFragment extends DialogFragment {
         if (args == null)
             return;
 
-        mTitle = args.getCharSequence(ARG_TITLE, "title");
-        mMessage = args.getCharSequence(ARG_MESSAGE, "message");
+        mTitle = args.getString("dialogTitle", "title");
+        mMessage = args.getString("dialogText", "message");
     }
 
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        return new AlertDialog.Builder(requireContext(), R.style.AlertDialog_AppTheme).setTitle(mTitle).setMessage(mMessage).setPositiveButton(R.string.ok, null).create();
+        return new MaterialAlertDialogBuilder(requireContext(), R.style.AlertDialogStyle).setTitle(mTitle).setMessage(mMessage).setPositiveButton(R.string.ok, null).create();
     }
 
     @Override

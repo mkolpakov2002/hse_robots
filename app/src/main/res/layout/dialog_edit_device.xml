@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:animateLayoutChanges="true"
-    android:background="@drawable/bg_rounded_popup">
+    android:animateLayoutChanges="true">
 
     <TextView
         android:id="@+id/change_title"
@@ -58,7 +57,7 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/dialog_edit_cancel"
-        style="@style/HSERobotsMaterialButton.Outlined.Slim"
+        style="@style/TextButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -71,7 +70,7 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/dialog_edit_save"
-        style="@style/HSERobotsMaterialButton.Slim"
+        style="@style/MaterialButton.Outlined"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"

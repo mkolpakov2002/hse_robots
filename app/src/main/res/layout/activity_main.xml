@@ -12,7 +12,6 @@
         android:id="@+id/main_activity_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/background_bg"
         android:orientation="vertical"
         android:weightSum="1">
 
@@ -23,7 +22,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:theme="@style/HSERobotsToolbar" />
+            app:theme="@style/Toolbar" />
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/nav_host_fragment"
@@ -38,7 +37,7 @@
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/floating_action_button_En_Bt"
-            style="@style/HSERobotsMaterialButton.Fab"
+            style="@style/MaterialButton.Fab.Main"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
@@ -51,11 +50,8 @@
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottomnav"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            style="@style/HSERobotsBottomNavigationView"
-            android:background="@drawable/white_bg"
+            style="@style/BottomNavigationView"
             android:elevation="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

@@ -1,24 +1,18 @@
 package ru.hse.control_system_v2;
 
-import static ru.hse.control_system_v2.Constants.APP_LOG_TAG;
-
-import android.util.Log;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import ru.hse.control_system_v2.list_devices.DeviceItemType;
 
 public class DeviceHandler {
-    private static List<DeviceItemType> devicesList;
+    private static ArrayList<DeviceItemType> devicesList = new ArrayList<>();
 
-    public static synchronized List<DeviceItemType> getDevicesList(){
+    public static synchronized ArrayList<DeviceItemType> getDevicesList(){
         return DeviceHandler.devicesList;
     }
 
-    public static synchronized void setDevicesList(DeviceItemType... devicesList){
-        DeviceHandler.devicesList = Arrays.asList(devicesList);
+    public static synchronized void setDevicesList(ArrayList<DeviceItemType> devicesList){
+        DeviceHandler.devicesList = devicesList;
     }
 
 }

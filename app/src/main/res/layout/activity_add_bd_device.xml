@@ -3,7 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background_bg"
     android:orientation="vertical"
     android:weightSum="1">
 
@@ -24,7 +23,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:theme="@style/HSERobotsToolbar"/>
+            app:theme="@style/Toolbar"/>
 
         <TextView
             android:id="@+id/paired_devices_title_add_activity"
@@ -44,7 +43,6 @@
         android:id="@+id/swipeRefreshLayout_add_device"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:background="@drawable/white_bg"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -77,7 +75,7 @@
         android:layout_marginBottom="16dp"
         android:contentDescription="@string/suggestionEnableBluetooth"
         android:text="@string/go_to_settings"
-        style="@style/HSERobotsMaterialButton.ExtendedFab"
+        style="@style/MaterialButton.ExtendedFab"
         app:icon="@drawable/ic_settings"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

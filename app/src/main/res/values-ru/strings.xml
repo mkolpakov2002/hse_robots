@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Роботы ВШЭ</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -130,6 +131,4 @@
     <string name="settings_fragment_delete_protocols">Вы действительно хотите удалить все кастомные протоколы?</string>
     <string name="settings_fragment_button_ok">ОК</string>
     <string name="settings_fragment_button_cancel">Отмена</string>
-
-
 </resources>

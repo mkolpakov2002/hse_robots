@@ -20,7 +20,7 @@
         android:layout_marginBottom="16dp"
         android:contentDescription=""
         app:icon="@drawable/ic_connection"
-        android:text="Подключение"
+        android:text="@string/floating_action_button_connection"
         android:textAlignment="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

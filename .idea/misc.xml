@@ -84,6 +84,11 @@
         <entry key="..\:/Users/mkolp/StudioProjects/hse_robots/app/src/main/res/layout/mtrl_alert_dialog_actions_custom.xml" value="0.1" />
         <entry key="..\:/Users/mkolp/StudioProjects/hse_robots/app/src/main/res/layout/row_devices.xml" value="0.15760869565217392" />
         <entry key="..\:/Users/mkolp/StudioProjects/hse_robots/app/src/main/res/menu/main_bottom_menu.xml" value="0.1875" />
+        <entry key="..\:/Users/tatry/Desktop/Robots_436_new/hse_robots/app/src/main/res/layout/activity_bluetooth_device.xml" value="0.1" />
+        <entry key="..\:/Users/tatry/Desktop/Robots_436_new/hse_robots/app/src/main/res/layout/bottom_sheet_dialog_add_device.xml" value="0.1" />
+        <entry key="..\:/Users/tatry/Desktop/Robots_436_new/hse_robots/app/src/main/res/layout/bottom_sheet_dialog_connection_type.xml" value="0.1" />
+        <entry key="..\:/Users/tatry/Desktop/Robots_436_new/hse_robots/app/src/main/res/layout/item_main_list_button_add.xml" value="0.1" />
+        <entry key="..\:/Users/tatry/Desktop/Robots_436_new/hse_robots/app/src/main/res/menu/main_bottom_menu.xml" value="0.1" />
       </map>
     </option>
   </component>

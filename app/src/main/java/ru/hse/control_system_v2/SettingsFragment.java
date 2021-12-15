@@ -213,15 +213,15 @@ public class SettingsFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 MaterialAlertDialogBuilder materialAlertDialogBuilder = new MaterialAlertDialogBuilder(fragmentContext, R.style.AlertDialogStyle);
-                materialAlertDialogBuilder.setTitle("Подтверждение")
-                        .setMessage("Вы действительно хотите удалить все кастомные протоколы?")
+                materialAlertDialogBuilder.setTitle(getResources().getString(R.string.settings_fragment_confirm))
+                        .setMessage(getResources().getString(R.string.settings_fragment_delete_protocols))
                         .setIcon(R.drawable.ic_baseline_warning_24)
-                        .setPositiveButton("OK", (dialog1, whichButton) -> {
+                        .setPositiveButton(getResources().getString(R.string.settings_fragment_button_ok), (dialog1, whichButton) -> {
                             ProtocolDBHelper dbHelper = new ProtocolDBHelper(fragmentContext);
                             dbHelper.onUpgrade(dbHelper.getWritableDatabase(), 1,1);
                             showProtocols();
                         })
-                        .setNegativeButton("Отмена", null)
+                        .setNegativeButton(getResources().getString(R.string.settings_fragment_button_cancel), null)
                         .create();
                 materialAlertDialogBuilder.show();
 
@@ -423,7 +423,7 @@ public class SettingsFragment extends Fragment {
         Cursor cursor = database.query(ProtocolDBHelper.TABLE_PROTOCOLS, null, null, null, null, null, null);
         if (cursor.moveToFirst()) {
             textListProtocols.setText("");
-            textListProtocols.append("Список доступных протоколов");
+            textListProtocols.append(getResources().getString(R.string.list_of_available_protocols));
             int idIndex = cursor.getColumnIndex(ProtocolDBHelper.KEY_ID);
             int nameIndex = cursor.getColumnIndex(ProtocolDBHelper.KEY_NAME);
             int lenIndex = cursor.getColumnIndex(ProtocolDBHelper.KEY_LEN);
@@ -435,7 +435,7 @@ public class SettingsFragment extends Fragment {
                         ", code = " + cursor.getString(codeIndex));
             } while (cursor.moveToNext());
         } else
-            textListProtocols.append("Нет доступных протоколов");
+            textListProtocols.append(getResources().getString(R.string.no_available_protocols));
 
         cursor.close();
     }

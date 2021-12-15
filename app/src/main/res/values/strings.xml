@@ -9,7 +9,7 @@
     <string name="add_bd_label">Принять</string>
     <string name="cancel_add_bd_label">Отмена</string>
     <string name="ok_add_bd_label">Завершить</string>
-    <string name="suggestionNoBtAdapter">На вашем устройстве нет Bluetooth адаптера, дальнейшая работа невозможна</string>
+    <string name="suggestionNoBtAdapter">На вашем устройстве нет Bluetooth или WiFi адаптера, дальнейшая работа невозможна</string>
     <string name="error">Ошибка приложения</string>
     <string name="suggestionEnableBluetooth">Пожалуйста, включите bluetooth для выбора устройств!</string>
     <string name="btnEnBt">Включить bluetooth</string>
@@ -123,8 +123,8 @@
     <string name="send_command_right">Отправляю команду движения  вправо;</string>
     <string name="send_command_button_released">Кнопка отпущена, отправляю команду стоп;</string>
     <string name="send_command_insufficient_data">Недостаточно данных в используемом протоколе, сообщение не отправлено;</string>
-    <string name="send_command_hold_enabled">Удерживание команды включено...</string>
-    <string name="send_command_hold_disabled">Удерживание команды отключено...</string>
+    <string name="send_command_hold_enabled">Удерживание команды включено…</string>
+    <string name="send_command_hold_disabled">Удерживание команды отключено…</string>
 
     <string name="settings_fragment_confirm">Подтверждение</string>
     <string name="settings_fragment_delete_protocols">Вы действительно хотите удалить все кастомные протоколы?</string>

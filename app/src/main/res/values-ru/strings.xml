@@ -10,7 +10,7 @@
     <string name="add_bd_label">Принять</string>
     <string name="cancel_add_bd_label">Отмена</string>
     <string name="ok_add_bd_label">Завершить</string>
-    <string name="suggestionNoBtAdapter">На вашем устройстве нет Bluetooth адаптера, дальнейшая работа невозможна</string>
+    <string name="suggestionNoBtAdapter">На вашем устройстве нет Bluetooth или WiFi адаптера, дальнейшая работа невозможна</string>
     <string name="error">Ошибка приложения</string>
     <string name="suggestionEnableBluetooth">Пожалуйста, включите bluetooth для выбора устройств!</string>
     <string name="btnEnBt">Включить bluetooth</string>

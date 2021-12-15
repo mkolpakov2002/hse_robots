@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -206,7 +207,7 @@ public class MainMenuFragment extends Fragment implements SwipeRefreshLayout.OnR
             headerText.setText(R.string.suggestionEnableBluetooth);
             recycler.setAdapter(null);
             multipleTypesAdapter = null;
-        } else {
+        } else if (BluetoothAdapter.getDefaultAdapter() == null || !ma.getPackageManager().hasSystemFeature(PackageManager.FEATURE_WIFI)){
             if(dialog !=null && dialog.isShowing()){
                 dialog.hide();
             }

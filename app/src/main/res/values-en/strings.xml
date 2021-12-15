@@ -10,7 +10,7 @@
     <string name="add_bd_label">Accept</string>
     <string name="cancel_add_bd_label">Cancel</string>
     <string name="ok_add_bd_label">End</string>
-    <string name="suggestionNoBtAdapter">There is no Bluetooth adapter on your device, further work is impossible</string>
+    <string name="suggestionNoBtAdapter">There is no Bluetooth or WiFi adapter on your device, further work is impossible</string>
     <string name="error">Application error</string>
     <string name="suggestionEnableBluetooth">Please turn on bluetooth to select devices!</string>
     <string name="btnEnBt">Enable bluetooth</string>

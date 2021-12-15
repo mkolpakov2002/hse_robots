@@ -1,6 +1,5 @@
 package ru.hse.control_system_v2;
 
-import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -17,6 +16,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -26,6 +26,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.dialog.MaterialDialogs;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -47,6 +48,7 @@ public class MainMenuFragment extends Fragment implements SwipeRefreshLayout.OnR
     private View view;
     private BottomSheetDialog bottomSheetDialogToAdd;
     private BottomSheetDialog bottomSheetDialogToConnect;
+    private AlertDialog dialog;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -205,19 +207,23 @@ public class MainMenuFragment extends Fragment implements SwipeRefreshLayout.OnR
             recycler.setAdapter(null);
             multipleTypesAdapter = null;
         } else {
+            if(dialog !=null && dialog.isShowing()){
+                dialog.hide();
+            }
             // отсутствует Bluetooth адаптер, работа приложения невозможна
-            MaterialAlertDialogBuilder dialog = new MaterialAlertDialogBuilder(ma);
-            dialog.setTitle(getString(R.string.error));
-            dialog.setMessage(getString(R.string.suggestionNoBtAdapter));
-            dialog.setPositiveButton(getResources().getString(R.string.ok),
+            MaterialAlertDialogBuilder adapterDialogBuilder = new MaterialAlertDialogBuilder(ma);
+            adapterDialogBuilder.setTitle(getString(R.string.error));
+            adapterDialogBuilder.setMessage(getString(R.string.suggestionNoBtAdapter));
+            adapterDialogBuilder.setPositiveButton(getResources().getString(R.string.ok),
                     (dialog1, which) -> {
                         // скрывает диалог и завершает работу приложения
                         dialog1.dismiss();
                         ma.finish();
                     });
             // нельзя закрыть этот диалог
-            dialog.setCancelable(false);
-            dialog.create().show();
+            adapterDialogBuilder.setCancelable(false);
+            dialog = adapterDialogBuilder.create();
+            dialog.show();
         }
         // Приложение обновлено, завершаем анимацию обновления
         swipeToRefreshLayout.setRefreshing(false);

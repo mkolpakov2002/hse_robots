@@ -38,20 +38,13 @@ import ru.hse.control_system_v2.dbprotocol.ProtocolDBHelper;
 import ru.hse.control_system_v2.list_devices.DeviceItemType;
 
 public class AddDeviceDBActivity extends AppCompatActivity implements DevicesAdapter.SelectedDevice, SwipeRefreshLayout.OnRefreshListener{
-    ProtocolDBHelper protocolDBHelper;
-    ExtendedFloatingActionButton fabToOpenSettings;
-    RecyclerView pairedList;
-    BluetoothAdapter btAdapter;
-    String selectedDeviceInfo;
-    String deviceHardwareAddress;
-    DevicesAdapter devicesAdapter;
-    TextView pairedDevicesTitleTextView;
 
-    String name;
+    private RecyclerView pairedList;
+    private BluetoothAdapter btAdapter;
+    private TextView pairedDevicesTitleTextView;
     //инициализация swipe refresh
-    SwipeRefreshLayout swipeToRefreshLayout;
-    Bundle b;
-    public static boolean stateOfAlert;
+    private SwipeRefreshLayout swipeToRefreshLayout;
+    private static boolean stateOfAlert;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -62,10 +55,8 @@ public class AddDeviceDBActivity extends AppCompatActivity implements DevicesAda
         swipeToRefreshLayout = findViewById(R.id.swipeRefreshLayout_add_device);
         swipeToRefreshLayout.setOnRefreshListener(this);
 
-        fabToOpenSettings = findViewById(R.id.floating_action_button_open_settings);
+        ExtendedFloatingActionButton fabToOpenSettings = findViewById(R.id.floating_action_button_open_settings);
         fabToOpenSettings.setOnClickListener(this::openSettings);
-
-        protocolDBHelper = new ProtocolDBHelper(this);
 
         stateOfAlert = false;
 
@@ -102,7 +93,7 @@ public class AddDeviceDBActivity extends AppCompatActivity implements DevicesAda
             // проходимся в цикле по этому списку
             for (BluetoothDevice device : pairedDevices) {
                 // Обновление List View - добавляем в него сопряжённые устройства
-                deviceHardwareAddress = device.getName() + "\n" + device.getAddress(); // Name + MAC address в виде String переменной
+                String deviceHardwareAddress = device.getName() + "\n" + device.getAddress(); // Name + MAC address в виде String переменной
                 a.add(deviceHardwareAddress);
             }
             String[] array = a.toArray(new String[0]);
@@ -112,7 +103,7 @@ public class AddDeviceDBActivity extends AppCompatActivity implements DevicesAda
 
                 devicesList.add(deviceModel);
             }
-            devicesAdapter = new DevicesAdapter(devicesList, this);
+            DevicesAdapter devicesAdapter = new DevicesAdapter(devicesList, this);
 
             pairedList.setAdapter(devicesAdapter);
 
@@ -127,7 +118,7 @@ public class AddDeviceDBActivity extends AppCompatActivity implements DevicesAda
 
     //Получаем адрес устройства из List View
     public void checkDeviceAddress(DeviceModel deviceModel) {
-        selectedDeviceInfo = deviceModel.getDeviceName();
+        String selectedDeviceInfo = deviceModel.getDeviceName();
         DialogDeviceEdit alertDialog = new DialogDeviceEdit(null, selectedDeviceInfo);
         Bundle args = new Bundle();
         alertDialog.setArguments(args);

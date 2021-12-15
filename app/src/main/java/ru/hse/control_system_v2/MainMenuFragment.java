@@ -25,6 +25,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -199,16 +200,16 @@ public class MainMenuFragment extends Fragment implements SwipeRefreshLayout.OnR
                 // it works second time and later
                 multipleTypesAdapter.refreshAdapterData();
             }
-        } else if(!btIsEnabledFlagVoid()) {
+        } else if(BluetoothAdapter.getDefaultAdapter() != null && !btIsEnabledFlagVoid()) {
             headerText.setText(R.string.suggestionEnableBluetooth);
             recycler.setAdapter(null);
             multipleTypesAdapter = null;
         } else {
             // отсутствует Bluetooth адаптер, работа приложения невозможна
-            AlertDialog dialog = new AlertDialog.Builder(ma).create();
+            MaterialAlertDialogBuilder dialog = new MaterialAlertDialogBuilder(ma);
             dialog.setTitle(getString(R.string.error));
             dialog.setMessage(getString(R.string.suggestionNoBtAdapter));
-            dialog.setButton(AlertDialog.BUTTON_POSITIVE, getResources().getString(R.string.ok),
+            dialog.setPositiveButton(getResources().getString(R.string.ok),
                     (dialog1, which) -> {
                         // скрывает диалог и завершает работу приложения
                         dialog1.dismiss();
@@ -216,7 +217,7 @@ public class MainMenuFragment extends Fragment implements SwipeRefreshLayout.OnR
                     });
             // нельзя закрыть этот диалог
             dialog.setCancelable(false);
-            dialog.show();
+            dialog.create().show();
         }
         // Приложение обновлено, завершаем анимацию обновления
         swipeToRefreshLayout.setRefreshing(false);

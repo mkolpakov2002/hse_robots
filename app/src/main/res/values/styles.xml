@@ -22,7 +22,7 @@
         <item name="android:windowLightStatusBar">true</item>
         <item name="colorPrimaryContainer">@color/colorPureWhite</item>
         <item name="colorOnPrimaryContainer">@color/colorPrimaryDark</item>
-        <item name="android:statusBarColor">?android:attr/windowBackground</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="bottomSheetDialogTheme">@style/BottomSheetDialogStyle</item>
         <item name="floatingActionButtonPrimaryStyle">@style/MaterialButton.Fab.Main</item>
         <item name="floatingActionButtonSecondaryStyle">@style/MaterialButton.Fab.Secondary</item>
@@ -31,7 +31,7 @@
     </style>
 
     <style name="AppTheme.Dark" parent="Theme.Material3.Dark.NoActionBar">
-        <item name="android:statusBarColor">?android:attr/windowBackground</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="colorPrimary">@color/colorPerfectPink</item>
         <item name="colorOnPrimary">@color/colorOnPerfectPink</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>

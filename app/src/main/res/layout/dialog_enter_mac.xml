@@ -36,6 +36,7 @@
             android:ems="10"
             android:hint="@string/hint_dialog_mac"
             android:textAllCaps="true"
+            android:minHeight="48dp"
             android:inputType="textCapCharacters" />
 
     </LinearLayout>

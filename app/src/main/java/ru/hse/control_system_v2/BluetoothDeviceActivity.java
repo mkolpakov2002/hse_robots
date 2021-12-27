@@ -3,10 +3,8 @@ package ru.hse.control_system_v2;
 
 import static ru.hse.control_system_v2.Constants.APP_LOG_TAG;
 
-import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
@@ -49,14 +47,14 @@ public class BluetoothDeviceActivity extends AppCompatActivity implements View.O
         super.onCreate(savedInstanceState);
         ThemeUtils.onActivityCreateSetTheme(this);
         setContentView(R.layout.activity_bluetooth_device);
-        findViewById(R.id.button_stop).setEnabled(false);
+        findViewById(R.id.button_stop_bt).setEnabled(false);
 
         disconnectedDevicesList = new ArrayList<>();
         devicesList = new ArrayList<>();
         devicesList = DeviceHandler.getDevicesList();
         checkForActiveDevices();
 
-        outputText = findViewById(R.id.incoming_data);
+        outputText = findViewById(R.id.incoming_data_bt);
         outputText.setMovementMethod(new ScrollingMovementMethod());
         String devProtocol = devicesList.get(0).getDevProtocol();
 
@@ -87,13 +85,13 @@ public class BluetoothDeviceActivity extends AppCompatActivity implements View.O
             }
         }
 
-        findViewById(R.id.button_up).setOnTouchListener(touchListener);
-        findViewById(R.id.button_down).setOnTouchListener(touchListener);
-        findViewById(R.id.button_left).setOnTouchListener(touchListener);
-        findViewById(R.id.button_right).setOnTouchListener(touchListener);
-        findViewById(R.id.button_stop).setOnClickListener(this);
+        findViewById(R.id.button_up_bt).setOnTouchListener(touchListener);
+        findViewById(R.id.button_down_bt).setOnTouchListener(touchListener);
+        findViewById(R.id.button_left_bt).setOnTouchListener(touchListener);
+        findViewById(R.id.button_right_bt).setOnTouchListener(touchListener);
+        findViewById(R.id.button_stop_bt).setOnClickListener(this);
 
-        SwitchMaterial hold_command = findViewById(R.id.switch_hold_command_mm);
+        SwitchMaterial hold_command = findViewById(R.id.switch_hold_command_mm_Bt);
         hold_command.setOnCheckedChangeListener(this);
         hold_command.setChecked(false);
 
@@ -182,7 +180,7 @@ public class BluetoothDeviceActivity extends AppCompatActivity implements View.O
     {
         completeDevicesInfo();
         switch (v.getId()) {
-            case R.id.button_stop:
+            case R.id.button_stop_bt:
                 outputText.append("\n"+ getResources().getString(R.string.send_command_stop));
                 completeMessage("STOP");
                 countCommands = 0;
@@ -199,27 +197,27 @@ public class BluetoothDeviceActivity extends AppCompatActivity implements View.O
             if(event.getAction() == MotionEvent.ACTION_DOWN) {
                 // если нажали на кнопку и не важно есть удержание команд или нет
                 switch (v.getId()) {
-                    case R.id.button_up:
+                    case R.id.button_up_bt:
                         Log.d(APP_LOG_TAG, "Отправляю команду движения вперёд;");
                         outputText.append("\n"+ getResources().getString(R.string.send_command_forward));
                         completeMessage("FORWARD");
                         countCommands = 0;
                         break;
-                    case R.id.button_down:
+                    case R.id.button_down_bt:
                         outputText.append("\n"+ getResources().getString(R.string.send_command_back));
                         Log.d(APP_LOG_TAG, "Отправляю команду движения назад;");
                         //Toast.makeText(getApplicationContext(), "Назад поехали", Toast.LENGTH_SHORT).show();
                         completeMessage("BACK");
                         countCommands = 0;
                         break;
-                    case R.id.button_left:
+                    case R.id.button_left_bt:
                         outputText.append("\n"+ getResources().getString(R.string.send_command_left));
                         //Toast.makeText(getApplicationContext(), "Влево поехали", Toast.LENGTH_SHORT).show();
                         Log.d(APP_LOG_TAG, "Отправляю команду движения влево;");
                         completeMessage("LEFT");
                         countCommands = 0;
                         break;
-                    case R.id.button_right:
+                    case R.id.button_right_bt:
                         //Toast.makeText(getApplicationContext(), "Вправо поехали", Toast.LENGTH_SHORT).show();
                         outputText.append("\n"+ getResources().getString(R.string.send_command_right));
                         Log.d(APP_LOG_TAG, "Отправляю команду движения вправо;");
@@ -235,19 +233,19 @@ public class BluetoothDeviceActivity extends AppCompatActivity implements View.O
                     outputText.append("\n"+ getResources().getString(R.string.send_command_button_released));
                     switch (v.getId())
                     {
-                        case R.id.button_up:
+                        case R.id.button_up_bt:
                             completeMessage("FORWARD_STOP");
                             countCommands = 0;
                             break;
-                        case R.id.button_down:
+                        case R.id.button_down_bt:
                             completeMessage("BACK_STOP");
                             countCommands = 0;
                             break;
-                        case R.id.button_left:
+                        case R.id.button_left_bt:
                             completeMessage("LEFT_STOP");
                             countCommands = 0;
                             break;
-                        case R.id.button_right:
+                        case R.id.button_right_bt:
                             completeMessage("RIGHT_STOP");
                             countCommands = 0;
                             break;
@@ -299,15 +297,15 @@ public class BluetoothDeviceActivity extends AppCompatActivity implements View.O
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         switch (buttonView.getId()) {
-            case R.id.switch_hold_command_mm:
+            case R.id.switch_hold_command_mm_Bt:
                 isHoldCommand = isChecked;
                 if(isHoldCommand) {
                     outputText.append("\n"+ getResources().getString(R.string.send_command_hold_enabled));
-                    findViewById(R.id.button_stop).setEnabled(true);
+                    findViewById(R.id.button_stop_bt).setEnabled(true);
                 }
                 else {
                     outputText.append("\n"+ getResources().getString(R.string.send_command_hold_disabled));
-                    findViewById(R.id.button_stop).setEnabled(false);
+                    findViewById(R.id.button_stop_bt).setEnabled(false);
                 }
                 break;
         }

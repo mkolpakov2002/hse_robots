@@ -17,78 +17,65 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ScrollView
-        android:id="@+id/scrollView3"
+    <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
+        android:orientation="vertical"
+        android:scrollbarStyle="insideOverlay"
         app:layout_constraintBottom_toTopOf="@+id/dialog_edit_cancel"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/change_title">
+        app:layout_constraintTop_toBottomOf="@+id/change_title"
+        tools:layout_editor_absoluteX="8dp">
 
-        <LinearLayout
-            android:id="@+id/linearLayout"
+
+        <EditText
+            android:id="@+id/editDeviceName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:orientation="vertical"
-            android:scrollbarStyle="insideOverlay"
-            >
+            android:ems="10"
+            android:hint="@string/alert_device_name_tint"
+            android:importantForAutofill="no"
+            android:inputType="textPersonName"
+            android:minHeight="48dp" />
 
+        <EditText
+            android:id="@+id/editDeviceIp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/alert_device_ip_hint"
+            android:importantForAutofill="no"
+            android:inputType="number"
+            android:minHeight="48dp" />
 
-            <EditText
-                android:id="@+id/editDeviceName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="@string/alert_device_name_tint"
-                android:importantForAutofill="no"
-                android:inputType="textPersonName"
-                android:minHeight="48dp" />
+        <EditText
+            android:id="@+id/editDevicePort"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/alert_device_port_tint"
+            android:importantForAutofill="no"
+            android:inputType="number"
+            android:minHeight="48dp" />
 
-            <EditText
-                android:id="@+id/editDeviceIp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="@string/alert_device_ip_hint"
-                android:importantForAutofill="no"
-                android:inputType="number"
-                android:minHeight="48dp" />
+        <Spinner
+            android:id="@+id/spinner_proto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp" />
 
-            <EditText
-                android:id="@+id/editDevicePort"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="@string/alert_device_port_tint"
-                android:importantForAutofill="no"
-                android:inputType="number"
-                android:minHeight="48dp" />
+        <Spinner
+            android:id="@+id/spinner_class"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp" />
 
-            <Spinner
-                android:id="@+id/spinner_proto"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:minHeight="48dp" />
-
-            <Spinner
-                android:id="@+id/spinner_class"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:minHeight="48dp" />
-
-            <Spinner
-                android:id="@+id/spinner_type"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:minHeight="48dp" />
-        </LinearLayout>
-    </ScrollView>
+        <Spinner
+            android:id="@+id/spinner_type"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp" />
+    </LinearLayout>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/dialog_edit_cancel"

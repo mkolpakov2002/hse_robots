@@ -46,8 +46,8 @@ public class DeviceItemType implements ItemType{
         this.devClass = devClass;
         this.devType = devType;
         //Ip и порт
-        this.devIp = devIp;
-        this.devPort = 9002;
+        this.devIp = devIp.replace(':', '.').replace('/', '.');
+        this.devPort = devPort;
 
         switch (devClass) {
             case "class_android":
@@ -98,7 +98,7 @@ public class DeviceItemType implements ItemType{
     }
     //"192.168.1.138"
     public void setDevIp(String devIp){
-        this.devIp = devIp;
+        this.devIp = devIp.replace(':', '.').replace('/', '.');
     }
     //4141
     public void setDevPort(int devPort){

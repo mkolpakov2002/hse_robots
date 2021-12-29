@@ -54,8 +54,8 @@ public class DialogDeviceEdit extends DialogFragment {
     private EditText editTextPortAlert;
     private MainActivity ma;
     private AlertDialog alertDialog;
-    private boolean isPortAccepted;
-    private boolean isIpAccepted;
+    private boolean isPortAccepted = false;
+    private boolean isIpAccepted = false;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -74,6 +74,8 @@ public class DialogDeviceEdit extends DialogFragment {
         devType = currentDevice.getDevType();
         devIp = currentDevice.getDevIp();
         devPort = String.valueOf(currentDevice.getDevPort());
+        isPortAccepted = true;
+        isIpAccepted = true;
     }
 
     public DialogDeviceEdit(){
@@ -207,6 +209,7 @@ public class DialogDeviceEdit extends DialogFragment {
                 if(s.length() == 0 || !isPortAccepted){
                     editTextPortAlert.requestFocus();
                     target.setError(getString(R.string.error_incorrect));
+                    isPortAccepted = false;
                 }
             }
         });

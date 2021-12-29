@@ -15,7 +15,6 @@ public class WiFiDataThread extends Thread{
 
     }
 
-
     public void sendData(byte[] message, int lengthMes) {
 
     }

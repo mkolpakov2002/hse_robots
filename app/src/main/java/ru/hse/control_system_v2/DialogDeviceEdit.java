@@ -233,6 +233,12 @@ public class DialogDeviceEdit extends DialogFragment {
                         if(editTextNameAlert.getText().length()==0){
                             editTextNameAlert.requestFocus();
                             editTextNameAlert.setError(getString(R.string.error_incorrect));
+                        } else if(editTextIpAlert.getText().length()==0){
+                            editTextIpAlert.requestFocus();
+                            editTextIpAlert.setError(getString(R.string.error_incorrect));
+                        } else if(editTextPortAlert.getText().length()==0){
+                            editTextPortAlert.requestFocus();
+                            editTextPortAlert.setError(getString(R.string.error_incorrect));
                         } else if(isIpAccepted && isPortAccepted) {
                             devIp = editTextIpAlert.getText().toString();
                             devPort = editTextPortAlert.getText().toString();

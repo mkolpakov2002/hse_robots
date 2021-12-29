@@ -47,7 +47,6 @@ public class WiFiConnectionService extends Service {
         return Service.START_NOT_STICKY;
     }
 
-
     class ConnectingThread implements Runnable {
         DeviceItemType currentDevice;
 

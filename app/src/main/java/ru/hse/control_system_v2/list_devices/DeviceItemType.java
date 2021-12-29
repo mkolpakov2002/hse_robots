@@ -48,40 +48,11 @@ public class DeviceItemType implements ItemType{
         //Ip и порт
         this.devIp = devIp.replace(':', '.').replace('/', '.');
         this.devPort = devPort;
-
-        switch (devClass) {
-            case "class_android":
-                imageType = "class_android";
-                break;
-            case "class_computer":
-
-            case "type_computer":
-                imageType = "class_computer";
-                break;
-            case "no_class":
-                imageType = "no_class";
-                break;
+        if(devClass.equals("class_arduino")){
+            imageType = devType;
+        } else {
+            imageType = devClass;
         }
-
-        switch (devType) {
-            case "type_sphere":
-                //mViewHolder.deviceImage.setImageResource(R.drawable.type_computer);
-                //imageType = "type_sphere";
-                break;
-            case "type_anthropomorphic":
-                //mViewHolder.deviceImage.setImageResource(R.drawable.type_computer);
-                //imageType = "type_anthropomorphic";
-                break;
-            case "type_cubbi":
-                imageType = "type_cubbi";
-                break;
-        }
-        //mViewHolder.deviceImage.setImageResource(R.drawable.type_computer);
-        //imageType = "class_android";
-        //else {
-        //mViewHolder.deviceImage.setImageResource(R.drawable.type_no_type);
-        //imageType = "class_android";
-        //}
     }
 
     public void setIsSelectedOnScreen(boolean isSelectedOnScreen){
@@ -253,38 +224,37 @@ public class DeviceItemType implements ItemType{
         mViewHolder.mName.setText(devName);
         mViewHolder.checkMark.setVisibility(View.GONE);
         mViewHolder.materialCardView.setStrokeColor(Color.TRANSPARENT);
-        switch (devClass) {
-            case "class_android":
-                mViewHolder.deviceImage.setImageResource(R.drawable.class_android);
-                break;
-            case "class_computer":
-            case "type_computer":
-                mViewHolder.deviceImage.setImageResource(R.drawable.type_computer);
-                break;
-            case "no_class":
-                mViewHolder.deviceImage.setImageResource(R.drawable.type_no_type);
-                break;
+        if(devClass.equals("class_arduino")){
+            switch (imageType) {
+                case "type_computer":
+                    mViewHolder.deviceImage.setImageResource(R.drawable.type_computer);
+                    break;
+                case "type_sphere":
+                    //mViewHolder.deviceImage.setImageResource(R.drawable.type_computer);
+                    break;
+                case "type_anthropomorphic":
+                    //mViewHolder.deviceImage.setImageResource(R.drawable.type_computer);
+                    break;
+                case "type_cubbi":
+                    mViewHolder.deviceImage.setImageResource(R.drawable.type_cubbi);
+                    break;
+                case "no_type":
+                    mViewHolder.deviceImage.setImageResource(R.drawable.type_no_type);
+                    break;
+            }
+        } else {
+            switch (imageType) {
+                case "class_android":
+                    mViewHolder.deviceImage.setImageResource(R.drawable.class_android);
+                    break;
+                case "no_class":
+                    mViewHolder.deviceImage.setImageResource(R.drawable.type_no_type);
+                    break;
+                case "class_computer":
+                    mViewHolder.deviceImage.setImageResource(R.drawable.class_computer);
+                    break;
+            }
         }
-
-        switch (devType) {
-            case "type_sphere":
-                //mViewHolder.deviceImage.setImageResource(R.drawable.type_computer);
-                //imageType = "type_sphere";
-                break;
-            case "type_anthropomorphic":
-                //mViewHolder.deviceImage.setImageResource(R.drawable.type_computer);
-                //imageType = "type_anthropomorphic";
-                break;
-            case "type_cubbi":
-                mViewHolder.deviceImage.setImageResource(R.drawable.type_cubbi);
-                break;
-        }
-        //mViewHolder.deviceImage.setImageResource(R.drawable.type_computer);
-        //imageType = "class_android";
-        //else {
-        //mViewHolder.deviceImage.setImageResource(R.drawable.type_no_type);
-        //imageType = "class_android";
-        //}
 
         mViewHolder.deviceImage.setVisibility(View.VISIBLE);
 

@@ -3,6 +3,7 @@ package ru.hse.control_system_v2;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -32,6 +33,7 @@ public class DialogDevice extends DialogFragment {
     private Context c;
     private DeviceItemType currentDevice;
     private MainActivity ma;
+    private AlertDialog alertDialog;
 
     public DialogDevice(){
         //nothing
@@ -80,42 +82,46 @@ public class DialogDevice extends DialogFragment {
         builder.setView(dialogView);
         showDeviceInformation(dialogView);
 
-        final AlertDialog alertDialog = builder.create();
-        MaterialButton buttonToConnect = dialogView.findViewById(R.id.dialog_device_connect);
-        buttonToConnect.setOnClickListener(view -> {
-            MainMenuFragment mainMenuFragment = ma.getMainMenuFragment();
-            if(mainMenuFragment != null){
-                mainMenuFragment.onRefresh();
-                //запуск подключения происходит ниже
+        builder.setTitle(getResources().getString(R.string.alert_info));
+        builder.setPositiveButton(getResources().getString(R.string.alert_connect), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                MainMenuFragment mainMenuFragment = ma.getMainMenuFragment();
+                if(mainMenuFragment != null){
+                    mainMenuFragment.onRefresh();
+                    //запуск подключения происходит ниже
+                    if(alertDialog.isShowing()){
+                        alertDialog.dismiss();
+                    }
+                    mainMenuFragment.showBottomSheetToConnect();
+                }
+            }
+        });
+        builder.setNegativeButton(getResources().getString(R.string.alert_delete), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
                 if(alertDialog.isShowing()){
                     alertDialog.dismiss();
                 }
-                mainMenuFragment.showBottomSheetToConnect();
+                AppDataBase dbDevices = App.getDatabase();
+                DeviceItemTypeDao devicesDao = dbDevices.getDeviceItemTypeDao();
+                devicesDao.delete(id);
+                MainMenuFragment mainMenuFragment = ma.getMainMenuFragment();
+                if(mainMenuFragment != null){
+                    mainMenuFragment.onRefresh();
+                }
             }
         });
-
-        MaterialButton buttonToDeleteDevice = dialogView.findViewById(R.id.dialog_device_delete);
-        buttonToDeleteDevice.setOnClickListener(view -> {
-            if(alertDialog.isShowing()){
-                alertDialog.dismiss();
-            }
-            AppDataBase dbDevices = App.getDatabase();
-            DeviceItemTypeDao devicesDao = dbDevices.getDeviceItemTypeDao();
-            devicesDao.delete(id);
-            MainMenuFragment mainMenuFragment = ma.getMainMenuFragment();
-            if(mainMenuFragment != null){
-                mainMenuFragment.onRefresh();
+        builder.setNeutralButton(getResources().getString(R.string.alert_change), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                if(alertDialog.isShowing()){
+                    alertDialog.dismiss();
+                }
+                changeDeviceAlert();
             }
         });
-
-        MaterialButton buttonToChangeDevice = dialogView.findViewById(R.id.dialog_device_change);
-        buttonToChangeDevice.setOnClickListener(view -> {
-            if(alertDialog.isShowing()){
-                alertDialog.dismiss();
-            }
-            changeDeviceAlert();
-        });
-
+        alertDialog = builder.create();
 
         return alertDialog;
     }

@@ -1,12 +1,9 @@
 package ru.hse.control_system_v2;
 
-import static ru.hse.control_system_v2.Constants.APP_LOG_TAG;
-
-import android.app.Activity;
 import android.app.Dialog;
 import android.bluetooth.BluetoothAdapter;
-import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
@@ -16,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -24,9 +22,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -58,6 +53,9 @@ public class DialogDeviceEdit extends DialogFragment {
     private EditText editTextIpAlert;
     private EditText editTextPortAlert;
     private MainActivity ma;
+    private AlertDialog alertDialog;
+    private boolean isPortAccepted;
+    private boolean isIpAccepted;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -177,20 +175,21 @@ public class DialogDeviceEdit extends DialogFragment {
             public void onTextChanged(EditText target, Editable s) {
                 if(s.length() == 0){
                     editTextNameAlert.requestFocus();
-                    target.setError(getString(R.string.error_empty));
+                    target.setError(getString(R.string.error_incorrect));
                 }
             }
         });
 
-        editTextIpAlert.setInputType(InputType.TYPE_CLASS_DATETIME);
         editTextIpAlert.setHint(getResources().getString(R.string.alert_device_ip_hint));
         editTextIpAlert.addTextChangedListener(new TextChangedListener<>(editTextIpAlert) {
             @Override
             public void onTextChanged(EditText target, Editable s) {
-                if(s.length() == 0){
+                if(s.length() == 0 || !Patterns.IP_ADDRESS
+                        .matcher(s).matches()){
                     editTextIpAlert.requestFocus();
-                    target.setError(getString(R.string.error_empty));
-                }
+                    target.setError(getString(R.string.error_incorrect));
+                    isIpAccepted = false;
+                } else isIpAccepted = true;
             }
         });
 
@@ -199,60 +198,60 @@ public class DialogDeviceEdit extends DialogFragment {
         editTextPortAlert.addTextChangedListener(new TextChangedListener<>(editTextPortAlert) {
             @Override
             public void onTextChanged(EditText target, Editable s) {
-                if(s.length() == 0){
+                try {
+                    int devPortInt = Integer.parseInt(s.toString());
+                    isPortAccepted = true;
+                } catch (NumberFormatException e) {
+                    isPortAccepted = false;
+                }
+                if(s.length() == 0 || !isPortAccepted){
                     editTextPortAlert.requestFocus();
-                    target.setError(getString(R.string.error_empty));
+                    target.setError(getString(R.string.error_incorrect));
                 }
             }
         });
 
+        builder.setTitle(getResources().getString(R.string.alert_editing));
+        //https://stackoverflow.com/questions/26086848/android-dont-dismiss-alertdialog-after-clicking-positivebutton
+        builder.setPositiveButton(getResources().getString(R.string.alert_save), null);
 
-        MaterialButton buttonToCancelChanges = dialogView.findViewById(R.id.dialog_edit_cancel);
-        MaterialButton buttonToSaveChanges = dialogView.findViewById(R.id.dialog_edit_save);
+        builder.setNegativeButton(getResources().getString(R.string.cancel_add_bd_label), null);
 
-        AlertDialog alertDialog = builder.create();
+        alertDialog = builder.create();
+        alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
 
-        buttonToCancelChanges.setOnClickListener(view -> {
-            alertDialog.dismiss();
+            @Override
+            public void onShow(DialogInterface dialog) {
+
+                Button positiveButton = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                positiveButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if(editTextNameAlert.getText().length()==0){
+                            editTextNameAlert.requestFocus();
+                            editTextNameAlert.setError(getString(R.string.error_incorrect));
+                        } else if(isIpAccepted && isPortAccepted) {
+                            devIp = editTextIpAlert.getText().toString();
+                            devPort = editTextPortAlert.getText().toString();
+                            alertDialog.dismiss();
+                            if(isNewDev){
+                                saveNewDevice();
+                            } else {
+                                saveOldDevice();
+                            }
+                        }
+                    }
+                });
+                Button negativeButton = alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+                negativeButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        alertDialog.dismiss();
+                    }
+                });
+            }
         });
 
-        buttonToSaveChanges.setOnClickListener(view -> {
-            boolean isPortAccepted;
-            try {
-                devPort = editTextPortAlert.getText().toString();
-                int devPortInt = Integer.parseInt(devPort);
-                isPortAccepted = true;
-            }
-            catch (NumberFormatException e) {
-                isPortAccepted = false;
-            }
-
-            if(editTextNameAlert.getText().length()==0){
-                editTextNameAlert.requestFocus();
-                editTextNameAlert.setError(getString(R.string.error_empty));
-            } else if(editTextIpAlert.getText().length()==0 ||
-                    Patterns.IP_ADDRESS
-                            .matcher(editTextIpAlert.getText().toString()).matches()){
-                editTextIpAlert.requestFocus();
-                editTextIpAlert.setError(getString(R.string.error_empty));
-            } else if(editTextPortAlert.getText().length()==0){
-                editTextPortAlert.requestFocus();
-                editTextPortAlert.setError(getString(R.string.error_empty));
-            } else if(!isPortAccepted){
-                editTextPortAlert.requestFocus();
-                editTextPortAlert.setError("Неверный номер порта");
-            } else {
-                devIp = editTextIpAlert.getText().toString();
-                alertDialog.dismiss();
-                if(isNewDev){
-                    saveNewDevice();
-                } else {
-                    saveOldDevice();
-                }
-            }
-
-
-        });
         return alertDialog;
     }
 
@@ -293,34 +292,19 @@ public class DialogDeviceEdit extends DialogFragment {
         else
             typeDevice = "no_type";
 
-        if (BluetoothAdapter.checkBluetoothAddress(MAC)) {
-
-            AppDataBase dbDevices = App.getDatabase();
-            DeviceItemTypeDao devicesDao = dbDevices.getDeviceItemTypeDao();
-            List<DeviceItemType> devicesWithMAC;
-            devicesWithMAC = devicesDao.getAllDevicesWithSuchMAC(MAC);
-            if(devicesWithMAC.size()!=0){
-                Toast.makeText(c, "Already added MAC address", Toast.LENGTH_LONG).show();
-                Log.d("Add device", "Device denied");
-            } else {
-                currentDevice = new DeviceItemType(name,MAC,protocol,classDevice,typeDevice,devIp,Integer.parseInt(devPort));
-                devicesDao.insertAll(currentDevice);
-            }
-        }
-        else {
-            Toast.makeText(c, "Wrong MAC address", Toast.LENGTH_LONG).show();
-            Log.d("Add device", "Device denied");
-        }
-
-        //Обновление MainActivity
-        if(!isNewDev){
+        AppDataBase dbDevices = App.getDatabase();
+        DeviceItemTypeDao devicesDao = dbDevices.getDeviceItemTypeDao();
+        currentDevice = new DeviceItemType(name,MAC,protocol,classDevice,typeDevice,devIp,Integer.parseInt(devPort));
+        devicesDao.insertAll(currentDevice);
+        //Обновление Activity
+        if(c instanceof AddDeviceDBActivity){
+            ((AddDeviceDBActivity) c).exitActivity();
+        } else {
             MainMenuFragment mainMenuFragment = ma.getMainMenuFragment();
             if(mainMenuFragment != null){
                 mainMenuFragment.onRefresh();
             }
         }
-
-        ((AddDeviceDBActivity) c).exitActivity();
     }
 
 }

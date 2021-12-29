@@ -20,7 +20,9 @@ import androidx.fragment.app.DialogFragment;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
-import ru.hse.control_system_v2.dbprotocol.ProtocolDBHelper;
+import java.util.List;
+
+import ru.hse.control_system_v2.list_devices.DeviceItemType;
 
 
 public class DialogSaveDeviceWithMAC extends DialogFragment {
@@ -84,6 +86,12 @@ public class DialogSaveDeviceWithMAC extends DialogFragment {
                 formattedMac = handleColonDeletion(enteredMac, formattedMac, selectionStart);
                 int lengthDiff = formattedMac.length() - enteredMac.length();
                 setMacEdit(cleanMac, formattedMac, selectionStart, lengthDiff);
+                if(!BluetoothAdapter.checkBluetoothAddress(editTextMACAlert.getText().toString())){
+                    editTextMACAlert.requestFocus();
+                    editTextMACAlert.setError(getString(R.string.error_incorrect));
+                } else {
+                    editTextMACAlert.clearFocus();
+                }
             }
 
             @Override
@@ -100,21 +108,25 @@ public class DialogSaveDeviceWithMAC extends DialogFragment {
         });
 
         buttonToAccept.setOnClickListener(view -> {
+            AppDataBase dbDevices = App.getDatabase();
+            DeviceItemTypeDao devicesDao = dbDevices.getDeviceItemTypeDao();
+            List<DeviceItemType> devicesWithMAC;
+
             String macAddr = editTextMACAlert.getText().toString();
-            if(macAddr.length()==0){
+            devicesWithMAC = devicesDao.getAllDevicesWithSuchMAC(macAddr);
+
+            if(macAddr.length()==0 || !BluetoothAdapter.checkBluetoothAddress(macAddr)){
                 editTextMACAlert.requestFocus();
-                editTextMACAlert.setError(getString(R.string.error_empty));
-            } else if(!BluetoothAdapter.checkBluetoothAddress(macAddr)){
+                editTextMACAlert.setError(getString(R.string.error_incorrect));
+            } else if(devicesWithMAC.size()!=0) {
                 editTextMACAlert.requestFocus();
-                editTextMACAlert.setError(getString(R.string.error_mac));
+                editTextMACAlert.setError("Already added MAC address");
             } else {
                 alertDialog.dismiss();
                 DialogDeviceEdit alertDialogSave = new DialogDeviceEdit(null,macAddr);
                 Bundle args = new Bundle();
                 alertDialogSave.setArguments(args);
-                //fragment.currentDevice = item;
                 alertDialogSave.show(((MainActivity) c).getSupportFragmentManager(), "dialog");
-
             }
         });
 

@@ -15,15 +15,6 @@
             android:scrollbarAlwaysDrawVerticalTrack="true"
             android:scrollbars="vertical">
 
-            <TextView
-                android:id="@+id/info_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="16dp"
-                android:text="@string/alert_info"
-                android:textAppearance="@style/TextAppearance.AppCompat.Title" />
-
             <LinearLayout
                 android:id="@+id/linearLayout"
                 android:layout_width="match_parent"
@@ -164,39 +155,6 @@
                     android:layout_marginEnd="16dp"
                     android:text="TextView"
                     android:textAppearance="@style/TextAppearance.AppCompat.Small" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/dialog_device_connect"
-                    style="@style/MaterialButton.Outlined"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end"
-                    android:layout_margin="8dp"
-                    android:text="@string/alert_connect" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/dialog_device_change"
-                    style="@style/TextButtonStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end"
-                    android:layout_marginEnd="8dp"
-                    android:text="@string/alert_change" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/dialog_device_delete"
-                    style="@style/TextButtonStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end"
-                    android:layout_margin="8dp"
-                    android:text="@string/alert_delete" />
             </LinearLayout>
 
         </LinearLayout>

@@ -71,7 +71,7 @@
     <string name="button_save_protocol">Добавить протокол</string>
     <string name="button_add_protocol">Добавить новый протокол</string>
     <string name="button_delete_protocols">Удалить кастомные протоколы</string>
-    <string name="error_empty">Введите данные</string>
+    <string name="error_incorrect">Неверные данные</string>
     <string name="error_mac">Введите корректный MAC</string>
     <string name="title_activity_wi_fi_device">WiFiDeviceActivity</string>
     <string name="dummy_button">Dummy Button</string>

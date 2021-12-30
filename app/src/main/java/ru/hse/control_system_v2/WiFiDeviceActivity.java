@@ -85,13 +85,6 @@ public class WiFiDeviceActivity extends AppCompatActivity implements CompoundBut
         message = new byte[lengthMes];
         countCommands = 0;
 
-        for(DeviceItemType currentDevice: devicesList) {
-            if (!BluetoothAdapter.checkBluetoothAddress(currentDevice.getDeviceMAC())) {
-                showToast("Wrong MAC address");
-                WiFiDeviceActivity.this.finish();
-            }
-        }
-
         buttonUp = findViewById(R.id.button_up);
         buttonUp.setOnTouchListener(touchListener);
         buttonDown = findViewById(R.id.button_down);

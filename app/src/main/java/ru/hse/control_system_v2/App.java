@@ -2,6 +2,8 @@ package ru.hse.control_system_v2;
 
 import android.app.Application;
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 
 import androidx.room.Room;
 

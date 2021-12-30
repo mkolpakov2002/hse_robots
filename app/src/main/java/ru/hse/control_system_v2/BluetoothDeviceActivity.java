@@ -78,13 +78,6 @@ public class BluetoothDeviceActivity extends AppCompatActivity implements View.O
         message = new byte[lengthMes];
         countCommands = 0;
 
-        for(DeviceItemType currentDevice: devicesList) {
-            if (!BluetoothAdapter.checkBluetoothAddress(currentDevice.getDeviceMAC())) {
-                showToast("Wrong MAC address");
-                BluetoothDeviceActivity.this.finish();
-            }
-        }
-
         findViewById(R.id.button_up_bt).setOnTouchListener(touchListener);
         findViewById(R.id.button_down_bt).setOnTouchListener(touchListener);
         findViewById(R.id.button_left_bt).setOnTouchListener(touchListener);

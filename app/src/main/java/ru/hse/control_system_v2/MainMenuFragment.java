@@ -192,8 +192,7 @@ public class MainMenuFragment extends Fragment implements SwipeRefreshLayout.OnR
     public void onRefresh() {
         ma.showMainMenu();
         hideAllButtons();
-
-        if (BluetoothAdapter.getDefaultAdapter() != null && btIsEnabledFlagVoid()) {
+        if (BluetoothAdapter.getDefaultAdapter() != null && ma.getPackageManager().hasSystemFeature(PackageManager.FEATURE_WIFI)) {
             headerText.setText(R.string.favorites_devices);
             // Bluetooth включён, надо показать кнопку добавления устройств и другую информацию
             if (multipleTypesAdapter == null){ // it works first time
@@ -203,28 +202,23 @@ public class MainMenuFragment extends Fragment implements SwipeRefreshLayout.OnR
                 // it works second time and later
                 multipleTypesAdapter.refreshAdapterData();
             }
-        } else if(BluetoothAdapter.getDefaultAdapter() != null && !btIsEnabledFlagVoid()) {
-            headerText.setText(R.string.suggestionEnableBluetooth);
-            recycler.setAdapter(null);
-            multipleTypesAdapter = null;
-        } else if (BluetoothAdapter.getDefaultAdapter() == null || !ma.getPackageManager().hasSystemFeature(PackageManager.FEATURE_WIFI)){
-            if(dialog !=null && dialog.isShowing()){
-                dialog.hide();
+        } else {
+            if(dialog == null || !dialog.isShowing()){
+                // отсутствует Bluetooth адаптер, работа приложения невозможна
+                MaterialAlertDialogBuilder adapterDialogBuilder = new MaterialAlertDialogBuilder(ma);
+                adapterDialogBuilder.setTitle(getString(R.string.error));
+                adapterDialogBuilder.setMessage(getString(R.string.suggestionNoBtAdapter));
+                adapterDialogBuilder.setPositiveButton(getResources().getString(R.string.ok),
+                        (dialog1, which) -> {
+                            // скрывает диалог и завершает работу приложения
+                            dialog1.dismiss();
+                            ma.finish();
+                        });
+                // нельзя закрыть этот диалог
+                adapterDialogBuilder.setCancelable(false);
+                dialog = adapterDialogBuilder.create();
+                dialog.show();
             }
-            // отсутствует Bluetooth адаптер, работа приложения невозможна
-            MaterialAlertDialogBuilder adapterDialogBuilder = new MaterialAlertDialogBuilder(ma);
-            adapterDialogBuilder.setTitle(getString(R.string.error));
-            adapterDialogBuilder.setMessage(getString(R.string.suggestionNoBtAdapter));
-            adapterDialogBuilder.setPositiveButton(getResources().getString(R.string.ok),
-                    (dialog1, which) -> {
-                        // скрывает диалог и завершает работу приложения
-                        dialog1.dismiss();
-                        ma.finish();
-                    });
-            // нельзя закрыть этот диалог
-            adapterDialogBuilder.setCancelable(false);
-            dialog = adapterDialogBuilder.create();
-            dialog.show();
         }
         // Приложение обновлено, завершаем анимацию обновления
         swipeToRefreshLayout.setRefreshing(false);

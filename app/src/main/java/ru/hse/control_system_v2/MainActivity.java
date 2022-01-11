@@ -9,7 +9,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -26,14 +28,12 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.Objects;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements OneButtonAlertDialogFragment.OnDismissListener {
 
-    private FloatingActionButton fabToEnBt;
     private int isFirstLaunch;
     private SharedPreferences sPref;
     private BluetoothAdapter btAdapter;
@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
     private NavDestination currentVisibleFragment;
     private NavHostFragment navHostFragment;
     private NavController navController;
-    private boolean isBtConnection;
+    private Boolean isBtConnection;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -51,20 +51,14 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        registerReceiver(mMessageReceiverBtServiceStarted, new IntentFilter("startingBtService"));
-        registerReceiver(mMessageReceiverWiFiServiceStarted, new IntentFilter("startingWiFiService"));
+        registerReceiver(mMessageReceiverNeedToStartBtService, new IntentFilter("startingBtService"));
+        registerReceiver(mMessageReceiverNeedToStartWiFiService, new IntentFilter("startingWiFiService"));
         registerReceiver(mMessageReceiverNotSuccess, new IntentFilter("not_success"));
         registerReceiver(mMessageReceiverSuccess, new IntentFilter("success"));
 
-        fabToEnBt = findViewById(R.id.floating_action_button_En_Bt);
-        fabToEnBt.setOnClickListener(v -> {
-            Intent intentBtEnabled = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivity(intentBtEnabled);
-        });
-
-        fabToEnBt.hide();
         sPref = getPreferences(MODE_PRIVATE);
         isFirstLaunch = sPref.getInt("isFirstLaunch", 1);
+        isBtConnection = null;
         ////////////////////////////////////
         // настройка поведения нижнего экрана
 
@@ -136,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
                         dialog1.dismiss();
                         this.finish();
                     });
-        } else if(btIsEnabledFlagVoid()){
+        } else {
             if (isFirstLaunch == 1){
                 sPref = getPreferences(MODE_PRIVATE);
                 SharedPreferences.Editor ed = sPref.edit();
@@ -148,8 +142,6 @@ public class MainActivity extends AppCompatActivity {
                             getResources().getString(R.string.other_discoverable_devices));
 
             }
-        } else {
-            showFabToEnBt();
         }
     }
 
@@ -188,14 +180,6 @@ public class MainActivity extends AppCompatActivity {
         navController.navigate(R.id.action_mainMenuFragment_to_oneButtonAlertDialogFragment, message);
     }
 
-    private synchronized void showFabToEnBt(){
-        fabToEnBt.show();
-    }
-
-    private synchronized void hideFabToEnBt(){
-        fabToEnBt.hide();
-    }
-
     public synchronized void showMainMenu(){
         main_bottom_menu.setVisibility(View.VISIBLE);
     }
@@ -210,10 +194,10 @@ public class MainActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             if(btIsEnabledFlagVoid()){
                 // Bluetooth включён, надо скрыть кнопку включения Bluetooth
-                hideFabToEnBt();
+                //TODO
             } else {
                 // Bluetooth выключён, надо показать кнопку включения Bluetooth
-                showFabToEnBt();
+                //TODO
             }
         }
     };
@@ -233,30 +217,38 @@ public class MainActivity extends AppCompatActivity {
         return height;
     }
 
-    private final BroadcastReceiver mMessageReceiverBtServiceStarted = new BroadcastReceiver() {
+    private final BroadcastReceiver mMessageReceiverNeedToStartBtService = new BroadcastReceiver() {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            Intent startBluetoothConnectionService = new Intent(context.getApplicationContext(), BluetoothConnectionService.class);
-            context.getApplicationContext().startService(startBluetoothConnectionService);
-            navController.navigateUp();
-            getMainMenuFragment().onRefresh();
-            navController.navigate(R.id.action_mainMenuFragment_to_connection_dialog);
             isBtConnection = true;
+            if(btIsEnabledFlagVoid()){
+                startConnectionService();
+            } else {
+                Bundle args = new Bundle();
+                args.putString("dialogTitle",getString(R.string.error));
+                args.putString("dialogText","Для соединения необходимо включить Bluetooth");
+                navController.navigateUp();
+                navController.navigate(R.id.action_mainMenuFragment_to_oneButtonAlertDialogFragment, args);
+            }
 
         }
     };
 
-    private final BroadcastReceiver mMessageReceiverWiFiServiceStarted = new BroadcastReceiver() {
+    private final BroadcastReceiver mMessageReceiverNeedToStartWiFiService = new BroadcastReceiver() {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            Intent startWiFiConnectionService = new Intent(context.getApplicationContext(), WiFiConnectionService.class);
-            startService(startWiFiConnectionService);
-            navController.navigateUp();
-            getMainMenuFragment().onRefresh();
-            navController.navigate(R.id.action_mainMenuFragment_to_connection_dialog);
             isBtConnection = false;
+            if(((WifiManager)getSystemService(Context.WIFI_SERVICE)).isWifiEnabled()){
+                startConnectionService();
+            } else {
+                Bundle args = new Bundle();
+                args.putString("dialogTitle",getString(R.string.error));
+                args.putString("dialogText","Для соединения необходимо включить WiFi");
+                navController.navigateUp();
+                navController.navigate(R.id.action_mainMenuFragment_to_oneButtonAlertDialogFragment, args);
+            }
         }
     };
 
@@ -268,6 +260,7 @@ public class MainActivity extends AppCompatActivity {
             navController.navigateUp();
             createOneButtonAlertDialog("Ошибка", "Подключение не успешно.");
             getMainMenuFragment().onRefresh();
+            isBtConnection = null;
         }
     };
 
@@ -282,6 +275,7 @@ public class MainActivity extends AppCompatActivity {
                 navController.navigate(R.id.action_mainMenuFragment_to_bluetoothDeviceActivity);
             else
                 navController.navigate(R.id.action_mainMenuFragment_to_wiFiDeviceActivity);
+            isBtConnection = null;
         }
     };
 
@@ -290,8 +284,47 @@ public class MainActivity extends AppCompatActivity {
         if(getCurrentVisibleFragment().getId()==R.id.mainMenuFragment && !main_bottom_menu.isShown()){
             getMainMenuFragment().onRefresh();
         } else {
-            super.onBackPressed();  // optional depending on your needs
+            super.onBackPressed();
         }
     }
 
+    private void startConnectionService(){
+        if(isBtConnection){
+            Intent startBluetoothConnectionService = new Intent(App.getContext(), BluetoothConnectionService.class);
+            startService(startBluetoothConnectionService);
+            navController.navigateUp();
+            getMainMenuFragment().onRefresh();
+            navController.navigate(R.id.action_mainMenuFragment_to_connection_dialog);
+        } else {
+            Intent startWiFiConnectionService = new Intent(App.getContext(), WiFiConnectionService.class);
+            startService(startWiFiConnectionService);
+            navController.navigateUp();
+            getMainMenuFragment().onRefresh();
+            navController.navigate(R.id.action_mainMenuFragment_to_connection_dialog);
+        }
+    }
+
+    void enableNetwork(){
+        if(isBtConnection){
+            Intent intentBtEnabled = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            this.startActivity(intentBtEnabled);
+        } else {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                Intent panelIntent = new Intent(Settings.Panel.ACTION_INTERNET_CONNECTIVITY);
+                this.startActivity(panelIntent);
+            } else {
+                WifiManager wifiManager = (WifiManager)
+                        App.getContext().getSystemService(WIFI_SERVICE);
+                wifiManager.setWifiEnabled(true);
+            }
+        }
+
+    }
+
+    @Override
+    public void onDialogDismissed() {
+        if(isBtConnection != null){
+            enableNetwork();
+        }
+    }
 }

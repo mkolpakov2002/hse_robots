@@ -1,9 +1,12 @@
 package ru.hse.control_system_v2;
 
+import static ru.hse.control_system_v2.Constants.APP_LOG_TAG;
+
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,8 +17,19 @@ import androidx.fragment.app.DialogFragment;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 public class OneButtonAlertDialogFragment extends DialogFragment {
-    private static String mTitle = "title";
-    private static String mMessage = "message";
+    private String mTitle = "title";
+    private String mMessage = "message";
+    OnDismissListener onDismissListener;
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if (context instanceof OnDismissListener) {
+            onDismissListener = (OnDismissListener) context;
+        } else {
+            Log.d(APP_LOG_TAG,"no OneButtonAlertDialogFragment.OnDismissListener");
+        }
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -38,19 +52,10 @@ public class OneButtonAlertDialogFragment extends DialogFragment {
     @Override
     public void onDismiss(@NonNull DialogInterface dialog) {
         super.onDismiss(dialog);
-
-        Object parent = getParentFragment();
-        if (parent == null)
-            parent = requireActivity();
-
-        if (parent instanceof OnDismissListener && getTag() != null)
-            ((OnDismissListener) parent).onDialogDismissed(getTag());
-
+        onDismissListener.onDialogDismissed();
     }
 
     public interface OnDismissListener {
-
-        void onDialogDismissed(@NonNull String dialogTag);
-
+        void onDialogDismissed();
     }
 }

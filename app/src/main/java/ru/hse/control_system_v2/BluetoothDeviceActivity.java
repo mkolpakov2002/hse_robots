@@ -60,7 +60,7 @@ public class BluetoothDeviceActivity extends AppCompatActivity implements View.O
 
 
         bluetoothDataThreadForArduinoList = new ArrayList<>();
-        outputText.append("\n" + getResources().getString(R.string.bluetooth_device_activity_connected_first) + devicesList.size() + " " + getResources().getString(R.string.bluetooth_device_activity_from) + " " + (devicesList.size() + disconnectedDevicesList.size()) + getResources().getString(R.string.bluetooth_device_activity_devices));
+        outputText.append("\n" + getResources().getString(R.string.bluetooth_device_activity_connected_first) + " " + devicesList.size() + " " + getResources().getString(R.string.bluetooth_device_activity_from) + " " + (devicesList.size() + disconnectedDevicesList.size()) + " " + getResources().getString(R.string.bluetooth_device_activity_devices));
         outputText.append("\n" + getResources().getString(R.string.bluetooth_device_activity_list_of_connections));
         for (int i = 0; i < devicesList.size(); i++) {
             outputText.append("\n" + getResources().getString(R.string.bluetooth_device_activity_device) + " " + devicesList.get(i).getDevName() + " " + getResources().getString(R.string.bluetooth_device_activity_connected_second));

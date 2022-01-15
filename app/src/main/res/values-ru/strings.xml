@@ -54,7 +54,7 @@
     <string name="dialog_mac">Ввод MAC адреса</string>
     <string name="hint_dialog_mac">MAC из 1234567890ABCDEF</string>
     <string name="instruction_alert">Подсказка</string>
-    <string name="ok">Ок</string>
+    <string name="ok">ОК</string>
     <string name="instruction_for_app">Используйте это приложение, чтобы подключиться к вашим роботизированным устройствам. Если список устройств пуст, добавьте их по нажатию на соответсвующую кнопку. Можно добавлять устройства как вручную, так и с помощью списка сопряжённых Bluetooth устройств из настроек Android устройства. Для подключения можно выбирать сразу несколько устройств, чтобы начать соединение выберите их долгим нажатием в списке доступных устройств. Перед началом соединения ужно выбрать тип соединения - WiFi или Bluetooth. Для Bluetooth соединения необходимо, чтобы все устройства имели MAC адреса. Для WiFi соединения нужно, чтобы устройства имели Ip и порт. Для удобства индикация возможности соединения по Bluetooth и WiFi для каждого устройства отображается в виде иконки. \nПриложение создано в рамках проектной работы ИВТ МИЭМ НИУ ВШЭ.</string>
     <string name="instruction_for_app_bt">Для Bluetooth соединения необходимо, чтобы все устройства имели MAC адреса.</string>
     <string name="instruction_for_app_wifi">Для WiFi соединения нужно, чтобы устройства имели Ip и порт.</string>
@@ -105,7 +105,7 @@
     <string name="terminal">Терминал</string>
     <string name="button_add_new_device">Добавление новых устройств</string>
     <string name="button_list_of_paired">из списка сопряжённых</string>
-    <string name="button_manually_by_MAC">вручную по MAC</string>
+    <string name="button_manually_by_MAC">вручную</string>
     <string name="button_select_type_connection">Выберите тип подключения</string>
     <string name="wi_fi_connection">подключение по Wi-Fi</string>
     <string name="bluetooth_connection">подключение по Bluetooth</string>

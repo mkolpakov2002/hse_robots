@@ -152,8 +152,7 @@ public class MainMenuFragment extends Fragment implements SwipeRefreshLayout.OnR
             buttonToAddDevice.setOnClickListener(view1 -> {
                 bottomSheetDialogToAdd.dismiss();
                 if(App.isBtEnabled() && !BluetoothAdapter.getDefaultAdapter().getBondedDevices().isEmpty()){
-                    Navigation.findNavController(requireParentFragment().requireView()).navigateUp();
-                    Navigation.findNavController(requireParentFragment().requireView()).navigate(R.id.action_mainMenuFragment_to_addDeviceFragment);
+                    Navigation.findNavController(requireParentFragment().requireView()).navigate(R.id.addDeviceFragment);
                 } else if(!App.isBtEnabled()){
                     Snackbar snackbar = Snackbar
                             .make(swipeToRefreshLayout, "Для доступа к списку нужно включить Bluetooth",

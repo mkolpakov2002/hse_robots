@@ -105,7 +105,7 @@
     <string name="terminal">Terminal</string>
     <string name="button_add_new_device">Adding new devices</string>
     <string name="button_list_of_paired">from the list of conjugates</string>
-    <string name="button_manually_by_MAC">manually by MAC</string>
+    <string name="button_manually_by_MAC">manually</string>
     <string name="button_select_type_connection">Select the connection type</string>
     <string name="wi_fi_connection">Wi-Fi connection</string>
     <string name="bluetooth_connection">Bluetooth connection</string>
@@ -123,13 +123,13 @@
     <string name="bluetooth_device_activity_connected_second">connected;</string>
 
     <string name="send_command_stop">Sending the stop command;</string>
-    <string name="send_command_forward">Sending the forward movement command;</string>
-    <string name="send_command_back">Sending a command to move backwards;</string>
+    <string name="send_command_forward">I am sending the forward movement command;</string>
+    <string name="send_command_back">I am sending a command to move backwards;</string>
     <string name="send_command_left">Sending a command to move to the left;</string>
     <string name="send_command_right">Sending a command to move to the right;</string>
     <string name="send_command_button_released">The button is released, I send the stop command;</string>
     <string name="send_command_insufficient_data">Insufficient data in the protocol used, the message was not sent;</string>
-    <string name="send_command_hold_enabled">Command hold is enabled…</string>
+    <string name="send_command_hold_enabled">Command hold enabled…</string>
     <string name="send_command_hold_disabled">Command hold is disabled…</string>
 
     <string name="settings_fragment_confirm">Confirmation</string>

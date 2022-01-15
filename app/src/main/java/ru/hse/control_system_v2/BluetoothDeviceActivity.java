@@ -60,10 +60,10 @@ public class BluetoothDeviceActivity extends AppCompatActivity implements View.O
 
 
         bluetoothDataThreadForArduinoList = new ArrayList<>();
-        outputText.append("\n"+ getResources().getString(R.string.bluetooth_device_activity_connected_first) + devicesList.size() + " " + getResources().getString(R.string.bluetooth_device_activity_from) + " " + (devicesList.size()+disconnectedDevicesList.size()) + getResources().getString(R.string.bluetooth_device_activity_devices));
-        outputText.append("\n"+ getResources().getString(R.string.bluetooth_device_activity_list_of_connections));
-        for(int i = 0; i < devicesList.size(); i++){
-            outputText.append("\n"+ getResources().getString(R.string.bluetooth_device_activity_device) + " " + devicesList.get(i).getDevName() + " " + getResources().getString(R.string.bluetooth_device_activity_connected_second));
+        outputText.append("\n" + getResources().getString(R.string.bluetooth_device_activity_connected_first) + devicesList.size() + " " + getResources().getString(R.string.bluetooth_device_activity_from) + " " + (devicesList.size() + disconnectedDevicesList.size()) + getResources().getString(R.string.bluetooth_device_activity_devices));
+        outputText.append("\n" + getResources().getString(R.string.bluetooth_device_activity_list_of_connections));
+        for (int i = 0; i < devicesList.size(); i++) {
+            outputText.append("\n" + getResources().getString(R.string.bluetooth_device_activity_device) + " " + devicesList.get(i).getDevName() + " " + getResources().getString(R.string.bluetooth_device_activity_connected_second));
             BluetoothDataThread bluetoothDataThreadForArduino = new BluetoothDataThread(this, devicesList.get(i));
             bluetoothDataThreadForArduinoList.add(bluetoothDataThreadForArduino);
             bluetoothDataThreadForArduinoList.get(i).start();
@@ -102,23 +102,23 @@ public class BluetoothDeviceActivity extends AppCompatActivity implements View.O
         finish();
     }
 
-    public synchronized void printDataToTextView(String printData){
+    public synchronized void printDataToTextView(String printData) {
         Log.d(APP_LOG_TAG, "Печатаемое сообщение в BtDeviceActivity: " + printData);
         outputText.append("\n" + "---" + "\n" + printData);
     }
 
-    public synchronized boolean isActive(){
+    public synchronized boolean isActive() {
         return active;
     }
 
-    void checkForActiveDevices(){
-        for (DeviceItemType currentDevice: devicesList){
-            if(!currentDevice.isConnected()){
+    void checkForActiveDevices() {
+        for (DeviceItemType currentDevice : devicesList) {
+            if (!currentDevice.isConnected()) {
                 disconnectedDevicesList.add(currentDevice);
             }
         }
-        for (DeviceItemType currentDevice: disconnectedDevicesList){
-            if(currentDevice.isConnected()){
+        for (DeviceItemType currentDevice : disconnectedDevicesList) {
+            if (currentDevice.isConnected()) {
                 devicesList.add(currentDevice);
             }
         }
@@ -126,7 +126,7 @@ public class BluetoothDeviceActivity extends AppCompatActivity implements View.O
         disconnectedDevicesList.removeIf(DeviceItemType::isConnected);
     }
 
-    public synchronized void addDisconnectedDevice(DeviceItemType currentDevice){
+    public synchronized void addDisconnectedDevice(DeviceItemType currentDevice) {
         disconnectedDevicesList.add(currentDevice);
         //TODO
         //Диалог с предложением переподключить эти устройства
@@ -169,42 +169,39 @@ public class BluetoothDeviceActivity extends AppCompatActivity implements View.O
     }
 
     @Override
-    public void onClick(View v)
-    {
+    public void onClick(View v) {
         completeDevicesInfo();
         switch (v.getId()) {
             case R.id.button_stop_bt:
-                outputText.append("\n"+ getResources().getString(R.string.send_command_stop));
+                outputText.append("\n" + getResources().getString(R.string.send_command_stop));
                 completeMessage("STOP");
                 countCommands = 0;
                 break;
         }
     }
 
-    View.OnTouchListener touchListener = new View.OnTouchListener()
-    {
+    View.OnTouchListener touchListener = new View.OnTouchListener() {
         @Override
-        public boolean onTouch(View v, MotionEvent event)
-        {
+        public boolean onTouch(View v, MotionEvent event) {
             completeDevicesInfo();
-            if(event.getAction() == MotionEvent.ACTION_DOWN) {
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
                 // если нажали на кнопку и не важно есть удержание команд или нет
                 switch (v.getId()) {
                     case R.id.button_up_bt:
                         Log.d(APP_LOG_TAG, "Отправляю команду движения вперёд;");
-                        outputText.append("\n"+ getResources().getString(R.string.send_command_forward));
+                        outputText.append("\n" + getResources().getString(R.string.send_command_forward));
                         completeMessage("FORWARD");
                         countCommands = 0;
                         break;
                     case R.id.button_down_bt:
-                        outputText.append("\n"+ getResources().getString(R.string.send_command_back));
+                        outputText.append("\n" + getResources().getString(R.string.send_command_back));
                         Log.d(APP_LOG_TAG, "Отправляю команду движения назад;");
                         //Toast.makeText(getApplicationContext(), "Назад поехали", Toast.LENGTH_SHORT).show();
                         completeMessage("BACK");
                         countCommands = 0;
                         break;
                     case R.id.button_left_bt:
-                        outputText.append("\n"+ getResources().getString(R.string.send_command_left));
+                        outputText.append("\n" + getResources().getString(R.string.send_command_left));
                         //Toast.makeText(getApplicationContext(), "Влево поехали", Toast.LENGTH_SHORT).show();
                         Log.d(APP_LOG_TAG, "Отправляю команду движения влево;");
                         completeMessage("LEFT");
@@ -212,20 +209,18 @@ public class BluetoothDeviceActivity extends AppCompatActivity implements View.O
                         break;
                     case R.id.button_right_bt:
                         //Toast.makeText(getApplicationContext(), "Вправо поехали", Toast.LENGTH_SHORT).show();
-                        outputText.append("\n"+ getResources().getString(R.string.send_command_right));
+                        outputText.append("\n" + getResources().getString(R.string.send_command_right));
                         Log.d(APP_LOG_TAG, "Отправляю команду движения вправо;");
                         completeMessage("RIGHT");
                         countCommands = 0;
                         break;
                 }
-            }
-            else if(event.getAction() == MotionEvent.ACTION_UP) {
+            } else if (event.getAction() == MotionEvent.ACTION_UP) {
                 // если отпустили кнопку
-                if(!isHoldCommand) {
+                if (!isHoldCommand) {
                     // и нет удержания команд то все кнопки отправляют команду стоп
-                    outputText.append("\n"+ getResources().getString(R.string.send_command_button_released));
-                    switch (v.getId())
-                    {
+                    outputText.append("\n" + getResources().getString(R.string.send_command_button_released));
+                    switch (v.getId()) {
                         case R.id.button_up_bt:
                             completeMessage("FORWARD_STOP");
                             countCommands = 0;
@@ -270,7 +265,7 @@ public class BluetoothDeviceActivity extends AppCompatActivity implements View.O
         Byte code = getDevicesID.get(command);
         if (code != null) {
             if (getDevicesID.getTag(res.getString(R.string.TAG_TURN_COM))) {
-                message[countCommands++] = (prevCommand == code)? getDevicesID.get("redo_command"): getDevicesID.get("new_command");
+                message[countCommands++] = (prevCommand == code) ? getDevicesID.get("redo_command") : getDevicesID.get("new_command");
                 prevCommand = code;
             }
 
@@ -278,12 +273,11 @@ public class BluetoothDeviceActivity extends AppCompatActivity implements View.O
                 message[countCommands++] = getDevicesID.get("type_move");
             message[countCommands++] = code;
 
-            for(int i = 0; i < bluetoothDataThreadForArduinoList.size(); i++){
+            for (int i = 0; i < bluetoothDataThreadForArduinoList.size(); i++) {
                 bluetoothDataThreadForArduinoList.get(i).sendData(message, lengthMes);
             }
-        }
-        else {
-            outputText.append("\n"+ getResources().getString(R.string.send_command_insufficient_data));
+        } else {
+            outputText.append("\n" + getResources().getString(R.string.send_command_insufficient_data));
         }
     }
 
@@ -292,18 +286,16 @@ public class BluetoothDeviceActivity extends AppCompatActivity implements View.O
         switch (buttonView.getId()) {
             case R.id.switch_hold_command_mm_Bt:
                 isHoldCommand = isChecked;
-                if(isHoldCommand) {
-                    outputText.append("\n"+ getResources().getString(R.string.send_command_hold_enabled));
+                if (isHoldCommand) {
+                    outputText.append("\n" + getResources().getString(R.string.send_command_hold_enabled));
                     findViewById(R.id.button_stop_bt).setEnabled(true);
-                }
-                else {
-                    outputText.append("\n"+ getResources().getString(R.string.send_command_hold_disabled));
+                } else {
+                    outputText.append("\n" + getResources().getString(R.string.send_command_hold_disabled));
                     findViewById(R.id.button_stop_bt).setEnabled(false);
                 }
                 break;
         }
     }
-
 
 
     // Метод для вывода всплывающих данных на экран
@@ -316,7 +308,7 @@ public class BluetoothDeviceActivity extends AppCompatActivity implements View.O
     protected void onDestroy() {
         super.onDestroy();
         active = false;
-        for (int i = 0; i < devicesList.size(); i++){
+        for (int i = 0; i < devicesList.size(); i++) {
             Log.d(APP_LOG_TAG, "BtDeviceActivity в onDestroy, отключение устройств");
             devicesList.get(i).closeConnection();
 

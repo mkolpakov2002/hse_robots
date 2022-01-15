@@ -15,18 +15,18 @@ public class ButtonItemType implements ItemType {
     final String IMAGE_TYPE = "button_type";
     MainMenuFragment mainMenuFragment;
 
-    public ButtonItemType(MainActivity ma){
+    public ButtonItemType(MainActivity ma) {
         this.ma = ma;
         this.textInfo = ma.getResources().getString(R.string.button_add_device);
     }
 
     public View.OnClickListener getOnClickListener() {
 
-       return new View.OnClickListener() {
+        return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mainMenuFragment = ma.getMainMenuFragment();
-                if(mainMenuFragment!=null){
+                if (mainMenuFragment != null) {
                     mainMenuFragment.showBottomSheetToAdd();
                 }
             }

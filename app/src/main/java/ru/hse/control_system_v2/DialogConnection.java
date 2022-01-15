@@ -15,13 +15,14 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 public class DialogConnection extends DialogFragment {
     Context c;
 
-    public DialogConnection(){
+    public DialogConnection() {
         //nothing
     }
+
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        if (context instanceof Activity){
+        if (context instanceof Activity) {
             c = context;
         }
     }

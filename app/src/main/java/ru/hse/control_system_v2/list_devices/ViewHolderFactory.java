@@ -35,6 +35,8 @@ public class ViewHolderFactory {
         TextView mName;
         ImageView deviceImage;
         ImageView checkMark;
+        ImageView wifiSupportIcon;
+        ImageView btSupportIcon;
         MainActivity ma;
         MaterialCardView materialCardView;
 
@@ -46,9 +48,11 @@ public class ViewHolderFactory {
             mName = itemView.findViewById(R.id.item_name);
             deviceImage = itemView.findViewById(R.id.icon_image_view);
             checkMark = itemView.findViewById(R.id.check_mark);
+            wifiSupportIcon = itemView.findViewById(R.id.wifi_icon);
+            btSupportIcon = itemView.findViewById(R.id.bt_icon);
             materialCardView = itemView.findViewById(R.id.device_item_card_view);
 
-            if (context instanceof Activity){
+            if (context instanceof Activity) {
                 ma = (MainActivity) context;
             }
             itemView.setOnClickListener(v -> {
@@ -62,6 +66,7 @@ public class ViewHolderFactory {
 
         interface IListener {
             void onDeviceClicked(int id, View itemView);
+
             void onDeviceLongClicked(int id, View itemView);
         }
 

@@ -15,15 +15,15 @@ import java.io.OutputStream;
 
 import ru.hse.control_system_v2.list_devices.DeviceItemType;
 
-public class WiFiDataThread extends Thread{
+public class WiFiDataThread extends Thread {
 
     private final DeviceItemType deviceItemType;
     private WiFiDeviceActivity wiFiDeviceActivity;
     private final NetworkInfo mWifi;
     private OutputStream mmOutStream;
 
-    public WiFiDataThread(Context c, DeviceItemType deviceItemType){
-        if (c instanceof WiFiDeviceActivity){
+    public WiFiDataThread(Context c, DeviceItemType deviceItemType) {
+        if (c instanceof WiFiDeviceActivity) {
             wiFiDeviceActivity = ((WiFiDeviceActivity) c);
         }
         this.deviceItemType = deviceItemType;
@@ -48,7 +48,7 @@ public class WiFiDataThread extends Thread{
         InputStream mmInStream = tmpIn;
         StringBuilder str = new StringBuilder();
 
-        while(deviceItemType.isConnected()){
+        while (deviceItemType.isConnected()) {
             byte[] buffer = new byte[1024];  // buffer store for the stream
             int bytes = 0; // bytes returned from read()
             // Keep listening to the InputStream until an exception occurs
@@ -59,7 +59,7 @@ public class WiFiDataThread extends Thread{
                 Log.e(APP_LOG_TAG, "Ошибка чтения входящих данных в потоке " + e.getMessage());
                 Disconnect();
             }
-            if(deviceItemType.isConnected()){
+            if (deviceItemType.isConnected()) {
                 //успешно считываем данные
                 StringBuilder incomingDataBuffer = new StringBuilder();
                 String incomingMessage = new String(buffer, 0, bytes);
@@ -69,11 +69,11 @@ public class WiFiDataThread extends Thread{
                 str.append(incomingMessage);
                 int j = 0;
                 boolean isComplete = false;
-                while(!isComplete){
+                while (!isComplete) {
                     //обрабатываем str, выделяем строки с символом \n в конце
-                    if(str.charAt(j)=='\n' && j+1<=str.length()-1) {
+                    if (str.charAt(j) == '\n' && j + 1 <= str.length() - 1) {
                         //substring копирует до второго параметра НЕ включительно, но включая с первого
-                        incomingDataBuffer.append(str.substring(0, j+1));
+                        incomingDataBuffer.append(str.substring(0, j + 1));
                         incomingData(incomingDataBuffer.toString());
                         //incomingDataBuffer.toString() - подходящая строка
                         //записываем в str остаток старой строки (str без incomingDataBuffer.toString())
@@ -82,7 +82,7 @@ public class WiFiDataThread extends Thread{
                         str.setLength(0);
                         str.append(bufferStr);
                         j = -1;
-                    } else if(str.charAt(j)=='\n') {
+                    } else if (str.charAt(j) == '\n') {
                         //нету элемента j+1, рассматриваемый символ \n последний в str
                         //просто копируем (без остатка, его нет)
                         incomingDataBuffer.append(str);
@@ -90,7 +90,7 @@ public class WiFiDataThread extends Thread{
                         j = -1;
                         str.setLength(0);
                     }
-                    if(str.indexOf("\n") == -1){
+                    if (str.indexOf("\n") == -1) {
                         //более символов \n не найдено, завершаем обработку строки
                         isComplete = true;
                     }
@@ -106,12 +106,12 @@ public class WiFiDataThread extends Thread{
 
     public void sendData(byte[] message, int lengthMes) {
         StringBuilder logMessage = new StringBuilder("Отправляем данные по WiFi: ");
-        for (int i=0; i < lengthMes; i++)
+        for (int i = 0; i < lengthMes; i++)
             logMessage.append(message[i]).append(" ");
         Log.d(APP_LOG_TAG, logMessage + "***");
         try {
             mmOutStream.write(message);
-        } catch (IOException e){
+        } catch (IOException e) {
             Disconnect();
         }
     }
@@ -123,7 +123,7 @@ public class WiFiDataThread extends Thread{
 
     public void Disconnect() {
         deviceItemType.closeConnection();
-        if(wifiIsEnabledFlagVoid()){
+        if (wifiIsEnabledFlagVoid()) {
             //TODO
             //Сделать проверку на сеть в Bt и WiFi активити
             wiFiDeviceActivity.addDisconnectedDevice(deviceItemType);
@@ -131,14 +131,14 @@ public class WiFiDataThread extends Thread{
         Thread.currentThread().interrupt();
     }
 
-    synchronized void incomingData(String incomingData){
-        if(wiFiDeviceActivity.isActive()){
+    synchronized void incomingData(String incomingData) {
+        if (wiFiDeviceActivity.isActive()) {
             Log.d(APP_LOG_TAG, "Входящие данные WiFi: " + incomingData);
             //TODO
             //А если activity не активна?
             (wiFiDeviceActivity).runOnUiThread(new Runnable() {
                 public void run() {
-                    (wiFiDeviceActivity).printDataToTextView(incomingData.replaceAll("\n",""));
+                    (wiFiDeviceActivity).printDataToTextView(incomingData.replaceAll("\n", ""));
                 }
             });
             SystemClock.sleep(100);

@@ -1,8 +1,10 @@
 package ru.hse.control_system_v2.list_devices;
 
+import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothSocket;
 import android.graphics.Color;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.View;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,7 +20,7 @@ import java.net.SocketAddress;
 import ru.hse.control_system_v2.R;
 
 @Entity(tableName = "devices")
-public class DeviceItemType implements ItemType{
+public class DeviceItemType implements ItemType {
     @PrimaryKey(autoGenerate = true)
     private int devId;
     private String devName;
@@ -37,9 +39,9 @@ public class DeviceItemType implements ItemType{
     @Ignore
     private boolean isSelectedOnScreen = false;
     @Ignore
-    private String imageType = "default";
+    private String imageType;
 
-    public DeviceItemType(String devName, String deviceMAC, String devProtocol, String devClass, String devType,String devIp, int devPort) {
+    public DeviceItemType(String devName, String deviceMAC, String devProtocol, String devClass, String devType, String devIp, int devPort) {
         this.devName = devName;
         this.deviceMAC = deviceMAC;
         this.devProtocol = devProtocol;
@@ -48,18 +50,27 @@ public class DeviceItemType implements ItemType{
         //Ip и порт
         this.devIp = devIp.replace(':', '.').replace('/', '.');
         this.devPort = devPort;
-        if(devClass.equals("class_arduino")){
+        if (devClass.equals("class_arduino")) {
             imageType = devType;
         } else {
             imageType = devClass;
         }
     }
 
-    public void setIsSelectedOnScreen(boolean isSelectedOnScreen){
+    public DeviceItemType(){
+        devProtocol = "arduino_default";
+        devClass = "no_class";
+        devType = "no_type";
+        devPort = 0;
+        deviceMAC = devName = devIp = "";
+        imageType = devClass;
+    }
+
+    public void setIsSelectedOnScreen(boolean isSelectedOnScreen) {
         this.isSelectedOnScreen = isSelectedOnScreen;
     }
 
-    public boolean getIsSelectedOnScreen(){
+    public boolean getIsSelectedOnScreen() {
         return isSelectedOnScreen;
     }
 
@@ -67,16 +78,20 @@ public class DeviceItemType implements ItemType{
     public String getImageType() {
         return imageType;
     }
+
     //"192.168.1.138"
-    public void setDevIp(String devIp){
+    public void setDevIp(String devIp) {
         this.devIp = devIp.replace(':', '.').replace('/', '.');
     }
+
     //4141
-    public void setDevPort(int devPort){
+    public void setDevPort(int devPort) {
         this.devPort = devPort;
     }
 
-    public void setDevId(int devId){ this.devId = devId; }
+    public void setDevId(int devId) {
+        this.devId = devId;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -90,11 +105,11 @@ public class DeviceItemType implements ItemType{
                 this.getDevType().equals(item.getDevType()) &&
                 this.getDevClass().equals(item.getDevClass()) &&
                 this.getDevIp().equals(item.getDevIp()) &&
-                this.getDevPort()==(item.getDevPort()) &&
+                this.getDevPort() == (item.getDevPort()) &&
                 this.getDevProtocol().equals(item.getDevProtocol());
     }
 
-    public Boolean isConnected(){
+    public Boolean isConnected() {
         return isConnected;
     }
 
@@ -107,7 +122,7 @@ public class DeviceItemType implements ItemType{
     }
 
     public void setBtSocket(BluetoothSocket socket) {
-        if(socket != null){
+        if (socket != null) {
             bluetoothSocket = socket;
             openBtConnection();
         } else
@@ -115,17 +130,14 @@ public class DeviceItemType implements ItemType{
     }
 
     public void setWifiSocket(Socket socket) {
-        SocketAddress addr;
-        addr = new InetSocketAddress(devIp, devPort);
-        if(socket != null){
+        if (socket != null) {
             wifiSocket = socket;
-            openWifiConnection(addr);
-
+            isConnected = true;
         } else isConnected = false;
     }
 
-    public void closeConnection(){
-        if (bluetoothSocket!=null && bluetoothSocket.isConnected()){
+    public void closeConnection() {
+        if (bluetoothSocket != null && bluetoothSocket.isConnected()) {
             try {
                 bluetoothSocket.close();
                 bluetoothSocket = null;
@@ -134,7 +146,7 @@ public class DeviceItemType implements ItemType{
                 Log.d("bluetoothSocket", e.getMessage());
             }
         }
-        if(wifiSocket!=null && wifiSocket.isConnected()){
+        if (wifiSocket != null && wifiSocket.isConnected()) {
             try {
                 wifiSocket.close();
                 wifiSocket = null;
@@ -146,8 +158,8 @@ public class DeviceItemType implements ItemType{
         isConnected = false;
     }
 
-    public void openBtConnection(){
-        if (bluetoothSocket!=null){
+    public void openBtConnection() {
+        if (bluetoothSocket != null) {
             try {
                 bluetoothSocket.connect();
                 isConnected = true;
@@ -160,36 +172,35 @@ public class DeviceItemType implements ItemType{
         } else isConnected = false;
     }
 
-    private void openWifiConnection(SocketAddress addr){
-        if (wifiSocket!=null){
-            //TODO
-            //проверить корректность ip и порта
-            try {
-                wifiSocket.connect(addr);
-                isConnected = true;
-            } catch (IOException e) {
-                e.printStackTrace();
-                Log.d("WiFi", e.getMessage());
-                closeConnection();
-                isConnected = false;
-            }
-        } else isConnected = false;
-    }
-
-
     public void setDeviceMAC(String deviceMAC) {
-        this.deviceMAC=deviceMAC;
+        this.deviceMAC = deviceMAC;
     }
 
     public void setDevName(String devName) {
-        this.devName=devName;
+        this.devName = devName;
     }
 
-    public void setDevClass(String devClass) { this.devClass=devClass; }
+    public void setDevClass(String devClass) {
+        this.devClass = devClass;
+        if (devClass.equals("class_arduino")) {
+            imageType = devType;
+        } else {
+            imageType = devClass;
+        }
+    }
 
-    public void setDevType(String devType) {this.devType=devType; }
+    public void setDevType(String devType) {
+        this.devType = devType;
+        if (devClass.equals("class_arduino")) {
+            imageType = devType;
+        } else {
+            imageType = devClass;
+        }
+    }
 
-    public void setDevProtocol(String devProtocol) { this.devProtocol=devProtocol; }
+    public void setDevProtocol(String devProtocol) {
+        this.devProtocol = devProtocol;
+    }
 
     public String getDeviceMAC() {
         return deviceMAC;
@@ -203,15 +214,33 @@ public class DeviceItemType implements ItemType{
         return devName;
     }
 
-    public String getDevClass() { return devClass; }
+    public String getDevClass() {
+        return devClass;
+    }
 
-    public String getDevType() { return devType; }
+    public String getDevType() {
+        return devType;
+    }
 
-    public String getDevProtocol() { return devProtocol; }
+    public String getDevProtocol() {
+        return devProtocol;
+    }
 
-    public String getDevIp() { return devIp; }
+    public String getDevIp() {
+        return devIp;
+    }
 
-    public int getDevPort() { return devPort; }
+    public int getDevPort() {
+        return devPort;
+    }
+
+    public boolean isBtSupported() {
+        return deviceMAC != null && BluetoothAdapter.checkBluetoothAddress(deviceMAC);
+    }
+
+    public boolean isWiFiSupported() {
+        return ((devIp != null) && Patterns.IP_ADDRESS.matcher(devIp).matches());
+    }
 
     @Override
     public int getItemViewType() {
@@ -224,7 +253,7 @@ public class DeviceItemType implements ItemType{
         mViewHolder.mName.setText(devName);
         mViewHolder.checkMark.setVisibility(View.GONE);
         mViewHolder.materialCardView.setStrokeColor(Color.TRANSPARENT);
-        if(devClass.equals("class_arduino")){
+        if (devClass.equals("class_arduino")) {
             switch (imageType) {
                 case "type_computer":
                     mViewHolder.deviceImage.setImageResource(R.drawable.type_computer);
@@ -255,8 +284,19 @@ public class DeviceItemType implements ItemType{
                     break;
             }
         }
-
         mViewHolder.deviceImage.setVisibility(View.VISIBLE);
+
+        if (isWiFiSupported()) {
+            mViewHolder.wifiSupportIcon.setVisibility(View.VISIBLE);
+        } else {
+            mViewHolder.wifiSupportIcon.setVisibility(View.GONE);
+        }
+
+        if (isBtSupported()) {
+            mViewHolder.btSupportIcon.setVisibility(View.VISIBLE);
+        } else {
+            mViewHolder.btSupportIcon.setVisibility(View.GONE);
+        }
 
     }
 

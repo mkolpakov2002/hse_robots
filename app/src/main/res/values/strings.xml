@@ -10,7 +10,7 @@
     <string name="add_bd_label">Accept</string>
     <string name="cancel_add_bd_label">Cancel</string>
     <string name="ok_add_bd_label">End</string>
-    <string name="suggestionNoBtAdapter">There is no Bluetooth or WiFi adapter on your device, further work is impossible</string>
+    <string name="suggestionNoBtAdapter">There is no Bluetooth or WiFi adapter on your device, further operation is impossible</string>
     <string name="error">Application error</string>
     <string name="suggestionEnableBluetooth">Please turn on bluetooth to select devices!</string>
     <string name="btnEnBt">Enable bluetooth</string>
@@ -34,11 +34,11 @@
     <string name="alert_type">Type:\u00A0</string>
     <string name="alert_save">Save</string>
     <string name="alert_device_saving">Saving the device</string>
-    <string name="alert_editing">Edit</string>
+    <string name="alert_editing">Editing</string>
     <string name="alert_change">Edit</string>
     <string name="alert_delete">Delete</string>
     <string name="alert_info">Information</string>
-    <string name="alert_connection_attempt">Connection is in progress...</string>
+    <string name="alert_connection_attempt">Connection is in progress…</string>
     <string name="button_forward">Forward</string>
     <string name="button_backward">Back</string>
     <string name="button_leftward">Left</string>
@@ -49,13 +49,18 @@
     <string name="alert_device_name_tint">Device name</string>
     <string name="drawer_item_open_source">Open Source</string>
     <string name="drawer_item_code">Source code</string>
-    <string name="robot_item_image">Appearance of the robot</string>
+    <string name="robot_item_image">Robot appearance</string>
     <string name="manual_mac">Entering mac</string>
     <string name="dialog_mac">Entering the MAC address</string>
     <string name="hint_dialog_mac">MAC of 1234567890ABCDEF</string>
     <string name="instruction_alert">Hint</string>
     <string name="ok">OK</string>
-    <string name="instruction_for_app">Use this app to connect to your robotic devices. If the list of available devices is empty, go to settings by clicking on the button assigned for this, create a new connection. To connect, you can select several devices at once, to start the connection, select them by long pressing in the list of available devices. Data is transmitted via the protocol available at the link: \nhttps://drive.google.com/file/d/15m_IHMHJuL50GD7ED1wr0oiJYxRY-AMS/view?usp=shared access. The application was created as part of the course work of Kolpakov Maxim Maksimovich in 2021.</string>
+    <string name="instruction_for_app">Use this app to connect to your robotic devices. If the list of devices is empty, add them by clicking on the corresponding button. You can add devices either manually or by using the list of paired Bluetooth devices from the Android device settings. To connect, you can select several devices at once, to start the connection, select them by long pressing in the list of available devices. Before starting the connection, it is necessary to choose the connection type - WiFi or Bluetooth. For a Bluetooth connection, it is necessary that all devices have MAC addresses. For a WiFi connection, the devices need to have an Ip and a port. For convenience, the indication of Bluetooth and WiFi connectivity for each device is displayed as an icon. \napplication was created as part of the project work of the HSE MIEM Institute.</string>
+    <string name="instruction_for_app_bt">Bluetooth connection requires that all devices have MAC addresses.</string>
+    <string name="instruction_for_app_wifi">WiFi connection requires devices to have Ip and port.</string>
+    <string name="instruction_for_app_settings">Use the settings window to control the added protocols and the device database.</string>
+    <string name="instruction_for_app_device_menu">Use this window to edit and save devices, connect to an already saved device.</string>
+    <string name="instruction_for_app_add_device">Use this window to save Bluetooth-enabled devices. To add a new one to this list, go to Settings and set up a new pairing.</string>
     <string name="instructions_title">Instruction</string>
     <string name="other_discoverable_devices">New paired devices can be added to the menu below</string>
     <string name="TAG_FULL_MES">CodeCatalogue</string>
@@ -71,7 +76,7 @@
     <string name="button_save_protocol">Add protocol</string>
     <string name="button_add_protocol">Add a new protocol</string>
     <string name="button_delete_protocols">Delete custom protocols</string>
-    <string name="error_incorrect">Incorrect data</string>
+    <string name="error_incorrect">Invalid data</string>
     <string name="error_mac">Enter the correct MAC</string>
     <string name="title_activity_wi_fi_device">WiFiDeviceActivity</string>
     <string name="dummy_button">Dummy Button</string>
@@ -87,11 +92,11 @@
     <string name="button_choose_file">Select the finished file</string>
     <string name="button_choose_theme">Select the application theme</string>
     <string name="alert_device_port_tint">Pluggable port</string>
-    <string name="alert_device_ip_hint">Device ip address</string>
+    <string name="alert_device_ip_hint">Device ip</string>
 
-    <string name="button_main">Main</string>
+    <string name="button_main">Home</string>
     <string name="button_settings">Settings</string>
-    <string name="control_panel">Control panel</string>
+    <string name="control_panel">Control Panel</string>
     <string name="command_hold">Command hold</string>
     <string name="button_left_n45">Left\n45</string>
     <string name="button_right_n45">Right\n45</string>
@@ -99,37 +104,36 @@
     <string name="button_right_n90">Right\n90</string>
     <string name="terminal">Terminal</string>
     <string name="button_add_new_device">Adding new devices</string>
-    <string name="button_list_of_paired">from the list of paired</string>
+    <string name="button_list_of_paired">from the list of conjugates</string>
     <string name="button_manually_by_MAC">manually by MAC</string>
     <string name="button_select_type_connection">Select the connection type</string>
     <string name="wi_fi_connection">Wi-Fi connection</string>
     <string name="bluetooth_connection">Bluetooth connection</string>
     <string name="floating_action_button_connection">Connection</string>
     <string name="protocol_control_settings">Settings</string>
-    <string name="text_protocol_output">To output all available protocols click the OUTPUT button</string>
+    <string name="text_protocol_output">To output all available protocols, click OUTPUT</string>
     <string name="button_add_device_label">Add device</string>
     <string name="list_of_available_protocols">List of available protocols</string>
-    <string name="no_available_protocols">No available protocols</string>
+    <string name="no_available_protocols">No protocols available</string>
     <string name="bluetooth_device_activity_connected_first">Connected</string>
     <string name="bluetooth_device_activity_from">from</string>
-    <string name="bluetooth_device_activity_devices"> devices;</string>
+    <string name="bluetooth_device_activity_devices">devices;</string>
     <string name="bluetooth_device_activity_list_of_connections">List of successful connections:</string>
     <string name="bluetooth_device_activity_device">Device</string>
-    <string name="bluetooth_device_activity_connected_second">is connected;</string>
+    <string name="bluetooth_device_activity_connected_second">connected;</string>
 
     <string name="send_command_stop">Sending the stop command;</string>
     <string name="send_command_forward">Sending the forward movement command;</string>
-    <string name="send_command_back"> Sending the backward movement command;</string>
-    <string name="send_command_left">Sending the left movement command;</string>
-    <string name="send_command_right">Sending the right movement command;</string>
-    <string name="send_command_button_released">The button is released, sending the stop command;</string>
-    <string name="send_command_insufficient_data">Недостаточно данных в используемом протоколе, сообщение не отправлено;</string>
-    <string name="send_command_hold_enabled">Command hold is enabled...</string>
-    <string name="send_command_hold_disabled">Command hold is disabled...</string>
+    <string name="send_command_back">Sending a command to move backwards;</string>
+    <string name="send_command_left">Sending a command to move to the left;</string>
+    <string name="send_command_right">Sending a command to move to the right;</string>
+    <string name="send_command_button_released">The button is released, I send the stop command;</string>
+    <string name="send_command_insufficient_data">Insufficient data in the protocol used, the message was not sent;</string>
+    <string name="send_command_hold_enabled">Command hold is enabled…</string>
+    <string name="send_command_hold_disabled">Command hold is disabled…</string>
 
     <string name="settings_fragment_confirm">Confirmation</string>
     <string name="settings_fragment_delete_protocols">Do you really want to delete all custom protocols?</string>
     <string name="settings_fragment_button_ok">OK</string>
-    <string name="settings_fragment_button_cancel"> Cancel</string>
-
+    <string name="settings_fragment_button_cancel">Cancel</string>
 </resources>

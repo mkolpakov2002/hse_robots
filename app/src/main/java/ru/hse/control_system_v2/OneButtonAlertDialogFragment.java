@@ -27,7 +27,7 @@ public class OneButtonAlertDialogFragment extends DialogFragment {
         if (context instanceof OnDismissListener) {
             onDismissListener = (OnDismissListener) context;
         } else {
-            Log.d(APP_LOG_TAG,"no OneButtonAlertDialogFragment.OnDismissListener");
+            Log.d(APP_LOG_TAG, "no OneButtonAlertDialogFragment.OnDismissListener");
         }
     }
 

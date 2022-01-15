@@ -40,6 +40,7 @@ public interface DeviceItemTypeDao {
     // Получение всех DeviceItem из бд с условием
     @Query("SELECT * FROM devices WHERE devProtocol LIKE :suchProto")
     List<DeviceItemType> getAllDevicesWithSuchProto(String suchProto);
+
     @Query("SELECT * FROM devices WHERE deviceMAC LIKE :suchMAC")
     List<DeviceItemType> getAllDevicesWithSuchMAC(String suchMAC);
 

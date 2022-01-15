@@ -30,6 +30,9 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.dialog.MaterialDialogs;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
+
+import java.util.ArrayList;
 
 import ru.hse.control_system_v2.list_devices.DeviceItemType;
 import ru.hse.control_system_v2.list_devices.MultipleTypesAdapter;
@@ -38,7 +41,6 @@ public class MainMenuFragment extends Fragment implements SwipeRefreshLayout.OnR
 
     //инициализация swipe refresh
     private SwipeRefreshLayout swipeToRefreshLayout;
-    private BluetoothAdapter btAdapter;
     private ExtendedFloatingActionButton fabToStartConnecting;
     private FloatingActionButton fabToDelete;
     private RecyclerView recycler;
@@ -48,12 +50,11 @@ public class MainMenuFragment extends Fragment implements SwipeRefreshLayout.OnR
     private MainActivity ma;
     private View view;
     private BottomSheetDialog bottomSheetDialogToAdd;
-    private BottomSheetDialog bottomSheetDialogToConnect;
     private AlertDialog dialog;
 
     @Override
     public void onAttach(@NonNull Context context) {
-        fragmentContext=context;
+        fragmentContext = context;
         ma = ((MainActivity) fragmentContext);
         super.onAttach(context);
     }
@@ -71,7 +72,7 @@ public class MainMenuFragment extends Fragment implements SwipeRefreshLayout.OnR
     }
 
     @Override
-    public void onStart(){
+    public void onStart() {
         super.onStart();
         onRefresh();
     }
@@ -95,11 +96,22 @@ public class MainMenuFragment extends Fragment implements SwipeRefreshLayout.OnR
         swipeToRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
         swipeToRefreshLayout.setOnRefreshListener(this);
 
-        btAdapter = BluetoothAdapter.getDefaultAdapter();
-
         fabToStartConnecting = view.findViewById(R.id.floating_action_button_start_sending_data);
         fabToStartConnecting.setOnClickListener(v -> {
-            bottomSheetDialogToConnect.show();
+            if (multipleTypesAdapter.areDevicesConnectable())
+                ma.showBottomSheetToConnect();
+            else {
+                Snackbar snackbar = Snackbar
+                        .make(swipeToRefreshLayout, "Нужны устройства с одним протоколом, классом, типом",
+                                Snackbar.LENGTH_LONG)
+                        .setAction("Ок", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                //nothing
+                            }
+                        });
+                snackbar.show();
+            }
         });
 
         fabToDelete = view.findViewById(R.id.floating_action_button_delete_selected);
@@ -107,7 +119,7 @@ public class MainMenuFragment extends Fragment implements SwipeRefreshLayout.OnR
         fabToDelete.setOnClickListener(v -> {
             AppDataBase dbDevices = App.getDatabase();
             DeviceItemTypeDao devicesDao = dbDevices.getDeviceItemTypeDao();
-            for(DeviceItemType device: DeviceHandler.getDevicesList()){
+            for (DeviceItemType device : DeviceHandler.getDevicesList()) {
                 devicesDao.delete(device.getDevId());
             }
             onRefresh();
@@ -126,7 +138,7 @@ public class MainMenuFragment extends Fragment implements SwipeRefreshLayout.OnR
             }
         });
         recycler.setClipToPadding(false);
-        recycler.setPadding(0,0,0,ma.getBottomAppBarSize());
+        recycler.setPadding(0, 0, 0, ma.getBottomAppBarSize());
 
         bottomSheetDialogToAdd = new BottomSheetDialog(ma);
         bottomSheetDialogToAdd.setContentView(R.layout.bottom_sheet_dialog_add_device);
@@ -139,44 +151,49 @@ public class MainMenuFragment extends Fragment implements SwipeRefreshLayout.OnR
         if (buttonToAddDevice != null) {
             buttonToAddDevice.setOnClickListener(view1 -> {
                 bottomSheetDialogToAdd.dismiss();
-                Navigation.findNavController(requireParentFragment().requireView()).navigateUp();
-                Navigation.findNavController(requireParentFragment().requireView()).navigate(R.id.action_mainMenuFragment_to_addDeviceDBActivity2);
+                if(App.isBtEnabled() && !BluetoothAdapter.getDefaultAdapter().getBondedDevices().isEmpty()){
+                    Navigation.findNavController(requireParentFragment().requireView()).navigateUp();
+                    Navigation.findNavController(requireParentFragment().requireView()).navigate(R.id.action_mainMenuFragment_to_addDeviceFragment);
+                } else if(!App.isBtEnabled()){
+                    Snackbar snackbar = Snackbar
+                            .make(swipeToRefreshLayout, "Для доступа к списку нужно включить Bluetooth",
+                                    Snackbar.LENGTH_LONG)
+                            .setAction("Ок", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    Intent intentBtEnabled = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                                    fragmentContext.startActivity(intentBtEnabled);
+                                }
+                            });
+                    snackbar.show();
+                } else {
+                    Snackbar snackbar = Snackbar
+                            .make(swipeToRefreshLayout, "Нет сопряжённых устройств",
+                                    Snackbar.LENGTH_LONG)
+                            .setAction("Ок", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    Intent intentBtEnabled = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                                    fragmentContext.startActivity(intentBtEnabled);
+                                }
+                            });
+                    snackbar.show();
+                }
+
             });
         }
         if (buttonToAddDeviceViaMAC != null) {
             buttonToAddDeviceViaMAC.setOnClickListener(view1 -> {
+                DeviceItemType newDevice = new DeviceItemType();
+                ArrayList<DeviceItemType> newList = new ArrayList<>();
+                newList.add(newDevice);
+                DeviceHandler.setDevicesList(newList);
                 bottomSheetDialogToAdd.dismiss();
-                Navigation.findNavController(requireParentFragment().requireView()).navigate(R.id.action_mainMenuFragment_to_device_entering_mac);
+                Navigation.findNavController(requireParentFragment().requireView()).navigate(R.id.action_mainMenuFragment_to_deviceMenuFragment);
             });
         }
 
-
-        bottomSheetDialogToConnect = new BottomSheetDialog(ma);
-        bottomSheetDialogToConnect.setContentView(R.layout.bottom_sheet_dialog_connection_type);
-        bottomSheetDialogToConnect.setCancelable(true);
-        bottomSheetDialogToConnect.dismiss();
-        hideBottomSheetToAdd();
-
-        Button buttonToConnectViaWiFi = bottomSheetDialogToConnect.findViewById(R.id.button_wifi);
-        Button buttonToConnectViaBt = bottomSheetDialogToConnect.findViewById(R.id.button_bt);
-        if (buttonToConnectViaWiFi != null) {
-            buttonToConnectViaWiFi.setOnClickListener(view1 -> {
-                Intent serviceStarted;
-                serviceStarted = new Intent("startingWiFiService");
-                ma.sendBroadcast(serviceStarted);
-                bottomSheetDialogToConnect.dismiss();
-            });
-        }
-        if (buttonToConnectViaBt != null) {
-            buttonToConnectViaBt.setOnClickListener(view1 -> {
-                Intent serviceStarted;
-                serviceStarted = new Intent("startingBtService");
-                ma.sendBroadcast(serviceStarted);
-                bottomSheetDialogToConnect.dismiss();
-            });
-        }
-
-        if(savedInstanceState!=null){
+        if (savedInstanceState != null) {
             //recycler.getLayoutManager().onRestoreInstanceState(recylerViewState);
         }
     }
@@ -195,15 +212,15 @@ public class MainMenuFragment extends Fragment implements SwipeRefreshLayout.OnR
         if (BluetoothAdapter.getDefaultAdapter() != null && ma.getPackageManager().hasSystemFeature(PackageManager.FEATURE_WIFI)) {
             headerText.setText(R.string.favorites_devices);
             // Bluetooth включён, надо показать кнопку добавления устройств и другую информацию
-            if (multipleTypesAdapter == null){ // it works first time
-                multipleTypesAdapter = new MultipleTypesAdapter( fragmentContext);
+            if (multipleTypesAdapter == null) { // it works first time
+                multipleTypesAdapter = new MultipleTypesAdapter(fragmentContext);
                 recycler.setAdapter(multipleTypesAdapter);
             } else {
                 // it works second time and later
                 multipleTypesAdapter.refreshAdapterData();
             }
         } else {
-            if(dialog == null || !dialog.isShowing()){
+            if (dialog == null || !dialog.isShowing()) {
                 // отсутствует Bluetooth адаптер, работа приложения невозможна
                 MaterialAlertDialogBuilder adapterDialogBuilder = new MaterialAlertDialogBuilder(ma);
                 adapterDialogBuilder.setTitle(getString(R.string.error));
@@ -224,18 +241,6 @@ public class MainMenuFragment extends Fragment implements SwipeRefreshLayout.OnR
         swipeToRefreshLayout.setRefreshing(false);
     }
 
-    //True, если Bluetooth включён
-    public boolean btIsEnabledFlagVoid(){
-        return btAdapter.isEnabled();
-    }
-
-    // Метод для вывода всплывающих данных на экран
-    public void showToast(String outputInfoString) {
-        System.out.println("show toast: " + outputInfoString);
-        Toast outputInfoToast = Toast.makeText(ma, outputInfoString, Toast.LENGTH_SHORT);
-        outputInfoToast.show();
-    }
-
     //выполняемый код при изменении состояния bluetooth
     private final BroadcastReceiver BluetoothStateChanged = new BroadcastReceiver() {
         @Override
@@ -244,16 +249,16 @@ public class MainMenuFragment extends Fragment implements SwipeRefreshLayout.OnR
         }
     };
 
-    public void hideAllButtons(){
+    public void hideAllButtons() {
         fabToDelete.hide();
         fabToStartConnecting.hide();
         hideBottomSheetToAdd();
-        hideBottomSheetToConnect();
+        ma.hideBottomSheetToConnect();
     }
 
-    public void showItemSelectionMenu(){
+    public void showItemSelectionMenu() {
         hideBottomSheetToAdd();
-        hideBottomSheetToConnect();
+        ma.hideBottomSheetToConnect();
         ma.hideMainMenu();
         fabToDelete.show();
         fabToStartConnecting.show();
@@ -266,20 +271,12 @@ public class MainMenuFragment extends Fragment implements SwipeRefreshLayout.OnR
         //Parcelable recylerViewState = Objects.requireNonNull(recycler.getLayoutManager()).onSaveInstanceState();
     }
 
-    public synchronized void showBottomSheetToAdd(){
+    public synchronized void showBottomSheetToAdd() {
         bottomSheetDialogToAdd.show();
     }
 
-    public synchronized void hideBottomSheetToAdd(){
+    public synchronized void hideBottomSheetToAdd() {
         bottomSheetDialogToAdd.cancel();
-    }
-
-    public synchronized void showBottomSheetToConnect(){
-        bottomSheetDialogToConnect.show();
-    }
-
-    public synchronized void hideBottomSheetToConnect(){
-        bottomSheetDialogToConnect.cancel();
     }
 
 }

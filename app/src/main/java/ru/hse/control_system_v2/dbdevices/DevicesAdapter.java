@@ -34,7 +34,7 @@ public class DevicesAdapter extends RecyclerView.Adapter<DevicesAdapter.DevicesA
     public DevicesAdapter.DevicesAdapterVh onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Context context = parent.getContext();
 
-        return new DevicesAdapterVh(LayoutInflater.from(context).inflate(R.layout.item_add_bd_device,null));
+        return new DevicesAdapterVh(LayoutInflater.from(context).inflate(R.layout.item_add_bd_device, null));
     }
 
     @Override
@@ -64,6 +64,7 @@ public class DevicesAdapter extends RecyclerView.Adapter<DevicesAdapter.DevicesA
 
         TextView tvDevicename;
         ImageView imIcon;
+
         public DevicesAdapterVh(@NonNull View itemView) {
             super(itemView);
             tvDevicename = itemView.findViewById(R.id.devicename);

@@ -67,10 +67,10 @@ public class ProtocolDBHelper extends SQLiteOpenHelper {
 
         for (int i = 0; i < cursor.getCount(); i++) {
             String fileName = cursor.getString(3);
-            Log.d("SQL",  fileName + " deleting");
+            Log.d("SQL", fileName + " deleting");
             File file = new File(dir, fileName);
             Log.d("delpro", cursor.getString(1));
-            devicesDao.deleteProto(cursor.getString(1),context.getResources().getString(R.string.TAG_default_protocol) );
+            devicesDao.deleteProto(cursor.getString(1), context.getResources().getString(R.string.TAG_default_protocol));
             boolean result = file.delete();
             Log.d("SQL", cursor.getString(3) + " deleting " + (result ? "yes" : "no"));
             cursor.moveToNext();
@@ -80,7 +80,7 @@ public class ProtocolDBHelper extends SQLiteOpenHelper {
     }
 
     public ArrayList<String> getProtocolNames() {
-        if(db == null || !db.isOpen()) {
+        if (db == null || !db.isOpen()) {
             db = getReadableDatabase();
         }
         //db = getReadableDatabase();
@@ -98,7 +98,7 @@ public class ProtocolDBHelper extends SQLiteOpenHelper {
     }
 
     public String getFileName(String name) {
-        if(db == null || !db.isOpen()) {
+        if (db == null || !db.isOpen()) {
             db = getWritableDatabase();
         }
         String query = "select " + KEY_CODE + " from " + TABLE_PROTOCOLS + " where " + KEY_NAME + " = '" + name + "';";
@@ -109,8 +109,8 @@ public class ProtocolDBHelper extends SQLiteOpenHelper {
         return cursor.getString(0);
     }
 
-    public int getLength (String name) {
-        if(db == null || !db.isOpen()) {
+    public int getLength(String name) {
+        if (db == null || !db.isOpen()) {
             db = getWritableDatabase();
         }
         String query = "select " + KEY_LEN + " from " + TABLE_PROTOCOLS + " where " + KEY_NAME + " = '" + name + "';";
@@ -123,10 +123,10 @@ public class ProtocolDBHelper extends SQLiteOpenHelper {
 
     public int insert(ContentValues contentValues) {
         int result = 0;
-        if(db == null || !db.isOpen()) {
+        if (db == null || !db.isOpen()) {
             db = getWritableDatabase();
         }
-        String query ="select * from " + TABLE_PROTOCOLS + " where " + KEY_NAME + " = '" + contentValues.get(KEY_NAME) + "';";
+        String query = "select * from " + TABLE_PROTOCOLS + " where " + KEY_NAME + " = '" + contentValues.get(KEY_NAME) + "';";
         Cursor cursor = db.rawQuery(query, null);
         if (cursor.getCount() == 0) {
             db.insert(TABLE_PROTOCOLS, null, contentValues);

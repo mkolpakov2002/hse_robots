@@ -19,7 +19,7 @@ import ru.hse.control_system_v2.list_devices.DeviceItemType;
 public class WiFiConnectionService extends Service {
     private ArrayList<DeviceItemType> devicesList;
     private ArrayList<DeviceItemType> devicesListConnected;
-    private static final String host_address="192.168.1.138";
+    private static final String host_address = "192.168.1.138";
     private String classDevice;
     private boolean isSuccess = false;
     private Intent intentService;
@@ -36,7 +36,7 @@ public class WiFiConnectionService extends Service {
 
         devicesList.addAll(DeviceHandler.getDevicesList());
 
-        for(int i = 0; i < devicesList.size(); i++){
+        for (int i = 0; i < devicesList.size(); i++) {
             Log.d(APP_LOG_TAG, "Создаю потоки для подключений...");
             ConnectingThread mr = new ConnectingThread(devicesList.get(i));
             treadList.add(i, mr);
@@ -56,7 +56,7 @@ public class WiFiConnectionService extends Service {
 
         public void run() {
             try {
-                currentDevice.setWifiSocket(new Socket(currentDevice.getDevIp(),currentDevice.getDevPort()));
+                currentDevice.setWifiSocket(new Socket(currentDevice.getDevIp(), currentDevice.getDevPort()));
             } catch (IOException e) {
                 e.printStackTrace();
                 currentDevice.closeConnection();
@@ -76,16 +76,16 @@ public class WiFiConnectionService extends Service {
     // Передаём данные о статусе соединения в Main Activity
     synchronized void resultOfConnection(DeviceItemType currentDevice) {
         devicesListConnected.add(currentDevice);
-        if(currentDevice.isConnected()){
+        if (currentDevice.isConnected()) {
             isSuccess = true;
         }
-        if(devicesListConnected.size() == devicesList.size()){
+        if (devicesListConnected.size() == devicesList.size()) {
             Intent resultOfConnectionIntent;
-            if(isSuccess){
+            if (isSuccess) {
                 resultOfConnectionIntent = new Intent("success");
                 resultOfConnectionIntent.putExtra("protocol", classDevice);
                 Log.d(APP_LOG_TAG, "WiFi соединение успешно, передаю результат в Main Activity...");
-            } else{
+            } else {
                 resultOfConnectionIntent = new Intent("not_success");
                 Log.d(APP_LOG_TAG, "WiFi соединение неуспешно, передаю результат в Main Activity...");
             }

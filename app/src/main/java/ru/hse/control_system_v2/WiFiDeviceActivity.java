@@ -27,7 +27,7 @@ import ru.hse.control_system_v2.dbprotocol.ProtocolDBHelper;
 import ru.hse.control_system_v2.dbprotocol.ProtocolRepo;
 import ru.hse.control_system_v2.list_devices.DeviceItemType;
 
-public class WiFiDeviceActivity extends AppCompatActivity implements CompoundButton.OnCheckedChangeListener{
+public class WiFiDeviceActivity extends AppCompatActivity implements CompoundButton.OnCheckedChangeListener {
 
     private boolean isHoldCommand;
     private byte[] message;      // комманда посылаемая на arduino
@@ -48,7 +48,6 @@ public class WiFiDeviceActivity extends AppCompatActivity implements CompoundBut
     private ImageButton buttonRight;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,10 +66,10 @@ public class WiFiDeviceActivity extends AppCompatActivity implements CompoundBut
 
 
         wifiDataThreadForArduinoList = new ArrayList<>();
-        outputText.append("\n"+ getResources().getString(R.string.bluetooth_device_activity_connected_first) + devicesList.size() + " " + getResources().getString(R.string.bluetooth_device_activity_from) + " " + (devicesList.size()+disconnectedDevicesList.size()) + getResources().getString(R.string.bluetooth_device_activity_devices));
-        outputText.append("\n"+ getResources().getString(R.string.bluetooth_device_activity_list_of_connections));
-        for(int i = 0; i < devicesList.size(); i++){
-            outputText.append("\n"+ getResources().getString(R.string.bluetooth_device_activity_device) + " " + devicesList.get(i).getDevName() + " " + getResources().getString(R.string.bluetooth_device_activity_connected_second));
+        outputText.append("\n" + getResources().getString(R.string.bluetooth_device_activity_connected_first) + devicesList.size() + " " + getResources().getString(R.string.bluetooth_device_activity_from) + " " + (devicesList.size() + disconnectedDevicesList.size()) + getResources().getString(R.string.bluetooth_device_activity_devices));
+        outputText.append("\n" + getResources().getString(R.string.bluetooth_device_activity_list_of_connections));
+        for (int i = 0; i < devicesList.size(); i++) {
+            outputText.append("\n" + getResources().getString(R.string.bluetooth_device_activity_device) + " " + devicesList.get(i).getDevName() + " " + getResources().getString(R.string.bluetooth_device_activity_connected_second));
             WiFiDataThread bluetoothDataThreadForArduino = new WiFiDataThread(this, devicesList.get(i));
             wifiDataThreadForArduinoList.add(bluetoothDataThreadForArduino);
             wifiDataThreadForArduinoList.get(i).start();
@@ -101,7 +100,7 @@ public class WiFiDeviceActivity extends AppCompatActivity implements CompoundBut
             @Override
             public void onClick(View view) {
                 completeDevicesInfo();
-                outputText.append("\n"+ getResources().getString(R.string.send_command_stop));
+                outputText.append("\n" + getResources().getString(R.string.send_command_stop));
                 completeMessage("STOP");
                 countCommands = 0;
             }
@@ -125,23 +124,23 @@ public class WiFiDeviceActivity extends AppCompatActivity implements CompoundBut
         finish();
     }
 
-    public synchronized void printDataToTextView(String printData){
+    public synchronized void printDataToTextView(String printData) {
         Log.d(APP_LOG_TAG, "Печатаемое сообщение в BtDeviceActivity: " + printData);
         outputText.append("\n" + "---" + "\n" + printData);
     }
 
-    public synchronized boolean isActive(){
+    public synchronized boolean isActive() {
         return active;
     }
 
-    void checkForActiveDevices(){
-        for (DeviceItemType currentDevice: devicesList){
-            if(!currentDevice.isConnected()){
+    void checkForActiveDevices() {
+        for (DeviceItemType currentDevice : devicesList) {
+            if (!currentDevice.isConnected()) {
                 disconnectedDevicesList.add(currentDevice);
             }
         }
-        for (DeviceItemType currentDevice: disconnectedDevicesList){
-            if(currentDevice.isConnected()){
+        for (DeviceItemType currentDevice : disconnectedDevicesList) {
+            if (currentDevice.isConnected()) {
                 devicesList.add(currentDevice);
             }
         }
@@ -149,7 +148,7 @@ public class WiFiDeviceActivity extends AppCompatActivity implements CompoundBut
         disconnectedDevicesList.removeIf(DeviceItemType::isConnected);
     }
 
-    public synchronized void addDisconnectedDevice(DeviceItemType currentDevice){
+    public synchronized void addDisconnectedDevice(DeviceItemType currentDevice) {
         disconnectedDevicesList.add(currentDevice);
         //TODO
         //Диалог с предложением переподключить эти устройства
@@ -195,7 +194,7 @@ public class WiFiDeviceActivity extends AppCompatActivity implements CompoundBut
         @Override
         public boolean onTouch(View v, MotionEvent event) {
             completeDevicesInfo();
-            if(event.getAction() == MotionEvent.ACTION_DOWN) {
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
                 // если нажали на кнопку и не важно есть удержание команд или нет
                 if (buttonUp.equals(v)) {
                     Log.d(APP_LOG_TAG, "Отправляю команду движения вперёд;");
@@ -220,12 +219,11 @@ public class WiFiDeviceActivity extends AppCompatActivity implements CompoundBut
                     completeMessage("RIGHT");
                     countCommands = 0;
                 }
-            }
-            else if(event.getAction() == MotionEvent.ACTION_UP) {
+            } else if (event.getAction() == MotionEvent.ACTION_UP) {
                 // если отпустили кнопку
-                if(!isHoldCommand) {
+                if (!isHoldCommand) {
                     // и нет удержания команд то все кнопки отправляют команду стоп
-                    outputText.append("\n"+ getResources().getString(R.string.send_command_button_released));
+                    outputText.append("\n" + getResources().getString(R.string.send_command_button_released));
                     if (buttonUp.equals(v)) {
                         completeMessage("FORWARD_STOP");
                         countCommands = 0;
@@ -266,7 +264,7 @@ public class WiFiDeviceActivity extends AppCompatActivity implements CompoundBut
         Byte code = getDevicesID.get(command);
         if (code != null) {
             if (getDevicesID.getTag(res.getString(R.string.TAG_TURN_COM))) {
-                message[countCommands++] = (prevCommand == code)? getDevicesID.get("redo_command"): getDevicesID.get("new_command");
+                message[countCommands++] = (prevCommand == code) ? getDevicesID.get("redo_command") : getDevicesID.get("new_command");
                 prevCommand = code;
             }
 
@@ -274,12 +272,11 @@ public class WiFiDeviceActivity extends AppCompatActivity implements CompoundBut
                 message[countCommands++] = getDevicesID.get("type_move");
             message[countCommands++] = code;
 
-            for(int i = 0; i < wifiDataThreadForArduinoList.size(); i++){
+            for (int i = 0; i < wifiDataThreadForArduinoList.size(); i++) {
                 wifiDataThreadForArduinoList.get(i).sendData(message, lengthMes);
             }
-        }
-        else {
-            outputText.append("\n"+ getResources().getString(R.string.send_command_insufficient_data));
+        } else {
+            outputText.append("\n" + getResources().getString(R.string.send_command_insufficient_data));
         }
     }
 
@@ -298,7 +295,6 @@ public class WiFiDeviceActivity extends AppCompatActivity implements CompoundBut
     }
 
 
-
     // Метод для вывода всплывающих данных на экран
     public void showToast(String outputInfoString) {
         Toast outputInfoToast = Toast.makeText(this, outputInfoString, Toast.LENGTH_SHORT);
@@ -309,7 +305,7 @@ public class WiFiDeviceActivity extends AppCompatActivity implements CompoundBut
     protected void onDestroy() {
         super.onDestroy();
         active = false;
-        for (int i = 0; i < devicesList.size(); i++){
+        for (int i = 0; i < devicesList.size(); i++) {
             Log.d(APP_LOG_TAG, "BtDeviceActivity в onDestroy, отключение устройств");
             devicesList.get(i).closeConnection();
 

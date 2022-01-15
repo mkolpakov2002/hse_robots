@@ -83,7 +83,7 @@ public class SettingsFragment extends Fragment {
 
     @Override
     public void onAttach(@NonNull Context context) {
-        fragmentContext=context;
+        fragmentContext = context;
         ma = ((MainActivity) fragmentContext);
         super.onAttach(context);
     }
@@ -126,7 +126,7 @@ public class SettingsFragment extends Fragment {
                     contentValues.put(ProtocolDBHelper.KEY_NAME, name);
                     contentValues.put(ProtocolDBHelper.KEY_LEN, length);
                     try {
-                        contentValues.put(ProtocolDBHelper.KEY_CODE, saveToFile(name,code));
+                        contentValues.put(ProtocolDBHelper.KEY_CODE, saveToFile(name, code));
                     } catch (IOException e) {
                         Toast.makeText(fragmentContext, "Error saving: try again", Toast.LENGTH_LONG).show();
                         e.printStackTrace();
@@ -163,8 +163,8 @@ public class SettingsFragment extends Fragment {
         String sTheme = sPref.getString("theme", themes.get(0));
         autoCompleteTextView.setText(sTheme);
         autoCompleteTextView.setAdapter(adapter);
-        autoCompleteTextView.setOnItemClickListener ((adapterView, view1, position, l) -> {
-            if (position<themes.size()&&position>=0 && !ThemeUtils.getCurrentTheme().equals(autoCompleteTextView.getText().toString())){
+        autoCompleteTextView.setOnItemClickListener((adapterView, view1, position, l) -> {
+            if (position < themes.size() && position >= 0 && !ThemeUtils.getCurrentTheme().equals(autoCompleteTextView.getText().toString())) {
                 SharedPreferences.Editor ed = sPref.edit();
                 ed.putString("theme", themes.get(position));
                 ed.apply();
@@ -218,7 +218,7 @@ public class SettingsFragment extends Fragment {
                         .setIcon(R.drawable.ic_baseline_warning_24)
                         .setPositiveButton(getResources().getString(R.string.settings_fragment_button_ok), (dialog1, whichButton) -> {
                             ProtocolDBHelper dbHelper = new ProtocolDBHelper(fragmentContext);
-                            dbHelper.onUpgrade(dbHelper.getWritableDatabase(), 1,1);
+                            dbHelper.onUpgrade(dbHelper.getWritableDatabase(), 1, 1);
                             showProtocols();
                         })
                         .setNegativeButton(getResources().getString(R.string.settings_fragment_button_cancel), null)
@@ -265,15 +265,14 @@ public class SettingsFragment extends Fragment {
         buttonFile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (hasPermissions()){
+                if (hasPermissions()) {
                     Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                     intent.addCategory(Intent.CATEGORY_OPENABLE);
                     intent.setType("*/*");
                     String[] mimetypes = {"text/xml", "text/plain"};
                     intent.putExtra(Intent.EXTRA_MIME_TYPES, mimetypes);
                     startActivityForResult(intent, REQUEST_CODE_OPEN);
-                }
-                else {
+                } else {
                     requestPermissionWithRationale();
                 }
             }
@@ -282,8 +281,8 @@ public class SettingsFragment extends Fragment {
         showProtocols();
     }
 
-    void canShowSaveButton(){
-        if (isEditTextNameChanged && isEditTextLenChanged && isEditTextCodeChanged){
+    void canShowSaveButton() {
+        if (isEditTextNameChanged && isEditTextLenChanged && isEditTextCodeChanged) {
             buttonAdd.setEnabled(true);
             buttonAdd.setBackgroundColor(fragmentContext.getColor(R.color.white));
         } else {
@@ -304,14 +303,14 @@ public class SettingsFragment extends Fragment {
         }
     }
 
-    private boolean hasPermissions(){
+    private boolean hasPermissions() {
         int res = 0;
         //string array of permissions,
         String[] permissions = new String[]{Manifest.permission.READ_EXTERNAL_STORAGE};
 
-        for (String perms : permissions){
+        for (String perms : permissions) {
             res = ma.checkCallingOrSelfPermission(perms);
-            if (!(res == PackageManager.PERMISSION_GRANTED)){
+            if (!(res == PackageManager.PERMISSION_GRANTED)) {
                 return false;
             }
         }
@@ -364,9 +363,8 @@ public class SettingsFragment extends Fragment {
     }
 
 
-
     public void showNoStoragePermissionSnackbar() {
-        Snackbar.make(ma.findViewById(R.id.activity_explain_perms), "Storage permission isn't granted" , Snackbar.LENGTH_LONG)
+        Snackbar.make(ma.findViewById(R.id.activity_explain_perms), "Storage permission isn't granted", Snackbar.LENGTH_LONG)
                 .setAction("SETTINGS", new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -387,26 +385,24 @@ public class SettingsFragment extends Fragment {
         startActivityForResult(appSettingsIntent, PERMISSION_REQUEST_CODE);
     }
 
-    private void requestPerms(){
+    private void requestPerms() {
         String[] permissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
-        requestPermissions(permissions,PERMISSION_REQUEST_CODE);
+        requestPermissions(permissions, PERMISSION_REQUEST_CODE);
     }
 
-    private String readTextFile(Uri uri)
-    {
+    private String readTextFile(Uri uri) {
         BufferedReader reader = null;
         StringBuilder builder = new StringBuilder();
-        try
-        {
+        try {
             reader = new BufferedReader(new InputStreamReader(ma.getContentResolver().openInputStream(uri)));
             String line = "";
-            while ((line = reader.readLine()) != null)
-            {
+            while ((line = reader.readLine()) != null) {
                 builder.append(line).append("\n");
             }
             reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        catch (IOException e) {e.printStackTrace();}
         return builder.toString();
     }
 
@@ -419,7 +415,7 @@ public class SettingsFragment extends Fragment {
         return fileName;
     }
 
-    void showProtocols(){
+    void showProtocols() {
         Cursor cursor = database.query(ProtocolDBHelper.TABLE_PROTOCOLS, null, null, null, null, null, null);
         if (cursor.moveToFirst()) {
             textListProtocols.setText("");
@@ -441,7 +437,7 @@ public class SettingsFragment extends Fragment {
     }
 
     //True, если Bluetooth включён
-    public boolean btIsEnabledFlagVoid(){
+    public boolean btIsEnabledFlagVoid() {
         return btAdapter.isEnabled();
     }
 

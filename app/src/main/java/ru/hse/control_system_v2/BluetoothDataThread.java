@@ -24,8 +24,8 @@ public class BluetoothDataThread extends Thread {
     private OutputStream mmOutStream;
 
 
-    public BluetoothDataThread(@NonNull Context context, DeviceItemType deviceItemType){
-        if (context instanceof Activity){
+    public BluetoothDataThread(@NonNull Context context, DeviceItemType deviceItemType) {
+        if (context instanceof Activity) {
             c = context;
         }
         bluetoothDeviceActivity = ((BluetoothDeviceActivity) c);
@@ -51,7 +51,7 @@ public class BluetoothDataThread extends Thread {
         InputStream mmInStream = tmpIn;
         StringBuilder str = new StringBuilder();
 
-        while(deviceItemType.isConnected()){
+        while (deviceItemType.isConnected()) {
             byte[] buffer = new byte[1024];  // buffer store for the stream
             int bytes = 0; // bytes returned from read()
             // Keep listening to the InputStream until an exception occurs
@@ -62,7 +62,7 @@ public class BluetoothDataThread extends Thread {
                 Log.e(APP_LOG_TAG, "Ошибка чтения входящих данных в потоке " + e.getMessage());
                 Disconnect();
             }
-            if(deviceItemType.isConnected()){
+            if (deviceItemType.isConnected()) {
                 //успешно считываем данные
                 StringBuilder incomingDataBuffer = new StringBuilder();
                 String incomingMessage = new String(buffer, 0, bytes);
@@ -72,11 +72,11 @@ public class BluetoothDataThread extends Thread {
                 str.append(incomingMessage);
                 int j = 0;
                 boolean isComplete = false;
-                while(!isComplete){
+                while (!isComplete) {
                     //обрабатываем str, выделяем строки с символом \n в конце
-                    if(str.charAt(j)=='\n' && j+1<=str.length()-1) {
+                    if (str.charAt(j) == '\n' && j + 1 <= str.length() - 1) {
                         //substring копирует до второго параметра НЕ включительно, но включая с первого
-                        incomingDataBuffer.append(str.substring(0, j+1));
+                        incomingDataBuffer.append(str.substring(0, j + 1));
                         incomingData(incomingDataBuffer.toString());
                         //incomingDataBuffer.toString() - подходящая строка
                         //записываем в str остаток старой строки (str без incomingDataBuffer.toString())
@@ -85,7 +85,7 @@ public class BluetoothDataThread extends Thread {
                         str.setLength(0);
                         str.append(bufferStr);
                         j = -1;
-                    } else if(str.charAt(j)=='\n') {
+                    } else if (str.charAt(j) == '\n') {
                         //нету элемента j+1, рассматриваемый символ \n последний в str
                         //просто копируем (без остатка, его нет)
                         incomingDataBuffer.append(str);
@@ -93,7 +93,7 @@ public class BluetoothDataThread extends Thread {
                         j = -1;
                         str.setLength(0);
                     }
-                    if(str.indexOf("\n") == -1){
+                    if (str.indexOf("\n") == -1) {
                         //более символов \n не найдено, завершаем обработку строки
                         isComplete = true;
                     }
@@ -108,14 +108,14 @@ public class BluetoothDataThread extends Thread {
         Log.d(APP_LOG_TAG, "Конец работы цикла потока Bt");
     }
 
-    synchronized void incomingData(String incomingData){
-        if(bluetoothDeviceActivity.isActive()){
+    synchronized void incomingData(String incomingData) {
+        if (bluetoothDeviceActivity.isActive()) {
             Log.d(APP_LOG_TAG, "Входящие данные Bt: " + incomingData);
             //TODO
             //А если activity не активна?
             ((BluetoothDeviceActivity) c).runOnUiThread(new Runnable() {
                 public void run() {
-                    ((BluetoothDeviceActivity) c).printDataToTextView(incomingData.replaceAll("\n",""));
+                    ((BluetoothDeviceActivity) c).printDataToTextView(incomingData.replaceAll("\n", ""));
                 }
             });
             SystemClock.sleep(100);
@@ -124,12 +124,12 @@ public class BluetoothDataThread extends Thread {
 
     public void sendData(byte[] message, int len) {
         StringBuilder logMessage = new StringBuilder("Отправляем данные по Bt: ");
-        for (int i=0; i < len; i++)
+        for (int i = 0; i < len; i++)
             logMessage.append(message[i]).append(" ");
         Log.d(APP_LOG_TAG, logMessage + "***");
         try {
             mmOutStream.write(message);
-        } catch (IOException e){
+        } catch (IOException e) {
             Disconnect();
         }
     }
@@ -141,7 +141,7 @@ public class BluetoothDataThread extends Thread {
 
     public void Disconnect() {
         deviceItemType.closeConnection();
-        if(btIsEnabledFlagVoid()){
+        if (btIsEnabledFlagVoid()) {
             bluetoothDeviceActivity.addDisconnectedDevice(deviceItemType);
         }
         Thread.currentThread().interrupt();

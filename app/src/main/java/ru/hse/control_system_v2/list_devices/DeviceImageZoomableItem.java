@@ -17,7 +17,7 @@ public class DeviceImageZoomableItem extends AppCompatImageView {
     private float scaleFactor = 1.f;
 
     // конструкторы
-    public DeviceImageZoomableItem(Context context){
+    public DeviceImageZoomableItem(Context context) {
         super(context);
         init();
     }

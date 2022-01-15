@@ -146,6 +146,7 @@ public class ThemeUtils {
         }
 
     }
+
     public static String getCurrentTheme() {
         return sTheme;
     }

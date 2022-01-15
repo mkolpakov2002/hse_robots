@@ -26,14 +26,14 @@ public class ProtocolRepo extends HashMap<String, Byte> {
     private Context context;
     ProtocolDBHelper dbHelper;
 
-    public static final List<String> labels = List.of("class_android","class_computer","class_arduino","type_sphere","type_anthropomorphic",
-            "type_cubbi","type_computer","no_class","no_type","redo_command","new_command","type_move","type_tele",
-            "STOP","FORWARD","FORWARD_STOP","BACK", "BACK_STOP","LEFT","LEFT_STOP","RIGHT","RIGHT_STOP");
+    public static final List<String> labels = List.of("class_android", "class_computer", "class_arduino", "type_sphere", "type_anthropomorphic",
+            "type_cubbi", "type_computer", "no_class", "no_type", "redo_command", "new_command", "type_move", "type_tele",
+            "STOP", "FORWARD", "FORWARD_STOP", "BACK", "BACK_STOP", "LEFT", "LEFT_STOP", "RIGHT", "RIGHT_STOP");
 
     public ProtocolRepo(Context context, String name) {
         this.context = context;
         dbHelper = ProtocolDBHelper.getInstance(context);
-        Log.d("mLog", "name = "+name);
+        Log.d("mLog", "name = " + name);
         queryTags = new ArrayList<>();
         moveCodes = new HashMap<>();
         if (!name.isEmpty())
@@ -50,7 +50,7 @@ public class ProtocolRepo extends HashMap<String, Byte> {
 
     XmlPullParser prepareXpp(String name) throws IOException, XmlPullParserException {
         XmlPullParser xpp;
-        if (name.equals(context.getResources().getString(R.string.TAG_default_protocol)+".xml") || name.equals(context.getResources().getString(R.string.TAG_default_protocol))){
+        if (name.equals(context.getResources().getString(R.string.TAG_default_protocol) + ".xml") || name.equals(context.getResources().getString(R.string.TAG_default_protocol))) {
             xpp = context.getResources().getXml(R.xml.arduino_default);
             return xpp;
         }
@@ -59,11 +59,11 @@ public class ProtocolRepo extends HashMap<String, Byte> {
         String read;
         StringBuilder builder = new StringBuilder();
 
-        while((read = bufferedReader.readLine()) != null){
+        while ((read = bufferedReader.readLine()) != null) {
             Log.d("mLog", read);
             if (read.contains("<?xml"))
                 continue;
-            read = read.replaceAll(" ","");
+            read = read.replaceAll(" ", "");
             builder.append(read);
             Log.d("mLog", read);
         }
@@ -76,6 +76,7 @@ public class ProtocolRepo extends HashMap<String, Byte> {
 
         return xpp;
     }
+
     public void parseCodes(String name) {
         String curName = "";
         try {
@@ -123,7 +124,7 @@ public class ProtocolRepo extends HashMap<String, Byte> {
                                     /*(byte) ((Character.digit(codeEl.charAt(0), 16) << 4)
                                     + Character.digit(codeEl.charAt(1), 16));*/
                             moveCodes.put(curName, xppCode);
-                            }
+                        }
                         break;
                     default:
                         break;
@@ -138,16 +139,16 @@ public class ProtocolRepo extends HashMap<String, Byte> {
         }
     }
 
-        public int stringXMLparser(String code) {
+    public int stringXMLparser(String code) {
         try {
-        XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
-        code = code.replaceAll(" ","");
-        code = code.replaceAll("\n","");
-        factory.setNamespaceAware(true);
-        XmlPullParser xpp = factory.newPullParser();
-        xpp.setInput(new StringReader(code));
+            XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
+            code = code.replaceAll(" ", "");
+            code = code.replaceAll("\n", "");
+            factory.setNamespaceAware(true);
+            XmlPullParser xpp = factory.newPullParser();
+            xpp.setInput(new StringReader(code));
 
-        String curName = "";
+            String curName = "";
             while (xpp.getEventType() != XmlPullParser.END_DOCUMENT) {
                 switch (xpp.getEventType()) {
                     case XmlPullParser.START_TAG:

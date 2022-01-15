@@ -41,7 +41,7 @@ public class BluetoothConnectionService extends Service {
     private int devicesListConnectedSize;
     private boolean isSuccess = false;
     private Intent intentService;
-    private static final int FOREGROUND_ID=1338;
+    private static final int FOREGROUND_ID = 1338;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -54,7 +54,7 @@ public class BluetoothConnectionService extends Service {
         ExecutorService executorService = Executors.newFixedThreadPool(devicesList.size());
         Log.d(APP_LOG_TAG, "Соединение по Bt начато...");
         btAdapter = BluetoothAdapter.getDefaultAdapter();
-        for(int i = 0; i < devicesList.size(); i++){
+        for (int i = 0; i < devicesList.size(); i++) {
             Log.d(APP_LOG_TAG, "Создаю потоки для подключений...");
             MyRun mr = new MyRun(devicesList.get(i));
             treadList.add(i, mr);
@@ -113,15 +113,15 @@ public class BluetoothConnectionService extends Service {
     // Передаём данные о статусе соединения в Main Activity
     synchronized void resultOfConnection(DeviceItemType currentDevice) {
         devicesListConnectedSize++;
-        if(currentDevice.isConnected()){
+        if (currentDevice.isConnected()) {
             isSuccess = true;
         }
-        if(devicesListConnectedSize == devicesList.size()){
+        if (devicesListConnectedSize == devicesList.size()) {
             Intent resultOfConnectionIntent;
-            if(isSuccess){
+            if (isSuccess) {
                 resultOfConnectionIntent = new Intent("success");
                 DeviceHandler.setDevicesList(devicesList);
-                Log.d(APP_LOG_TAG, "getter " +String.valueOf(DeviceHandler.getDevicesList().size()));
+                Log.d(APP_LOG_TAG, "getter " + String.valueOf(DeviceHandler.getDevicesList().size()));
                 Log.d(APP_LOG_TAG, "Bt соединение успешно, передаю результат в Main Activity...");
             } else {
                 resultOfConnectionIntent = new Intent("not_success");

@@ -70,4 +70,12 @@ public class App extends Application {
         return btAdapter != null && wifiManager != null;
     }
 
+    public static boolean isBtSupported(){
+        return btAdapter != null;
+    }
+
+    public static boolean isWiFiSupported() {
+        return wifiManager != null;
+    }
+
 }

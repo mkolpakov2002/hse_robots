@@ -13,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -27,7 +26,6 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.android.material.dialog.MaterialDialogs;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -102,9 +100,9 @@ public class MainMenuFragment extends Fragment implements SwipeRefreshLayout.OnR
                 ma.showBottomSheetToConnect();
             else {
                 Snackbar snackbar = Snackbar
-                        .make(swipeToRefreshLayout, "Нужны устройства с одним протоколом, классом, типом",
+                        .make(swipeToRefreshLayout, getString(R.string.selection_class_device_error),
                                 Snackbar.LENGTH_LONG)
-                        .setAction("Ок", new View.OnClickListener() {
+                        .setAction(getString(R.string.ok), new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
                                 //nothing
@@ -151,13 +149,23 @@ public class MainMenuFragment extends Fragment implements SwipeRefreshLayout.OnR
         if (buttonToAddDevice != null) {
             buttonToAddDevice.setOnClickListener(view1 -> {
                 bottomSheetDialogToAdd.dismiss();
-                if(App.isBtEnabled() && !BluetoothAdapter.getDefaultAdapter().getBondedDevices().isEmpty()){
+                if(!App.isBtSupported()){
+                    Snackbar snackbar = Snackbar
+                            .make(swipeToRefreshLayout, getString(R.string.suggestionNoBtAdapter),
+                                    Snackbar.LENGTH_LONG)
+                            .setAction(getString(R.string.ok), new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                }
+                            });
+                    snackbar.show();
+                } else if(App.isBtEnabled() && !BluetoothAdapter.getDefaultAdapter().getBondedDevices().isEmpty()){
                     Navigation.findNavController(requireParentFragment().requireView()).navigate(R.id.addDeviceFragment);
                 } else if(!App.isBtEnabled()){
                     Snackbar snackbar = Snackbar
-                            .make(swipeToRefreshLayout, "Для доступа к списку нужно включить Bluetooth",
+                            .make(swipeToRefreshLayout, getString(R.string.en_bt_for_list),
                                     Snackbar.LENGTH_LONG)
-                            .setAction("Ок", new View.OnClickListener() {
+                            .setAction(getString(R.string.ok), new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
                                     Intent intentBtEnabled = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
@@ -167,9 +175,9 @@ public class MainMenuFragment extends Fragment implements SwipeRefreshLayout.OnR
                     snackbar.show();
                 } else {
                     Snackbar snackbar = Snackbar
-                            .make(swipeToRefreshLayout, "Нет сопряжённых устройств",
+                            .make(swipeToRefreshLayout, getString(R.string.no_devices_added),
                                     Snackbar.LENGTH_LONG)
-                            .setAction("Ок", new View.OnClickListener() {
+                            .setAction(getString(R.string.ok), new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
                                     Intent intentBtEnabled = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
@@ -208,33 +216,14 @@ public class MainMenuFragment extends Fragment implements SwipeRefreshLayout.OnR
     public void onRefresh() {
         ma.showMainMenu();
         hideAllButtons();
-        if (BluetoothAdapter.getDefaultAdapter() != null && ma.getPackageManager().hasSystemFeature(PackageManager.FEATURE_WIFI)) {
-            headerText.setText(R.string.favorites_devices);
-            // Bluetooth включён, надо показать кнопку добавления устройств и другую информацию
-            if (multipleTypesAdapter == null) { // it works first time
-                multipleTypesAdapter = new MultipleTypesAdapter(fragmentContext);
-                recycler.setAdapter(multipleTypesAdapter);
-            } else {
-                // it works second time and later
-                multipleTypesAdapter.refreshAdapterData();
-            }
+        headerText.setText(R.string.favorites_devices);
+        // Bluetooth включён, надо показать кнопку добавления устройств и другую информацию
+        if (multipleTypesAdapter == null) { // it works first time
+            multipleTypesAdapter = new MultipleTypesAdapter(fragmentContext);
+            recycler.setAdapter(multipleTypesAdapter);
         } else {
-            if (dialog == null || !dialog.isShowing()) {
-                // отсутствует Bluetooth адаптер, работа приложения невозможна
-                MaterialAlertDialogBuilder adapterDialogBuilder = new MaterialAlertDialogBuilder(ma);
-                adapterDialogBuilder.setTitle(getString(R.string.error));
-                adapterDialogBuilder.setMessage(getString(R.string.suggestionNoBtAdapter));
-                adapterDialogBuilder.setPositiveButton(getResources().getString(R.string.ok),
-                        (dialog1, which) -> {
-                            // скрывает диалог и завершает работу приложения
-                            dialog1.dismiss();
-                            ma.finish();
-                        });
-                // нельзя закрыть этот диалог
-                adapterDialogBuilder.setCancelable(false);
-                dialog = adapterDialogBuilder.create();
-                dialog.show();
-            }
+            // it works second time and later
+            multipleTypesAdapter.refreshAdapterData();
         }
         // Приложение обновлено, завершаем анимацию обновления
         swipeToRefreshLayout.setRefreshing(false);

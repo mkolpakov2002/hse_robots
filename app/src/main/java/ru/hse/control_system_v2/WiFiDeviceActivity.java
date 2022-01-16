@@ -4,7 +4,6 @@ import static ru.hse.control_system_v2.Constants.APP_LOG_TAG;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -66,10 +65,10 @@ public class WiFiDeviceActivity extends AppCompatActivity implements CompoundBut
 
 
         wifiDataThreadForArduinoList = new ArrayList<>();
-        outputText.append("\n" + getResources().getString(R.string.bluetooth_device_activity_connected_first) + " " + devicesList.size() + " " + getResources().getString(R.string.bluetooth_device_activity_from) + " " + (devicesList.size() + disconnectedDevicesList.size()) + " " + getResources().getString(R.string.bluetooth_device_activity_devices));
+        outputText.append("\n" + getResources().getString(R.string.bluetooth_device_activity_connected_first) + " " + devicesList.size() + " " + getResources().getString(R.string.bluetooth_device_activity_from) + " " + (devicesList.size() + disconnectedDevicesList.size()) + " " + getResources().getString(R.string.devices_title));
         outputText.append("\n" + getResources().getString(R.string.bluetooth_device_activity_list_of_connections));
         for (int i = 0; i < devicesList.size(); i++) {
-            outputText.append("\n" + getResources().getString(R.string.bluetooth_device_activity_device) + " " + devicesList.get(i).getDevName() + " " + getResources().getString(R.string.bluetooth_device_activity_connected_second));
+            outputText.append("\n" + getResources().getString(R.string.device_title) + " " + devicesList.get(i).getDevName() + " " + getResources().getString(R.string.bluetooth_device_activity_connected_second));
             WiFiDataThread bluetoothDataThreadForArduino = new WiFiDataThread(this, devicesList.get(i));
             wifiDataThreadForArduinoList.add(bluetoothDataThreadForArduino);
             wifiDataThreadForArduinoList.get(i).start();

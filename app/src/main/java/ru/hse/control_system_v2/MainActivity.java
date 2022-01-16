@@ -9,19 +9,21 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.navigation.NavController;
@@ -31,13 +33,12 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.Objects;
 
-import ru.hse.control_system_v2.dbdevices.DeviceModel;
-import ru.hse.control_system_v2.dbdevices.DevicesAdapter;
 import ru.hse.control_system_v2.list_devices.DeviceItemType;
 
 
@@ -65,18 +66,18 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 String currentFragment = Objects.requireNonNull(getCurrentVisibleFragment().getLabel()).toString();
-                switch (currentFragment){
+                switch (currentFragment) {
                     case "main":
-                        createOneButtonAlertDialog("Инструкция", getString(R.string.instruction_for_app));
+                        createOneButtonAlertDialog(getString(R.string.instruction_alert), getString(R.string.instruction_for_app));
                         break;
                     case "settings":
-                        createOneButtonAlertDialog("Инструкция", getString(R.string.instruction_for_app_settings));
+                        createOneButtonAlertDialog(getString(R.string.instruction_alert), getString(R.string.instruction_for_app_settings));
                         break;
                     case "DeviceMenuFragment":
-                        createOneButtonAlertDialog("Инструкция", getString(R.string.instruction_for_app_device_menu));
+                        createOneButtonAlertDialog(getString(R.string.instruction_alert), getString(R.string.instruction_for_app_device_menu));
                         break;
                     case "AddDeviceFragment":
-                        createOneButtonAlertDialog("Инструкция", getString(R.string.instruction_for_app_add_device));
+                        createOneButtonAlertDialog(getString(R.string.instruction_alert), getString(R.string.instruction_for_app_add_device));
                         break;
                     default:
                         //nothing
@@ -105,58 +106,72 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
         Button buttonToConnectViaBt = bottomSheetDialogToConnect.findViewById(R.id.button_bt);
         if (buttonToConnectViaWiFi != null) {
             buttonToConnectViaWiFi.setOnClickListener(view1 -> {
-                boolean isConnectionPossible = true;
-                for(DeviceItemType current: DeviceHandler.getDevicesList()){
-                    if(!current.isWiFiSupported()){
-                        isConnectionPossible = false;
-                        bottomSheetDialogToConnect.dismiss();
-                        Snackbar snackbar = Snackbar
-                                .make(main_bottom_menu, "Устройство "+ current.getDevName() + " не поддерживает WiFi",
-                                        Snackbar.LENGTH_LONG)
-                                .setAction("Подробнее", new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        createOneButtonAlertDialog(getString(R.string.alert_info), getString(R.string.instruction_for_app_wifi));
-                                    }
-                                });
-                        snackbar.show();
-                        break;
+                if (App.isWiFiSupported()) {
+                    boolean isConnectionPossible = true;
+                    for (DeviceItemType current : DeviceHandler.getDevicesList()) {
+                        if (!current.isWiFiSupported()) {
+                            isConnectionPossible = false;
+                            bottomSheetDialogToConnect.dismiss();
+                            Snackbar snackbar = Snackbar
+                                    .make(main_bottom_menu, getString(R.string.device_title) +
+                                                    " " + current.getDevName() + " " +
+                                                    getString(R.string.wifi_not_supported_text),
+                                            Snackbar.LENGTH_LONG)
+                                    .setAction(getString(R.string.button_more), new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            createOneButtonAlertDialog(getString(R.string.alert_info), getString(R.string.instruction_for_app_wifi));
+                                        }
+                                    });
+                            snackbar.show();
+                            break;
+                        }
                     }
+                    if (isConnectionPossible) {
+                        Intent serviceStarted;
+                        serviceStarted = new Intent("startingWiFiService");
+                        sendBroadcast(serviceStarted);
+                        bottomSheetDialogToConnect.dismiss();
+                    }
+                } else {
+                    createOneButtonAlertDialog(getString(R.string.error), getString(R.string.suggestionNoWiFiAdapter));
                 }
-                if(isConnectionPossible){
-                    Intent serviceStarted;
-                    serviceStarted = new Intent("startingWiFiService");
-                    sendBroadcast(serviceStarted);
-                    bottomSheetDialogToConnect.dismiss();
-                }
+
             });
         }
         if (buttonToConnectViaBt != null) {
             buttonToConnectViaBt.setOnClickListener(view1 -> {
-                boolean isConnectionPossible = true;
-                for(DeviceItemType current: DeviceHandler.getDevicesList()){
-                    if(!current.isBtSupported()){
-                        isConnectionPossible = false;
-                        bottomSheetDialogToConnect.dismiss();
-                        Snackbar snackbar = Snackbar
-                                .make(main_bottom_menu, "Устройство "+ current.getDevName() + " не поддерживает Bluetooth",
-                                        Snackbar.LENGTH_LONG)
-                                .setAction("Подробнее", new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        createOneButtonAlertDialog(getString(R.string.alert_info), getString(R.string.instruction_for_app_bt));
-                                    }
-                                });
-                        snackbar.show();
-                        break;
+                if (App.isBtSupported()) {
+                    boolean isConnectionPossible = true;
+                    for (DeviceItemType current : DeviceHandler.getDevicesList()) {
+                        if (!current.isBtSupported()) {
+                            isConnectionPossible = false;
+                            bottomSheetDialogToConnect.dismiss();
+                            Snackbar snackbar = Snackbar
+                                    .make(main_bottom_menu, getString(R.string.device_title) +
+                                                    " " + current.getDevName() + " " +
+                                                    getString(R.string.bluetooth_not_supported_text),
+                                            Snackbar.LENGTH_LONG)
+                                    .setAction(getString(R.string.button_more), new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            createOneButtonAlertDialog(getString(R.string.alert_info), getString(R.string.instruction_for_app_bt));
+                                        }
+                                    });
+                            snackbar.show();
+                            break;
+                        }
                     }
+                    if (isConnectionPossible) {
+                        Intent serviceStarted;
+                        serviceStarted = new Intent("startingBtService");
+                        sendBroadcast(serviceStarted);
+                        bottomSheetDialogToConnect.dismiss();
+                    }
+                } else {
+                    createOneButtonAlertDialog(getString(R.string.error), getString(R.string.suggestionNoBtAdapter));
                 }
-                if(isConnectionPossible){
-                    Intent serviceStarted;
-                    serviceStarted = new Intent("startingBtService");
-                    sendBroadcast(serviceStarted);
-                    bottomSheetDialogToConnect.dismiss();
-                }
+
             });
         }
 
@@ -191,31 +206,28 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
     }
 
 
-    // проверка на наличие Bluetooth адаптера; дальнейшее продолжение работы в случае наличия
+    // проверка на наличие адаптеров
     public void checkForBtAdapter() {
 
         if (!App.isBtWiFiSupported()) {
             // объект Builder для создания диалогового окна
             androidx.appcompat.app.AlertDialog dialog = new androidx.appcompat.app.AlertDialog.Builder(this, R.style.AlertDialog_AppCompat).create();
             dialog.setTitle(getString(R.string.error));
-            dialog.setMessage(getString(R.string.suggestionNoBtAdapter));
-            dialog.setButton(androidx.appcompat.app.AlertDialog.BUTTON_NEUTRAL, "OK",
+            dialog.setMessage(getString(R.string.suggestionNoBtWiFiAdapter));
+            dialog.setButton(androidx.appcompat.app.AlertDialog.BUTTON_NEUTRAL, getString(R.string.ok),
                     (dialog1, which) -> {
                         // Closes the dialog and terminates the activity.
                         dialog1.dismiss();
-                        this.finish();
                     });
-        } else {
-            if (isFirstLaunch == 1) {
-                sPref = getPreferences(MODE_PRIVATE);
-                SharedPreferences.Editor ed = sPref.edit();
-                ed.putInt("isFirstLaunch", 0);
-                ed.apply();
-                isFirstLaunch = 0;
-                requestPerms();
-                createOneButtonAlertDialog(getResources().getString(R.string.instruction_alert), "Добро пожаловать! Используйте это приложение для управления вашими роботами. Подробная инструкция доступна по нажатию на знак вопроса.");
-
-            }
+        }
+        if (isFirstLaunch == 1) {
+            sPref = getPreferences(MODE_PRIVATE);
+            SharedPreferences.Editor ed = sPref.edit();
+            ed.putInt("isFirstLaunch", 0);
+            ed.apply();
+            isFirstLaunch = 0;
+            requestPerms();
+            createOneButtonAlertDialog(getResources().getString(R.string.instruction_alert), getString(R.string.alert_first_launch));
         }
     }
 
@@ -272,7 +284,7 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
             } else {
                 Bundle args = new Bundle();
                 args.putString("dialogTitle", getString(R.string.error));
-                args.putString("dialogText", "Для соединения необходимо включить Bluetooth");
+                args.putString("dialogText", getString(R.string.en_bt_for_connection));
                 navController.navigateUp();
                 navController.navigate(R.id.oneButtonAlertDialogFragment, args);
             }
@@ -290,7 +302,7 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
             } else {
                 Bundle args = new Bundle();
                 args.putString("dialogTitle", getString(R.string.error));
-                args.putString("dialogText", "Для соединения необходимо включить WiFi");
+                args.putString("dialogText", getString(R.string.en_wifi_for_connection));
                 navController.navigateUp();
                 navController.navigate(R.id.oneButtonAlertDialogFragment, args);
             }
@@ -303,9 +315,9 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
         @Override
         public void onReceive(Context context, Intent intent) {
             navController.navigate(R.id.mainMenuFragment);
-            if(getMainMenuFragment()!=null)
+            if (getMainMenuFragment() != null)
                 getMainMenuFragment().onRefresh();
-            createOneButtonAlertDialog("Ошибка", "Подключение не успешно.");
+            createOneButtonAlertDialog(getString(R.string.error), getString(R.string.connection_error));
             isBtConnection = null;
         }
     };
@@ -327,15 +339,15 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
     @Override
     public void onBackPressed() {
         if (getCurrentVisibleFragment().getId() == R.id.mainMenuFragment && !main_bottom_menu.isShown()) {
-            if(getMainMenuFragment()!=null)
+            if (getMainMenuFragment() != null)
                 getMainMenuFragment().onRefresh();
-        } else if (getCurrentVisibleFragment().getId() == R.id.mainMenuFragment){
+        } else if (getCurrentVisibleFragment().getId() == R.id.mainMenuFragment) {
             if (back_pressed + 2000 > System.currentTimeMillis()) {
                 finish();
             } else {
                 //показ сообщения, о необходимости второго нажатия кнопки назад при выходе
                 Snackbar snackbar = Snackbar
-                        .make(main_bottom_menu, "Нажмите второй раз для выхода из приложения",
+                        .make(main_bottom_menu, getString(R.string.double_back_click),
                                 Snackbar.LENGTH_LONG);
                 snackbar.show();
             }
@@ -389,8 +401,8 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
         bottomSheetDialogToConnect.cancel();
     }
 
-    public MainMenuFragment getMainMenuFragment(){
-        if(getCurrentVisibleFragment().getId() == R.id.mainMenuFragment){
+    public MainMenuFragment getMainMenuFragment() {
+        if (getCurrentVisibleFragment().getId() == R.id.mainMenuFragment) {
             FragmentManager fragmentManager = null;
             if (navHostFragment != null) {
                 fragmentManager = navHostFragment.getChildFragmentManager();
@@ -399,7 +411,7 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
             if (fragmentManager != null) {
                 current = fragmentManager.getPrimaryNavigationFragment();
             }
-            if(current instanceof MainMenuFragment){
+            if (current instanceof MainMenuFragment) {
                 return (MainMenuFragment) current;
             }
         }

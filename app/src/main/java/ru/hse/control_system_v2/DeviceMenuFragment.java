@@ -448,8 +448,10 @@ public class DeviceMenuFragment extends Fragment {
                     currentDevice.isWiFiSupported()){
                 connectButton.setEnabled(true);
             }
-            if(!isNew)
+            if(!isNew){
                 saveButton.setEnabled(false);
+                deleteButton.setEnabled(true);
+            }
         } else {
             saveButton.setEnabled(true);
             connectButton.setEnabled(false);

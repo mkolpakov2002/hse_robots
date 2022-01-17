@@ -57,11 +57,11 @@ public class WiFiDeviceActivity extends AppCompatActivity implements CompoundBut
         disconnectedDevicesList = new ArrayList<>();
         devicesList = new ArrayList<>();
         devicesList = DeviceHandler.getDevicesList();
+        String devProtocol = devicesList.get(0).getDevProtocol();
         checkForActiveDevices();
 
         outputText = findViewById(R.id.incoming_data);
         outputText.setMovementMethod(new ScrollingMovementMethod());
-        String devProtocol = devicesList.get(0).getDevProtocol();
 
 
         wifiDataThreadForArduinoList = new ArrayList<>();

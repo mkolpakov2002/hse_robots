@@ -51,12 +51,11 @@ public class BluetoothDeviceActivity extends AppCompatActivity implements View.O
         disconnectedDevicesList = new ArrayList<>();
         devicesList = new ArrayList<>();
         devicesList = DeviceHandler.getDevicesList();
+        String devProtocol = devicesList.get(0).getDevProtocol();
         checkForActiveDevices();
 
         outputText = findViewById(R.id.incoming_data_bt);
         outputText.setMovementMethod(new ScrollingMovementMethod());
-        String devProtocol = devicesList.get(0).getDevProtocol();
-
 
         bluetoothDataThreadForArduinoList = new ArrayList<>();
         outputText.append("\n" + getResources().getString(R.string.bluetooth_device_activity_connected_first) + " " + devicesList.size() + " " + getResources().getString(R.string.bluetooth_device_activity_from) + " " + (devicesList.size() + disconnectedDevicesList.size()) + " " + getResources().getString(R.string.devices_title));

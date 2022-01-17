@@ -19,7 +19,7 @@ import ru.hse.control_system_v2.R;
 
 public class DevicesAdapter extends RecyclerView.Adapter<DevicesAdapter.DevicesAdapterVh> {
 
-    private List<DeviceModel> deviceModelList;
+    private final List<DeviceModel> deviceModelList;
 
     private final SelectedDevice selectedDevice;
 

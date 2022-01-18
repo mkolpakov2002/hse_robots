@@ -31,11 +31,7 @@
             android:label="@string/title_activity_wi_fi_device" />
 
         <service
-            android:name=".WiFiConnectionService"
-            android:enabled="true"
-            android:exported="false" />
-        <service
-            android:name=".BluetoothConnectionService"
+            android:name=".ConnectionService"
             android:enabled="true"
             android:exported="false" />
 

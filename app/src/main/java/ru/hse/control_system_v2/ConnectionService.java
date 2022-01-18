@@ -3,30 +3,42 @@ package ru.hse.control_system_v2;
 import static ru.hse.control_system_v2.Constants.APP_LOG_TAG;
 
 import android.app.Service;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import ru.hse.control_system_v2.list_devices.DeviceItemType;
 
-public class WiFiConnectionService extends Service {
+public class ConnectionService extends Service {
     private ArrayList<DeviceItemType> devicesList;
     private ArrayList<DeviceItemType> devicesListConnected;
-    private static final String host_address = "192.168.1.138";
-    private String classDevice;
     private boolean isSuccess = false;
     private Intent intentService;
+    boolean isBtService;
+    // SPP UUID сервиса согласно документации Android:
+    /*
+    Hint: If you are connecting to a Bluetooth serial board,
+     then try using the well-known SPP UUID 00001101-0000-1000-8000-00805F9B34FB
+     https://developer.android.com/reference/android/bluetooth/BluetoothDevice.html
+     */
+    private final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         intentService = intent;
+        Bundle b = intentService.getExtras();
+        isBtService = b.getBoolean("isBtService");
         ArrayList<ConnectingThread> treadList = new ArrayList<>();
 
         devicesList = new ArrayList<>();
@@ -43,7 +55,7 @@ public class WiFiConnectionService extends Service {
             executorService.execute(treadList.get(i));
         }
 
-        Log.d(APP_LOG_TAG, "WiFi соединение начато...");
+        Log.d(APP_LOG_TAG, "Соединение начато...");
         return Service.START_NOT_STICKY;
     }
 
@@ -56,14 +68,21 @@ public class WiFiConnectionService extends Service {
 
         public void run() {
             try {
-                currentDevice.setWifiSocket(new Socket(currentDevice.getDevIp(), currentDevice.getDevPort()));
-            } catch (IOException e) {
+                if(!isBtService)
+                    currentDevice.setWifiSocket(new Socket(currentDevice.getDevIp(), currentDevice.getDevPort()));
+                else {
+                    BluetoothDevice device = App.getBtAdapter().getRemoteDevice(currentDevice.getDeviceMAC());
+                    currentDevice.setBtSocket((BluetoothSocket) device.getClass().getMethod("createRfcommSocketToServiceRecord", UUID.class).invoke(device, MY_UUID));
+                }
+                Log.d(APP_LOG_TAG, "Попытка подключения для " + currentDevice.getDevName() + " успешна");
+            } catch (IOException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
                 e.printStackTrace();
+                Log.d(APP_LOG_TAG, "Попытка подключения для " + currentDevice.getDevName() + " неуспешна");
                 currentDevice.closeConnection();
             }
             resultOfConnection(currentDevice);
 
-            Log.d(APP_LOG_TAG, "...Попытка подключения для текущего устройства завершена...");
+            Log.d(APP_LOG_TAG, "Попытка подключения для текущего устройства завершена...");
         }
     }
 
@@ -83,11 +102,9 @@ public class WiFiConnectionService extends Service {
             Intent resultOfConnectionIntent;
             if (isSuccess) {
                 resultOfConnectionIntent = new Intent("success");
-                resultOfConnectionIntent.putExtra("protocol", classDevice);
-                Log.d(APP_LOG_TAG, "WiFi соединение успешно, передаю результат в Main Activity...");
+                DeviceHandler.setDevicesList(devicesList);
             } else {
                 resultOfConnectionIntent = new Intent("not_success");
-                Log.d(APP_LOG_TAG, "WiFi соединение неуспешно, передаю результат в Main Activity...");
             }
             sendBroadcast(resultOfConnectionIntent);
             stopService(intentService);

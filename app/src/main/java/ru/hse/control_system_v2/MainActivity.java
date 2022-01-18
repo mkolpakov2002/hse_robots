@@ -9,21 +9,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.navigation.NavController;
@@ -33,7 +30,6 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -358,15 +354,10 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
     }
 
     private void startConnectionService() {
-        if (isBtConnection) {
-            Intent startBluetoothConnectionService = new Intent(App.getContext(), BluetoothConnectionService.class);
-            startService(startBluetoothConnectionService);
-        } else {
-            Intent startWiFiConnectionService = new Intent(App.getContext(), WiFiConnectionService.class);
-            startService(startWiFiConnectionService);
-        }
+        Intent startConnectionService = new Intent(App.getContext(), ConnectionService.class);
+        startConnectionService.putExtra("isBtService", isBtConnection);
+        startService(startConnectionService);
         navController.navigate(R.id.connection_dialog);
-
     }
 
     void enableNetwork() {

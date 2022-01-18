@@ -39,7 +39,7 @@ public class App extends Application {
         protocolDBHelper = new ProtocolDBHelper(this.getApplicationContext());
     }
 
-    public ArrayList<String> getProtocolNames(){
+    public ArrayList<String> getProtocolNames() {
         return protocolDBHelper.getProtocolNames();
     }
 
@@ -70,12 +70,16 @@ public class App extends Application {
         return btAdapter != null && wifiManager != null;
     }
 
-    public static boolean isBtSupported(){
+    public static boolean isBtSupported() {
         return btAdapter != null;
     }
 
     public static boolean isWiFiSupported() {
         return wifiManager != null;
+    }
+
+    public static BluetoothAdapter getBtAdapter() {
+        return btAdapter;
     }
 
 }

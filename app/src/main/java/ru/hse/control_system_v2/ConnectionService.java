@@ -46,8 +46,6 @@ public class ConnectionService extends Service {
         devicesList.addAll(DeviceHandler.getDevicesList());
         ExecutorService executorService = Executors.newFixedThreadPool(devicesList.size());
 
-        devicesList.addAll(DeviceHandler.getDevicesList());
-
         for (int i = 0; i < devicesList.size(); i++) {
             Log.d(APP_LOG_TAG, "Создаю потоки для подключений...");
             ConnectingThread mr = new ConnectingThread(devicesList.get(i));
@@ -95,7 +93,8 @@ public class ConnectionService extends Service {
     // Передаём данные о статусе соединения в Main Activity
     synchronized void resultOfConnection(DeviceItemType currentDevice) {
         devicesListConnected.add(currentDevice);
-        if (currentDevice.isConnected()) {
+        if (currentDevice.isWiFiBtConnected()!=null
+        && currentDevice.isWiFiBtConnected()) {
             isSuccess = true;
         }
         if (devicesListConnected.size() == devicesList.size()) {

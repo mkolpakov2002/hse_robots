@@ -6,10 +6,8 @@
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
     <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
-    <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <uses-feature android:name="android.hardware.wifi" />
 
@@ -26,9 +24,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.Rena">
         <activity
-            android:name=".WiFiDeviceActivity"
+            android:name=".ConnectionActivity"
             android:exported="true"
-            android:label="@string/title_activity_wi_fi_device" />
+            android:label="ConnectionActivity" />
 
         <service
             android:name=".ConnectionService"
@@ -46,8 +44,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".BluetoothDeviceActivity" />
 
         <service
             android:name="androidx.room.MultiInstanceInvalidationService"

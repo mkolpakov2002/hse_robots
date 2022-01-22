@@ -324,10 +324,9 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
         public void onReceive(Context context, Intent intent) {
             //Устройство подключено, Service выполнился успешно
             navController.navigate(R.id.mainMenuFragment);
-            if (isBtConnection)
-                navController.navigate(R.id.bluetoothDeviceActivity);
-            else
-                navController.navigate(R.id.wiFiDeviceActivity);
+            Bundle b = new Bundle();
+            b.putBoolean("isBtService", isBtConnection);
+            navController.navigate(R.id.connectionActivity, b);
             isBtConnection = null;
         }
     };

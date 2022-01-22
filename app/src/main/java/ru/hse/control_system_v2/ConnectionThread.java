@@ -2,12 +2,14 @@ package ru.hse.control_system_v2;
 
 import static ru.hse.control_system_v2.Constants.APP_LOG_TAG;
 
-import android.bluetooth.BluetoothAdapter;
+import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+import android.content.Intent;
 import android.os.SystemClock;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,40 +17,45 @@ import java.io.OutputStream;
 
 import ru.hse.control_system_v2.list_devices.DeviceItemType;
 
-public class WiFiDataThread extends Thread {
-
+public class ConnectionThread extends Thread {
     private final DeviceItemType deviceItemType;
-    private WiFiDeviceActivity wiFiDeviceActivity;
-    private final NetworkInfo mWifi;
+    private Context c;
     private OutputStream mmOutStream;
+    boolean isBtService;
 
-    public WiFiDataThread(Context c, DeviceItemType deviceItemType) {
-        if (c instanceof WiFiDeviceActivity) {
-            wiFiDeviceActivity = ((WiFiDeviceActivity) c);
+
+    public ConnectionThread(@NonNull Context context, DeviceItemType deviceItemType, boolean isBtService) {
+        if (context instanceof Activity) {
+            c = context;
         }
         this.deviceItemType = deviceItemType;
-        mWifi = ((ConnectivityManager) c.getSystemService(Context.CONNECTIVITY_SERVICE)).getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        this.isBtService = isBtService;
         Log.d(APP_LOG_TAG, "Поток запущен");
     }
 
     @Override
     public void run() {
-        Log.d(APP_LOG_TAG, "WiFi thread is running");
         OutputStream tmpOut = null;
         InputStream tmpIn = null;
         try {
-            tmpOut = deviceItemType.getWiFiSocket().getOutputStream();
-            tmpIn = deviceItemType.getWiFiSocket().getInputStream();
+            if(!isBtService){
+                tmpOut = deviceItemType.getWiFiSocket().getOutputStream();
+                tmpIn = deviceItemType.getWiFiSocket().getInputStream();
+            } else {
+                tmpOut = deviceItemType.getBtSocket().getOutputStream();
+                tmpIn = deviceItemType.getBtSocket().getInputStream();
+            }
         } catch (IOException e) {
             e.printStackTrace();
             Log.e(APP_LOG_TAG, e.getMessage());
             Disconnect();
         }
+
         mmOutStream = tmpOut;
         InputStream mmInStream = tmpIn;
         StringBuilder str = new StringBuilder();
 
-        while (deviceItemType.isConnected()) {
+        while (deviceItemType.isWiFiBtConnected()) {
             byte[] buffer = new byte[1024];  // buffer store for the stream
             int bytes = 0; // bytes returned from read()
             // Keep listening to the InputStream until an exception occurs
@@ -59,7 +66,7 @@ public class WiFiDataThread extends Thread {
                 Log.e(APP_LOG_TAG, "Ошибка чтения входящих данных в потоке " + e.getMessage());
                 Disconnect();
             }
-            if (deviceItemType.isConnected()) {
+            if (deviceItemType.isWiFiBtConnected()) {
                 //успешно считываем данные
                 StringBuilder incomingDataBuffer = new StringBuilder();
                 String incomingMessage = new String(buffer, 0, bytes);
@@ -101,12 +108,22 @@ public class WiFiDataThread extends Thread {
                 Disconnect();
             }
         }
-        Log.d(APP_LOG_TAG, "Конец работы цикла потока WiFi");
+
+        Log.d(APP_LOG_TAG, "Конец работы цикла потока");
     }
 
-    public void sendData(byte[] message, int lengthMes) {
-        StringBuilder logMessage = new StringBuilder("Отправляем данные по WiFi: ");
-        for (int i = 0; i < lengthMes; i++)
+    synchronized void incomingData(String incomingData) {
+        ((ConnectionActivity) c).runOnUiThread(new Runnable() {
+            public void run() {
+                ((ConnectionActivity) c).printDataToTextView(incomingData.replaceAll("\n", ""));
+            }
+        });
+        SystemClock.sleep(100);
+    }
+
+    public void sendData(byte[] message, int len) {
+        StringBuilder logMessage = new StringBuilder("Отправляем данные: ");
+        for (int i = 0; i < len; i++)
             logMessage.append(message[i]).append(" ");
         Log.d(APP_LOG_TAG, logMessage + "***");
         try {
@@ -116,32 +133,13 @@ public class WiFiDataThread extends Thread {
         }
     }
 
-    //возвращает true, если wifi включён
-    public boolean wifiIsEnabledFlagVoid() {
-        return mWifi.isConnected();
-    }
-
     public void Disconnect() {
         deviceItemType.closeConnection();
-        if (wifiIsEnabledFlagVoid()) {
-            //TODO
-            //Сделать проверку на сеть в Bt и WiFi активити
-            wiFiDeviceActivity.addDisconnectedDevice(deviceItemType);
+        if (App.isBtEnabled()) {
+            ((ConnectionActivity) c).addDisconnectedDevice();
         }
         Thread.currentThread().interrupt();
     }
 
-    synchronized void incomingData(String incomingData) {
-        if (wiFiDeviceActivity.isActive()) {
-            Log.d(APP_LOG_TAG, "Входящие данные WiFi: " + incomingData);
-            //TODO
-            //А если activity не активна?
-            (wiFiDeviceActivity).runOnUiThread(new Runnable() {
-                public void run() {
-                    (wiFiDeviceActivity).printDataToTextView(incomingData.replaceAll("\n", ""));
-                }
-            });
-            SystemClock.sleep(100);
-        }
-    }
+
 }

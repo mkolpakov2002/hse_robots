@@ -66,6 +66,7 @@ public class App extends Application {
                 || wifiManager.getWifiState() == WifiManager.WIFI_STATE_ENABLING;
     }
 
+
     public static boolean isBtWiFiSupported() {
         return btAdapter != null && wifiManager != null;
     }

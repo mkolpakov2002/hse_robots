@@ -116,20 +116,20 @@
     <string name="no_available_protocols">No protocols available</string>
     <string name="bluetooth_device_activity_connected_first">Connected</string>
     <string name="bluetooth_device_activity_from">from</string>
-    <string name="devices_title">devices;</string>
+    <string name="devices_title">devices.</string>
     <string name="bluetooth_device_activity_list_of_connections">List of successful connections:</string>
     <string name="device_title">Device</string>
     <string name="bluetooth_device_activity_connected_second">connected;</string>
 
-    <string name="send_command_stop">Sending a stop command;</string>
-    <string name="send_command_forward">Sending forward command;</string>
-    <string name="send_command_back">Sending back command;</string>
-    <string name="send_command_left">Sending command to move left;</string>
-    <string name="send_command_right">Sending command to move right;</string>
-    <string name="send_command_button_released">Button released, sending stop command;</string>
-    <string name="send_command_insufficient_data">Insufficient data in the protocol used, message not sent;</string>
+    <string name="send_command_stop">Sending a stop command.</string>
+    <string name="send_command_forward">Sending forward command.</string>
+    <string name="send_command_back">Sending back command.</string>
+    <string name="send_command_left">Sending command to move left.</string>
+    <string name="send_command_right">Sending command to move right.</string>
+    <string name="send_command_button_released">Button released, sending stop command.</string>
+    <string name="send_command_insufficient_data">Insufficient data in the protocol used, message not sent.</string>
     <string name="send_command_hold_enabled">Command hold enabled…</string>
-    <string name="send_command_hold_disabled">Command hold disabled...</string>
+    <string name="send_command_hold_disabled">Command hold disabled…</string>
 
     <string name="settings_fragment_confirm">Confirmation</string>
     <string name="settings_fragment_delete_protocols">Are you sure you want to delete all custom protocols?</string>

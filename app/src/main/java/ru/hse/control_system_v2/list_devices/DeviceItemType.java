@@ -30,6 +30,7 @@ public class DeviceItemType implements ItemType {
     private String devIp;
     private int devPort;
     private String devProtocol;
+    //True -- wifi, False - Bt, Null - no connection
     @Ignore
     private Boolean isConnected;
     @Ignore
@@ -109,8 +110,8 @@ public class DeviceItemType implements ItemType {
                 this.getDevProtocol().equals(item.getDevProtocol());
     }
 
-    public Boolean isConnected() {
-        return isConnected;
+    public Boolean isWiFiBtConnected() {
+        return isConnected!=null;
     }
 
     public BluetoothSocket getBtSocket() {
@@ -126,14 +127,14 @@ public class DeviceItemType implements ItemType {
             bluetoothSocket = socket;
             openBtConnection();
         } else
-            isConnected = false;
+            isConnected = null;
     }
 
     public void setWifiSocket(Socket socket) {
         if (socket != null) {
             wifiSocket = socket;
             isConnected = true;
-        } else isConnected = false;
+        } else isConnected = null;
     }
 
     public void closeConnection() {
@@ -155,7 +156,7 @@ public class DeviceItemType implements ItemType {
                 Log.d("wifiSocket", e.getMessage());
             }
         }
-        isConnected = false;
+        isConnected = null;
     }
 
     public void openBtConnection() {
@@ -167,9 +168,9 @@ public class DeviceItemType implements ItemType {
                 e.printStackTrace();
                 Log.d("BLUETOOTH", e.getMessage());
                 closeConnection();
-                isConnected = false;
+                isConnected = null;
             }
-        } else isConnected = false;
+        } else isConnected = null;
     }
 
     public void setDeviceMAC(String deviceMAC) {

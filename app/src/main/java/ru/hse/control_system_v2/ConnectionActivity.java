@@ -1,10 +1,16 @@
 package ru.hse.control_system_v2;
 
-
 import static ru.hse.control_system_v2.Constants.APP_LOG_TAG;
 
+import android.app.Dialog;
+import android.bluetooth.BluetoothAdapter;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Resources;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
@@ -16,6 +22,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import java.util.ArrayList;
@@ -26,12 +33,12 @@ import ru.hse.control_system_v2.dbprotocol.ProtocolDBHelper;
 import ru.hse.control_system_v2.dbprotocol.ProtocolRepo;
 import ru.hse.control_system_v2.list_devices.DeviceItemType;
 
-public class BluetoothDeviceActivity extends AppCompatActivity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
+public class ConnectionActivity extends AppCompatActivity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener{
 
     private boolean isHoldCommand;
     private byte[] message;      // комманда посылаемая на arduino
     private byte prevCommand = 0;
-    private ArrayList<BluetoothDataThread> bluetoothDataThreadForArduinoList;
+    private ArrayList<ConnectionThread> dataThreadForArduinoList;
     private List<DeviceItemType> devicesList;
     private ArrayList<DeviceItemType> disconnectedDevicesList;
     private TextView outputText;
@@ -40,31 +47,46 @@ public class BluetoothDeviceActivity extends AppCompatActivity implements View.O
     private int lengthMes;
     private boolean active;
     private Resources res;
+    MaterialAlertDialogBuilder materialAlertDialogBuilder;
+    Dialog disconnectedDialog;
+    Dialog networkDialog;
+    boolean isBtService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ThemeUtils.onActivityCreateSetTheme(this);
-        setContentView(R.layout.activity_bluetooth_device);
-        findViewById(R.id.button_stop_bt).setEnabled(false);
+        setContentView(R.layout.activity_connection);
+        Bundle b = getIntent().getExtras();
+        isBtService = b.getBoolean("isBtService");
 
         disconnectedDevicesList = new ArrayList<>();
         devicesList = new ArrayList<>();
         devicesList = DeviceHandler.getDevicesList();
-        String devProtocol = devicesList.get(0).getDevProtocol();
         checkForActiveDevices();
+        if(devicesList.size()>0){
+            initializeData();
+        } else {
+            addDisconnectedDevice();
+        }
+    }
 
+    void initializeData(){
+        registerReceiver(mReceiver, new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
+        registerReceiver(mReceiver,new IntentFilter(WifiManager.WIFI_STATE_CHANGED_ACTION));
+        String devProtocol = devicesList.get(0).getDevProtocol();
+        findViewById(R.id.button_stop_bt).setEnabled(false);
         outputText = findViewById(R.id.incoming_data_bt);
         outputText.setMovementMethod(new ScrollingMovementMethod());
 
-        bluetoothDataThreadForArduinoList = new ArrayList<>();
+        dataThreadForArduinoList = new ArrayList<>();
         outputText.append("\n" + getResources().getString(R.string.bluetooth_device_activity_connected_first) + " " + devicesList.size() + " " + getResources().getString(R.string.bluetooth_device_activity_from) + " " + (devicesList.size() + disconnectedDevicesList.size()) + " " + getResources().getString(R.string.devices_title));
         outputText.append("\n" + getResources().getString(R.string.bluetooth_device_activity_list_of_connections));
         for (int i = 0; i < devicesList.size(); i++) {
             outputText.append("\n" + getResources().getString(R.string.device_title) + " " + devicesList.get(i).getDevName() + " " + getResources().getString(R.string.bluetooth_device_activity_connected_second));
-            BluetoothDataThread bluetoothDataThreadForArduino = new BluetoothDataThread(this, devicesList.get(i));
-            bluetoothDataThreadForArduinoList.add(bluetoothDataThreadForArduino);
-            bluetoothDataThreadForArduinoList.get(i).start();
+            ConnectionThread bluetoothDataThreadForArduino = new ConnectionThread(this, devicesList.get(i), isBtService);
+            dataThreadForArduinoList.add(bluetoothDataThreadForArduino);
+            dataThreadForArduinoList.get(i).start();
         }
 
         res = getResources();
@@ -89,19 +111,16 @@ public class BluetoothDeviceActivity extends AppCompatActivity implements View.O
         Arrays.fill(message, (byte) 0);
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (data == null) return;
-        String message = data.getStringExtra("message");
-        Intent intent = new Intent();
-        intent.putExtra("message", message);
-        setResult(RESULT_CANCELED, intent);
-        finish();
-    }
+    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        public void onReceive (Context context, Intent intent) {
+            if((isBtService && !App.isBtEnabled()) ||
+                    (!isBtService && !App.isWiFiEnabled())){
+                addDisconnectedDevice();
+            }
+        }};
 
     public synchronized void printDataToTextView(String printData) {
-        Log.d(APP_LOG_TAG, "Печатаемое сообщение в BtDeviceActivity: " + printData);
+        Log.d(APP_LOG_TAG, "Печатаемое сообщение в DeviceActivity: " + printData);
         outputText.append("\n" + "---" + "\n" + printData);
     }
 
@@ -109,27 +128,69 @@ public class BluetoothDeviceActivity extends AppCompatActivity implements View.O
         return active;
     }
 
-    void checkForActiveDevices() {
+    synchronized void checkForActiveDevices() {
         for (DeviceItemType currentDevice : devicesList) {
-            if (!currentDevice.isConnected()) {
+            if (!currentDevice.isWiFiBtConnected()) {
                 disconnectedDevicesList.add(currentDevice);
             }
         }
         for (DeviceItemType currentDevice : disconnectedDevicesList) {
-            if (currentDevice.isConnected()) {
+            if (currentDevice.isWiFiBtConnected()) {
                 devicesList.add(currentDevice);
             }
         }
-        devicesList.removeIf(currentDevice -> !currentDevice.isConnected());
-        disconnectedDevicesList.removeIf(DeviceItemType::isConnected);
+        devicesList.removeIf(currentDevice -> !currentDevice.isWiFiBtConnected());
+        disconnectedDevicesList.removeIf(DeviceItemType::isWiFiBtConnected);
     }
 
-    public synchronized void addDisconnectedDevice(DeviceItemType currentDevice) {
-        disconnectedDevicesList.add(currentDevice);
-        //TODO
-        //Диалог с предложением переподключить эти устройства
-        Log.d(APP_LOG_TAG, "устройство отсоединилось");
+    public synchronized void addDisconnectedDevice() {
+        ArrayList<DeviceItemType> current = disconnectedDevicesList;
+        checkForActiveDevices();
+        if((disconnectedDialog == null || !disconnectedDialog.isShowing())
+                && ((isBtService && App.isBtEnabled()) ||
+                (!isBtService && App.isWiFiEnabled()))
+                && disconnectedDevicesList!=current){
+            materialAlertDialogBuilder = new MaterialAlertDialogBuilder(this);
+            materialAlertDialogBuilder.setTitle(getString(R.string.error));
+            if(disconnectedDevicesList.size()==1){
+                materialAlertDialogBuilder.setMessage("Устройство " + devicesList.get(0).getDevName() + "отключилось. Продолжить работу?");
+            } else {
+                materialAlertDialogBuilder.setMessage("Некоторые устройства отключились. Продолжить работу?");
+            }
+            materialAlertDialogBuilder.setPositiveButton("Продолжить работу", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    addDisconnectedDevice();
+                    dialogInterface.dismiss();
+                }
+            });
+            materialAlertDialogBuilder.setNegativeButton("Выйти", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    dialogInterface.dismiss();
+                    finish();
+                }
+            });
+            disconnectedDialog = materialAlertDialogBuilder.show();
+        } else if (((isBtService && !App.isBtEnabled()) || (!isBtService && !App.isWiFiEnabled()))
+                && (networkDialog== null || !networkDialog.isShowing())){
+            if(networkDialog != null && disconnectedDialog.isShowing())
+                disconnectedDialog.dismiss();
+            materialAlertDialogBuilder = new MaterialAlertDialogBuilder(this);
+            materialAlertDialogBuilder.setTitle(getString(R.string.error));
+            materialAlertDialogBuilder.setMessage("Сеть отключена. Дальнейшее управление невозможно.");
+            materialAlertDialogBuilder.setPositiveButton("Ок", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    dialogInterface.dismiss();
+                    finish();
+                }
+            });
+            materialAlertDialogBuilder.setCancelable(false);
+            networkDialog = materialAlertDialogBuilder.show();
+        } else {
 
+        }
     }
 
     @Override
@@ -156,13 +217,13 @@ public class BluetoothDeviceActivity extends AppCompatActivity implements View.O
             message[countCommands++] = getDevicesID.get("type_move");
 
         message[countCommands++] = getDevicesID.get("STOP");
-        for (int i = 0; i < bluetoothDataThreadForArduinoList.size(); i++) {
-            Log.d(APP_LOG_TAG, "BtDeviceActivity в onPause");
-            bluetoothDataThreadForArduinoList.get(i).sendData(message, lengthMes);
+        for (int i = 0; i < dataThreadForArduinoList.size(); i++) {
+            Log.d(APP_LOG_TAG, "DeviceActivity в onPause");
+            dataThreadForArduinoList.get(i).sendData(message, lengthMes);
         }
 
-        for (int i = 0; i < bluetoothDataThreadForArduinoList.size(); i++) {
-            bluetoothDataThreadForArduinoList.get(i).Disconnect();
+        for (int i = 0; i < dataThreadForArduinoList.size(); i++) {
+            dataThreadForArduinoList.get(i).Disconnect();
         }
     }
 
@@ -271,8 +332,8 @@ public class BluetoothDeviceActivity extends AppCompatActivity implements View.O
                 message[countCommands++] = getDevicesID.get("type_move");
             message[countCommands++] = code;
 
-            for (int i = 0; i < bluetoothDataThreadForArduinoList.size(); i++) {
-                bluetoothDataThreadForArduinoList.get(i).sendData(message, lengthMes);
+            for (int i = 0; i < dataThreadForArduinoList.size(); i++) {
+                dataThreadForArduinoList.get(i).sendData(message, lengthMes);
             }
         } else {
             outputText.append("\n" + getResources().getString(R.string.send_command_insufficient_data));
@@ -307,7 +368,7 @@ public class BluetoothDeviceActivity extends AppCompatActivity implements View.O
         super.onDestroy();
         active = false;
         for (int i = 0; i < devicesList.size(); i++) {
-            Log.d(APP_LOG_TAG, "BtDeviceActivity в onDestroy, отключение устройств");
+            Log.d(APP_LOG_TAG, "DeviceActivity в onDestroy, отключение устройств");
             devicesList.get(i).closeConnection();
 
         }

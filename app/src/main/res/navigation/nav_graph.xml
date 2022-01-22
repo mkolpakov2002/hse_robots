@@ -18,14 +18,8 @@
             android:id="@+id/action_mainMenuFragment_to_connection_dialog"
             app:destination="@id/connection_dialog" />
         <action
-            android:id="@+id/action_mainMenuFragment_to_bluetoothDeviceActivity"
-            app:destination="@id/bluetoothDeviceActivity" />
-        <action
             android:id="@+id/action_mainMenuFragment_to_oneButtonAlertDialogFragment"
             app:destination="@id/oneButtonAlertDialogFragment" />
-        <action
-            android:id="@+id/action_mainMenuFragment_to_wiFiDeviceActivity"
-            app:destination="@id/wiFiDeviceActivity" />
         <action
             android:id="@+id/action_mainMenuFragment_to_deviceMenuFragment"
             app:destination="@id/deviceMenuFragment" />
@@ -51,19 +45,12 @@
             android:id="@+id/action_connection_dialog_to_mainMenuFragment"
             app:destination="@id/mainMenuFragment" />
         <action
-            android:id="@+id/action_connection_dialog_to_wiFiDeviceActivity"
-            app:destination="@id/wiFiDeviceActivity" />
-        <action
-            android:id="@+id/action_connection_dialog_to_bluetoothDeviceActivity"
-            app:destination="@id/bluetoothDeviceActivity" />
-        <action
             android:id="@+id/action_connection_dialog_to_oneButtonAlertDialogFragment"
             app:destination="@id/oneButtonAlertDialogFragment" />
+        <action
+            android:id="@+id/action_connection_dialog_to_connectionActivity"
+            app:destination="@id/connectionActivity" />
     </dialog>
-    <activity
-        android:id="@+id/bluetoothDeviceActivity"
-        android:name="ru.hse.control_system_v2.BluetoothDeviceActivity"
-        android:label="BluetoothDeviceActivity" />
     <dialog
         android:id="@+id/oneButtonAlertDialogFragment"
         android:name="ru.hse.control_system_v2.OneButtonAlertDialogFragment"
@@ -73,11 +60,6 @@
             android:id="@+id/action_oneButtonAlertDialogFragment_to_mainMenuFragment"
             app:destination="@id/mainMenuFragment" />
     </dialog>
-    <activity
-        android:id="@+id/wiFiDeviceActivity"
-        android:name="ru.hse.control_system_v2.WiFiDeviceActivity"
-        android:label="activity_wifi_device"
-        tools:layout="@layout/activity_wifi_device" />
     <fragment
         android:id="@+id/deviceMenuFragment"
         android:name="ru.hse.control_system_v2.DeviceMenuFragment"
@@ -100,4 +82,8 @@
             android:id="@+id/action_addDeviceFragment_to_deviceMenuFragment"
             app:destination="@id/deviceMenuFragment" />
     </fragment>
+    <activity
+        android:id="@+id/connectionActivity"
+        android:name="ru.hse.control_system_v2.ConnectionActivity"
+        android:label="ConnectionActivity" />
 </navigation>

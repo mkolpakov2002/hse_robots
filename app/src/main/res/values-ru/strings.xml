@@ -116,18 +116,18 @@
     <string name="no_available_protocols">Нет доступных протоколов</string>
     <string name="bluetooth_device_activity_connected_first">Подключено</string>
     <string name="bluetooth_device_activity_from">из</string>
-    <string name="devices_title">устройств;</string>
+    <string name="devices_title">устройств.</string>
     <string name="bluetooth_device_activity_list_of_connections">Список успешных подключений:</string>
     <string name="device_title">Устройство</string>
-    <string name="bluetooth_device_activity_connected_second">подключено;</string>
+    <string name="bluetooth_device_activity_connected_second">подключено.</string>
 
-    <string name="send_command_stop">Отправляю команду стоп;</string>
-    <string name="send_command_forward">Отправляю команду движения вперёд;</string>
-    <string name="send_command_back">Отправляю команду движения назад;</string>
-    <string name="send_command_left">Отправляю команду движения  влево;</string>
-    <string name="send_command_right">Отправляю команду движения  вправо;</string>
-    <string name="send_command_button_released">Кнопка отпущена, отправляю команду стоп;</string>
-    <string name="send_command_insufficient_data">Недостаточно данных в используемом протоколе, сообщение не отправлено;</string>
+    <string name="send_command_stop">Отправляю команду стоп.</string>
+    <string name="send_command_forward">Отправляю команду движения вперёд.</string>
+    <string name="send_command_back">Отправляю команду движения назад.</string>
+    <string name="send_command_left">Отправляю команду движения  влево.</string>
+    <string name="send_command_right">Отправляю команду движения  вправо.</string>
+    <string name="send_command_button_released">Кнопка отпущена, отправляю команду стоп.</string>
+    <string name="send_command_insufficient_data">Недостаточно данных в используемом протоколе, сообщение не отправлено.</string>
     <string name="send_command_hold_enabled">Удерживание команды включено…</string>
     <string name="send_command_hold_disabled">Удерживание команды отключено…</string>
 

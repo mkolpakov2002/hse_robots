@@ -60,6 +60,7 @@
     <string name="instruction_for_app_settings">Use the settings window to control the added protocols and device database.</string>
     <string name="instruction_for_app_device_menu">Use this window to edit and save devices, connect to an already saved device.</string>
     <string name="instruction_for_app_add_device">Use this window to save Bluetooth enabled devices. To add a new one to this list, go to settings and set up a new pairing.</string>
+    <string name="instruction_for_app_connection_activity">To control the robot/robots</string>
     <string name="instructions_title">Instructions</string>
     <string name="other_discoverable_devices">New paired devices can be added in the menu below</string>
     <string name="TAG_FULL_MES">CodeCatalogue</string>
@@ -148,4 +149,5 @@
     <string name="en_bt_for_list">Please enable Bluetooth to open this menu</string>
     <string name="double_back_click">Press a second time to exit the application</string>
     <string name="alert_first_launch">Welcome! Use this app to control your robots. Detailed instructions are available by clicking on the question mark</string>
+    <string name="label_connection_activity">ConnectionActivity</string>
 </resources>

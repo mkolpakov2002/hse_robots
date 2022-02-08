@@ -79,6 +79,11 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
                         //nothing
                         break;
                 }
+
+                if (getCallingActivity().getClassName().equals("ConnectionActivity")) {
+                    Log.d("ALERT ", getCallingActivity().getClassName());
+                    createOneButtonAlertDialog(getString(R.string.instruction_alert), getString(R.string.instruction_for_app_connection_activity));
+                }
                 return true;
             }
         });

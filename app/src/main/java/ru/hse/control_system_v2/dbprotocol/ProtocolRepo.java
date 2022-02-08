@@ -28,7 +28,7 @@ public class ProtocolRepo extends HashMap<String, Byte> {
 
     public static final List<String> labels = List.of("class_android", "class_computer", "class_arduino", "type_sphere", "type_anthropomorphic",
             "type_cubbi", "type_computer", "no_class", "no_type", "redo_command", "new_command", "type_move", "type_tele",
-            "STOP", "FORWARD", "FORWARD_STOP", "BACK", "BACK_STOP", "LEFT", "LEFT_STOP", "RIGHT", "RIGHT_STOP");
+            "STOP", "FORWARD", "FORWARD_STOP", "BACK", "BACK_STOP", "LEFT", "LEFT_STOP", "RIGHT", "RIGHT_STOP", "SERVOMOTORS", "SPEED");
 
     public ProtocolRepo(Context context, String name) {
         this.context = context;

@@ -60,6 +60,7 @@
     <string name="instruction_for_app_settings">Используйте окно настроек для контроля над добавленными протоколами и базой данных устройств.</string>
     <string name="instruction_for_app_device_menu">Используйте это окно для редактирования и сохранения устройств, подключения к уже сохранённому устройству.</string>
     <string name="instruction_for_app_add_device">Используйте это окно для сохранения устройств, поддерживающих Bluetooth. Для добавления в этот список нового, перейдите в настройки и настройте новое сопряжение.</string>
+    <string name="instruction_for_app_connection_activity">Для управления роботом/роботами</string>
     <string name="instructions_title">Инструкция</string>
     <string name="other_discoverable_devices">Новые сопряжённые устройства могут быть добавлены в меню ниже</string>
     <string name="TAG_FULL_MES">CodeCatalogue</string>

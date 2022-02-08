@@ -7,7 +7,7 @@
     </ClassFromDevice>
     <TypeFromDevice>
         <type_sphere>10</type_sphere>
-        <type_anthropomorphic>09</type_anthropomorphic>
+        <type_anthropomorphic>90</type_anthropomorphic>
         <type_cubbi>41</type_cubbi>
         <type_computer>9D</type_computer>
         <no_type>22</no_type>
@@ -20,7 +20,7 @@
     </ClassToDevice>
     <TypeToDevice>
         <type_sphere>10</type_sphere>
-        <type_anthropomorphic>09</type_anthropomorphic>
+        <type_anthropomorphic>90</type_anthropomorphic>
         <type_cubbi>41</type_cubbi>
         <type_computer>9D</type_computer>
         <no_type>22</no_type>
@@ -32,6 +32,7 @@
     <TypeOfCommand>
         <type_move>A1</type_move>
         <type_tele>B4</type_tele>
+        <type_calibration>C4</type_calibration>
     </TypeOfCommand>
     <TypeOfMove>
         <STOP>7F</STOP>
@@ -39,9 +40,14 @@
         <FORWARD_STOP>41</FORWARD_STOP>
         <BACK>02</BACK>
         <BACK_STOP>42</BACK_STOP>
-        <LEFT>04</LEFT>
+        <LEFT>03</LEFT>
         <LEFT_STOP>43</LEFT_STOP>
-        <RIGHT>03</RIGHT>
+        <RIGHT>0C</RIGHT>
         <RIGHT_STOP>4C</RIGHT_STOP>
     </TypeOfMove>
+
+    <TypeOfCalibration>
+        <SERVOMOTORS>12</SERVOMOTORS>
+        <MOTOR_SPEED>78</MOTOR_SPEED>
+    </TypeOfCalibration>
 </CodeCatalogue>

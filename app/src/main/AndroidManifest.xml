@@ -11,6 +11,11 @@
 
     <uses-feature android:name="android.hardware.wifi" />
 
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+   <!-- <uses-feature android:name="android.hardware.camera" android:required="true" />-->
+
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
@@ -26,7 +31,8 @@
         <activity
             android:name=".ConnectionActivity"
             android:exported="true"
-            android:label="ConnectionActivity" />
+            android:label="@string/label_connection_activity"
+            android:screenOrientation="landscape"/>
 
         <service
             android:name=".ConnectionService"

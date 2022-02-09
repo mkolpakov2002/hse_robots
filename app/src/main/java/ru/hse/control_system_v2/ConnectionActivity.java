@@ -49,6 +49,8 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
+import androidx.navigation.NavController;
+
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -123,6 +125,7 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
     private TextureView mImageView = null;
     private HandlerThread mBackgroundThread;
     private Handler mBackgroundHandler = null;
+    private NavController navController;
 
     private void startBackgroundThread() {
         mBackgroundThread = new HandlerThread("CameraBackground");
@@ -155,6 +158,7 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
         alertDialog.show();
     }
 
+
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -168,7 +172,7 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 if (item.getItemId() == R.id.main_toolbar_instruction) {
-                    showAlertWithOneButton();
+                  showAlertWithOneButton();
                 }
                 return false;
             }

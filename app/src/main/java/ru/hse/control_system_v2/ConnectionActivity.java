@@ -2,6 +2,7 @@ package ru.hse.control_system_v2;
 
 import static ru.hse.control_system_v2.Constants.APP_LOG_TAG;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.ActivityNotFoundException;
@@ -18,6 +19,8 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.TextureView;
 import android.view.View;
@@ -29,6 +32,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
@@ -43,6 +47,7 @@ import ru.hse.control_system_v2.list_devices.DeviceItemType;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.content.Context;
@@ -74,6 +79,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.Objects;
 
 public class ConnectionActivity extends AppCompatActivity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener, TextureView.SurfaceTextureListener {
 
@@ -136,12 +142,38 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
         }
     }
 
+    public void showAlertWithOneButton(){
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(ConnectionActivity.this);
+        alertDialog.setTitle(getString(R.string.instruction_alert))
+                   .setMessage(getString(R.string.instruction_for_app_connection_activity))
+                   .setPositiveButton("ОК", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
+            }
+        });
+        alertDialog.create();
+        alertDialog.show();
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ThemeUtils.onActivityCreateSetTheme(this);
         setContentView(R.layout.activity_connection);
+
+        MaterialToolbar toolbar = findViewById(R.id.toolbar_connection_activity);
+        toolbar.inflateMenu(R.menu.main_toolbar_menu);
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                if (item.getItemId() == R.id.main_toolbar_instruction) {
+                    showAlertWithOneButton();
+                }
+                return false;
+            }
+        });
+
         Bundle b = getIntent().getExtras();
         isBtService = b.getBoolean("isBtService");
 

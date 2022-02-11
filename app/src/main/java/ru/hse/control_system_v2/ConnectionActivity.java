@@ -32,7 +32,22 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.MediaItem;
+import com.google.android.exoplayer2.Player;
+import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.ext.rtmp.RtmpDataSourceFactory;
+import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.ProgressiveMediaSource;
+import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.trackselection.TrackSelection;
+import com.google.android.exoplayer2.trackselection.TrackSelector;
+import com.google.android.exoplayer2.ui.PlayerView;
+import com.google.android.exoplayer2.upstream.BandwidthMeter;
+import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
@@ -83,16 +98,7 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Objects;
 
-public class ConnectionActivity extends AppCompatActivity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener, TextureView.SurfaceTextureListener {
-
-    // 1
-//    final int CAMERA_REQUEST = 1;
-//    final int PIC_CROP = 2;
-//    private static final int REQUEST_TAKE_PHOTO = 1;
-//    private static final int REQUEST_TAKE_VIDEO = 2;
-//    private Uri picUri;
-//    private Button btnCamera;
-//    private TextureView mTextureView;
+public class ConnectionActivity extends AppCompatActivity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
 
     private boolean isHoldCommand;
     private byte[] message;      // комманда посылаемая на arduino
@@ -111,40 +117,6 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
     Dialog networkDialog;
     boolean isBtService;
 
-    public static final String LOG_TAG = "myLogs";
-
-    CameraService[] myCameras = null;
-
-    private CameraManager mCameraManager = null;
-    private final int CAMERA1 = 0;
-    private final int CAMERA2 = 1;
-
-    private Button mButtonOpenCamera1 = null;
-    private Button mButtonOpenCamera2 = null;
-    private Button mButtonToMakeShot = null;
-    private TextureView mImageView = null;
-    private HandlerThread mBackgroundThread;
-    private Handler mBackgroundHandler = null;
-    private NavController navController;
-
-    private void startBackgroundThread() {
-        mBackgroundThread = new HandlerThread("CameraBackground");
-        mBackgroundThread.start();
-        mBackgroundHandler = new Handler(mBackgroundThread.getLooper());
-        Log.d(LOG_TAG, "startBackgroundThread");
-    }
-
-    private void stopBackgroundThread() {
-        mBackgroundThread.quitSafely();
-        try {
-            mBackgroundThread.join();
-            mBackgroundThread = null;
-            mBackgroundHandler = null;
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
     public void showAlertWithOneButton(){
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(ConnectionActivity.this);
         alertDialog.setTitle(getString(R.string.instruction_alert))
@@ -158,8 +130,6 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
         alertDialog.show();
     }
 
-
-    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -191,194 +161,6 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
             addDisconnectedDevice();
         }
 
-
-        Log.d(LOG_TAG, "Запрашиваем разрешение");
-        if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
-                (ContextCompat.checkSelfPermission(
-                        ConnectionActivity.this,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)) {
-            requestPermissions(new String[]{Manifest.permission.CAMERA,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE},1);
-        }
-
-        mButtonOpenCamera1 =  findViewById(R.id.button1);
-        mButtonOpenCamera2 =  findViewById(R.id.button2);
-        mButtonToMakeShot =findViewById(R.id.button3);
-        mImageView = findViewById(R.id.textureView);
-
-        mButtonOpenCamera1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (myCameras[CAMERA2].isOpen()) {myCameras[CAMERA2].closeCamera();}
-                if (myCameras[CAMERA1] != null) {
-                    if (!myCameras[CAMERA1].isOpen()) myCameras[CAMERA1].openCamera();
-                }
-            }
-        });
-
-        mButtonOpenCamera2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (myCameras[CAMERA1].isOpen()) {myCameras[CAMERA1].closeCamera();}
-                if (myCameras[CAMERA2] != null) {
-                    if (!myCameras[CAMERA2].isOpen()) myCameras[CAMERA2].openCamera();
-                }
-            }
-        });
-
-        mButtonToMakeShot.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (myCameras[CAMERA1].isOpen()) myCameras[CAMERA1].makePhoto();
-                if (myCameras[CAMERA2].isOpen()) myCameras[CAMERA2].makePhoto();
-            }
-        });
-
-        mCameraManager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
-        try{
-            // Получение списка камер с устройства
-            myCameras = new CameraService[mCameraManager.getCameraIdList().length];
-
-            for (String cameraID : mCameraManager.getCameraIdList()) {
-                Log.i(LOG_TAG, "cameraID: "+cameraID);
-                int id = Integer.parseInt(cameraID);
-                // создаем обработчик для камеры
-                myCameras[id] = new CameraService(mCameraManager,cameraID);
-            }
-        }
-        catch(CameraAccessException e){
-            Log.e(LOG_TAG, e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    public class CameraService {
-
-        private File mFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), "test1.jpg");;
-        private String mCameraID;
-        private CameraDevice mCameraDevice = null;
-        private CameraCaptureSession mCaptureSession;
-        private ImageReader mImageReader;
-
-        public CameraService(CameraManager cameraManager, String cameraID) {
-            mCameraManager = cameraManager;
-            mCameraID = cameraID;
-        }
-
-        public void makePhoto (){
-            try {
-                // This is the CaptureRequest.Builder that we use to take a picture.
-                final CaptureRequest.Builder captureBuilder =
-                        mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
-                captureBuilder.addTarget(mImageReader.getSurface());
-                CameraCaptureSession.CaptureCallback CaptureCallback = new CameraCaptureSession.CaptureCallback() {
-                    @Override
-                    public void onCaptureCompleted(@NonNull CameraCaptureSession session,
-                                                   @NonNull CaptureRequest request,
-                                                   @NonNull TotalCaptureResult result) {
-
-                    }
-                };
-
-                mCaptureSession.stopRepeating();
-                mCaptureSession.abortCaptures();
-                mCaptureSession.capture(captureBuilder.build(), CaptureCallback, mBackgroundHandler);
-            }
-            catch (CameraAccessException e) {
-                e.printStackTrace();
-            }
-        }
-
-
-        private final ImageReader.OnImageAvailableListener mOnImageAvailableListener
-                = new ImageReader.OnImageAvailableListener() {
-            @Override
-            public void onImageAvailable(ImageReader reader) {
-                mBackgroundHandler.post(new ImageSaver(reader.acquireNextImage(), mFile));
-            }
-        };
-
-
-        private CameraDevice.StateCallback mCameraCallback = new CameraDevice.StateCallback() {
-            @Override
-            public void onOpened(CameraDevice camera) {
-                mCameraDevice = camera;
-                Log.i(LOG_TAG, "Open camera  with id:"+mCameraDevice.getId());
-                createCameraPreviewSession();
-            }
-
-            @Override
-            public void onDisconnected(CameraDevice camera) {
-                mCameraDevice.close();
-                Log.i(LOG_TAG, "disconnect camera  with id:"+mCameraDevice.getId());
-                mCameraDevice = null;
-            }
-
-            @Override
-            public void onError(CameraDevice camera, int error) {
-                Log.i(LOG_TAG, "error! camera id:"+camera.getId()+" error:"+error);
-            }
-        };
-
-        private void createCameraPreviewSession() {
-
-            mImageReader = ImageReader.newInstance(1920,1080, ImageFormat.JPEG,1);
-            mImageReader.setOnImageAvailableListener(mOnImageAvailableListener, null);
-
-            SurfaceTexture texture = mImageView.getSurfaceTexture();
-
-            texture.setDefaultBufferSize(1920,1080);
-            Surface surface = new Surface(texture);
-
-            try {
-                final CaptureRequest.Builder builder =
-                        mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
-
-                builder.addTarget(surface);
-                mCameraDevice.createCaptureSession(Arrays.asList(surface,mImageReader.getSurface()),
-                        new CameraCaptureSession.StateCallback() {
-                            @Override
-                            public void onConfigured(CameraCaptureSession session) {
-                                mCaptureSession = session;
-                                try {
-                                    mCaptureSession.setRepeatingRequest(builder.build(),null,mBackgroundHandler);
-                                } catch (CameraAccessException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-
-                            @Override
-                            public void onConfigureFailed(CameraCaptureSession session) { }}, mBackgroundHandler);
-            } catch (CameraAccessException e) {
-                e.printStackTrace();
-            }
-        }
-
-        public boolean isOpen() {
-            if (mCameraDevice == null) {
-                return false;
-            } else {
-                return true;
-            }
-        }
-
-        @RequiresApi(api = Build.VERSION_CODES.M)
-        public void openCamera() {
-            try {
-                if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
-                    mCameraManager.openCamera(mCameraID,mCameraCallback,mBackgroundHandler);
-                }
-            } catch (CameraAccessException e) {
-                Log.i(LOG_TAG,e.getMessage());
-            }
-        }
-
-        public void closeCamera() {
-            if (mCameraDevice != null) {
-                mCameraDevice.close();
-                mCameraDevice = null;
-            }
-        }
     }
 
     private static class ImageSaver implements Runnable {
@@ -460,17 +242,29 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
         findViewById(R.id.button_right_bt_right).setOnTouchListener(touchListener);
         findViewById(R.id.button_stop_bt_right).setOnClickListener(this);
 
-        //1
-//        btnCamera = findViewById(R.id.btn_camera);
-//        btnCamera.setOnClickListener(this);
-//        mTextureView = findViewById(R.id.textureView);
-//        mTextureView.setSurfaceTextureListener(this);
 
         SwitchMaterial hold_command = findViewById(R.id.switch_hold_command_mm_Bt);
         hold_command.setOnCheckedChangeListener(this);
         hold_command.setChecked(false);
-
         Arrays.fill(message, (byte) 0);
+
+        //TODO
+        //https://exoplayer.dev/hello-world.html
+        //https://medium.com/mindorks/implementing-exoplayer-for-beginners-in-kotlin-c534706bce4b
+
+        if(!isBtService){
+            PlayerView playerView = findViewById(R.id.simple_player);
+            ExoPlayer player = new ExoPlayer.Builder(this).build();
+            // Bind the player to the view.
+            playerView.setPlayer(player);
+            MediaItem firstItem = MediaItem.fromUri(devicesList.get(0).getDevIp());
+            // Add the media items to be played.
+            player.addMediaItem(firstItem);
+            // Prepare the player.
+            player.prepare();
+            // Start the playback.
+            player.play();
+        }
     }
 
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
@@ -561,19 +355,12 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
         active = true;
         checkForActiveDevices();
 
-        startBackgroundThread();
-
         //arduino.BluetoothConnectionServiceVoid();     // соединяемся с bluetooth
         //TODO - вызывает вылет приложения
     }
 
     @Override
     protected void onPause() {
-
-        if(myCameras[CAMERA1].isOpen()){myCameras[CAMERA1].closeCamera();}
-        if(myCameras[CAMERA2].isOpen()){myCameras[CAMERA2].closeCamera();}
-        stopBackgroundThread();
-        Log.d(LOG_TAG, "stopBackgroundThread");
 
         super.onPause();
         active = false;
@@ -595,22 +382,6 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
             dataThreadForArduinoList.get(i).Disconnect();
         }
     }
-
-    //1 фотосъёмка
-//    public void capturePhoto() {
-//        Intent intent = new Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA);
-//        if (intent.resolveActivity(getPackageManager()) != null) {
-//            startActivityForResult(intent, REQUEST_TAKE_PHOTO);
-//        }
-//    }
-
-    //1 видеосъёмка
-//    public void captureVideo() {
-//        Intent intent = new Intent(MediaStore.INTENT_ACTION_VIDEO_CAMERA);
-//        if (intent.resolveActivity(getPackageManager()) != null) {
-//            startActivityForResult(intent, REQUEST_TAKE_VIDEO);
-//        }
-//    }
 
     @Override
     public void onClick(View v) {
@@ -833,25 +604,5 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
             devicesList.get(i).closeConnection();
 
         }
-    }
-
-    @Override
-    public void onSurfaceTextureAvailable(@NonNull SurfaceTexture surfaceTexture, int i, int i1) {
-
-    }
-
-    @Override
-    public void onSurfaceTextureSizeChanged(@NonNull SurfaceTexture surfaceTexture, int i, int i1) {
-
-    }
-
-    @Override
-    public boolean onSurfaceTextureDestroyed(@NonNull SurfaceTexture surfaceTexture) {
-        return false;
-    }
-
-    @Override
-    public void onSurfaceTextureUpdated(@NonNull SurfaceTexture surfaceTexture) {
-
     }
 }

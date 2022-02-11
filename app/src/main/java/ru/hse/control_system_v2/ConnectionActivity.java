@@ -118,7 +118,7 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
     boolean isBtService;
 
     public void showAlertWithOneButton(){
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(ConnectionActivity.this);
+        MaterialAlertDialogBuilder alertDialog = new MaterialAlertDialogBuilder(ConnectionActivity.this);
         alertDialog.setTitle(getString(R.string.instruction_alert))
                    .setMessage(getString(R.string.instruction_for_app_connection_activity))
                    .setPositiveButton("ОК", new DialogInterface.OnClickListener() {
@@ -207,7 +207,6 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
         registerReceiver(mReceiver,new IntentFilter(WifiManager.WIFI_STATE_CHANGED_ACTION));
         String devProtocol = devicesList.get(0).getDevProtocol();
         findViewById(R.id.button_stop_bt).setEnabled(false);
-        findViewById(R.id.button_stop_bt_right).setEnabled(false);
         outputText = findViewById(R.id.incoming_data_bt);
         outputText.setMovementMethod(new ScrollingMovementMethod());
 
@@ -236,13 +235,6 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
         findViewById(R.id.button_right_bt).setOnTouchListener(touchListener);
         findViewById(R.id.button_stop_bt).setOnClickListener(this);
 
-        findViewById(R.id.button_up_bt_right).setOnTouchListener(touchListener);
-        findViewById(R.id.button_down_bt_right).setOnTouchListener(touchListener);
-        findViewById(R.id.button_left_bt_right).setOnTouchListener(touchListener);
-        findViewById(R.id.button_right_bt_right).setOnTouchListener(touchListener);
-        findViewById(R.id.button_stop_bt_right).setOnClickListener(this);
-
-
         SwitchMaterial hold_command = findViewById(R.id.switch_hold_command_mm_Bt);
         hold_command.setOnCheckedChangeListener(this);
         hold_command.setChecked(false);
@@ -252,8 +244,8 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
         //https://exoplayer.dev/hello-world.html
         //https://medium.com/mindorks/implementing-exoplayer-for-beginners-in-kotlin-c534706bce4b
 
+        PlayerView playerView = findViewById(R.id.simple_player);
         if(!isBtService){
-            PlayerView playerView = findViewById(R.id.simple_player);
             ExoPlayer player = new ExoPlayer.Builder(this).build();
             // Bind the player to the view.
             playerView.setPlayer(player);
@@ -264,6 +256,8 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
             player.prepare();
             // Start the playback.
             player.play();
+        } else {
+            playerView.setVisibility(View.GONE);
         }
     }
 
@@ -285,38 +279,40 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
     }
 
     synchronized void checkForActiveDevices() {
+        boolean hasChanges = false;
         for (DeviceItemType currentDevice : devicesList) {
             if (!currentDevice.isWiFiBtConnected()) {
                 disconnectedDevicesList.add(currentDevice);
+                hasChanges = true;
             }
         }
         for (DeviceItemType currentDevice : disconnectedDevicesList) {
             if (currentDevice.isWiFiBtConnected()) {
                 devicesList.add(currentDevice);
+                hasChanges = true;
             }
         }
         devicesList.removeIf(currentDevice -> !currentDevice.isWiFiBtConnected());
         disconnectedDevicesList.removeIf(DeviceItemType::isWiFiBtConnected);
+        if(hasChanges){
+            addDisconnectedDevice();
+        }
     }
 
     public synchronized void addDisconnectedDevice() {
-        ArrayList<DeviceItemType> current = disconnectedDevicesList;
-        checkForActiveDevices();
         if((disconnectedDialog == null || !disconnectedDialog.isShowing())
                 && ((isBtService && App.isBtEnabled()) ||
-                (!isBtService && App.isWiFiEnabled()))
-                && disconnectedDevicesList!=current){
+                (!isBtService && App.isWiFiEnabled())) && devicesList.size()>0){
             materialAlertDialogBuilder = new MaterialAlertDialogBuilder(this);
             materialAlertDialogBuilder.setTitle(getString(R.string.error));
             if(disconnectedDevicesList.size()==1){
-                materialAlertDialogBuilder.setMessage("Устройство " + devicesList.get(0).getDevName() + "отключилось. Продолжить работу?");
+                materialAlertDialogBuilder.setMessage("Устройство " + disconnectedDevicesList.get(0).getDevName() + "отключилось. Продолжить работу?");
             } else {
                 materialAlertDialogBuilder.setMessage("Некоторые устройства отключились. Продолжить работу?");
             }
             materialAlertDialogBuilder.setPositiveButton("Продолжить работу", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
-                    addDisconnectedDevice();
                     dialogInterface.dismiss();
                 }
             });
@@ -328,6 +324,32 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
                 }
             });
             disconnectedDialog = materialAlertDialogBuilder.show();
+        } else if((disconnectedDialog == null || !disconnectedDialog.isShowing())
+                && ((isBtService && App.isBtEnabled()) ||
+                (!isBtService && App.isWiFiEnabled()))){
+            materialAlertDialogBuilder = new MaterialAlertDialogBuilder(this);
+            materialAlertDialogBuilder.setTitle(getString(R.string.error));
+            materialAlertDialogBuilder.setMessage("Все устройства отключены. Дальнейшее управление невозможно.");
+            materialAlertDialogBuilder.setPositiveButton("Переподключиться", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    DeviceHandler.setDevicesList(disconnectedDevicesList);
+                    Intent startConnectionService = new Intent(App.getContext(), ConnectionService.class);
+                    startConnectionService.putExtra("isBtService", isBtService);
+                    startService(startConnectionService);
+                    dialogInterface.dismiss();
+                    finish();
+                }
+            });
+            materialAlertDialogBuilder.setNegativeButton("Выход", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    dialogInterface.dismiss();
+                    finish();
+                }
+            });
+            materialAlertDialogBuilder.setCancelable(false);
+            disconnectedDialog = networkDialog = materialAlertDialogBuilder.show();
         } else if (((isBtService && !App.isBtEnabled()) || (!isBtService && !App.isWiFiEnabled()))
                 && (networkDialog== null || !networkDialog.isShowing())){
             if(networkDialog != null && disconnectedDialog.isShowing())
@@ -355,31 +377,30 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
         active = true;
         checkForActiveDevices();
 
-        //arduino.BluetoothConnectionServiceVoid();     // соединяемся с bluetooth
-        //TODO - вызывает вылет приложения
     }
 
     @Override
     protected void onPause() {
-
         super.onPause();
+        Log.d(APP_LOG_TAG, "DeviceActivity в onPause");
         active = false;
-        completeDevicesInfo();
+        checkForActiveDevices();
+        if(devicesList.size()>0){
+            completeDevicesInfo();
+            if (getDevicesID.getTag(res.getString(R.string.TAG_TURN_COM)))
+                message[countCommands++] = getDevicesID.get("new_command");
 
-        if (getDevicesID.getTag(res.getString(R.string.TAG_TURN_COM)))
-            message[countCommands++] = getDevicesID.get("new_command");
+            if (getDevicesID.getTag(res.getString(R.string.TAG_TYPE_COM)))
+                message[countCommands++] = getDevicesID.get("type_move");
 
-        if (getDevicesID.getTag(res.getString(R.string.TAG_TYPE_COM)))
-            message[countCommands++] = getDevicesID.get("type_move");
+            message[countCommands++] = getDevicesID.get("STOP");
+            for (int i = 0; i < dataThreadForArduinoList.size(); i++) {
+                dataThreadForArduinoList.get(i).sendData(message, lengthMes);
+            }
 
-        message[countCommands++] = getDevicesID.get("STOP");
-        for (int i = 0; i < dataThreadForArduinoList.size(); i++) {
-            Log.d(APP_LOG_TAG, "DeviceActivity в onPause");
-            dataThreadForArduinoList.get(i).sendData(message, lengthMes);
-        }
-
-        for (int i = 0; i < dataThreadForArduinoList.size(); i++) {
-            dataThreadForArduinoList.get(i).Disconnect();
+            for (int i = 0; i < dataThreadForArduinoList.size(); i++) {
+                dataThreadForArduinoList.get(i).Disconnect();
+            }
         }
     }
 
@@ -392,33 +413,6 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
                 completeMessage("STOP");
                 countCommands = 0;
                 break;
-            case (R.id.button_stop_bt_right):
-                outputText.append("\n" + getResources().getString(R.string.send_command_stop));
-                completeMessage("STOP");
-                countCommands = 0;
-                break;
-
-//1
-//            case R.id.btn_camera:
-//                try {
-//                    // Намерение для запуска камеры
-//                    Intent captureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//                    startActivityForResult(captureIntent, CAMERA_REQUEST);
-//                    String message = "Ваше устройство поддерживает съемку";
-//                    Toast toast = Toast
-//                            .makeText(this, message, Toast.LENGTH_SHORT);
-//                    toast.show();
-//                    Log.d("Camera", "Ваше устройство поддерживает съемку");
-//                } catch (ActivityNotFoundException e) {
-//                    // Выводим сообщение об ошибке
-//                    String errorMessage = "Ваше устройство не поддерживает съемку";
-//                    Toast toast = Toast
-//                            .makeText(this, errorMessage, Toast.LENGTH_SHORT);
-//                    toast.show();
-//                }
-//                captureVideo();
-//                Log.d("Camera", "Video is available");
-//                break;
         }
     }
 
@@ -437,20 +431,7 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
                         completeMessage("FORWARD");
                         countCommands = 0;
                         break;
-                    case (R.id.button_up_bt_right):
-                        Log.d(APP_LOG_TAG, "Отправляю команду движения вперёд;");
-                        outputText.append("\n" + getResources().getString(R.string.send_command_forward));
-                        completeMessage("FORWARD");
-                        countCommands = 0;
-                        break;
                     case (R.id.button_down_bt):
-                        outputText.append("\n" + getResources().getString(R.string.send_command_back));
-                        Log.d(APP_LOG_TAG, "Отправляю команду движения назад;");
-                        //Toast.makeText(getApplicationContext(), "Назад поехали", Toast.LENGTH_SHORT).show();
-                        completeMessage("BACK");
-                        countCommands = 0;
-                        break;
-                    case (R.id.button_down_bt_right):
                         outputText.append("\n" + getResources().getString(R.string.send_command_back));
                         Log.d(APP_LOG_TAG, "Отправляю команду движения назад;");
                         //Toast.makeText(getApplicationContext(), "Назад поехали", Toast.LENGTH_SHORT).show();
@@ -464,21 +445,7 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
                         completeMessage("LEFT");
                         countCommands = 0;
                         break;
-                    case (R.id.button_left_bt_right):
-                        outputText.append("\n" + getResources().getString(R.string.send_command_left));
-                        //Toast.makeText(getApplicationContext(), "Влево поехали", Toast.LENGTH_SHORT).show();
-                        Log.d(APP_LOG_TAG, "Отправляю команду движения влево;");
-                        completeMessage("LEFT");
-                        countCommands = 0;
-                        break;
                     case (R.id.button_right_bt):
-                        //Toast.makeText(getApplicationContext(), "Вправо поехали", Toast.LENGTH_SHORT).show();
-                        outputText.append("\n" + getResources().getString(R.string.send_command_right));
-                        Log.d(APP_LOG_TAG, "Отправляю команду движения вправо;");
-                        completeMessage("RIGHT");
-                        countCommands = 0;
-                        break;
-                    case (R.id.button_right_bt_right):
                         //Toast.makeText(getApplicationContext(), "Вправо поехали", Toast.LENGTH_SHORT).show();
                         outputText.append("\n" + getResources().getString(R.string.send_command_right));
                         Log.d(APP_LOG_TAG, "Отправляю команду движения вправо;");
@@ -496,15 +463,7 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
                             completeMessage("FORWARD_STOP");
                             countCommands = 0;
                             break;
-                        case (R.id.button_up_bt_right):
-                            completeMessage("FORWARD_STOP");
-                            countCommands = 0;
-                            break;
                         case (R.id.button_down_bt):
-                            completeMessage("BACK_STOP");
-                            countCommands = 0;
-                            break;
-                        case (R.id.button_down_bt_right):
                             completeMessage("BACK_STOP");
                             countCommands = 0;
                             break;
@@ -512,15 +471,7 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
                             completeMessage("LEFT_STOP");
                             countCommands = 0;
                             break;
-                        case (R.id.button_left_bt_right):
-                            completeMessage("LEFT_STOP");
-                            countCommands = 0;
-                            break;
                         case (R.id.button_right_bt):
-                            completeMessage("RIGHT_STOP");
-                            countCommands = 0;
-                            break;
-                        case (R.id.button_right_bt_right):
                             completeMessage("RIGHT_STOP");
                             countCommands = 0;
                             break;
@@ -576,15 +527,11 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
                 if (isHoldCommand) {
                     outputText.append("\n" + getResources().getString(R.string.send_command_hold_enabled));
                     findViewById(R.id.button_stop_bt).setEnabled(true);
-                    findViewById(R.id.button_stop_bt_right).setEnabled(true);
                 } else {
                     outputText.append("\n" + getResources().getString(R.string.send_command_hold_disabled));
                     findViewById(R.id.button_stop_bt).setEnabled(false);
-                    findViewById(R.id.button_stop_bt_right).setEnabled(false);
                 }
                 break;
-
-
         }
     }
 

@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+        super.onCreate(null);
         ThemeUtils.onActivityCreateSetTheme(this);
         setContentView(R.layout.activity_main);
         MaterialToolbar toolbar = findViewById(R.id.toolbar);
@@ -328,7 +328,7 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
             //Устройство подключено, Service выполнился успешно
             navController.navigate(R.id.mainMenuFragment);
             Bundle b = new Bundle();
-            b.putBoolean("isBtService", isBtConnection);
+            b.putBoolean("isBtService", DeviceHandler.getDevicesList().get(0).isWiFiBtConnected());
             navController.navigate(R.id.connectionActivity, b);
             isBtConnection = null;
         }

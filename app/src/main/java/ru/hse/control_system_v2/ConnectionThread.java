@@ -135,9 +135,6 @@ public class ConnectionThread extends Thread {
 
     public void Disconnect() {
         deviceItemType.closeConnection();
-        if (App.isBtEnabled()) {
-            ((ConnectionActivity) c).addDisconnectedDevice();
-        }
         Thread.currentThread().interrupt();
     }
 

@@ -168,6 +168,8 @@
             android:id="@+id/incoming_data_bt"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
             android:background="@drawable/textview_bg"
             android:gravity="bottom"
             android:padding="8dp"
@@ -194,6 +196,7 @@
                 android:layout_height="0dp"
                 android:padding="8dp"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
@@ -204,12 +207,12 @@
         <ScrollView
             android:id="@+id/scrollView5"
             android:layout_width="0dp"
-            app:layout_constraintWidth_percent="0.3"
             android:layout_height="0dp"
-            android:padding="10dp"
+            android:padding="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.3">
 
             <LinearLayout
                 android:id="@+id/btn_grid"

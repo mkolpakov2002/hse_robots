@@ -25,6 +25,7 @@ public class App extends Application {
     private static BluetoothAdapter btAdapter;
     private static WifiManager wifiManager;
     private ProtocolDBHelper protocolDBHelper;
+    private static boolean isConnecting = false;
 
     @Override
     public void onCreate() {
@@ -83,4 +84,9 @@ public class App extends Application {
         return btAdapter;
     }
 
+    public static void setConnecting(boolean connecting) {
+        isConnecting = connecting;
+    }
+
+    public static boolean isIsConnecting(){return isConnecting;}
 }

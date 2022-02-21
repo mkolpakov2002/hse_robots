@@ -105,6 +105,7 @@ public class ConnectionService extends Service {
             } else {
                 resultOfConnectionIntent = new Intent("not_success");
             }
+            App.setConnecting(false);
             sendBroadcast(resultOfConnectionIntent);
             stopService(intentService);
         }

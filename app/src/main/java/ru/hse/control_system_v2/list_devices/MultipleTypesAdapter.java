@@ -134,6 +134,7 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
 
                     itemTypeArrayList.get(itemTypeArrayList.indexOf(item)).setIsSelectedOnScreen(true);
                     selectedDevicesList.add(item);
+                    DeviceHandler.setDevicesList(selectedDevicesList);
 
                     if (mainMenuFragment != null) {
                         mainMenuFragment.showItemSelectionMenu();
@@ -231,9 +232,9 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     public boolean areDevicesConnectable() {
         for (DeviceItemType deviceItemType : selectedDevicesList) {
-            if (selectedDevicesList.get(0).getDevClass() != deviceItemType.getDevClass()
-                    || selectedDevicesList.get(0).getDevType() != deviceItemType.getDevType()
-                    || selectedDevicesList.get(0).getDevProtocol() != deviceItemType.getDevProtocol()) {
+            if (!selectedDevicesList.get(0).getDevClass().equals(deviceItemType.getDevClass())
+                    || !selectedDevicesList.get(0).getDevType().equals(deviceItemType.getDevType())
+                    || !selectedDevicesList.get(0).getDevProtocol().equals(deviceItemType.getDevProtocol())) {
                 return false;
             }
         }

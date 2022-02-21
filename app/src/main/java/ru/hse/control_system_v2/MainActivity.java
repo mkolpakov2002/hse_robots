@@ -173,9 +173,11 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
 
             });
         }
-
         setUpNavigation();
         checkForBtAdapter();
+        if(App.isIsConnecting()){
+            navController.navigate(R.id.connection_dialog);
+        }
     }
 
     void setUpNavigation() {
@@ -314,8 +316,14 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
         @Override
         public void onReceive(Context context, Intent intent) {
             navController.navigate(R.id.mainMenuFragment);
-            if (getMainMenuFragment() != null)
-                getMainMenuFragment().onRefresh();
+            {
+                try {
+                    if (getMainMenuFragment() != null)
+                        getMainMenuFragment().onRefresh();
+                } catch (java.lang.IllegalStateException e){
+                    //nothing
+                }
+            }
             createOneButtonAlertDialog(getString(R.string.error), getString(R.string.connection_error));
             isBtConnection = null;
         }
@@ -356,6 +364,7 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
     }
 
     private void startConnectionService() {
+        App.setConnecting(true);
         Intent startConnectionService = new Intent(App.getContext(), ConnectionService.class);
         startConnectionService.putExtra("isBtService", isBtConnection);
         startService(startConnectionService);

@@ -5,6 +5,7 @@ import static ru.hse.control_system_v2.Constants.APP_LOG_TAG;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -116,6 +117,7 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
     Dialog disconnectedDialog;
     Dialog networkDialog;
     boolean isBtService;
+    PlayerView playerView;
 
     public void showAlertWithOneButton(){
         MaterialAlertDialogBuilder alertDialog = new MaterialAlertDialogBuilder(ConnectionActivity.this);
@@ -161,6 +163,21 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
             addDisconnectedDevice();
         }
 
+        //TODO
+        IntentFilter filter3 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED);
+        //this.registerReceiver(mReceiver3, filter3);
+
+    }
+
+    @Override
+    protected void onStart(){
+        super.onStart();
+        playerView = findViewById(R.id.simple_player);
+        if(!isBtService){
+            initializePlayer();
+        } else {
+            playerView.setVisibility(View.GONE);
+        }
     }
 
     private static class ImageSaver implements Runnable {
@@ -243,23 +260,8 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
         //TODO
         //https://exoplayer.dev/hello-world.html
         //https://medium.com/mindorks/implementing-exoplayer-for-beginners-in-kotlin-c534706bce4b
-
-        PlayerView playerView = findViewById(R.id.simple_player);
-        if(!isBtService){
-            ExoPlayer player = new ExoPlayer.Builder(this).build();
-            // Bind the player to the view.
-            playerView.setPlayer(player);
-            MediaItem firstItem = MediaItem.fromUri(devicesList.get(0).getDevIp());
-            // Add the media items to be played.
-            player.addMediaItem(firstItem);
-            // Prepare the player.
-            player.prepare();
-            // Start the playback.
-            player.play();
-        } else {
-            playerView.setVisibility(View.GONE);
-        }
     }
+
 
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         public void onReceive (Context context, Intent intent) {
@@ -333,6 +335,7 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
             materialAlertDialogBuilder.setPositiveButton("Переподключиться", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
+                    App.setConnecting(true);
                     DeviceHandler.setDevicesList(disconnectedDevicesList);
                     Intent startConnectionService = new Intent(App.getContext(), ConnectionService.class);
                     startConnectionService.putExtra("isBtService", isBtService);
@@ -376,7 +379,11 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
         super.onResume();
         active = true;
         checkForActiveDevices();
-
+        if(!isBtService){
+            initializePlayer();
+        } else {
+            playerView.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -384,6 +391,7 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
         super.onPause();
         Log.d(APP_LOG_TAG, "DeviceActivity в onPause");
         active = false;
+        releasePlayer();
         checkForActiveDevices();
         if(devicesList.size()>0){
             completeDevicesInfo();
@@ -402,6 +410,12 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
                 dataThreadForArduinoList.get(i).Disconnect();
             }
         }
+    }
+
+    @Override
+    protected void onStop(){
+        super.onStop();
+        releasePlayer();
     }
 
     @Override
@@ -551,5 +565,34 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
             devicesList.get(i).closeConnection();
 
         }
+    }
+
+    private void initializePlayer(){
+        ExoPlayer player = new ExoPlayer.Builder(this).build();
+        // Bind the player to the view.
+        playerView.setPlayer(player);
+        MediaItem firstItem = MediaItem.fromUri(devicesList.get(0).getDevIp());
+        // Add the media items to be played.
+        player.addMediaItem(firstItem);
+        // Prepare the player.
+        player.prepare();
+        // Start the playback.
+        player.play();
+    }
+
+    private void releasePlayer(){
+
+    }
+
+    private void startVideo(){
+
+    }
+
+    private void pauseVideo(){
+
+    }
+
+    private void stopVideo(){
+
     }
 }

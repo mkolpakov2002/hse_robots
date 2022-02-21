@@ -24,7 +24,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme.Rena">
+        android:theme="@style/AppTheme.Rena"
+        android:usesCleartextTraffic="true">
         <activity
             android:name=".ConnectionActivity"
             android:exported="true"

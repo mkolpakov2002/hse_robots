@@ -251,6 +251,7 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
         findViewById(R.id.button_left_bt).setOnTouchListener(touchListener);
         findViewById(R.id.button_right_bt).setOnTouchListener(touchListener);
         findViewById(R.id.button_stop_bt).setOnClickListener(this);
+        findViewById(R.id.btn_servo).setOnClickListener(this);
 
         SwitchMaterial hold_command = findViewById(R.id.switch_hold_command_mm_Bt);
         hold_command.setOnCheckedChangeListener(this);
@@ -426,6 +427,9 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
                 outputText.append("\n" + getResources().getString(R.string.send_command_stop));
                 completeMessage("STOP");
                 countCommands = 0;
+                break;
+            case(R.id.btn_servo):
+                Toast.makeText(ConnectionActivity.this,"btn_servo",Toast.LENGTH_LONG).show();
                 break;
         }
     }

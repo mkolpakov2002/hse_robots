@@ -117,7 +117,7 @@ public class MainMenuFragment extends Fragment implements SwipeRefreshLayout.OnR
         fabToDelete.setOnClickListener(v -> {
             AppDataBase dbDevices = App.getDatabase();
             DeviceItemTypeDao devicesDao = dbDevices.getDeviceItemTypeDao();
-            for (DeviceItemType device : DeviceHandler.getDevicesList()) {
+            for (DeviceItemType device : App.getDevicesList()) {
                 devicesDao.delete(device.getDevId());
             }
             onRefresh();
@@ -194,7 +194,7 @@ public class MainMenuFragment extends Fragment implements SwipeRefreshLayout.OnR
                 DeviceItemType newDevice = new DeviceItemType();
                 ArrayList<DeviceItemType> newList = new ArrayList<>();
                 newList.add(newDevice);
-                DeviceHandler.setDevicesList(newList);
+                App.setDevicesList(newList);
                 bottomSheetDialogToAdd.dismiss();
                 Navigation.findNavController(requireParentFragment().requireView()).navigate(R.id.action_mainMenuFragment_to_deviceMenuFragment);
             });

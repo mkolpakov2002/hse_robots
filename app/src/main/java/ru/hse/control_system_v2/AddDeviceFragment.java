@@ -179,7 +179,7 @@ public class AddDeviceFragment extends Fragment implements DevicesAdapter.Select
         newDev.setDevName(name);
         ArrayList<DeviceItemType> deviceItemTypeArrayList = new ArrayList<DeviceItemType>();
         deviceItemTypeArrayList.add(newDev);
-        DeviceHandler.setDevicesList(deviceItemTypeArrayList);
+        App.setDevicesList(deviceItemTypeArrayList);
         Navigation.findNavController(view).navigate(R.id.deviceMenuFragment);
     }
 

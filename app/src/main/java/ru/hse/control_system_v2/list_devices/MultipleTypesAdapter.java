@@ -4,7 +4,6 @@ import static android.view.View.VISIBLE;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Animatable;
 import android.os.Bundle;
@@ -22,15 +21,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.card.MaterialCardView;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import ru.hse.control_system_v2.App;
 import ru.hse.control_system_v2.AppDataBase;
-import ru.hse.control_system_v2.DeviceHandler;
 import ru.hse.control_system_v2.DeviceItemTypeDao;
 import ru.hse.control_system_v2.MainActivity;
 import ru.hse.control_system_v2.MainMenuFragment;
@@ -134,7 +128,7 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
 
                     itemTypeArrayList.get(itemTypeArrayList.indexOf(item)).setIsSelectedOnScreen(true);
                     selectedDevicesList.add(item);
-                    DeviceHandler.setDevicesList(selectedDevicesList);
+                    App.setDevicesList(selectedDevicesList);
 
                     if (mainMenuFragment != null) {
                         mainMenuFragment.showItemSelectionMenu();
@@ -153,7 +147,7 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
 
             } else {
                 selectedDevicesList.add(item);
-                DeviceHandler.setDevicesList(selectedDevicesList);
+                App.setDevicesList(selectedDevicesList);
                 Log.d(TAG, "...Список пуст, открываю диалог...");
                 //список пуст, открываем диалог для одного устройства
                 Bundle args = new Bundle();
@@ -204,7 +198,7 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
                 }
 
             }
-            DeviceHandler.setDevicesList(selectedDevicesList);
+            App.setDevicesList(selectedDevicesList);
         }
 
     }

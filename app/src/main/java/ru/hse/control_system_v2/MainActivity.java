@@ -107,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
             buttonToConnectViaWiFi.setOnClickListener(view1 -> {
                 if (App.isWiFiSupported()) {
                     boolean isConnectionPossible = true;
-                    for (DeviceItemType current : DeviceHandler.getDevicesList()) {
+                    for (DeviceItemType current : App.getDevicesList()) {
                         if (!current.isWiFiSupported()) {
                             isConnectionPossible = false;
                             bottomSheetDialogToConnect.dismiss();
@@ -142,7 +142,7 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
             buttonToConnectViaBt.setOnClickListener(view1 -> {
                 if (App.isBtSupported()) {
                     boolean isConnectionPossible = true;
-                    for (DeviceItemType current : DeviceHandler.getDevicesList()) {
+                    for (DeviceItemType current : App.getDevicesList()) {
                         if (!current.isBtSupported()) {
                             isConnectionPossible = false;
                             bottomSheetDialogToConnect.dismiss();
@@ -336,7 +336,7 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
             //Устройство подключено, Service выполнился успешно
             navController.navigate(R.id.mainMenuFragment);
             Bundle b = new Bundle();
-            b.putBoolean("isBtService", DeviceHandler.getDevicesList().get(0).isWiFiBtConnected());
+            b.putBoolean("isBtService", !App.getDevicesList().get(0).isWiFiBtConnected());
             navController.navigate(R.id.connectionActivity, b);
             isBtConnection = null;
         }

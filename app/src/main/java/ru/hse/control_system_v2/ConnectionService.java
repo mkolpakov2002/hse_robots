@@ -43,7 +43,7 @@ public class ConnectionService extends Service {
 
         devicesList = new ArrayList<>();
         devicesListConnected = new ArrayList<>();
-        devicesList.addAll(DeviceHandler.getDevicesList());
+        devicesList.addAll(App.getDevicesList());
         ExecutorService executorService = Executors.newFixedThreadPool(devicesList.size());
 
         for (int i = 0; i < devicesList.size(); i++) {
@@ -93,15 +93,14 @@ public class ConnectionService extends Service {
     // Передаём данные о статусе соединения в Main Activity
     synchronized void resultOfConnection(DeviceItemType currentDevice) {
         devicesListConnected.add(currentDevice);
-        if (currentDevice.isWiFiBtConnected()!=null
-        && currentDevice.isWiFiBtConnected()) {
+        if (currentDevice.isWiFiBtConnected()!=null) {
             isSuccess = true;
         }
         if (devicesListConnected.size() == devicesList.size()) {
             Intent resultOfConnectionIntent;
             if (isSuccess) {
                 resultOfConnectionIntent = new Intent("success");
-                DeviceHandler.setDevicesList(devicesList);
+                App.setDevicesList(devicesList);
             } else {
                 resultOfConnectionIntent = new Intent("not_success");
             }

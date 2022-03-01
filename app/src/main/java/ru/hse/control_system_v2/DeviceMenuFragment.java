@@ -134,7 +134,7 @@ public class DeviceMenuFragment extends Fragment {
     }
 
     void getDeviceInformation() {
-        currentDevice = DeviceHandler.getDevicesList().get(0);
+        currentDevice = App.getDevicesList().get(0);
         id = currentDevice.getDevId();
         name = currentDevice.getDevName();
         MAC = currentDevice.getDeviceMAC();

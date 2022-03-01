@@ -16,6 +16,7 @@ import com.google.android.material.color.DynamicColors;
 import java.util.ArrayList;
 
 import ru.hse.control_system_v2.dbprotocol.ProtocolDBHelper;
+import ru.hse.control_system_v2.list_devices.DeviceItemType;
 
 public class App extends Application {
 
@@ -26,6 +27,7 @@ public class App extends Application {
     private static WifiManager wifiManager;
     private ProtocolDBHelper protocolDBHelper;
     private static boolean isConnecting = false;
+    private static ArrayList<DeviceItemType> devicesList = new ArrayList<>();
 
     @Override
     public void onCreate() {
@@ -89,4 +91,12 @@ public class App extends Application {
     }
 
     public static boolean isIsConnecting(){return isConnecting;}
+
+    public static synchronized ArrayList<DeviceItemType> getDevicesList() {
+        return devicesList;
+    }
+
+    public static synchronized void setDevicesList(ArrayList<DeviceItemType> newDevicesList) {
+        devicesList = newDevicesList;
+    }
 }

@@ -3,6 +3,7 @@ package ru.hse.control_system_v2.list_devices;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothSocket;
 import android.graphics.Color;
+import android.os.Parcelable;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
@@ -13,6 +14,7 @@ import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
@@ -111,7 +113,7 @@ public class DeviceItemType implements ItemType {
     }
 
     public Boolean isWiFiBtConnected() {
-        return isConnected!=null;
+        return isConnected;
     }
 
     public BluetoothSocket getBtSocket() {
@@ -163,7 +165,7 @@ public class DeviceItemType implements ItemType {
         if (bluetoothSocket != null) {
             try {
                 bluetoothSocket.connect();
-                isConnected = true;
+                isConnected = false;
             } catch (IOException e) {
                 e.printStackTrace();
                 Log.d("BLUETOOTH", e.getMessage());

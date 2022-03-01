@@ -102,7 +102,7 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
 
         disconnectedDevicesList = new ArrayList<>();
         devicesList = new ArrayList<>();
-        devicesList = DeviceHandler.getDevicesList();
+        devicesList = App.getDevicesList();
         checkForActiveDevices();
         if(devicesList.size()>0){
             registerReceiver(mReceiver, new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
@@ -197,94 +197,96 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
     synchronized void checkForActiveDevices() {
         boolean hasChanges = false;
         for (DeviceItemType currentDevice : devicesList) {
-            if (!currentDevice.isWiFiBtConnected()) {
+            if (currentDevice.isWiFiBtConnected()==null) {
                 disconnectedDevicesList.add(currentDevice);
                 hasChanges = true;
             }
         }
         for (DeviceItemType currentDevice : disconnectedDevicesList) {
-            if (currentDevice.isWiFiBtConnected()) {
+            if (currentDevice.isWiFiBtConnected()!=null) {
                 devicesList.add(currentDevice);
                 hasChanges = true;
             }
         }
-        devicesList.removeIf(currentDevice -> !currentDevice.isWiFiBtConnected());
-        disconnectedDevicesList.removeIf(DeviceItemType::isWiFiBtConnected);
+        devicesList.removeIf(currentDevice -> (currentDevice.isWiFiBtConnected()==null));
+        disconnectedDevicesList.removeIf(currentDevice -> (currentDevice.isWiFiBtConnected()!=null));
         if(hasChanges){
             addDisconnectedDevice();
         }
     }
 
     public synchronized void addDisconnectedDevice() {
-        if((disconnectedDialog == null || !disconnectedDialog.isShowing())
-                && ((isBtService && App.isBtEnabled()) ||
-                (!isBtService && App.isWiFiEnabled())) && devicesList.size()>0){
-            materialAlertDialogBuilder = new MaterialAlertDialogBuilder(this);
-            materialAlertDialogBuilder.setTitle(getString(R.string.error));
-            if(disconnectedDevicesList.size()==1){
-                materialAlertDialogBuilder.setMessage("Устройство " + disconnectedDevicesList.get(0).getDevName() + "отключилось. Продолжить работу?");
+        if(isActive()) {
+            if ((disconnectedDialog == null || !disconnectedDialog.isShowing())
+                    && ((isBtService && App.isBtEnabled()) ||
+                    (!isBtService && App.isWiFiEnabled())) && devicesList.size() > 0) {
+                materialAlertDialogBuilder = new MaterialAlertDialogBuilder(this);
+                materialAlertDialogBuilder.setTitle(getString(R.string.error));
+                if (disconnectedDevicesList.size() == 1) {
+                    materialAlertDialogBuilder.setMessage("Устройство " + disconnectedDevicesList.get(0).getDevName() + "отключилось. Продолжить работу?");
+                } else {
+                    materialAlertDialogBuilder.setMessage("Некоторые устройства отключились. Продолжить работу?");
+                }
+                materialAlertDialogBuilder.setPositiveButton("Продолжить работу", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
+                materialAlertDialogBuilder.setNegativeButton("Выйти", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                        finish();
+                    }
+                });
+                disconnectedDialog = materialAlertDialogBuilder.show();
+            } else if ((disconnectedDialog == null || !disconnectedDialog.isShowing())
+                    && ((isBtService && App.isBtEnabled()) ||
+                    (!isBtService && App.isWiFiEnabled()))) {
+                materialAlertDialogBuilder = new MaterialAlertDialogBuilder(this);
+                materialAlertDialogBuilder.setTitle(getString(R.string.error));
+                materialAlertDialogBuilder.setMessage("Все устройства отключены. Дальнейшее управление невозможно.");
+                materialAlertDialogBuilder.setPositiveButton("Переподключиться", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        App.setConnecting(true);
+                        App.setDevicesList(disconnectedDevicesList);
+                        Intent startConnectionService = new Intent(App.getContext(), ConnectionService.class);
+                        startConnectionService.putExtra("isBtService", isBtService);
+                        startService(startConnectionService);
+                        dialogInterface.dismiss();
+                        finish();
+                    }
+                });
+                materialAlertDialogBuilder.setNegativeButton("Выход", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                        finish();
+                    }
+                });
+                materialAlertDialogBuilder.setCancelable(false);
+                disconnectedDialog = networkDialog = materialAlertDialogBuilder.show();
+            } else if (((isBtService && !App.isBtEnabled()) || (!isBtService && !App.isWiFiEnabled()))
+                    && (networkDialog == null || !networkDialog.isShowing())) {
+                if (networkDialog != null && disconnectedDialog.isShowing())
+                    disconnectedDialog.dismiss();
+                materialAlertDialogBuilder = new MaterialAlertDialogBuilder(this);
+                materialAlertDialogBuilder.setTitle(getString(R.string.error));
+                materialAlertDialogBuilder.setMessage("Сеть отключена. Дальнейшее управление невозможно.");
+                materialAlertDialogBuilder.setPositiveButton("Ок", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                        finish();
+                    }
+                });
+                materialAlertDialogBuilder.setCancelable(false);
+                networkDialog = materialAlertDialogBuilder.show();
             } else {
-                materialAlertDialogBuilder.setMessage("Некоторые устройства отключились. Продолжить работу?");
-            }
-            materialAlertDialogBuilder.setPositiveButton("Продолжить работу", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    dialogInterface.dismiss();
-                }
-            });
-            materialAlertDialogBuilder.setNegativeButton("Выйти", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    dialogInterface.dismiss();
-                    finish();
-                }
-            });
-            disconnectedDialog = materialAlertDialogBuilder.show();
-        } else if((disconnectedDialog == null || !disconnectedDialog.isShowing())
-                && ((isBtService && App.isBtEnabled()) ||
-                (!isBtService && App.isWiFiEnabled()))){
-            materialAlertDialogBuilder = new MaterialAlertDialogBuilder(this);
-            materialAlertDialogBuilder.setTitle(getString(R.string.error));
-            materialAlertDialogBuilder.setMessage("Все устройства отключены. Дальнейшее управление невозможно.");
-            materialAlertDialogBuilder.setPositiveButton("Переподключиться", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    App.setConnecting(true);
-                    DeviceHandler.setDevicesList(disconnectedDevicesList);
-                    Intent startConnectionService = new Intent(App.getContext(), ConnectionService.class);
-                    startConnectionService.putExtra("isBtService", isBtService);
-                    startService(startConnectionService);
-                    dialogInterface.dismiss();
-                    finish();
-                }
-            });
-            materialAlertDialogBuilder.setNegativeButton("Выход", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    dialogInterface.dismiss();
-                    finish();
-                }
-            });
-            materialAlertDialogBuilder.setCancelable(false);
-            disconnectedDialog = networkDialog = materialAlertDialogBuilder.show();
-        } else if (((isBtService && !App.isBtEnabled()) || (!isBtService && !App.isWiFiEnabled()))
-                && (networkDialog== null || !networkDialog.isShowing())){
-            if(networkDialog != null && disconnectedDialog.isShowing())
-                disconnectedDialog.dismiss();
-            materialAlertDialogBuilder = new MaterialAlertDialogBuilder(this);
-            materialAlertDialogBuilder.setTitle(getString(R.string.error));
-            materialAlertDialogBuilder.setMessage("Сеть отключена. Дальнейшее управление невозможно.");
-            materialAlertDialogBuilder.setPositiveButton("Ок", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    dialogInterface.dismiss();
-                    finish();
-                }
-            });
-            materialAlertDialogBuilder.setCancelable(false);
-            networkDialog = materialAlertDialogBuilder.show();
-        } else {
 
+            }
         }
     }
 
@@ -327,7 +329,9 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
     @Override
     protected void onStop(){
         super.onStop();
-        releasePlayer();
+        active = false;
+        if(!isBtService && protocolRepo.isCameraSupported())
+            releasePlayer();
     }
 
     @Override
@@ -475,7 +479,6 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
         for (int i = 0; i < devicesList.size(); i++) {
             Log.d(APP_LOG_TAG, "DeviceActivity в onDestroy, отключение устройств");
             devicesList.get(i).closeConnection();
-
         }
     }
 

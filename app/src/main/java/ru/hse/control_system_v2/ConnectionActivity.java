@@ -2,51 +2,34 @@ package ru.hse.control_system_v2;
 
 import static ru.hse.control_system_v2.Constants.APP_LOG_TAG;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Resources;
-import android.graphics.SurfaceTexture;
-import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
-import android.view.TextureView;
 import android.view.View;
-import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.GridLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.exoplayer2.DefaultLivePlaybackSpeedControl;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.MediaItem;
-import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.ext.rtmp.RtmpDataSourceFactory;
-import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.ProgressiveMediaSource;
-import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.TrackSelection;
-import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.PlayerView;
-import com.google.android.exoplayer2.upstream.BandwidthMeter;
-import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -60,44 +43,7 @@ import ru.hse.control_system_v2.dbprotocol.ProtocolDBHelper;
 import ru.hse.control_system_v2.dbprotocol.ProtocolRepo;
 import ru.hse.control_system_v2.list_devices.DeviceItemType;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.ContextCompat;
-import androidx.navigation.NavController;
-
-import android.Manifest;
-import android.content.Context;
-import android.content.pm.PackageManager;
-import android.graphics.ImageFormat;
-import android.graphics.SurfaceTexture;
-import android.hardware.camera2.CameraAccessException;
-import android.hardware.camera2.CameraCaptureSession;
-import android.hardware.camera2.CameraDevice;
-import android.hardware.camera2.CameraManager;
-import android.hardware.camera2.CaptureRequest;
-import android.hardware.camera2.TotalCaptureResult;
-import android.media.Image;
-import android.media.ImageReader;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.Environment;
-import android.os.Handler;
-import android.os.HandlerThread;
-import android.util.Log;
-import android.view.Surface;
-import android.view.TextureView;
-import android.view.View;
-import android.widget.Button;
-import android.widget.Toast;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.util.Arrays;
-import java.util.Objects;
 
 public class ConnectionActivity extends AppCompatActivity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
 
@@ -108,7 +54,7 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
     private List<DeviceItemType> devicesList;
     private ArrayList<DeviceItemType> disconnectedDevicesList;
     private TextView outputText;
-    ProtocolRepo getDevicesID;
+    ProtocolRepo protocolRepo;
     private int countCommands;
     private int lengthMes;
     private boolean active;
@@ -117,7 +63,8 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
     Dialog disconnectedDialog;
     Dialog networkDialog;
     boolean isBtService;
-    PlayerView playerView;
+    ArrayList<PlayerView> playerViews;
+    GridLayout gridLayout;
 
     public void showAlertWithOneButton(){
         MaterialAlertDialogBuilder alertDialog = new MaterialAlertDialogBuilder(ConnectionActivity.this);
@@ -158,7 +105,63 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
         devicesList = DeviceHandler.getDevicesList();
         checkForActiveDevices();
         if(devicesList.size()>0){
-            initializeData();
+            registerReceiver(mReceiver, new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
+            registerReceiver(mReceiver,new IntentFilter(WifiManager.WIFI_STATE_CHANGED_ACTION));
+            String devProtocol = devicesList.get(0).getDevProtocol();
+            findViewById(R.id.button_stop_bt).setEnabled(false);
+            outputText = findViewById(R.id.incoming_data_bt);
+            outputText.setMovementMethod(new ScrollingMovementMethod());
+
+            dataThreadForArduinoList = new ArrayList<>();
+            outputText.append("\n" + getResources().getString(R.string.bluetooth_device_activity_connected_first) + " " + devicesList.size() + " " + getResources().getString(R.string.bluetooth_device_activity_from) + " " + (devicesList.size() + disconnectedDevicesList.size()) + " " + getResources().getString(R.string.devices_title));
+            outputText.append("\n" + getResources().getString(R.string.bluetooth_device_activity_list_of_connections));
+            for (int i = 0; i < devicesList.size(); i++) {
+                outputText.append("\n" + getResources().getString(R.string.device_title) + " " + devicesList.get(i).getDevName() + " " + getResources().getString(R.string.bluetooth_device_activity_connected_second));
+                ConnectionThread bluetoothDataThreadForArduino = new ConnectionThread(this, devicesList.get(i), isBtService);
+                dataThreadForArduinoList.add(bluetoothDataThreadForArduino);
+                dataThreadForArduinoList.get(i).start();
+            }
+
+            res = getResources();
+            isHoldCommand = false;
+
+            protocolRepo = new ProtocolRepo(getApplicationContext(), devProtocol);
+            ProtocolDBHelper protocolDBHelper = ProtocolDBHelper.getInstance(getApplicationContext());
+            lengthMes = protocolDBHelper.getLength(devProtocol);
+            message = new byte[lengthMes];
+            countCommands = 0;
+
+            findViewById(R.id.button_up_bt).setOnTouchListener(touchListener);
+            findViewById(R.id.button_down_bt).setOnTouchListener(touchListener);
+            findViewById(R.id.button_left_bt).setOnTouchListener(touchListener);
+            findViewById(R.id.button_right_bt).setOnTouchListener(touchListener);
+            findViewById(R.id.button_stop_bt).setOnClickListener(this);
+
+            SwitchMaterial hold_command = findViewById(R.id.switch_hold_command_mm_Bt);
+            hold_command.setOnCheckedChangeListener(this);
+            hold_command.setChecked(false);
+            Arrays.fill(message, (byte) 0);
+
+            gridLayout = findViewById(R.id.gridLayout);
+            // количество столбцов
+            gridLayout.setColumnCount(1);
+            gridLayout.setRowCount(devicesList.size());
+            //TODO
+            //https://exoplayer.dev/hello-world.html
+            //https://medium.com/mindorks/implementing-exoplayer-for-beginners-in-kotlin-c534706bce4b
+            if(!isBtService && protocolRepo.isCameraSupported()){
+                initializePlayer();
+            } else {
+                gridLayout.setVisibility(View.GONE);
+            }
+            if(!protocolRepo.isMoveSupported()){
+                findViewById(R.id.constraintLayout2).setVisibility(View.GONE);
+            }
+            if(protocolRepo.isNeedNewCommandButton()){
+                createButtonList();
+            } else {
+                findViewById(R.id.btn_grid).setVisibility(View.GONE);
+            }
         } else {
             addDisconnectedDevice();
         }
@@ -172,97 +175,7 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
     @Override
     protected void onStart(){
         super.onStart();
-        playerView = findViewById(R.id.simple_player);
-        if(!isBtService){
-            initializePlayer();
-        } else {
-            playerView.setVisibility(View.GONE);
-        }
     }
-
-    private static class ImageSaver implements Runnable {
-        /**
-         * The JPEG image
-         */
-        private final Image mImage;
-        /**
-         * The file we save the image into.
-         */
-        private final File mFile;
-
-        ImageSaver(Image image, File file) {
-            mImage = image;
-            mFile = file;
-        }
-
-        @Override
-        public void run() {
-            ByteBuffer buffer = mImage.getPlanes()[0].getBuffer();
-            byte[] bytes = new byte[buffer.remaining()];
-            buffer.get(bytes);
-            FileOutputStream output = null;
-            try {
-                output = new FileOutputStream(mFile);
-                output.write(bytes);
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                mImage.close();
-                if (null != output) {
-                    try {
-                        output.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-    }
-
-    void initializeData(){
-        registerReceiver(mReceiver, new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
-        registerReceiver(mReceiver,new IntentFilter(WifiManager.WIFI_STATE_CHANGED_ACTION));
-        String devProtocol = devicesList.get(0).getDevProtocol();
-        findViewById(R.id.button_stop_bt).setEnabled(false);
-        outputText = findViewById(R.id.incoming_data_bt);
-        outputText.setMovementMethod(new ScrollingMovementMethod());
-
-        dataThreadForArduinoList = new ArrayList<>();
-        outputText.append("\n" + getResources().getString(R.string.bluetooth_device_activity_connected_first) + " " + devicesList.size() + " " + getResources().getString(R.string.bluetooth_device_activity_from) + " " + (devicesList.size() + disconnectedDevicesList.size()) + " " + getResources().getString(R.string.devices_title));
-        outputText.append("\n" + getResources().getString(R.string.bluetooth_device_activity_list_of_connections));
-        for (int i = 0; i < devicesList.size(); i++) {
-            outputText.append("\n" + getResources().getString(R.string.device_title) + " " + devicesList.get(i).getDevName() + " " + getResources().getString(R.string.bluetooth_device_activity_connected_second));
-            ConnectionThread bluetoothDataThreadForArduino = new ConnectionThread(this, devicesList.get(i), isBtService);
-            dataThreadForArduinoList.add(bluetoothDataThreadForArduino);
-            dataThreadForArduinoList.get(i).start();
-        }
-
-        res = getResources();
-        isHoldCommand = false;
-
-        getDevicesID = new ProtocolRepo(getApplicationContext(), devProtocol);
-        ProtocolDBHelper protocolDBHelper = ProtocolDBHelper.getInstance(getApplicationContext());
-        lengthMes = protocolDBHelper.getLength(devProtocol);
-        message = new byte[lengthMes];
-        countCommands = 0;
-
-        findViewById(R.id.button_up_bt).setOnTouchListener(touchListener);
-        findViewById(R.id.button_down_bt).setOnTouchListener(touchListener);
-        findViewById(R.id.button_left_bt).setOnTouchListener(touchListener);
-        findViewById(R.id.button_right_bt).setOnTouchListener(touchListener);
-        findViewById(R.id.button_stop_bt).setOnClickListener(this);
-        findViewById(R.id.btn_servo).setOnClickListener(this);
-
-        SwitchMaterial hold_command = findViewById(R.id.switch_hold_command_mm_Bt);
-        hold_command.setOnCheckedChangeListener(this);
-        hold_command.setChecked(false);
-        Arrays.fill(message, (byte) 0);
-
-        //TODO
-        //https://exoplayer.dev/hello-world.html
-        //https://medium.com/mindorks/implementing-exoplayer-for-beginners-in-kotlin-c534706bce4b
-    }
-
 
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         public void onReceive (Context context, Intent intent) {
@@ -380,10 +293,8 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
         super.onResume();
         active = true;
         checkForActiveDevices();
-        if(!isBtService){
+        if(!isBtService && protocolRepo.isCameraSupported()){
             initializePlayer();
-        } else {
-            playerView.setVisibility(View.GONE);
         }
     }
 
@@ -396,13 +307,13 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
         checkForActiveDevices();
         if(devicesList.size()>0){
             completeDevicesInfo();
-            if (getDevicesID.getTag(res.getString(R.string.TAG_TURN_COM)))
-                message[countCommands++] = getDevicesID.get("new_command");
+            if (protocolRepo.getTag(res.getString(R.string.TAG_TURN_COM)))
+                message[countCommands++] = protocolRepo.get("new_command");
 
-            if (getDevicesID.getTag(res.getString(R.string.TAG_TYPE_COM)))
-                message[countCommands++] = getDevicesID.get("type_move");
+            if (protocolRepo.getTag(res.getString(R.string.TAG_TYPE_COM)))
+                message[countCommands++] = protocolRepo.get("type_move");
 
-            message[countCommands++] = getDevicesID.get("STOP");
+            message[countCommands++] = protocolRepo.get("STOP");
             for (int i = 0; i < dataThreadForArduinoList.size(); i++) {
                 dataThreadForArduinoList.get(i).sendData(message, lengthMes);
             }
@@ -427,9 +338,6 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
                 outputText.append("\n" + getResources().getString(R.string.send_command_stop));
                 completeMessage("STOP");
                 countCommands = 0;
-                break;
-            case(R.id.btn_servo):
-                Toast.makeText(ConnectionActivity.this,"btn_servo",Toast.LENGTH_LONG).show();
                 break;
         }
     }
@@ -503,30 +411,30 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
 
     public void completeDevicesInfo() {
         countCommands = 0;
-        if (getDevicesID.getTag(res.getString(R.string.TAG_CLASS_FROM)))
-            message[countCommands++] = getDevicesID.get("class_android");
+        if (protocolRepo.getTag(res.getString(R.string.TAG_CLASS_FROM)))
+            message[countCommands++] = protocolRepo.get("class_android");
 
-        if (getDevicesID.getTag(res.getString(R.string.TAG_TYPE_FROM)))
-            message[countCommands++] = getDevicesID.get("type_computer"); // класс и тип устройства отправки
+        if (protocolRepo.getTag(res.getString(R.string.TAG_TYPE_FROM)))
+            message[countCommands++] = protocolRepo.get("type_computer"); // класс и тип устройства отправки
 
-        if (getDevicesID.getTag(res.getString(R.string.TAG_CLASS_TO)))
-            message[countCommands++] = getDevicesID.get(devicesList.get(0).getDevClass());
+        if (protocolRepo.getTag(res.getString(R.string.TAG_CLASS_TO)))
+            message[countCommands++] = protocolRepo.get(devicesList.get(0).getDevClass());
 
-        if (getDevicesID.getTag(res.getString(R.string.TAG_TYPE_TO)))
-            message[countCommands++] = getDevicesID.get(devicesList.get(0).getDevType());// класс и тип устройства приема
+        if (protocolRepo.getTag(res.getString(R.string.TAG_TYPE_TO)))
+            message[countCommands++] = protocolRepo.get(devicesList.get(0).getDevType());// класс и тип устройства приема
     }
 
     public void completeMessage(String command) {
 
-        Byte code = getDevicesID.get(command);
+        Byte code = protocolRepo.get(command);
         if (code != null) {
-            if (getDevicesID.getTag(res.getString(R.string.TAG_TURN_COM))) {
-                message[countCommands++] = (prevCommand == code) ? getDevicesID.get("redo_command") : getDevicesID.get("new_command");
+            if (protocolRepo.getTag(res.getString(R.string.TAG_TURN_COM))) {
+                message[countCommands++] = (prevCommand == code) ? protocolRepo.get("redo_command") : protocolRepo.get("new_command");
                 prevCommand = code;
             }
 
-            if (getDevicesID.getTag(res.getString(R.string.TAG_TYPE_COM)))
-                message[countCommands++] = getDevicesID.get("type_move");
+            if (protocolRepo.getTag(res.getString(R.string.TAG_TYPE_COM)))
+                message[countCommands++] = protocolRepo.get("type_move");
             message[countCommands++] = code;
 
             for (int i = 0; i < dataThreadForArduinoList.size(); i++) {
@@ -571,17 +479,45 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
         }
     }
 
+    private void createButtonList(){
+        LinearLayout buttonListLayout = findViewById(R.id.btn_grid);
+        for(String command: protocolRepo.getNewDynamicCommands().keySet()){
+            MaterialButton curButton = new MaterialButton(this, null, R.attr.materialButtonStyle);
+
+            curButton.setText(command);
+            curButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    completeMessage(command);
+                    countCommands = 0;
+                }
+            });
+            buttonListLayout.addView(curButton);
+        }
+    }
+
     private void initializePlayer(){
-        ExoPlayer player = new ExoPlayer.Builder(this).build();
-        // Bind the player to the view.
-        playerView.setPlayer(player);
-        MediaItem firstItem = MediaItem.fromUri(devicesList.get(0).getDevIp());
-        // Add the media items to be played.
-        player.addMediaItem(firstItem);
-        // Prepare the player.
-        player.prepare();
-        // Start the playback.
-        player.play();
+        playerViews.clear();
+        for(int i = 0; i < devicesList.size(); i++){
+            ExoPlayer player = new ExoPlayer.Builder(this)
+                    .setLivePlaybackSpeedControl(
+                    new DefaultLivePlaybackSpeedControl.Builder()
+                            .setFallbackMaxPlaybackSpeed(1.04f)
+                            .build()).build();
+            PlayerView playerView = new PlayerView(this);
+            playerView.setPlayer(player);
+            gridLayout.addView(playerView);
+            MediaItem item = new MediaItem.Builder()
+                    .setUri(devicesList.get(i).getDevIp())
+                    .build();
+            // Set the media items to be played.
+            player.setMediaItem(item);
+            // Prepare the player.
+            player.prepare();
+            // Start the playback.
+            player.play();
+            playerViews.add(playerView);
+        }
     }
 
     private void releasePlayer(){

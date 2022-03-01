@@ -27,6 +27,7 @@
         <item name="floatingActionButtonPrimaryStyle">@style/MaterialButton.Fab.Main</item>
         <item name="floatingActionButtonSecondaryStyle">@style/MaterialButton.Fab.Secondary</item>
         <item name="buttonStyle">@style/MaterialButton</item>
+        <item name="materialButtonStyle">@style/MaterialButton</item>
 
     </style>
 
@@ -54,6 +55,7 @@
         <item name="colorSecondary">?attr/simpleThemeSecondaryColor</item>
         <item name="colorOnSecondary">?attr/simpleThemeOnSecondaryColor</item>
         <item name="buttonStyle">@style/MaterialButton</item>
+        <item name="materialButtonStyle">@style/MaterialButton</item>
 
     </style>
 

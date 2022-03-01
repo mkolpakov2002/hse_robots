@@ -1,4 +1,8 @@
 <CodeCatalogue>
+    <possibilities>
+        <move>1</move>
+        <camera>0</camera>
+    </possibilities>
     <ClassFromDevice>
         <class_android>30</class_android>
         <class_computer>65</class_computer>

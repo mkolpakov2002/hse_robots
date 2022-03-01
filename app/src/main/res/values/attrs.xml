@@ -9,4 +9,5 @@
     <attr name="simpleThemeAccentColor" format="color" />
     <attr name="simpleThemeWindowSecondaryColor" format="color" />
     <attr name="popupMenuBackgroundTint" format="color" />
+    <attr name="materialButtonStyle" format="reference"/>
 </resources>

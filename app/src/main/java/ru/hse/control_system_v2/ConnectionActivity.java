@@ -29,7 +29,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.exoplayer2.DefaultLivePlaybackSpeedControl;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.MediaItem;
-import com.google.android.exoplayer2.ui.PlayerView;
+import com.google.android.exoplayer2.ui.StyledPlayerView;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -63,7 +63,7 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
     Dialog disconnectedDialog;
     Dialog networkDialog;
     boolean isBtService;
-    ArrayList<PlayerView> playerViews;
+    ArrayList<StyledPlayerView> playerViews;
     GridLayout gridLayout;
 
     public void showAlertWithOneButton(){
@@ -493,6 +493,7 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
                 public void onClick(View view) {
                     completeMessage(command);
                     countCommands = 0;
+                    outputText.append("\n" + "Отправляю команду " + command);
                 }
             });
             buttonListLayout.addView(curButton);
@@ -507,7 +508,7 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
                     new DefaultLivePlaybackSpeedControl.Builder()
                             .setFallbackMaxPlaybackSpeed(1.04f)
                             .build()).build();
-            PlayerView playerView = new PlayerView(this);
+            StyledPlayerView playerView = new StyledPlayerView(this);
             playerView.setPlayer(player);
             gridLayout.addView(playerView);
             MediaItem item = new MediaItem.Builder()

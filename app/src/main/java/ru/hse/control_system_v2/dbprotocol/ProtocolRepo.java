@@ -79,7 +79,11 @@ public class ProtocolRepo extends HashMap<String, Byte> {
     }
 
     public Byte get(String key) {
-        return moveCodes.get(key);
+        if(moveCodes.get(key)!=null)
+            return moveCodes.get(key);
+        else if(possibilitiesSettings.get(key)!=null)
+            return possibilitiesSettings.get(key);
+        else return newProtoCommands.get(key);
     }
 
     public HashMap<String, Byte> getNewDynamicCommands() {

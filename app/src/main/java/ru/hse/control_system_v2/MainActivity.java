@@ -56,7 +56,12 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(null);
+        if (App.isActivityConnection()) {
+            super.onCreate(null);
+            App.setServiceConnecting(false);
+            App.setActivityConnectionState(false);
+        } else super.onCreate(savedInstanceState);
+
         ThemeUtils.onActivityCreateSetTheme(this);
         setContentView(R.layout.activity_main);
         MaterialToolbar toolbar = findViewById(R.id.toolbar);
@@ -175,7 +180,7 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
         }
         setUpNavigation();
         checkForBtAdapter();
-        if(App.isIsConnecting()){
+        if (App.isServiceConnecting()) {
             navController.navigate(R.id.connection_dialog);
         }
     }
@@ -235,6 +240,8 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
     @Override
     public void onResume() {
         super.onResume();
+        if(App.isActivityConnection())
+            App.setActivityConnectionState(false);
         checkForBtAdapter();
     }
 
@@ -320,7 +327,7 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
                 try {
                     if (getMainMenuFragment() != null)
                         getMainMenuFragment().onRefresh();
-                } catch (java.lang.IllegalStateException e){
+                } catch (java.lang.IllegalStateException e) {
                     //nothing
                 }
             }
@@ -333,12 +340,15 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            //Устройство подключено, Service выполнился успешно
-            navController.navigate(R.id.mainMenuFragment);
-            Bundle b = new Bundle();
-            b.putBoolean("isBtService", !App.getDevicesList().get(0).isWiFiBtConnected());
-            navController.navigate(R.id.connectionActivity, b);
-            isBtConnection = null;
+            if(!App.isActivityConnection()&&App.isServiceConnecting()){
+                //Устройство подключено, Service выполнился успешно
+                navController.navigate(R.id.mainMenuFragment);
+                Bundle b = new Bundle();
+                b.putBoolean("isBtService", !App.getDevicesList().get(0).isWiFiBtConnected());
+                navController.navigate(R.id.connectionActivity, b);
+                isBtConnection = null;
+                App.setServiceConnecting(false);
+            }
         }
     };
 
@@ -364,29 +374,27 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
     }
 
     private void startConnectionService() {
-        App.setConnecting(true);
-        Intent startConnectionService = new Intent(App.getContext(), ConnectionService.class);
-        startConnectionService.putExtra("isBtService", isBtConnection);
-        startService(startConnectionService);
-        navController.navigate(R.id.connection_dialog);
+        if(!App.isServiceConnecting()){
+            App.setServiceConnecting(true);
+            Intent startConnectionService = new Intent(App.getContext(), ConnectionService.class);
+            startConnectionService.putExtra("isBtService", isBtConnection);
+            startService(startConnectionService);
+            navController.navigate(R.id.connection_dialog);
+        }
     }
 
     void enableNetwork() {
         if (isBtConnection) {
-            Intent intentBtEnabled = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
+            BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(MainActivity.this, new String[]{
+                        Manifest.permission.BLUETOOTH_CONNECT
+                }, 2);
                 return;
             }
-            this.startActivity(intentBtEnabled);
+            mBluetoothAdapter.enable();
         } else {
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 Intent panelIntent = new Intent(Settings.Panel.ACTION_INTERNET_CONNECTIVITY);
                 this.startActivity(panelIntent);
             } else {

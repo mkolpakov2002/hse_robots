@@ -44,6 +44,9 @@ public class ProtocolRepo extends HashMap<String, Byte> {
         if (!name.isEmpty()){
             possibilitiesSettings.put("camera", (byte) 0x0);
             possibilitiesSettings.put("move", (byte) 0x0);
+            for(String key: mainLabels){
+                moveCodes.put(key, (byte) 0x0);
+            }
             parseCodes(name);
         }
 

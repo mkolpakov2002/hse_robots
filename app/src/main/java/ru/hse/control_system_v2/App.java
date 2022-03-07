@@ -27,6 +27,7 @@ public class App extends Application {
     private static WifiManager wifiManager;
     private ProtocolDBHelper protocolDBHelper;
     private static boolean isConnecting = false;
+    private static boolean connectionState = true;
     private static ArrayList<DeviceItemType> devicesList = new ArrayList<>();
 
     @Override
@@ -86,11 +87,17 @@ public class App extends Application {
         return btAdapter;
     }
 
-    public static void setConnecting(boolean connecting) {
+    public static void setServiceConnecting(boolean connecting) {
         isConnecting = connecting;
     }
 
-    public static boolean isIsConnecting(){return isConnecting;}
+    public static boolean isServiceConnecting(){return isConnecting;}
+
+    public static void setActivityConnectionState(boolean connecting) {
+        connectionState = connecting;
+    }
+
+    public static boolean isActivityConnection(){return connectionState;}
 
     public static synchronized ArrayList<DeviceItemType> getDevicesList() {
         return devicesList;

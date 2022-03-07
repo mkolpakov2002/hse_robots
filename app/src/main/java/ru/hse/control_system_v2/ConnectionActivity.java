@@ -21,6 +21,7 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.GridLayout;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,7 +30,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.exoplayer2.DefaultLivePlaybackSpeedControl;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.MediaItem;
-import com.google.android.exoplayer2.ui.StyledPlayerView;
+import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -38,6 +39,7 @@ import com.google.android.material.switchmaterial.SwitchMaterial;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import ru.hse.control_system_v2.dbprotocol.ProtocolDBHelper;
 import ru.hse.control_system_v2.dbprotocol.ProtocolRepo;
@@ -63,8 +65,10 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
     Dialog disconnectedDialog;
     Dialog networkDialog;
     boolean isBtService;
-    ArrayList<StyledPlayerView> playerViews;
-    GridLayout gridLayout;
+    ArrayList<PlayerView> playerViews;
+    LinearLayout videoLinearLayout;
+    ScrollView videoScrollLayout;
+    ScrollView buttonScrollLayout;
 
     public void showAlertWithOneButton(){
         MaterialAlertDialogBuilder alertDialog = new MaterialAlertDialogBuilder(ConnectionActivity.this);
@@ -84,6 +88,7 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
         super.onCreate(savedInstanceState);
         ThemeUtils.onActivityCreateSetTheme(this);
         setContentView(R.layout.activity_connection);
+        App.setActivityConnectionState(true);
 
         MaterialToolbar toolbar = findViewById(R.id.toolbar_connection_activity);
         toolbar.inflateMenu(R.menu.main_toolbar_menu);
@@ -142,17 +147,17 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
             hold_command.setChecked(false);
             Arrays.fill(message, (byte) 0);
 
-            gridLayout = findViewById(R.id.gridLayout);
-            // количество столбцов
-            gridLayout.setColumnCount(1);
-            gridLayout.setRowCount(devicesList.size());
+            videoLinearLayout = findViewById(R.id.gridLayout);
+            videoScrollLayout = findViewById(R.id.scrollViewVideo);
+            buttonScrollLayout = findViewById(R.id.scrollView5);
             //TODO
             //https://exoplayer.dev/hello-world.html
             //https://medium.com/mindorks/implementing-exoplayer-for-beginners-in-kotlin-c534706bce4b
             if(!isBtService && protocolRepo.isCameraSupported()){
+                playerViews = new ArrayList<>();
                 initializePlayer();
             } else {
-                gridLayout.setVisibility(View.GONE);
+                videoScrollLayout.setVisibility(View.GONE);
             }
             if(!protocolRepo.isMoveSupported()){
                 findViewById(R.id.constraintLayout2).setVisibility(View.GONE);
@@ -160,7 +165,7 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
             if(protocolRepo.isNeedNewCommandButton()){
                 createButtonList();
             } else {
-                findViewById(R.id.btn_grid).setVisibility(View.GONE);
+                buttonScrollLayout.setVisibility(View.GONE);
             }
         } else {
             addDisconnectedDevice();
@@ -250,7 +255,7 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
                 materialAlertDialogBuilder.setPositiveButton("Переподключиться", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        App.setConnecting(true);
+                        App.setServiceConnecting(true);
                         App.setDevicesList(disconnectedDevicesList);
                         Intent startConnectionService = new Intent(App.getContext(), ConnectionService.class);
                         startConnectionService.putExtra("isBtService", isBtService);
@@ -305,7 +310,8 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
         super.onPause();
         Log.d(APP_LOG_TAG, "DeviceActivity в onPause");
         active = false;
-        releasePlayer();
+        if(!isBtService && protocolRepo.isCameraSupported())
+            releasePlayer();
         checkForActiveDevices();
         if(devicesList.size()>0){
             completeDevicesInfo();
@@ -330,8 +336,6 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
     protected void onStop(){
         super.onStop();
         active = false;
-        if(!isBtService && protocolRepo.isCameraSupported())
-            releasePlayer();
     }
 
     @Override
@@ -483,21 +487,102 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void createButtonList(){
-        LinearLayout buttonListLayout = findViewById(R.id.btn_grid);
-        for(String command: protocolRepo.getNewDynamicCommands().keySet()){
-            MaterialButton curButton = new MaterialButton(this, null, R.attr.materialButtonStyle);
+        LinearLayout buttonListLayout;
+        GridLayout buttonGridLayout;
+        if(protocolRepo.isCameraSupported() && protocolRepo.isMoveSupported()) {
+            buttonListLayout = new LinearLayout(this);
+            buttonListLayout.setOrientation(LinearLayout.VERTICAL);
+            for(String command: protocolRepo.getNewDynamicCommands().keySet()){
+                MaterialButton currButton = createCommandButton(command);
+                GridLayout.LayoutParams param =new GridLayout.LayoutParams();
+                param.height = GridLayout.LayoutParams.WRAP_CONTENT;
+                param.width = GridLayout.LayoutParams.WRAP_CONTENT;
+                currButton.setLayoutParams(param);
+                buttonListLayout.addView(currButton);
+            }
 
-            curButton.setText(command);
-            curButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    completeMessage(command);
-                    countCommands = 0;
-                    outputText.append("\n" + "Отправляю команду " + command);
-                }
-            });
-            buttonListLayout.addView(curButton);
+            buttonScrollLayout.addView(buttonListLayout);
         }
+        else if(protocolRepo.isCameraSupported() || protocolRepo.isMoveSupported()) {
+            buttonGridLayout = new GridLayout(this);
+            buttonGridLayout.setAlignmentMode(GridLayout.ALIGN_BOUNDS);
+            buttonGridLayout.setColumnCount(2);
+
+            int currentCol = 0;
+            int currentRow = 0;
+
+            int paddingDp = 8;
+            float density = this.getResources().getDisplayMetrics().density;
+            int paddingPixel = (int)(paddingDp * density);
+
+            for(String command: protocolRepo.getNewDynamicCommands().keySet()){
+                MaterialButton currButton = createCommandButton(command);
+                GridLayout.LayoutParams param =new GridLayout.LayoutParams();
+                param.height = GridLayout.LayoutParams.WRAP_CONTENT;
+                param.width = GridLayout.LayoutParams.WRAP_CONTENT;
+                param.columnSpec = GridLayout.spec(currentCol, 1, 1);
+                param.rowSpec = GridLayout.spec(currentRow, 1, 1);
+                param.setMargins(paddingPixel, 0, paddingPixel, paddingPixel);
+                currButton.setLayoutParams(param);
+                buttonGridLayout.addView(currButton);
+                currentCol++;
+                if(currentCol == 2){
+                    currentCol = 0;
+                    currentRow++;
+                }
+            }
+            buttonScrollLayout.addView(buttonGridLayout);
+        }
+        else {
+            buttonGridLayout = new GridLayout(this);
+            buttonGridLayout.setAlignmentMode(GridLayout.ALIGN_BOUNDS);
+            buttonGridLayout.setColumnCount(3);
+
+            int paddingDp = 8;
+            float density = this.getResources().getDisplayMetrics().density;
+            int paddingPixel = (int)(paddingDp * density);
+
+
+            int currentCol = 0;
+            int currentRow = 0;
+            for(String command: protocolRepo.getNewDynamicCommands().keySet()){
+
+                MaterialButton currButton = createCommandButton(command);
+                GridLayout.LayoutParams param =new GridLayout.LayoutParams();
+                param.height = GridLayout.LayoutParams.WRAP_CONTENT;
+                param.width = GridLayout.LayoutParams.WRAP_CONTENT;
+                param.columnSpec = GridLayout.spec(currentCol, 1, 1);
+                param.rowSpec = GridLayout.spec(currentRow, 1, 1);
+                param.setMargins(paddingPixel, 0, paddingPixel, paddingPixel);
+                currButton.setLayoutParams(param);
+                buttonGridLayout.addView(currButton);
+                currentCol++;
+                if(currentCol == 3){
+                    currentCol = 0;
+                    currentRow++;
+                }
+            }
+
+            buttonScrollLayout.addView(buttonGridLayout);
+
+        }
+
+    }
+
+    private MaterialButton createCommandButton(String command){
+        MaterialButton curButton = new MaterialButton(this, null, R.attr.materialButtonStyle);
+
+        curButton.setText(command);
+        curButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                completeMessage(command);
+                countCommands = 0;
+                outputText.append("\n" + "Отправляю команду " + command);
+            }
+        });
+        return curButton;
+
     }
 
     private void initializePlayer(){
@@ -508,9 +593,12 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
                     new DefaultLivePlaybackSpeedControl.Builder()
                             .setFallbackMaxPlaybackSpeed(1.04f)
                             .build()).build();
-            StyledPlayerView playerView = new StyledPlayerView(this);
+            PlayerView playerView = new PlayerView(this);
             playerView.setPlayer(player);
-            gridLayout.addView(playerView);
+            playerView.setKeepScreenOn(true);
+            playerView.setMinimumHeight(300);
+            playerView.setUseController(false);
+            videoLinearLayout.addView(playerView);
             MediaItem item = new MediaItem.Builder()
                     .setUri(devicesList.get(i).getDevIp())
                     .build();
@@ -525,18 +613,12 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void releasePlayer(){
-
-    }
-
-    private void startVideo(){
-
-    }
-
-    private void pauseVideo(){
-
-    }
-
-    private void stopVideo(){
-
+        for(int i = 0; i < devicesList.size(); i++){
+            if(playerViews.get(i)!=null){
+                Objects.requireNonNull(playerViews.get(i).getPlayer()).stop();
+                Objects.requireNonNull(playerViews.get(i).getPlayer()).release();
+            }
+        }
+        playerViews.clear();
     }
 }

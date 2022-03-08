@@ -58,12 +58,16 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
     public void onCreate(Bundle savedInstanceState) {
         if (App.isActivityConnection()) {
             super.onCreate(null);
-            App.setServiceConnecting(false);
             App.setActivityConnectionState(false);
         } else super.onCreate(savedInstanceState);
 
         ThemeUtils.onActivityCreateSetTheme(this);
         setContentView(R.layout.activity_main);
+        setUpNavigation();
+        checkForBtAdapter();
+        if (App.isServiceConnecting()) {
+            navController.navigate(R.id.connection_dialog);
+        }
         MaterialToolbar toolbar = findViewById(R.id.toolbar);
         toolbar.inflateMenu(R.menu.main_toolbar_menu);
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
@@ -178,11 +182,6 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
 
             });
         }
-        setUpNavigation();
-        checkForBtAdapter();
-        if (App.isServiceConnecting()) {
-            navController.navigate(R.id.connection_dialog);
-        }
     }
 
     void setUpNavigation() {
@@ -240,8 +239,9 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
     @Override
     public void onResume() {
         super.onResume();
-        if(App.isActivityConnection())
+        if (App.isActivityConnection()) {
             App.setActivityConnectionState(false);
+        }
         checkForBtAdapter();
     }
 
@@ -331,6 +331,7 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
                     //nothing
                 }
             }
+            App.setServiceConnecting(false);
             createOneButtonAlertDialog(getString(R.string.error), getString(R.string.connection_error));
             isBtConnection = null;
         }

@@ -91,8 +91,6 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
 
         @Override
         public void deviceClicked(DeviceItemType item, View itemView) {
-            int b = itemTypeArrayList.indexOf(itemTypeArrayList.get(1));
-            int c = itemTypeArrayList.indexOf(itemTypeArrayList.get(2));
             ImageView checkMark = (ImageView) itemView.findViewById(R.id.check_mark);
             MaterialCardView materialCardView = itemView.findViewById(R.id.device_item_card_view);
             mainMenuFragment = ma.getMainMenuFragment();

@@ -1,5 +1,8 @@
 package ru.hse.control_system_v2.list_devices;
 
+import static ru.hse.control_system_v2.Constants.APP_LOG_TAG;
+
+import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothSocket;
 import android.graphics.Color;
@@ -109,7 +112,8 @@ public class DeviceItemType implements ItemType {
                 this.getDevClass().equals(item.getDevClass()) &&
                 this.getDevIp().equals(item.getDevIp()) &&
                 this.getDevPort() == (item.getDevPort()) &&
-                this.getDevProtocol().equals(item.getDevProtocol());
+                this.getDevProtocol().equals(item.getDevProtocol()) &&
+                this.getDevId() == (item.getDevId());
     }
 
     public Boolean isWiFiBtConnected() {
@@ -161,6 +165,7 @@ public class DeviceItemType implements ItemType {
         isConnected = null;
     }
 
+    @SuppressLint("MissingPermission")
     public void openBtConnection() {
         if (bluetoothSocket != null) {
             try {
@@ -168,7 +173,8 @@ public class DeviceItemType implements ItemType {
                 isConnected = false;
             } catch (IOException e) {
                 e.printStackTrace();
-                Log.d("BLUETOOTH", e.getMessage());
+                Log.d(APP_LOG_TAG, "Попытка подключения для " + getDevName() + " неуспешна");
+                Log.d(APP_LOG_TAG, e.getMessage());
                 closeConnection();
                 isConnected = null;
             }

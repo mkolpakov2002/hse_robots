@@ -65,7 +65,6 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
         newDataSet.add(itemTypeArrayList.get(0));
         var newData = getDevicesArrayList();
         newDataSet.addAll(newData);
-
         DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new ItemsDiffUtilCallBack(newDataSet, itemTypeArrayList), true);
         this.itemTypeArrayList = newDataSet;
         this.mData = getDevicesArrayList();
@@ -74,7 +73,6 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     public interface DeviceClickedListener {
         void deviceClicked(DeviceItemType item, View itemView);
-
         void deviceLongClicked(DeviceItemType item, View itemView);
     }
 
@@ -93,6 +91,8 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
 
         @Override
         public void deviceClicked(DeviceItemType item, View itemView) {
+            int b = itemTypeArrayList.indexOf(itemTypeArrayList.get(1));
+            int c = itemTypeArrayList.indexOf(itemTypeArrayList.get(2));
             ImageView checkMark = (ImageView) itemView.findViewById(R.id.check_mark);
             MaterialCardView materialCardView = itemView.findViewById(R.id.device_item_card_view);
             mainMenuFragment = ma.getMainMenuFragment();
@@ -111,7 +111,7 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
                 //необходимо проверить на присутствие в списке
                 boolean wasAlreadySelected = false;
                 for (DeviceItemType currentDevice : selectedDevicesList) {
-                    if (currentDevice.getDeviceMAC().equals(item.getDeviceMAC())) {
+                    if (currentDevice.getDevId() == (item.getDevId())) {
                         selectedDevicesList.remove(currentDevice);
                         itemTypeArrayList.get(itemTypeArrayList.indexOf(item)).setIsSelectedOnScreen(false);
                         wasAlreadySelected = true;
@@ -184,7 +184,7 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
                 {
                     boolean wasAlreadySelected = false;
                     for (int i = 0; i < selectedDevicesList.size(); i++) {
-                        if (selectedDevicesList.get(i).getDeviceMAC().equals(item.getDeviceMAC())) {
+                        if (selectedDevicesList.get(i).getDevId() == (item.getDevId())) {
                             wasAlreadySelected = true;
                         }
                     }

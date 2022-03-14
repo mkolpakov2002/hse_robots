@@ -72,7 +72,6 @@ public class ConnectionService extends Service {
                     BluetoothDevice device = App.getBtAdapter().getRemoteDevice(currentDevice.getDeviceMAC());
                     currentDevice.setBtSocket((BluetoothSocket) device.getClass().getMethod("createRfcommSocketToServiceRecord", UUID.class).invoke(device, MY_UUID));
                 }
-                Log.d(APP_LOG_TAG, "Попытка подключения для " + currentDevice.getDevName() + " успешна");
             } catch (IOException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
                 e.printStackTrace();
                 Log.d(APP_LOG_TAG, "Попытка подключения для " + currentDevice.getDevName() + " неуспешна");

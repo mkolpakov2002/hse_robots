@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId "ru.hse.control_system_v2"
-        minSdk 28
+        minSdk 24
         targetSdk 31
         versionCode 11
         versionName "2.9"

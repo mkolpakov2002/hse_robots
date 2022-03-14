@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -21,6 +22,7 @@ import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
@@ -34,8 +36,11 @@ import androidx.navigation.ui.NavigationUI;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Objects;
 
 import ru.hse.control_system_v2.list_devices.DeviceItemType;
@@ -182,6 +187,7 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
 
             });
         }
+        requestMultiplePermissions();
     }
 
     void setUpNavigation() {
@@ -216,24 +222,18 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
 
         if (!App.isBtWiFiSupported()) {
             // объект Builder для создания диалогового окна
-            androidx.appcompat.app.AlertDialog dialog = new androidx.appcompat.app.AlertDialog.Builder(this, R.style.AlertDialog_AppCompat).create();
+            AlertDialog dialog = new MaterialAlertDialogBuilder(this, R.style.AlertDialog_AppCompat).create();
             dialog.setTitle(getString(R.string.error));
             dialog.setMessage(getString(R.string.suggestionNoBtWiFiAdapter));
             dialog.setButton(androidx.appcompat.app.AlertDialog.BUTTON_NEUTRAL, getString(R.string.ok),
                     (dialog1, which) -> {
                         // Closes the dialog and terminates the activity.
                         dialog1.dismiss();
+                        this.finish();
                     });
+            dialog.show();
         }
-        if (isFirstLaunch == 1) {
-            sPref = getPreferences(MODE_PRIVATE);
-            SharedPreferences.Editor ed = sPref.edit();
-            ed.putInt("isFirstLaunch", 0);
-            ed.apply();
-            isFirstLaunch = 0;
-            requestPerms();
-            createOneButtonAlertDialog(getResources().getString(R.string.instruction_alert), getString(R.string.alert_first_launch));
-        }
+
     }
 
     @Override
@@ -245,9 +245,46 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
         checkForBtAdapter();
     }
 
-    private void requestPerms() {
-        String[] permissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
-        requestPermissions(permissions, PERMISSION_REQUEST_CODE);
+    private void requestMultiplePermissions() {
+        ArrayList<String> permissionList = new ArrayList<>();
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
+            if (ActivityCompat.checkSelfPermission(this,Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_DENIED) {
+                permissionList.add(Manifest.permission.BLUETOOTH_CONNECT);
+            }
+        }
+
+        if (ActivityCompat.checkSelfPermission(this,Manifest.permission.WRITE_EXTERNAL_STORAGE)== PackageManager.PERMISSION_DENIED) {
+            permissionList.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
+
+        if(permissionList.size()>0){
+            ActivityCompat.requestPermissions(this, (String[]) permissionList.toArray(),PERMISSION_REQUEST_CODE);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (Arrays.stream(grantResults).anyMatch(n -> n!= PackageManager.PERMISSION_GRANTED)){
+            // объект Builder для создания диалогового окна
+            AlertDialog dialog = new MaterialAlertDialogBuilder(this, R.style.AlertDialog_AppCompat).create();
+            dialog.setTitle(getString(R.string.error));
+            dialog.setMessage("Чтобы использовать приложение Роботы ВШЭ, предоставьте разрешения на доступ к Bluetooth и хранилищу.");
+            dialog.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.ok),
+                    (dialog1, which) -> {
+                        // Closes the dialog and terminates the activity.
+                        dialog1.dismiss();
+                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                                Uri.parse("package:" + getPackageName()));
+                        intent.addCategory(Intent.CATEGORY_DEFAULT);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                        this.finish();
+                    });
+            dialog.setCancelable(false);
+            dialog.show();
+        }
     }
 
     final int PERMISSION_REQUEST_CODE = 123;
@@ -400,7 +437,7 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
                 this.startActivity(panelIntent);
             } else {
                 WifiManager wifiManager = (WifiManager)
-                        App.getContext().getSystemService(WIFI_SERVICE);
+                        getApplicationContext().getSystemService(WIFI_SERVICE);
                 wifiManager.setWifiEnabled(true);
             }
         }

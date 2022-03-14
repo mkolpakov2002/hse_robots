@@ -77,7 +77,6 @@ public class SettingsFragment extends Fragment {
     private SQLiteDatabase database;
     private boolean isEditTextNameChanged, isEditTextLenChanged, isEditTextCodeChanged;
     private ScrollView menuProto;
-    private BluetoothAdapter btAdapter;
     private Context fragmentContext;
     private MainActivity ma;
 
@@ -277,7 +276,6 @@ public class SettingsFragment extends Fragment {
                 }
             }
         });
-        btAdapter = BluetoothAdapter.getDefaultAdapter();
         showProtocols();
     }
 
@@ -349,9 +347,7 @@ public class SettingsFragment extends Fragment {
                 break;
         }
 
-        if (allowed) {
-
-        } else {
+        if (!allowed) {
             // we will give warning to user that they haven't granted permissions.
             if (shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                 Toast.makeText(ma, "Storage Permissions denied.", Toast.LENGTH_SHORT).show();
@@ -435,11 +431,5 @@ public class SettingsFragment extends Fragment {
 
         cursor.close();
     }
-
-    //True, если Bluetooth включён
-    public boolean btIsEnabledFlagVoid() {
-        return btAdapter.isEnabled();
-    }
-
 
 }

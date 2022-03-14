@@ -11,8 +11,8 @@ android {
         applicationId "ru.hse.control_system_v2"
         minSdk 24
         targetSdk 31
-        versionCode 11
-        versionName "2.9"
+        versionCode 12
+        versionName "2.9.1"
         multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

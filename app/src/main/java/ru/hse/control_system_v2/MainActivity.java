@@ -258,7 +258,7 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
         }
 
         if(permissionList.size()>0){
-            ActivityCompat.requestPermissions(this, (String[]) permissionList.toArray(),PERMISSION_REQUEST_CODE);
+            ActivityCompat.requestPermissions(this, permissionList.toArray(new String[0]),PERMISSION_REQUEST_CODE);
         }
     }
 

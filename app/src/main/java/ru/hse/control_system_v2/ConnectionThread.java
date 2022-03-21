@@ -133,6 +133,14 @@ public class ConnectionThread extends Thread {
         }
     }
 
+    public void sendData(String message) {
+        try {
+            mmOutStream.write(message.getBytes());
+        } catch (IOException e) {
+            Disconnect();
+        }
+    }
+
     public void Disconnect() {
         deviceItemType.closeConnection();
         Thread.currentThread().interrupt();

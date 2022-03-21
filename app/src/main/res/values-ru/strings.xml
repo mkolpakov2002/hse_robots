@@ -1,21 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Роботы ВШЭ</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="name">Name</string>
-    <string name="rate_label">MAC</string>
     <string name="alert_connect">Подключить</string>
-    <string name="label_name">Имя</string>
-    <string name="label_MAC">MAC адрес</string>
-    <string name="add_bd_label">Принять</string>
-    <string name="cancel_add_bd_label">Отмена</string>
-    <string name="ok_add_bd_label">Завершить</string>
     <string name="error">Ошибка приложения</string>
     <string name="suggestionEnableBluetooth">Пожалуйста, включите bluetooth для выбора устройств!</string>
-    <string name="btnEnBt">Включить bluetooth</string>
     <string name="add_device">Добавить устройство</string>
     <string name="paired_devices">Список сопряжённых устройств</string>
-    <string name="protocol_control">Управление протоколами</string>
     <string name="favorites_devices">Список сохранённых устройств</string>
     <string name="no_devices_added">Нет сопряжённых устройств</string>
     <string name="go_to_settings">Новое сопряжение</string>
@@ -23,8 +14,6 @@
     <string name="protocol_length">Длина сообщения в байт</string>
     <string name="protocol_xml">XML вид кода</string>
     <string name="TAG_default_protocol">arduino_default</string>
-    <string name="switch_hold">Удержание команды</string>
-    <string name="name_manual_default">Устройство</string>
     <string name="alert_information">Информация</string>
     <string name="alert_device_name">Имя устройства:\u00A0</string>
     <string name="alert_MAC">MAC адрес:\u00A0</string>
@@ -32,26 +21,11 @@
     <string name="alert_class">Класс:\u00A0</string>
     <string name="alert_type">Тип:\u00A0</string>
     <string name="alert_save">Сохранить</string>
-    <string name="alert_device_saving">Сохранение устройства</string>
-    <string name="alert_editing">Редактирование</string>
-    <string name="alert_change">Редактировать</string>
     <string name="alert_delete">Удалить</string>
     <string name="alert_info">Информация</string>
     <string name="alert_connection_attempt">Идёт соединение…</string>
-    <string name="button_forward">Вперёд</string>
-    <string name="button_backward">Назад</string>
-    <string name="button_leftward">Влево</string>
-    <string name="button_rightward">Вправо</string>
-    <string name="button_stop">Стоп</string>
-    <string name="drawer_item_add_protocol">Добавить новый протокол</string>
     <string name="drawer_item_data_base">Удалить базу данных устройств</string>
-    <string name="alert_device_name_tint">Имя устройства</string>
-    <string name="drawer_item_open_source">Open Source</string>
-    <string name="drawer_item_code">Исходный код</string>
     <string name="robot_item_image">Внешний вид робота</string>
-    <string name="manual_mac">Ввод mac</string>
-    <string name="dialog_mac">Ввод MAC адреса</string>
-    <string name="hint_dialog_mac">MAC из 1234567890ABCDEF</string>
     <string name="instruction_alert">Подсказка</string>
     <string name="ok">ОК</string>
     <string name="instruction_for_app">Используйте это приложение, чтобы подключиться к вашим роботизированным устройствам. Если список устройств пуст, добавьте их по нажатию на соответсвующую кнопку. Можно добавлять устройства как вручную, так и с помощью списка сопряжённых Bluetooth устройств из настроек Android устройства. Для подключения можно выбирать сразу несколько устройств, чтобы начать соединение выберите их долгим нажатием в списке доступных устройств. Перед началом соединения ужно выбрать тип соединения - WiFi или Bluetooth. Для Bluetooth соединения необходимо, чтобы все устройства имели MAC адреса. Для WiFi соединения нужно, чтобы устройства имели Ip и порт. Для удобства индикация возможности соединения по Bluetooth и WiFi для каждого устройства отображается в виде иконки. \nПриложение создано в рамках проектной работы ИВТ МИЭМ НИУ ВШЭ.</string>
@@ -61,34 +35,19 @@
     <string name="instruction_for_app_device_menu">Используйте это окно для редактирования и сохранения устройств, подключения к уже сохранённому устройству.</string>
     <string name="instruction_for_app_add_device">Используйте это окно для сохранения устройств, поддерживающих Bluetooth. Для добавления в этот список нового, перейдите в настройки и настройте новое сопряжение.</string>
     <string name="instruction_for_app_connection_activity">Используйте основные джостики и отдельные кнопки для передачи роботу/роботам базовых действий (движение вперед, назад, налево, направо) и для передачи дополнительных действий (регулировка скорости моторов, калибровка сервомоторов). Отслеживайте отправленные команды через терминал. Для демонстрации видео используйте кнопки, расположенные по центру экрана.</string>
-    <string name="instructions_title">Инструкция</string>
-    <string name="other_discoverable_devices">Новые сопряжённые устройства могут быть добавлены в меню ниже</string>
-    <string name="TAG_FULL_MES">CodeCatalogue</string>
     <string name="TAG_CLASS_FROM">ClassFromDevice</string>
     <string name="TAG_TYPE_FROM">TypeFromDevice</string>
     <string name="TAG_CLASS_TO">ClassToDevice</string>
     <string name="TAG_TYPE_TO">TypeToDevice</string>
     <string name="TAG_TURN_COM">TurnOfCommand</string>
     <string name="TAG_TYPE_COM">TypeOfCommand</string>
-    <string name="TAG_MOVE_CODE">TypeOfMove</string>
-    <string name="button_show_protocols">вывод</string>
     <string name="button_add_device">Добавить устройство</string>
     <string name="button_save_protocol">Добавить протокол</string>
     <string name="button_add_protocol">Добавить новый протокол</string>
     <string name="button_delete_protocols">Удалить кастомные протоколы</string>
     <string name="error_incorrect">Неверные данные</string>
-    <string name="error_mac">Введите корректный MAC</string>
-    <string name="title_activity_wi_fi_device">WiFiDeviceActivity</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
     <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label">First Fragment</string>
-    <string name="second_fragment_label">Second Fragment</string>
-    <string name="next">Next</string>
-    <string name="previous">Previous</string>
 
-    <string name="hello_first_fragment">Hello first fragment</string>
-    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="button_choose_file">Выбрать готовый файл</string>
     <string name="button_choose_theme">Выберите тему приложения</string>
     <string name="alert_device_port_tint">Подключаемый порт</string>
@@ -98,10 +57,6 @@
     <string name="button_settings">Настройки</string>
     <string name="control_panel">Панель управления</string>
     <string name="command_hold">Удержание команды</string>
-    <string name="button_left_n45">Left\n45</string>
-    <string name="button_right_n45">Right\n45</string>
-    <string name="button_left_n90">Left\n90</string>
-    <string name="button_right_n90">Right\n90</string>
     <string name="terminal">Терминал</string>
     <string name="button_add_new_device">Добавление новых устройств</string>
     <string name="button_list_of_paired">из списка сопряжённых</string>
@@ -148,5 +103,4 @@
     <string name="en_bt_for_list">Включите Bluetooth чтобы открыть это меню</string>
     <string name="selection_class_device_error">Нужны устройства с одним протоколом, классом, типом</string>
     <string name="double_back_click">Нажмите второй раз для выхода из приложения</string>
-    <string name="alert_first_launch">Добро пожаловать! Используйте это приложение для управления вашими роботами. Подробная инструкция доступна по нажатию на знак вопроса</string>
 </resources>

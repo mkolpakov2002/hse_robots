@@ -48,8 +48,6 @@ import ru.hse.control_system_v2.list_devices.DeviceItemType;
 
 public class MainActivity extends AppCompatActivity implements OneButtonAlertDialogFragment.OnDismissListener {
 
-    private int isFirstLaunch;
-    private SharedPreferences sPref;
     private BottomNavigationView main_bottom_menu;
     private NavDestination currentVisibleFragment;
     private NavHostFragment navHostFragment;
@@ -105,8 +103,6 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
         registerReceiver(mMessageReceiverNotSuccess, new IntentFilter("not_success"));
         registerReceiver(mMessageReceiverSuccess, new IntentFilter("success"));
 
-        sPref = getPreferences(MODE_PRIVATE);
-        isFirstLaunch = sPref.getInt("isFirstLaunch", 1);
         isBtConnection = null;
         // настройка поведения нижнего экрана
 
@@ -475,6 +471,5 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
         }
         return null;
     }
-
 
 }

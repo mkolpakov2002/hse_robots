@@ -175,6 +175,8 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
         IntentFilter filter3 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED);
         //this.registerReceiver(mReceiver3, filter3);
 
+        MaterialButton stringButton = findViewById(R.id.button_send_string);
+
     }
 
     @Override
@@ -502,8 +504,7 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
             }
 
             buttonScrollLayout.addView(buttonListLayout);
-        }
-        else if(protocolRepo.isCameraSupported() || protocolRepo.isMoveSupported()) {
+        } else if(protocolRepo.isCameraSupported() || protocolRepo.isMoveSupported()) {
             buttonGridLayout = new GridLayout(this);
             buttonGridLayout.setAlignmentMode(GridLayout.ALIGN_BOUNDS);
             buttonGridLayout.setColumnCount(2);
@@ -532,8 +533,7 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
                 }
             }
             buttonScrollLayout.addView(buttonGridLayout);
-        }
-        else {
+        } else {
             buttonGridLayout = new GridLayout(this);
             buttonGridLayout.setAlignmentMode(GridLayout.ALIGN_BOUNDS);
             buttonGridLayout.setColumnCount(3);

@@ -11,18 +11,12 @@
 
     <color name="colorWindowSecondaryLight">#e2e2e2</color>
 
-    <color name="colorNeutralGray">#9e9e9e</color>
-
     <color name="colorPrimaryLight">#507FCC</color>
-    <color name="colorOnPrimaryLight">#000000</color>
     <color name="colorPureWhite">#ffffff</color>
-    <color name="colorOnPureWhite">#CCCCCC</color>
 
 
     <color name="colorPrimaryDark">#444444</color>
     <color name="colorPrimaryLightDark">#6f6f6f</color>
-    <color name="colorPrimaryDarkDark">#1d1d1d</color>
-
 
 
     <color name="colorAlmostWhite">#e5e5e5</color>
@@ -33,86 +27,48 @@
 
     <color name="colorPrimaryRena">#B3224B</color>
     <color name="colorPrimaryLightRena">#ea5976</color>
-    <color name="colorPrimaryDarkRena">#7d0024</color>
-    <color name="colorOnPrimaryRena">#ffffff</color>
     <color name="colorSecondaryRena">#000000</color>
-    <color name="colorSecondaryLightRena">#2c2c2c</color>
-    <color name="colorSecondaryDarkRena">#000000</color>
-    <color name="colorOnSecondaryRena">#FFFFFF</color>
 
-    <color name="colorPrimaryOmelette">#000000</color>
-    <color name="colorPrimaryLightOmelette">#6f6f6f</color>
-    <color name="colorPrimaryDarkOmelette">#1d1d1d</color>
     <color name="colorOnPrimaryOmelette">#ffffff</color>
-    <color name="colorSecondaryOmelette">#4c4c4c</color>
-    <color name="colorSecondaryLightOmelette">#787878</color>
-    <color name="colorSecondaryDarkOmelette">#242424</color>
     <color name="colorOnSecondaryOmelette">#ffffff</color>
 
     <color name="colorPrimaryPixel">#376ECC</color>
     <color name="colorPrimaryLightPixel">#729cff</color>
-    <color name="colorPrimaryDarkPixel">#00449a</color>
     <color name="colorOnPrimaryPixel">#000000</color>
     <color name="colorSecondaryPixel">#376ECC</color>
-    <color name="colorSecondaryLightPixel">#729cff</color>
-    <color name="colorSecondaryDarkPixel">#00449a</color>
     <color name="colorOnSecondaryPixel">#000000</color>
 
     <color name="colorPrimaryFDroid">#8bc34a</color>
     <color name="colorPrimaryLightFDroid">#bef67a</color>
-    <color name="colorPrimaryDarkFDroid">#5a9216</color>
-    <color name="colorOnPrimaryFDroid">#e0e0e0</color>
     <color name="colorSecondaryFDroid">#8bc34a</color>
-    <color name="colorSecondaryLightFDroid">#bef67a</color>
-    <color name="colorSecondaryDarkFDroid">#5a9216</color>
-    <color name="colorOnSecondaryFDroid">#e0e0e0</color>
 
     <color name="colorPrimaryDark2">#5C85B8</color>
     <color name="colorPrimaryLightDark2">#8db4ea</color>
-    <color name="colorPrimaryDarkDark2">#295988</color>
     <color name="colorOnPrimaryDark2">#ffffff</color>
-    <color name="colorTextSecondaryDark2">#ffffff</color>
     <color name="colorSecondaryDark2">#5C85B8</color>
-    <color name="colorSecondaryLightDark2">#8db4ea</color>
-    <color name="colorSecondaryDarkDark2">#295988</color>
     <color name="colorOnSecondaryDark2">#FFFFFF</color>
 
     <color name="colorPrimaryGold">#B58910</color>
     <color name="colorPrimaryLightGold">#ebb947</color>
-    <color name="colorPrimaryDarkGold">#815c00</color>
     <color name="colorOnPrimaryGold">#e6e6e6</color>
-    <color name="colorTextSecondaryGold">#d9d9d9</color>
     <color name="colorSecondaryGold">#00449a</color>
-    <color name="colorSecondaryLightGold">#4f6ecc</color>
-    <color name="colorSecondaryDarkGold">#001f6b</color>
     <color name="colorOnSecondaryGold">#FFFFFF</color>
 
     <color name="colorPrimaryRenaLight">@color/colorPrimaryRena</color>
     <color name="colorPrimaryLightRenaLight">@color/colorPrimaryRenaLight</color>
     <color name="colorOnPrimaryRenaLight">#000000</color>
-    <color name="colorTextSecondaryRenaLight">#000000</color>
     <color name="colorSecondaryRenaLight">@color/colorPrimaryRena</color>
-    <color name="colorSecondaryLightRenaLight">@color/colorPrimaryRenaLight</color>
-    <color name="colorSecondaryDarkRenaLight">@color/colorPrimaryDarkRena</color>
     <color name="colorOnSecondaryRenaLight">#000000</color>
 
     <color name="colorPrimaryMint">#63BAB3</color>
     <color name="colorPrimaryLightMint">#95ede5</color>
-    <color name="colorPrimaryDarkMint">#2e8a83</color>
     <color name="colorOnPrimaryMint">#FFFFFF</color>
-    <color name="colorTextSecondaryMint">#FFFFFF</color>
     <color name="colorSecondaryMint">#000000</color>
-    <color name="colorSecondaryLightMint">#2c2c2c</color>
-    <color name="colorSecondaryDarkMint">#000000</color>
     <color name="colorOnSecondaryMint">#FFFFFF</color>
     <color name="colorPrimaryFDroidDark">#658F36</color>
     <color name="colorPrimaryLightFDroidDark">#95bf63</color>
-    <color name="colorPrimaryDarkFDroidDark">#366003</color>
     <color name="colorOnPrimaryFDroidDark">#ffffff</color>
-    <color name="colorTextSecondaryFDroidDark">#ffffff</color>
     <color name="colorSecondaryFDroidDark">#000000</color>
-    <color name="colorSecondaryLightFDroidDark">#2c2c2c</color>
-    <color name="colorSecondaryDarkFDroidDark">#000000</color>
     <color name="colorOnSecondaryFDroidDark">#FFFFFF</color>
 
 </resources>

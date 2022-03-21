@@ -15,16 +15,21 @@ import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.exoplayer2.DefaultLivePlaybackSpeedControl;
@@ -175,7 +180,39 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
         IntentFilter filter3 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED);
         //this.registerReceiver(mReceiver3, filter3);
 
+        ConnectionActivity activity = this;
         MaterialButton stringButton = findViewById(R.id.button_send_string);
+        stringButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog dialog = new MaterialAlertDialogBuilder(activity, R.style.AlertDialog_AppCompat).create();
+                dialog.setTitle("Input string message");
+
+                final EditText input = new EditText(activity);
+                input.setHint("Message");
+                input.setHeight(LinearLayout.LayoutParams.MATCH_PARENT);
+                input.setWidth(LinearLayout.LayoutParams.MATCH_PARENT);
+                input.setMinimumHeight(50);
+                input.setGravity(Gravity.START);
+                input.setImeOptions(EditorInfo.IME_ACTION_DONE);
+                dialog.setView(input);
+                dialog.setButton(AlertDialog.BUTTON_POSITIVE, "Send", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        for (int i = 0; i < dataThreadForArduinoList.size(); i++) {
+                            dataThreadForArduinoList.get(i).sendData(input.getText().toString().trim());
+                        }
+                        dialog.dismiss();
+                    }
+                });
+                WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+                lp.copyFrom(dialog.getWindow().getAttributes());
+                lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+                lp.height = WindowManager.LayoutParams.MATCH_PARENT;
+                dialog.show();
+                dialog.getWindow().setAttributes(lp);
+            }
+        });
 
     }
 

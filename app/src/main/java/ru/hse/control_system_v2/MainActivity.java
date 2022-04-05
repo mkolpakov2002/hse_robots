@@ -206,6 +206,21 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
 
             }
         });
+
+        main_bottom_menu.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.mainMenuFragment:
+                        navController.navigate(R.id.mainMenuFragment);
+                        return true;
+                    case R.id.settingsFragment:
+                        navController.navigate(R.id.settingsFragment);
+                        return true;
+                }
+                return false;
+            }
+        });
     }
 
     public final NavDestination getCurrentVisibleFragment() {
@@ -223,9 +238,7 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
             dialog.setMessage(getString(R.string.suggestionNoBtWiFiAdapter));
             dialog.setButton(androidx.appcompat.app.AlertDialog.BUTTON_NEUTRAL, getString(R.string.ok),
                     (dialog1, which) -> {
-                        // Closes the dialog and terminates the activity.
                         dialog1.dismiss();
-                        this.finish();
                     });
             dialog.show();
         }

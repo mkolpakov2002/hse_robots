@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "f493862d35b16c3a875047eb62cb2a36",
+    "identityHash": "2d57cdce14df161d42952f2632082878",
     "entities": [
       {
         "tableName": "devices",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`devId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `devName` TEXT, `deviceMAC` TEXT, `devClass` TEXT, `devType` TEXT, `devIp` TEXT, `devPort` INTEGER NOT NULL, `devProtocol` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`devId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `devName` TEXT, `deviceMAC` TEXT, `devClass` TEXT, `devType` TEXT, `devIp` TEXT, `devPort` INTEGER NOT NULL, `devProtocol` TEXT, `devVideoCommand` TEXT)",
         "fields": [
           {
             "fieldPath": "devId",
@@ -55,6 +55,12 @@
             "columnName": "devProtocol",
             "affinity": "TEXT",
             "notNull": false
+          },
+          {
+            "fieldPath": "devVideoCommand",
+            "columnName": "devVideoCommand",
+            "affinity": "TEXT",
+            "notNull": false
           }
         ],
         "primaryKey": {
@@ -70,7 +76,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f493862d35b16c3a875047eb62cb2a36')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '2d57cdce14df161d42952f2632082878')"
     ]
   }
 }

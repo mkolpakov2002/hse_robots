@@ -57,13 +57,15 @@ public class DeviceMenuFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    private String name, MAC, protocol, devClass, devType, devIp, devPort, imageType;
+    private String name, MAC, protocol, devClass, devType, devIp, devPort, imageType, devVideoCommand;
     private int id;
     private DeviceItemType currentDevice;
     private MainActivity ma;
     private AlertDialog alertDialog;
     TextInputEditText deviceNameView;
     TextInputEditText deviceMACView;
+    TextInputEditText deviceVideoCommandView;
+    TextInputLayout deviceDevVideoCommandLayout;
     MaterialAutoCompleteTextView deviceClassView;
     MaterialAutoCompleteTextView deviceTypeView;
     MaterialAutoCompleteTextView deviceProtoView;
@@ -148,6 +150,7 @@ public class DeviceMenuFragment extends Fragment {
         devIp = currentDevice.getDevIp();
         devPort = String.valueOf(currentDevice.getDevPort());
         imageType = currentDevice.getImageType();
+        devVideoCommand = currentDevice.getDevVideoCommand();
         Bundle b = getArguments();
         if (b != null) {
             isNew = b.getBoolean("isNew");
@@ -176,6 +179,27 @@ public class DeviceMenuFragment extends Fragment {
                 onRefresh();
             }
         });
+        deviceVideoCommandView = view.findViewById(R.id.device_dev_video_command_edit);
+        deviceVideoCommandView.setText(devVideoCommand);
+        deviceVideoCommandView.addTextChangedListener(new TextChangedListener<>(deviceVideoCommandView) {
+            @Override
+            public void onTextChanged(TextInputEditText target, Editable s) {
+                devVideoCommand = s.toString().trim();
+                onRefresh();
+            }
+        });
+
+        deviceDevVideoCommandLayout = view.findViewById(R.id.device_dev_video_command_layout);
+        if(!isWiFiSupported()){
+            deviceDevVideoCommandLayout.setEnabled(false);
+        }
+        deviceDevVideoCommandLayout.setEndIconOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO
+            }
+        });
+
         deviceMACView = view.findViewById(R.id.device_mac_edit);
         deviceMACView.setText(MAC);
         deviceMACView.addTextChangedListener(new TextWatcher() {
@@ -337,6 +361,7 @@ public class DeviceMenuFragment extends Fragment {
             currentDevice.setDevType(typeDevice);
             currentDevice.setDevProtocol(protocol);
             currentDevice.setDevIp(devIp);
+            currentDevice.setDevVideoCommand(devVideoCommand);
             try {
                 int i = Integer.parseInt(devPort);
                 currentDevice.setDevPort(i);
@@ -469,6 +494,8 @@ public class DeviceMenuFragment extends Fragment {
         if(isWiFiSupported())
             wifiIcon.setVisibility(View.VISIBLE);
         else wifiIcon.setVisibility(View.INVISIBLE);
+
+        deviceDevVideoCommandLayout.setEnabled(isWiFiSupported());
 
 
     }

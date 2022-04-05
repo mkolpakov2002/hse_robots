@@ -104,4 +104,5 @@
     <string name="en_bt_for_list">Please enable Bluetooth to open this menu</string>
     <string name="double_back_click">Press a second time to exit the application</string>
     <string name="label_connection_activity">ConnectionActivity</string>
+    <string name="command_for_video_stream">Command for video stream</string>
 </resources>

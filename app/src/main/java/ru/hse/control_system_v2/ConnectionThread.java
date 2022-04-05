@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.StrictMode;
 import android.os.SystemClock;
 import android.util.Log;
 
@@ -55,7 +56,7 @@ public class ConnectionThread extends Thread {
         InputStream mmInStream = tmpIn;
         StringBuilder str = new StringBuilder();
 
-        while (deviceItemType.isWiFiBtConnected()) {
+        while (deviceItemType.isWiFiBtConnected()!=null) {
             byte[] buffer = new byte[1024];  // buffer store for the stream
             int bytes = 0; // bytes returned from read()
             // Keep listening to the InputStream until an exception occurs
@@ -66,7 +67,7 @@ public class ConnectionThread extends Thread {
                 Log.e(APP_LOG_TAG, "Ошибка чтения входящих данных в потоке " + e.getMessage());
                 Disconnect();
             }
-            if (deviceItemType.isWiFiBtConnected()) {
+            if (deviceItemType.isWiFiBtConnected()!=null) {
                 //успешно считываем данные
                 StringBuilder incomingDataBuffer = new StringBuilder();
                 String incomingMessage = new String(buffer, 0, bytes);
@@ -122,22 +123,34 @@ public class ConnectionThread extends Thread {
     }
 
     public void sendData(byte[] message, int len) {
-        StringBuilder logMessage = new StringBuilder("Отправляем данные: ");
-        for (int i = 0; i < len; i++)
-            logMessage.append(message[i]).append(" ");
-        Log.d(APP_LOG_TAG, logMessage + "***");
-        try {
-            mmOutStream.write(message);
-        } catch (IOException e) {
-            Disconnect();
+        int SDK_INT = android.os.Build.VERSION.SDK_INT;
+        if (SDK_INT > 8) {
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
+                    .permitAll().build();
+            StrictMode.setThreadPolicy(policy);
+            StringBuilder logMessage = new StringBuilder("Отправляем данные: ");
+            for (int i = 0; i < len; i++)
+                logMessage.append(message[i]).append(" ");
+            Log.d(APP_LOG_TAG, logMessage + "***");
+            try {
+                mmOutStream.write(message);
+            } catch (IOException e) {
+                Disconnect();
+            }
         }
     }
 
     public void sendData(String message) {
-        try {
-            mmOutStream.write(message.getBytes());
-        } catch (IOException e) {
-            Disconnect();
+        int SDK_INT = android.os.Build.VERSION.SDK_INT;
+        if (SDK_INT > 8) {
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
+                    .permitAll().build();
+            StrictMode.setThreadPolicy(policy);
+            try {
+                mmOutStream.write(message.getBytes());
+            } catch (IOException e) {
+                Disconnect();
+            }
         }
     }
 

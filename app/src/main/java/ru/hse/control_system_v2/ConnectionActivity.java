@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -46,6 +47,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+import io.reactivex.annotations.NonNull;
 import ru.hse.control_system_v2.dbprotocol.ProtocolDBHelper;
 import ru.hse.control_system_v2.dbprotocol.ProtocolRepo;
 import ru.hse.control_system_v2.list_devices.DeviceItemType;
@@ -185,32 +187,34 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
         stringButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                LayoutInflater inflater = getLayoutInflater();
+                View dialoglayout = inflater.inflate(R.layout.dialog_string_message, null);
                 AlertDialog dialog = new MaterialAlertDialogBuilder(activity, R.style.AlertDialog_AppCompat).create();
-                dialog.setTitle("Input string message");
+                dialog.setView(dialoglayout);
+                EditText input = dialoglayout.findViewById(R.id.stringMessageEditText);
 
-                final EditText input = new EditText(activity);
-                input.setHint("Message");
-                input.setHeight(LinearLayout.LayoutParams.MATCH_PARENT);
-                input.setWidth(LinearLayout.LayoutParams.MATCH_PARENT);
-                input.setMinimumHeight(50);
-                input.setGravity(Gravity.START);
-                input.setImeOptions(EditorInfo.IME_ACTION_DONE);
-                dialog.setView(input);
-                dialog.setButton(AlertDialog.BUTTON_POSITIVE, "Send", new DialogInterface.OnClickListener() {
+                MaterialButton sendButton = dialoglayout.findViewById(R.id.buttonStringSend);
+                sendButton.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                    public void onClick(View v) {
+                        String mes = input.getText().toString().trim();
+                        outputText.append("\n" + "Sending string command: "+mes);
                         for (int i = 0; i < dataThreadForArduinoList.size(); i++) {
-                            dataThreadForArduinoList.get(i).sendData(input.getText().toString().trim());
+                            dataThreadForArduinoList.get(i).sendData(mes);
                         }
                         dialog.dismiss();
                     }
                 });
-                WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-                lp.copyFrom(dialog.getWindow().getAttributes());
-                lp.width = WindowManager.LayoutParams.MATCH_PARENT;
-                lp.height = WindowManager.LayoutParams.MATCH_PARENT;
+
+                MaterialButton dismissButton = dialoglayout.findViewById(R.id.buttonStringCancel);
+                dismissButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+
                 dialog.show();
-                dialog.getWindow().setAttributes(lp);
             }
         });
 
@@ -528,7 +532,7 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
     private void createButtonList(){
         LinearLayout buttonListLayout;
         GridLayout buttonGridLayout;
-        if(protocolRepo.isCameraSupported() && protocolRepo.isMoveSupported()) {
+        if(!isBtService && protocolRepo.isCameraSupported() && protocolRepo.isMoveSupported()) {
             buttonListLayout = new LinearLayout(this);
             buttonListLayout.setOrientation(LinearLayout.VERTICAL);
             for(String command: protocolRepo.getNewDynamicCommands().keySet()){
@@ -541,7 +545,7 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
             }
 
             buttonScrollLayout.addView(buttonListLayout);
-        } else if(protocolRepo.isCameraSupported() || protocolRepo.isMoveSupported()) {
+        } else if(!isBtService && protocolRepo.isCameraSupported() || protocolRepo.isMoveSupported()) {
             buttonGridLayout = new GridLayout(this);
             buttonGridLayout.setAlignmentMode(GridLayout.ALIGN_BOUNDS);
             buttonGridLayout.setColumnCount(2);
@@ -637,7 +641,9 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
             playerView.setUseController(false);
             videoLinearLayout.addView(playerView);
             MediaItem item = new MediaItem.Builder()
-                    .setUri(devicesList.get(i).getDevIp())
+                    .setUri(devicesList.get(i).getDevIp()+":"
+                            +devicesList.get(i).getDevPort()+"/"
+                            +devicesList.get(i).getDevVideoCommand())
                     .build();
             // Set the media items to be played.
             player.setMediaItem(item);

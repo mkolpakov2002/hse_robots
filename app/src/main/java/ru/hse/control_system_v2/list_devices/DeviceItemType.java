@@ -35,6 +35,7 @@ public class DeviceItemType implements ItemType {
     private String devIp;
     private int devPort;
     private String devProtocol;
+    private String devVideoCommand;
     //True -- wifi, False - Bt, Null - no connection
     @Ignore
     private Boolean isConnected;
@@ -97,6 +98,14 @@ public class DeviceItemType implements ItemType {
 
     public void setDevId(int devId) {
         this.devId = devId;
+    }
+
+    public void setDevVideoCommand(String devVideoCommand) {
+        this.devVideoCommand = devVideoCommand;
+    }
+
+    public String getDevVideoCommand() {
+        return devVideoCommand;
     }
 
     @Override

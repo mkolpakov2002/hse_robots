@@ -140,6 +140,20 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/device_dev_video_command_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:endIconDrawable="@drawable/ic_baseline_help_outline_24">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/device_dev_video_command_edit"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:hint="@string/command_for_video_stream" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/device_mac_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">

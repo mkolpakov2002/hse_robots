@@ -37,6 +37,7 @@ public class App extends Application {
         instance = this;
         database = Room.databaseBuilder(this, AppDataBase.class, "devices")
                 .allowMainThreadQueries()
+                .fallbackToDestructiveMigration()
                 .build();
         DynamicColors.applyToActivitiesIfAvailable(this);
         btAdapter = BluetoothAdapter.getDefaultAdapter();

@@ -15,13 +15,10 @@ import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.WindowManager;
-import android.view.inputmethod.EditorInfo;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.GridLayout;
@@ -47,7 +44,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-import io.reactivex.annotations.NonNull;
 import ru.hse.control_system_v2.dbprotocol.ProtocolDBHelper;
 import ru.hse.control_system_v2.dbprotocol.ProtocolRepo;
 import ru.hse.control_system_v2.list_devices.DeviceItemType;
@@ -57,7 +53,7 @@ import androidx.appcompat.widget.Toolbar;
 public class ConnectionActivity extends AppCompatActivity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
 
     private boolean isHoldCommand;
-    private byte[] message;      // комманда посылаемая на arduino
+    private byte[] sendingToDeviceMessage;      // комманда посылаемая на arduino
     private byte prevCommand = 0;
     private ArrayList<ConnectionThread> dataThreadForArduinoList;
     private List<DeviceItemType> devicesList;
@@ -138,9 +134,11 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
             isHoldCommand = false;
 
             protocolRepo = new ProtocolRepo(getApplicationContext(), devProtocol);
+            //TODO
+            //Мурату
             ProtocolDBHelper protocolDBHelper = ProtocolDBHelper.getInstance(getApplicationContext());
             lengthMes = protocolDBHelper.getLength(devProtocol);
-            message = new byte[lengthMes];
+            sendingToDeviceMessage = new byte[lengthMes];
             countCommands = 0;
 
             findViewById(R.id.button_up_bt).setOnTouchListener(touchListener);
@@ -152,7 +150,7 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
             SwitchMaterial hold_command = findViewById(R.id.switch_hold_command_mm_Bt);
             hold_command.setOnCheckedChangeListener(this);
             hold_command.setChecked(false);
-            Arrays.fill(message, (byte) 0);
+            Arrays.fill(sendingToDeviceMessage, (byte) 0);
 
             videoLinearLayout = findViewById(R.id.gridLayout);
             videoScrollLayout = findViewById(R.id.scrollViewVideo);
@@ -357,18 +355,24 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
             releasePlayer();
         checkForActiveDevices();
         if(devicesList.size()>0){
-            completeDevicesInfo();
-            if (protocolRepo.getTag(res.getString(R.string.TAG_TURN_COM)))
-                message[countCommands++] = protocolRepo.get("new_command");
+            if(protocolRepo.isNeedPackageData()){
+                completeDevicesInfo();
+                if (protocolRepo.getTag(res.getString(R.string.TAG_TURN_COM)))
+                    sendingToDeviceMessage[countCommands++] = protocolRepo.get("new_command");
 
-            if (protocolRepo.getTag(res.getString(R.string.TAG_TYPE_COM)))
-                message[countCommands++] = protocolRepo.get("type_move");
+                if (protocolRepo.getTag(res.getString(R.string.TAG_TYPE_COM)))
+                    sendingToDeviceMessage[countCommands++] = protocolRepo.get("type_move");
 
-            message[countCommands++] = protocolRepo.get("STOP");
-            for (int i = 0; i < dataThreadForArduinoList.size(); i++) {
-                dataThreadForArduinoList.get(i).sendData(message, lengthMes);
+                sendingToDeviceMessage[countCommands++] = protocolRepo.get("STOP");
+                for (int i = 0; i < dataThreadForArduinoList.size(); i++) {
+                    dataThreadForArduinoList.get(i).sendData(sendingToDeviceMessage, lengthMes);
+                }
+
+            } else {
+                for (int i = 0; i < dataThreadForArduinoList.size(); i++) {
+                    dataThreadForArduinoList.get(i).sendData(protocolRepo.get("STOP"));
+                }
             }
-
             for (int i = 0; i < dataThreadForArduinoList.size(); i++) {
                 dataThreadForArduinoList.get(i).Disconnect();
             }
@@ -463,37 +467,49 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
     public void completeDevicesInfo() {
         countCommands = 0;
         if (protocolRepo.getTag(res.getString(R.string.TAG_CLASS_FROM)))
-            message[countCommands++] = protocolRepo.get("class_android");
+            sendingToDeviceMessage[countCommands++] = protocolRepo.get("class_android");
 
         if (protocolRepo.getTag(res.getString(R.string.TAG_TYPE_FROM)))
-            message[countCommands++] = protocolRepo.get("type_computer"); // класс и тип устройства отправки
+            sendingToDeviceMessage[countCommands++] = protocolRepo.get("type_computer"); // класс и тип устройства отправки
 
         if (protocolRepo.getTag(res.getString(R.string.TAG_CLASS_TO)))
-            message[countCommands++] = protocolRepo.get(devicesList.get(0).getDevClass());
+            sendingToDeviceMessage[countCommands++] = protocolRepo.get(devicesList.get(0).getDevClass());
 
         if (protocolRepo.getTag(res.getString(R.string.TAG_TYPE_TO)))
-            message[countCommands++] = protocolRepo.get(devicesList.get(0).getDevType());// класс и тип устройства приема
+            sendingToDeviceMessage[countCommands++] = protocolRepo.get(devicesList.get(0).getDevType());// класс и тип устройства приема
     }
 
     public void completeMessage(String command) {
 
         Byte code = protocolRepo.get(command);
-        if (code != null) {
-            if (protocolRepo.getTag(res.getString(R.string.TAG_TURN_COM))) {
-                message[countCommands++] = (prevCommand == code) ? protocolRepo.get("redo_command") : protocolRepo.get("new_command");
-                prevCommand = code;
-            }
 
-            if (protocolRepo.getTag(res.getString(R.string.TAG_TYPE_COM)))
-                message[countCommands++] = protocolRepo.get("type_move");
-            message[countCommands++] = code;
+        if(protocolRepo.isNeedPackageData()){
+            if (code != null) {
+                if (protocolRepo.getTag(res.getString(R.string.TAG_TURN_COM))) {
+                    sendingToDeviceMessage[countCommands++] = (prevCommand == code) ? protocolRepo.get("redo_command") : protocolRepo.get("new_command");
+                    prevCommand = code;
+                }
 
-            for (int i = 0; i < dataThreadForArduinoList.size(); i++) {
-                dataThreadForArduinoList.get(i).sendData(message, lengthMes);
+                if (protocolRepo.getTag(res.getString(R.string.TAG_TYPE_COM)))
+                    sendingToDeviceMessage[countCommands++] = protocolRepo.get("type_move");
+                sendingToDeviceMessage[countCommands++] = code;
+
+                for (int i = 0; i < dataThreadForArduinoList.size(); i++) {
+                    dataThreadForArduinoList.get(i).sendData(sendingToDeviceMessage, lengthMes);
+                }
+            } else {
+                outputText.append("\n" + getResources().getString(R.string.send_command_insufficient_data));
             }
         } else {
-            outputText.append("\n" + getResources().getString(R.string.send_command_insufficient_data));
+            if (code != null) {
+                for (int i = 0; i < dataThreadForArduinoList.size(); i++) {
+                    dataThreadForArduinoList.get(i).sendData(code);
+                }
+            }  else {
+                outputText.append("\n" + getResources().getString(R.string.send_command_insufficient_data));
+            }
         }
+
     }
 
     @Override

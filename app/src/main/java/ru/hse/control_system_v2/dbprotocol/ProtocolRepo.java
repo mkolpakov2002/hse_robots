@@ -44,6 +44,7 @@ public class ProtocolRepo extends HashMap<String, Byte> {
         if (!name.isEmpty()){
             possibilitiesSettings.put("camera", (byte) 0x0);
             possibilitiesSettings.put("move", (byte) 0x0);
+            possibilitiesSettings.put("package_data", (byte) 0x0);
             for(String key: mainLabels){
                 moveCodes.put(key, (byte) 0x0);
             }
@@ -77,6 +78,19 @@ public class ProtocolRepo extends HashMap<String, Byte> {
         } else return false;
     }
 
+    public boolean isNeedPackageData(){
+        if(possibilitiesSettings.containsKey("package_data")) {
+            try {
+                return possibilitiesSettings.get("package_data") == 1;
+            } catch (NullPointerException e){
+                return false;
+            }
+        } else return false;
+    }
+
+    //TODO
+    //для package_data
+
     public boolean isNeedNewCommandButton(){
         return !newProtoCommands.isEmpty();
     }
@@ -88,6 +102,8 @@ public class ProtocolRepo extends HashMap<String, Byte> {
             return possibilitiesSettings.get(key);
         else return newProtoCommands.get(key);
     }
+
+
 
     public HashMap<String, Byte> getNewDynamicCommands() {
         return newProtoCommands;

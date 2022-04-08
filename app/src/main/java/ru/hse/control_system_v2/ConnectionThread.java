@@ -154,6 +154,23 @@ public class ConnectionThread extends Thread {
         }
     }
 
+    public void sendData(byte message) {
+        int SDK_INT = android.os.Build.VERSION.SDK_INT;
+        if (SDK_INT > 8) {
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
+                    .permitAll().build();
+            StrictMode.setThreadPolicy(policy);
+            StringBuilder logMessage = new StringBuilder("Отправляем данные: ");
+            logMessage.append(message).append(" ");
+            Log.d(APP_LOG_TAG, logMessage + "***");
+            try {
+                mmOutStream.write(message);
+            } catch (IOException e) {
+                Disconnect();
+            }
+        }
+    }
+
     public void Disconnect() {
         deviceItemType.closeConnection();
         Thread.currentThread().interrupt();

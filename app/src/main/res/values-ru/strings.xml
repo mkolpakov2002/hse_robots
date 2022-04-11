@@ -103,4 +103,6 @@
     <string name="en_bt_for_list">Включите Bluetooth чтобы открыть это меню</string>
     <string name="selection_class_device_error">Нужны устройства с одним протоколом, классом, типом</string>
     <string name="double_back_click">Нажмите второй раз для выхода из приложения</string>
+    <string name="label_connection_activity">ConnectionActivity</string>
+    <string name="command_for_video_stream">Команда для видео стрима</string>
 </resources>

@@ -11,6 +11,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
@@ -22,23 +25,30 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.GridLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.exoplayer2.DefaultLivePlaybackSpeedControl;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.MediaItem;
+import com.google.android.exoplayer2.PlaybackException;
+import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -47,6 +57,8 @@ import java.util.Objects;
 import ru.hse.control_system_v2.dbprotocol.ProtocolDBHelper;
 import ru.hse.control_system_v2.dbprotocol.ProtocolRepo;
 import ru.hse.control_system_v2.list_devices.DeviceItemType;
+import org.java_websocket.client.WebSocketClient;
+import org.java_websocket.handshake.ServerHandshake;
 
 import androidx.appcompat.widget.Toolbar;
 
@@ -68,10 +80,10 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
     Dialog disconnectedDialog;
     Dialog networkDialog;
     boolean isBtService;
-    ArrayList<PlayerView> playerViews;
     LinearLayout videoLinearLayout;
     ScrollView videoScrollLayout;
     ScrollView buttonScrollLayout;
+    int playerId = 0;
 
     public void showAlertWithOneButton(){
         MaterialAlertDialogBuilder alertDialog = new MaterialAlertDialogBuilder(ConnectionActivity.this);
@@ -159,7 +171,6 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
             //https://exoplayer.dev/hello-world.html
             //https://medium.com/mindorks/implementing-exoplayer-for-beginners-in-kotlin-c534706bce4b
             if(!isBtService && protocolRepo.isCameraSupported()){
-                playerViews = new ArrayList<>();
                 initializePlayer();
             } else {
                 videoScrollLayout.setVisibility(View.GONE);
@@ -643,41 +654,146 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void initializePlayer(){
-        playerViews.clear();
+        videoLinearLayout.removeAllViewsInLayout();
         for(int i = 0; i < devicesList.size(); i++){
-            ExoPlayer player = new ExoPlayer.Builder(this)
-                    .setLivePlaybackSpeedControl(
-                    new DefaultLivePlaybackSpeedControl.Builder()
-                            .setFallbackMaxPlaybackSpeed(1.04f)
-                            .build()).build();
-            PlayerView playerView = new PlayerView(this);
-            playerView.setPlayer(player);
-            playerView.setKeepScreenOn(true);
-            playerView.setMinimumHeight(300);
-            playerView.setUseController(false);
-            videoLinearLayout.addView(playerView);
+            if(devicesList.get(i).isExoPlayerVideo()){
+                ExoPlayer player = new ExoPlayer.Builder(this)
+                        .setLivePlaybackSpeedControl(
+                                new DefaultLivePlaybackSpeedControl.Builder()
+                                        .setFallbackMaxPlaybackSpeed(1.04f)
+                                        .build()).build();
+                PlayerView playerView = new PlayerView(this);
+                playerView.setPlayer(player);
+                playerView.setKeepScreenOn(true);
+                playerView.setMinimumHeight(300);
+                playerView.setUseController(false);
             MediaItem item = new MediaItem.Builder()
-                    .setUri(devicesList.get(i).getDevIp()+":"
-                            +devicesList.get(i).getDevPort()+"/"
-                            +devicesList.get(i).getDevVideoCommand())
+                    .setUri(devicesList.get(i).getDevIp() + ":"
+                            + devicesList.get(i).getDevPort() + "/"
+                            + devicesList.get(i).getDevVideoCommand())
                     .build();
-            // Set the media items to be played.
-            player.setMediaItem(item);
-            // Prepare the player.
-            player.prepare();
-            // Start the playback.
-            player.play();
-            playerViews.add(playerView);
+
+//                MediaItem item = new MediaItem.Builder()
+//                        .setUri("http://devimages.apple.com/samplecode/adDemo/ad.m3u8")
+//                        .build();
+                // Set the media items to be played.
+                player.setMediaItem(item);
+                // Prepare the player.
+                player.prepare();
+                // Start the playback.
+                player.play();
+                int finalI = i;
+                player.addListener(new Player.Listener() {
+                    @Override
+                    public void onPlayerError(@NonNull PlaybackException error) {
+                        Player.Listener.super.onPlayerError(error);
+                        devicesList.get(finalI).setExoPlayerVideo(false);
+                        devicesList.get(finalI).setVideoInError(true);
+                        refreshPlayers();
+                    }
+                });
+                playerView.setTag(devicesList.get(i).getDevId());
+                playerId++;
+                devicesList.get(i).setPlayerView(playerView);
+                videoLinearLayout.addView(playerView);
+            } else {
+                connectWebSocket(i);
+            }
         }
+    }
+
+    private synchronized void refreshPlayers(){
+        for(int i = 0; i < devicesList.size(); i++){
+            if(videoLinearLayout.findViewWithTag(devicesList.get(i).getDevId()) instanceof PlayerView
+                    && devicesList.get(i).isVideoInError()){
+                videoLinearLayout.removeViewInLayout(videoLinearLayout.findViewWithTag(devicesList.get(i).getDevId()));
+                Objects.requireNonNull(devicesList.get(i).getPlayerView().getPlayer()).release();
+                connectWebSocket(i);
+            } else if(videoLinearLayout.findViewWithTag(devicesList.get(i).getDevId()) instanceof ImageView &&
+                    devicesList.get(i).isVideoInError()){
+                videoLinearLayout.removeViewInLayout(videoLinearLayout.findViewWithTag(devicesList.get(i).getDevId()));
+                showToast("Video for " + devicesList.get(i).getDevName() + " failed.");
+                devicesList.get(i).getmWebSocketClient().close();
+                devicesList.get(i).setVideoInError(false);
+            }
+        }
+    }
+
+    private void connectWebSocket(int i) {
+        ConnectionActivity ca = this;
+        URI uri;
+        try {
+            uri = new URI(devicesList.get(i).getDevIp() + ":"
+                    + devicesList.get(i).getDevPort() + "/"
+                    + devicesList.get(i).getDevVideoCommand());
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        devicesList.get(i).setmWebSocketClient(new WebSocketClient(uri) {
+            @Override
+            public void onOpen(ServerHandshake serverHandshake) {
+                Log.d("Websocket", "Open");
+            }
+
+            @Override
+            public void onClose(int i, String s, boolean b) {
+                Log.d("Websocket", "Closed " + s);
+            }
+
+            @Override
+            public void onMessage(String message){
+                Log.d("Websocket", "Receive");
+            }
+
+            @Override
+            public void onMessage(ByteBuffer message){
+                ca.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        byte[] imageBytes= new byte[message.remaining()];
+                        message.get(imageBytes);
+                        final Bitmap bmp=BitmapFactory.decodeByteArray(imageBytes,0,imageBytes.length);
+                        if (bmp == null) {
+                            return;
+                        }
+                        Matrix matrix = new Matrix();
+                        matrix.postRotate(90);
+                        final Bitmap bmp_traspose = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), matrix, true);
+                        ImageView currentView = new ImageView(ca);
+                        currentView.setTag(devicesList.get(i).getDevId());
+                        currentView.setImageBitmap(Bitmap.createScaledBitmap(bmp_traspose, bmp_traspose.getWidth(), bmp_traspose.getHeight(), false));
+                        devicesList.get(i).setPlayerImage(currentView);
+                        if(videoLinearLayout.findViewWithTag(devicesList.get(i).getDevId())==null){
+                            videoLinearLayout.addView(currentView);
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void onError(Exception e) {
+                Log.d("Websocket", "Error " + e.getMessage());
+                devicesList.get(i).setVideoInError(true);
+            }
+        });
+        devicesList.get(i).getmWebSocketClient().connect();
+
     }
 
     private void releasePlayer(){
         for(int i = 0; i < devicesList.size(); i++){
-            if(playerViews.get(i)!=null){
-                Objects.requireNonNull(playerViews.get(i).getPlayer()).stop();
-                Objects.requireNonNull(playerViews.get(i).getPlayer()).release();
+            if(devicesList.get(i).isExoPlayerVideo() &&
+                    devicesList.get(i).getPlayerView().getPlayer()!=null &&
+                    !devicesList.get(i).isVideoInError()){
+                devicesList.get(i).getPlayerView().getPlayer().stop();
+                devicesList.get(i).getPlayerView().getPlayer().release();
+            } else if (!devicesList.get(i).isExoPlayerVideo() &&
+                    devicesList.get(i).getmWebSocketClient().isOpen()){
+                devicesList.get(i).getmWebSocketClient().close();
             }
+            videoLinearLayout.removeAllViewsInLayout();
         }
-        playerViews.clear();
     }
 }

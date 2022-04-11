@@ -10,11 +10,17 @@ import android.os.Parcelable;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
+import android.widget.ImageView;
 
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
+
+import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.ui.PlayerView;
+
+import org.java_websocket.client.WebSocketClient;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -47,6 +53,16 @@ public class DeviceItemType implements ItemType {
     private boolean isSelectedOnScreen = false;
     @Ignore
     private String imageType;
+    @Ignore
+    PlayerView playerView;
+    @Ignore
+    ImageView playerImage;
+    @Ignore
+    boolean isExoPlayerVideo = true;
+    @Ignore
+    boolean isVideoInError = false;
+    @Ignore
+    WebSocketClient mWebSocketClient;
 
     public DeviceItemType(String devName, String deviceMAC, String devProtocol, String devClass, String devType, String devIp, int devPort) {
         this.devName = devName;
@@ -250,6 +266,47 @@ public class DeviceItemType implements ItemType {
 
     public int getDevPort() {
         return devPort;
+    }
+
+    public ImageView getPlayerImage() {
+        return playerImage;
+    }
+
+    public void setPlayerImage(ImageView playerImage) {
+        isExoPlayerVideo = false;
+        this.playerImage = playerImage;
+    }
+
+    public void setPlayerView(PlayerView playerView) {
+        this.playerView = playerView;
+    }
+
+    public PlayerView getPlayerView() {
+        return playerView;
+    }
+
+    public boolean isExoPlayerVideo() {
+        return isExoPlayerVideo;
+    }
+
+    public void setExoPlayerVideo(boolean exoPlayerVideo) {
+        isExoPlayerVideo = exoPlayerVideo;
+    }
+
+    public boolean isVideoInError() {
+        return isVideoInError;
+    }
+
+    public void setVideoInError(boolean videoInError) {
+        isVideoInError = videoInError;
+    }
+
+    public void setmWebSocketClient(WebSocketClient mWebSocketClient) {
+        this.mWebSocketClient = mWebSocketClient;
+    }
+
+    public WebSocketClient getmWebSocketClient() {
+        return mWebSocketClient;
     }
 
     public boolean isBtSupported() {

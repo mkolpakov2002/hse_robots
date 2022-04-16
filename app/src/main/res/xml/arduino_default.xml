@@ -1,7 +1,7 @@
 <CodeCatalogue>
     <possibilities>
         <move>1</move>
-        <camera>0</camera>
+        <camera>1</camera>
         <package_data>0</package_data>
     </possibilities>
     <ClassFromDevice>
@@ -55,8 +55,5 @@
         <SERVOMOTORS>12</SERVOMOTORS>
         <MOTOR_SPEED>78</MOTOR_SPEED>
     </TypeOfCalibration>
-
-
-
 
 </CodeCatalogue>

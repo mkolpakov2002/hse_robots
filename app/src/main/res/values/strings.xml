@@ -77,11 +77,11 @@
     <string name="device_title">Device</string>
     <string name="bluetooth_device_activity_connected_second">connected;</string>
 
-    <string name="send_command_stop">Sending a stop command.</string>
-    <string name="send_command_forward">Sending forward command.</string>
-    <string name="send_command_back">Sending back command.</string>
-    <string name="send_command_left">Sending command to move left.</string>
-    <string name="send_command_right">Sending command to move right.</string>
+    <string name="send_command_stop">to stop</string>
+    <string name="send_command_forward">to move forward</string>
+    <string name="send_command_back">to move back</string>
+    <string name="send_command_left">to move left</string>
+    <string name="send_command_right">to move right</string>
     <string name="send_command_button_released">Button released, sending stop command.</string>
     <string name="send_command_insufficient_data">Insufficient data in the protocol used, message not sent.</string>
     <string name="send_command_hold_enabled">Command hold enabled…</string>
@@ -105,4 +105,19 @@
     <string name="double_back_click">Press a second time to exit the application</string>
     <string name="label_connection_activity">ConnectionActivity</string>
     <string name="command_for_video_stream">Command for video stream</string>
+    <string name="send_string">Send text</string>
+    <string name="network_disconnected_in_connection">The network is disconnected. Further management is impossible.</string>
+    <string name="send_command_title">"Sending command "</string>
+    <string name="video_stream_failed">"Video stream failed for "</string>
+    <string name="exit">Exit</string>
+    <string name="continue_work">Continue working</string>
+    <string name="all_dev_disconnected">All devices are disabled. Further management is impossible.</string>
+    <string name="some_dev_disconnected">Some devices have shut down.</string>
+    <string name="reconnect">Reconnect</string>
+    <string name="continue_work_question">" Continue working?"</string>
+    <string name="one_dev_disconnected">" disconnected."</string>
+    <string name="input_string">Input message</string>
+    <string name="your_string_message">Your text message</string>
+    <string name="send">Send</string>
+    <string name="cancel">Cancel</string>
 </resources>

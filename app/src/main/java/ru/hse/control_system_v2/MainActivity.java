@@ -432,7 +432,7 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
 
     void enableNetwork() {
         if (isBtConnection) {
-            BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+            BluetoothAdapter mBluetoothAdapter = App.getBtAdapter();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(MainActivity.this, new String[]{
                         Manifest.permission.BLUETOOTH_CONNECT

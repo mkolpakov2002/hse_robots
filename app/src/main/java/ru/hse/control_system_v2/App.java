@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.util.Log;
 
 import androidx.room.Room;
@@ -39,7 +40,9 @@ public class App extends Application {
                 .allowMainThreadQueries()
                 .fallbackToDestructiveMigration()
                 .build();
-        DynamicColors.applyToActivitiesIfAvailable(this);
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            DynamicColors.applyToActivitiesIfAvailable(this);
+        }
         btAdapter = BluetoothAdapter.getDefaultAdapter();
         wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
         protocolDBHelper = new ProtocolDBHelper(this.getApplicationContext());

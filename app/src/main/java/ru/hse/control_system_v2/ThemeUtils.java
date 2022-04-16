@@ -33,7 +33,6 @@ public class ThemeUtils {
             App currentApp = App.getInstance();
             switch (sTheme) {
                 default:
-                case "System":
                     DynamicColors.applyToActivitiesIfAvailable(currentApp);
                     sTheme = "System";
                     break;
@@ -95,7 +94,6 @@ public class ThemeUtils {
             }
         } else {
             sTheme = sPref.getString("theme", THEMES_LIST[0]);
-            App currentApp = App.getInstance();
             switch (sTheme) {
                 default:
                 case "Light":

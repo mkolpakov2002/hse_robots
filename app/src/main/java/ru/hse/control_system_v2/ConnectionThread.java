@@ -3,9 +3,7 @@ package ru.hse.control_system_v2;
 import static ru.hse.control_system_v2.Constants.APP_LOG_TAG;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
 import android.os.StrictMode;
 import android.os.SystemClock;
 import android.util.Log;
@@ -49,7 +47,7 @@ public class ConnectionThread extends Thread {
         } catch (IOException e) {
             e.printStackTrace();
             Log.e(APP_LOG_TAG, e.getMessage());
-            Disconnect();
+            disconnectDevice();
         }
 
         mmOutStream = tmpOut;
@@ -65,7 +63,7 @@ public class ConnectionThread extends Thread {
                 bytes = mmInStream.read(buffer);
             } catch (IOException e) {
                 Log.e(APP_LOG_TAG, "Ошибка чтения входящих данных в потоке " + e.getMessage());
-                Disconnect();
+                disconnectDevice();
             }
             if (deviceItemType.isWiFiBtConnected()!=null) {
                 //успешно считываем данные
@@ -106,7 +104,7 @@ public class ConnectionThread extends Thread {
                 }
             } else {
                 //чтение входящей информации неуспешно при открытом приложении
-                Disconnect();
+                disconnectDevice();
             }
         }
 
@@ -135,7 +133,7 @@ public class ConnectionThread extends Thread {
             try {
                 mmOutStream.write(message);
             } catch (IOException e) {
-                Disconnect();
+                disconnectDevice();
             }
         }
     }
@@ -149,7 +147,7 @@ public class ConnectionThread extends Thread {
             try {
                 mmOutStream.write(message.getBytes());
             } catch (IOException e) {
-                Disconnect();
+                disconnectDevice();
             }
         }
     }
@@ -166,12 +164,12 @@ public class ConnectionThread extends Thread {
             try {
                 mmOutStream.write(message);
             } catch (IOException e) {
-                Disconnect();
+                disconnectDevice();
             }
         }
     }
 
-    public void Disconnect() {
+    public void disconnectDevice() {
         deviceItemType.closeConnection();
         Thread.currentThread().interrupt();
     }

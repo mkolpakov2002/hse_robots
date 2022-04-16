@@ -14,6 +14,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
@@ -44,6 +45,7 @@ import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import java.net.URI;
@@ -184,7 +186,7 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
                 buttonScrollLayout.setVisibility(View.GONE);
             }
         } else {
-            addDisconnectedDevice();
+            showDialogError(false);
         }
 
         //TODO
@@ -207,7 +209,7 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
                     @Override
                     public void onClick(View v) {
                         String mes = input.getText().toString().trim();
-                        outputText.append("\n" + "Sending string command: "+mes);
+                        outputText.append("\n" + getString(R.string.send_command_title) + mes);
                         for (int i = 0; i < dataThreadForArduinoList.size(); i++) {
                             dataThreadForArduinoList.get(i).sendData(mes);
                         }
@@ -238,7 +240,7 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
         public void onReceive (Context context, Intent intent) {
             if((isBtService && !App.isBtEnabled()) ||
                     (!isBtService && !App.isWiFiEnabled())){
-                addDisconnectedDevice();
+                showDialogError(false);
             }
         }};
 
@@ -268,82 +270,80 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
         devicesList.removeIf(currentDevice -> (currentDevice.isWiFiBtConnected()==null));
         disconnectedDevicesList.removeIf(currentDevice -> (currentDevice.isWiFiBtConnected()!=null));
         if(hasChanges){
-            addDisconnectedDevice();
+            showDialogError(false);
         }
     }
 
-    public synchronized void addDisconnectedDevice() {
-        if(isActive()) {
-            if ((disconnectedDialog == null || !disconnectedDialog.isShowing())
-                    && ((isBtService && App.isBtEnabled()) ||
-                    (!isBtService && App.isWiFiEnabled())) && devicesList.size() > 0) {
-                materialAlertDialogBuilder = new MaterialAlertDialogBuilder(this);
-                materialAlertDialogBuilder.setTitle(getString(R.string.error));
-                if (disconnectedDevicesList.size() == 1) {
-                    materialAlertDialogBuilder.setMessage("Устройство " + disconnectedDevicesList.get(0).getDevName() + "отключилось. Продолжить работу?");
-                } else {
-                    materialAlertDialogBuilder.setMessage("Некоторые устройства отключились. Продолжить работу?");
-                }
-                materialAlertDialogBuilder.setPositiveButton("Продолжить работу", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.dismiss();
-                    }
-                });
-                materialAlertDialogBuilder.setNegativeButton("Выйти", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.dismiss();
-                        finish();
-                    }
-                });
-                disconnectedDialog = materialAlertDialogBuilder.show();
-            } else if ((disconnectedDialog == null || !disconnectedDialog.isShowing())
-                    && ((isBtService && App.isBtEnabled()) ||
-                    (!isBtService && App.isWiFiEnabled()))) {
-                materialAlertDialogBuilder = new MaterialAlertDialogBuilder(this);
-                materialAlertDialogBuilder.setTitle(getString(R.string.error));
-                materialAlertDialogBuilder.setMessage("Все устройства отключены. Дальнейшее управление невозможно.");
-                materialAlertDialogBuilder.setPositiveButton("Переподключиться", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        App.setServiceConnecting(true);
-                        App.setDevicesList(disconnectedDevicesList);
-                        Intent startConnectionService = new Intent(App.getContext(), ConnectionService.class);
-                        startConnectionService.putExtra("isBtService", isBtService);
-                        startService(startConnectionService);
-                        dialogInterface.dismiss();
-                        finish();
-                    }
-                });
-                materialAlertDialogBuilder.setNegativeButton("Выход", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.dismiss();
-                        finish();
-                    }
-                });
-                materialAlertDialogBuilder.setCancelable(false);
-                disconnectedDialog = networkDialog = materialAlertDialogBuilder.show();
-            } else if (((isBtService && !App.isBtEnabled()) || (!isBtService && !App.isWiFiEnabled()))
-                    && (networkDialog == null || !networkDialog.isShowing())) {
-                if (networkDialog != null && disconnectedDialog.isShowing())
-                    disconnectedDialog.dismiss();
-                materialAlertDialogBuilder = new MaterialAlertDialogBuilder(this);
-                materialAlertDialogBuilder.setTitle(getString(R.string.error));
-                materialAlertDialogBuilder.setMessage("Сеть отключена. Дальнейшее управление невозможно.");
-                materialAlertDialogBuilder.setPositiveButton("Ок", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.dismiss();
-                        finish();
-                    }
-                });
-                materialAlertDialogBuilder.setCancelable(false);
-                networkDialog = materialAlertDialogBuilder.show();
-            } else {
+    private boolean isDialogNotCancelable = false;
 
+    public void showDialogError(boolean isVideoError, String... devName){
+        if(isActive() && !isDialogNotCancelable) {
+            if (disconnectedDialog != null && disconnectedDialog.isShowing()){
+                disconnectedDialog.dismiss();
             }
+            materialAlertDialogBuilder = new MaterialAlertDialogBuilder(this);
+            materialAlertDialogBuilder.setTitle(getString(R.string.error));
+            materialAlertDialogBuilder.setNegativeButton(getString(R.string.exit), (dialogInterface, i) -> {
+                dialogInterface.dismiss();
+                finish();
+            });
+
+            materialAlertDialogBuilder.setPositiveButton(getString(R.string.continue_work), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    dialogInterface.dismiss();
+                }
+            });
+
+            if(isVideoError){
+                materialAlertDialogBuilder.setMessage(getString(R.string.video_stream_failed)+Arrays.toString(devName));
+            } else {
+                if (((isBtService && App.isBtEnabled()) ||
+                        (!isBtService && App.isWiFiEnabled()))){
+                    if (disconnectedDevicesList.size()==1 && devicesList.size()>0) {
+                        materialAlertDialogBuilder.setMessage(disconnectedDevicesList.get(0).getDevName()
+                                + getString(R.string.one_dev_disconnected)
+                                + getString(R.string.continue_work_question));
+                    } else if (devicesList.size()==0) {
+                        materialAlertDialogBuilder.setMessage(getString(R.string.all_dev_disconnected));
+                        materialAlertDialogBuilder.setPositiveButton(getString(R.string.reconnect), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                App.setServiceConnecting(true);
+                                App.setDevicesList(disconnectedDevicesList);
+                                Intent startConnectionService = new Intent(App.getContext(), ConnectionService.class);
+                                startConnectionService.putExtra("isBtService", isBtService);
+                                startService(startConnectionService);
+                                dialogInterface.dismiss();
+                                finish();
+                            }
+                        });
+
+                        materialAlertDialogBuilder.setCancelable(false);
+                        isDialogNotCancelable = true;
+                    } else {
+                        materialAlertDialogBuilder.setMessage(getString(R.string.some_dev_disconnected)
+                                + getString(R.string.continue_work_question));
+                    }
+                } else {
+                    materialAlertDialogBuilder.setMessage(getString(R.string.network_disconnected_in_connection));
+                    materialAlertDialogBuilder.setPositiveButton(getString(R.string.reconnect), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            App.setServiceConnecting(true);
+                            App.setDevicesList(disconnectedDevicesList);
+                            Intent startConnectionService = new Intent(App.getContext(), ConnectionService.class);
+                            startConnectionService.putExtra("isBtService", isBtService);
+                            startService(startConnectionService);
+                            dialogInterface.dismiss();
+                            finish();
+                        }
+                    });
+                    materialAlertDialogBuilder.setCancelable(false);
+                    isDialogNotCancelable = true;
+                }
+            }
+            disconnectedDialog = materialAlertDialogBuilder.show();
         }
     }
 
@@ -385,7 +385,7 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
                 }
             }
             for (int i = 0; i < dataThreadForArduinoList.size(); i++) {
-                dataThreadForArduinoList.get(i).Disconnect();
+                dataThreadForArduinoList.get(i).disconnectDevice();
             }
         }
     }
@@ -415,23 +415,24 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
         public boolean onTouch(View v, MotionEvent event) {
             completeDevicesInfo();
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                outputText.append("\n" + getResources().getString(R.string.send_command_title));
                 // если нажали на кнопку и не важно есть удержание команд или нет
                 switch (v.getId()) {
                     case (R.id.button_up_bt):
                         Log.d(APP_LOG_TAG, "Отправляю команду движения вперёд;");
-                        outputText.append("\n" + getResources().getString(R.string.send_command_forward));
+                        outputText.append(getResources().getString(R.string.send_command_forward));
                         completeMessage("FORWARD");
                         countCommands = 0;
                         break;
                     case (R.id.button_down_bt):
-                        outputText.append("\n" + getResources().getString(R.string.send_command_back));
+                        outputText.append(getResources().getString(R.string.send_command_back));
                         Log.d(APP_LOG_TAG, "Отправляю команду движения назад;");
                         //Toast.makeText(getApplicationContext(), "Назад поехали", Toast.LENGTH_SHORT).show();
                         completeMessage("BACK");
                         countCommands = 0;
                         break;
                     case (R.id.button_left_bt):
-                        outputText.append("\n" + getResources().getString(R.string.send_command_left));
+                        outputText.append(getResources().getString(R.string.send_command_left));
                         //Toast.makeText(getApplicationContext(), "Влево поехали", Toast.LENGTH_SHORT).show();
                         Log.d(APP_LOG_TAG, "Отправляю команду движения влево;");
                         completeMessage("LEFT");
@@ -439,7 +440,7 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
                         break;
                     case (R.id.button_right_bt):
                         //Toast.makeText(getApplicationContext(), "Вправо поехали", Toast.LENGTH_SHORT).show();
-                        outputText.append("\n" + getResources().getString(R.string.send_command_right));
+                        outputText.append(getResources().getString(R.string.send_command_right));
                         Log.d(APP_LOG_TAG, "Отправляю команду движения вправо;");
                         completeMessage("RIGHT");
                         countCommands = 0;
@@ -559,20 +560,15 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
     private void createButtonList(){
         LinearLayout buttonListLayout;
         GridLayout buttonGridLayout;
-        if(!isBtService && protocolRepo.isCameraSupported() && protocolRepo.isMoveSupported()) {
+        if(!isBtService && protocolRepo.isCameraSupported()) {
             buttonListLayout = new LinearLayout(this);
             buttonListLayout.setOrientation(LinearLayout.VERTICAL);
             for(String command: protocolRepo.getNewDynamicCommands().keySet()){
                 MaterialButton currButton = createCommandButton(command);
-                GridLayout.LayoutParams param =new GridLayout.LayoutParams();
-                param.height = GridLayout.LayoutParams.WRAP_CONTENT;
-                param.width = GridLayout.LayoutParams.WRAP_CONTENT;
-                currButton.setLayoutParams(param);
                 buttonListLayout.addView(currButton);
             }
-
             buttonScrollLayout.addView(buttonListLayout);
-        } else if(!isBtService && protocolRepo.isCameraSupported() || protocolRepo.isMoveSupported()) {
+        } else {
             buttonGridLayout = new GridLayout(this);
             buttonGridLayout.setAlignmentMode(GridLayout.ALIGN_BOUNDS);
             buttonGridLayout.setColumnCount(2);
@@ -601,56 +597,21 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
                 }
             }
             buttonScrollLayout.addView(buttonGridLayout);
-        } else {
-            buttonGridLayout = new GridLayout(this);
-            buttonGridLayout.setAlignmentMode(GridLayout.ALIGN_BOUNDS);
-            buttonGridLayout.setColumnCount(3);
-
-            int paddingDp = 8;
-            float density = this.getResources().getDisplayMetrics().density;
-            int paddingPixel = (int)(paddingDp * density);
-
-
-            int currentCol = 0;
-            int currentRow = 0;
-            for(String command: protocolRepo.getNewDynamicCommands().keySet()){
-
-                MaterialButton currButton = createCommandButton(command);
-                GridLayout.LayoutParams param =new GridLayout.LayoutParams();
-                param.height = GridLayout.LayoutParams.WRAP_CONTENT;
-                param.width = GridLayout.LayoutParams.WRAP_CONTENT;
-                param.columnSpec = GridLayout.spec(currentCol, 1, 1);
-                param.rowSpec = GridLayout.spec(currentRow, 1, 1);
-                param.setMargins(paddingPixel, 0, paddingPixel, paddingPixel);
-                currButton.setLayoutParams(param);
-                buttonGridLayout.addView(currButton);
-                currentCol++;
-                if(currentCol == 3){
-                    currentCol = 0;
-                    currentRow++;
-                }
-            }
-
-            buttonScrollLayout.addView(buttonGridLayout);
-
         }
-
     }
 
     private MaterialButton createCommandButton(String command){
         MaterialButton curButton = new MaterialButton(this, null, R.attr.materialButtonStyle);
-
         curButton.setText(command);
         curButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 completeMessage(command);
                 countCommands = 0;
-                outputText.append("\n" + "Отправляю команду " + command);
+                outputText.append("\n" + getString(R.string.send_command_title) + command);
             }
         });
         return curButton;
-
     }
 
     private void initializePlayer(){
@@ -667,15 +628,14 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
                 playerView.setKeepScreenOn(true);
                 playerView.setMinimumHeight(300);
                 playerView.setUseController(false);
+                Uri uri = Uri.parse("http://"+devicesList.get(i).getDevIp() + ":"
+                        + devicesList.get(i).getDevPort() + "/"
+                        + devicesList.get(i).getDevVideoCommand());
+
             MediaItem item = new MediaItem.Builder()
-                    .setUri(devicesList.get(i).getDevIp() + ":"
-                            + devicesList.get(i).getDevPort() + "/"
-                            + devicesList.get(i).getDevVideoCommand())
+                    .setUri(uri)
                     .build();
 
-//                MediaItem item = new MediaItem.Builder()
-//                        .setUri("http://devimages.apple.com/samplecode/adDemo/ad.m3u8")
-//                        .build();
                 // Set the media items to be played.
                 player.setMediaItem(item);
                 // Prepare the player.
@@ -688,7 +648,7 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
                     public void onPlayerError(@NonNull PlaybackException error) {
                         Player.Listener.super.onPlayerError(error);
                         devicesList.get(finalI).setExoPlayerVideo(false);
-                        devicesList.get(finalI).setVideoInError(true);
+                        devicesList.get(finalI).setExoVideoInError(true);
                         refreshPlayers();
                     }
                 });
@@ -705,27 +665,29 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
     private synchronized void refreshPlayers(){
         for(int i = 0; i < devicesList.size(); i++){
             if(videoLinearLayout.findViewWithTag(devicesList.get(i).getDevId()) instanceof PlayerView
-                    && devicesList.get(i).isVideoInError()){
+                    && devicesList.get(i).isExoVideoInError()){
                 videoLinearLayout.removeViewInLayout(videoLinearLayout.findViewWithTag(devicesList.get(i).getDevId()));
                 Objects.requireNonNull(devicesList.get(i).getPlayerView().getPlayer()).release();
                 connectWebSocket(i);
             } else if(videoLinearLayout.findViewWithTag(devicesList.get(i).getDevId()) instanceof ImageView &&
-                    devicesList.get(i).isVideoInError()){
+                    devicesList.get(i).isSocketVideoInError()){
                 videoLinearLayout.removeViewInLayout(videoLinearLayout.findViewWithTag(devicesList.get(i).getDevId()));
-                showToast("Video for " + devicesList.get(i).getDevName() + " failed.");
+                showToast(getString(R.string.video_stream_failed)
+                        + devicesList.get(i).getDevName());
                 devicesList.get(i).getmWebSocketClient().close();
-                devicesList.get(i).setVideoInError(false);
+                showDialogError(true, devicesList.get(i).getDevName());
             }
         }
     }
 
     private void connectWebSocket(int i) {
         ConnectionActivity ca = this;
+
         URI uri;
         try {
-            uri = new URI(devicesList.get(i).getDevIp() + ":"
+            uri = new URI(Uri.parse(("ws://"+devicesList.get(i).getDevIp() + ":"
                     + devicesList.get(i).getDevPort() + "/"
-                    + devicesList.get(i).getDevVideoCommand());
+                    + devicesList.get(i).getDevVideoCommand()).trim()).toString());
         } catch (URISyntaxException e) {
             e.printStackTrace();
             return;
@@ -734,17 +696,17 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
         devicesList.get(i).setmWebSocketClient(new WebSocketClient(uri) {
             @Override
             public void onOpen(ServerHandshake serverHandshake) {
-                Log.d("Websocket", "Open");
+                Log.e("Websocket", "Open");
             }
 
             @Override
             public void onClose(int i, String s, boolean b) {
-                Log.d("Websocket", "Closed " + s);
+                Log.e("Websocket", "Closed " + s);
             }
 
             @Override
             public void onMessage(String message){
-                Log.d("Websocket", "Receive");
+                Log.e("Websocket", "Receive");
             }
 
             @Override
@@ -752,6 +714,7 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
                 ca.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        Log.e("Websocket", "RUN!!! ");
                         byte[] imageBytes= new byte[message.remaining()];
                         message.get(imageBytes);
                         final Bitmap bmp=BitmapFactory.decodeByteArray(imageBytes,0,imageBytes.length);
@@ -774,8 +737,8 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
 
             @Override
             public void onError(Exception e) {
-                Log.d("Websocket", "Error " + e.getMessage());
-                devicesList.get(i).setVideoInError(true);
+                Log.e("Websocket", "Error " + e.getMessage());
+                devicesList.get(i).setSocketVideoInError(true);
             }
         });
         devicesList.get(i).getmWebSocketClient().connect();
@@ -784,16 +747,16 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
 
     private void releasePlayer(){
         for(int i = 0; i < devicesList.size(); i++){
-            if(devicesList.get(i).isExoPlayerVideo() &&
-                    devicesList.get(i).getPlayerView().getPlayer()!=null &&
-                    !devicesList.get(i).isVideoInError()){
-                devicesList.get(i).getPlayerView().getPlayer().stop();
-                devicesList.get(i).getPlayerView().getPlayer().release();
+            Player curr = devicesList.get(i).getPlayerView().getPlayer();
+            if(devicesList.get(i).isExoPlayerVideo() && curr!=null &&
+                    !devicesList.get(i).isExoVideoInError()){
+                curr.stop();
+                curr.release();
             } else if (!devicesList.get(i).isExoPlayerVideo() &&
-                    devicesList.get(i).getmWebSocketClient().isOpen()){
+                    !devicesList.get(i).isSocketVideoInError()){
                 devicesList.get(i).getmWebSocketClient().close();
             }
-            videoLinearLayout.removeAllViewsInLayout();
         }
+        videoLinearLayout.removeAllViewsInLayout();
     }
 }

@@ -77,11 +77,11 @@
     <string name="device_title">Устройство</string>
     <string name="bluetooth_device_activity_connected_second">подключено.</string>
 
-    <string name="send_command_stop">Отправляю команду стоп.</string>
-    <string name="send_command_forward">Отправляю команду движения вперёд.</string>
-    <string name="send_command_back">Отправляю команду движения назад.</string>
-    <string name="send_command_left">Отправляю команду движения  влево.</string>
-    <string name="send_command_right">Отправляю команду движения  вправо.</string>
+    <string name="send_command_stop">стоп</string>
+    <string name="send_command_forward">движения вперёд</string>
+    <string name="send_command_back">движения назад</string>
+    <string name="send_command_left">движения  влево</string>
+    <string name="send_command_right">движения  вправо</string>
     <string name="send_command_button_released">Кнопка отпущена, отправляю команду стоп.</string>
     <string name="send_command_insufficient_data">Недостаточно данных в используемом протоколе, сообщение не отправлено.</string>
     <string name="send_command_hold_enabled">Удерживание команды включено…</string>
@@ -105,4 +105,19 @@
     <string name="double_back_click">Нажмите второй раз для выхода из приложения</string>
     <string name="label_connection_activity">ConnectionActivity</string>
     <string name="command_for_video_stream">Команда для видео стрима</string>
+    <string name="send_string">Отправить текст</string>
+    <string name="network_disconnected_in_connection">Сеть отключена. Дальнейшее управление невозможно.</string>
+    <string name="send_command_title">"Отправляю команду "</string>
+    <string name="video_stream_failed">"Сбой видеопотока для "</string>
+    <string name="exit">Выход</string>
+    <string name="continue_work">Продолжить работу</string>
+    <string name="some_dev_disconnected">Некоторые устройства отключились.</string>
+    <string name="all_dev_disconnected">Все устройства отключены. Дальнейшее управление невозможно.</string>
+    <string name="reconnect">Переподключиться</string>
+    <string name="one_dev_disconnected">" отключилось."</string>
+    <string name="continue_work_question">" Продолжить работу?"</string>
+    <string name="input_string">Ввод сообщения</string>
+    <string name="your_string_message">Ваш текст сообщения</string>
+    <string name="send">Отправить</string>
+    <string name="cancel">Отмена</string>
 </resources>

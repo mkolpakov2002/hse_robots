@@ -6,7 +6,6 @@ import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothSocket;
 import android.graphics.Color;
-import android.os.Parcelable;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
@@ -17,16 +16,12 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
-import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ui.PlayerView;
 
 import org.java_websocket.client.WebSocketClient;
 
 import java.io.IOException;
-import java.io.Serializable;
-import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.SocketAddress;
 
 import ru.hse.control_system_v2.R;
 
@@ -60,7 +55,9 @@ public class DeviceItemType implements ItemType {
     @Ignore
     boolean isExoPlayerVideo = true;
     @Ignore
-    boolean isVideoInError = false;
+    boolean isExoVideoInError = false;
+    @Ignore
+    boolean isSocketVideoInError = false;
     @Ignore
     WebSocketClient mWebSocketClient;
 
@@ -293,12 +290,20 @@ public class DeviceItemType implements ItemType {
         isExoPlayerVideo = exoPlayerVideo;
     }
 
-    public boolean isVideoInError() {
-        return isVideoInError;
+    public boolean isExoVideoInError() {
+        return isExoVideoInError;
     }
 
-    public void setVideoInError(boolean videoInError) {
-        isVideoInError = videoInError;
+    public void setExoVideoInError(boolean videoInError) {
+        isExoVideoInError = videoInError;
+    }
+
+    public boolean isSocketVideoInError() {
+        return isSocketVideoInError;
+    }
+
+    public void setSocketVideoInError(boolean socketVideoInError) {
+        isSocketVideoInError = socketVideoInError;
     }
 
     public void setmWebSocketClient(WebSocketClient mWebSocketClient) {

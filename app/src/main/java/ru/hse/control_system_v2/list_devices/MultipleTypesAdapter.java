@@ -24,10 +24,10 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 import ru.hse.control_system_v2.App;
-import ru.hse.control_system_v2.AppDataBase;
-import ru.hse.control_system_v2.DeviceItemTypeDao;
-import ru.hse.control_system_v2.MainActivity;
-import ru.hse.control_system_v2.MainMenuFragment;
+import ru.hse.control_system_v2.database.AppDataBase;
+import ru.hse.control_system_v2.database.DeviceItemTypeDao;
+import ru.hse.control_system_v2.activity.MainActivity;
+import ru.hse.control_system_v2.fragment.MainMenuFragment;
 import ru.hse.control_system_v2.R;
 
 public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements ViewHolderFactory.ListDevicesHolder.IListener {

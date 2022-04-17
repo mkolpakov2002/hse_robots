@@ -213,7 +213,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                tools:context=".ConnectionActivity">
+                tools:context=".activity.ConnectionActivity">
 
             </LinearLayout>
 

@@ -1,4 +1,4 @@
-package ru.hse.control_system_v2.dbdevices;
+package ru.hse.control_system_v2.object_classes;
 
 import java.io.Serializable;
 

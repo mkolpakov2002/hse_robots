@@ -1,4 +1,4 @@
-package ru.hse.control_system_v2;
+package ru.hse.control_system_v2.activity;
 
 import static ru.hse.control_system_v2.Constants.APP_LOG_TAG;
 
@@ -16,6 +16,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
@@ -45,7 +46,6 @@ import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import java.net.URI;
@@ -56,12 +56,18 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+import ru.hse.control_system_v2.App;
+import ru.hse.control_system_v2.connection_classes.ConnectionService;
+import ru.hse.control_system_v2.connection_classes.ConnectionThread;
+import ru.hse.control_system_v2.R;
+import ru.hse.control_system_v2.ThemeUtils;
 import ru.hse.control_system_v2.dbprotocol.ProtocolDBHelper;
 import ru.hse.control_system_v2.dbprotocol.ProtocolRepo;
 import ru.hse.control_system_v2.list_devices.DeviceItemType;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 
 public class ConnectionActivity extends AppCompatActivity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
@@ -103,7 +109,10 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ThemeUtils.onActivityCreateSetTheme(this);
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            AppCompatDelegate.setDefaultNightMode(
+                    AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY);
+        } else ThemeUtils.onActivityCreateSetTheme(this);
         setContentView(R.layout.activity_connection);
         App.setActivityConnectionState(true);
 
@@ -558,46 +567,39 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void createButtonList(){
-        LinearLayout buttonListLayout;
         GridLayout buttonGridLayout;
+        buttonGridLayout = new GridLayout(this);
+        buttonGridLayout.setUseDefaultMargins(true);
         if(!isBtService && protocolRepo.isCameraSupported()) {
-            buttonListLayout = new LinearLayout(this);
-            buttonListLayout.setOrientation(LinearLayout.VERTICAL);
-            for(String command: protocolRepo.getNewDynamicCommands().keySet()){
-                MaterialButton currButton = createCommandButton(command);
-                buttonListLayout.addView(currButton);
-            }
-            buttonScrollLayout.addView(buttonListLayout);
+            buttonGridLayout.setColumnCount(1);
         } else {
-            buttonGridLayout = new GridLayout(this);
-            buttonGridLayout.setAlignmentMode(GridLayout.ALIGN_BOUNDS);
             buttonGridLayout.setColumnCount(2);
+        }
+        int currentCol = 0;
+        int currentRow = 0;
 
-            int currentCol = 0;
-            int currentRow = 0;
-
-            int paddingDp = 8;
-            float density = this.getResources().getDisplayMetrics().density;
-            int paddingPixel = (int)(paddingDp * density);
-
-            for(String command: protocolRepo.getNewDynamicCommands().keySet()){
-                MaterialButton currButton = createCommandButton(command);
-                GridLayout.LayoutParams param =new GridLayout.LayoutParams();
-                param.height = GridLayout.LayoutParams.WRAP_CONTENT;
-                param.width = GridLayout.LayoutParams.WRAP_CONTENT;
-                param.columnSpec = GridLayout.spec(currentCol, 1, 1);
-                param.rowSpec = GridLayout.spec(currentRow, 1, 1);
-                param.setMargins(paddingPixel, 0, paddingPixel, paddingPixel);
-                currButton.setLayoutParams(param);
-                buttonGridLayout.addView(currButton);
+        for(String command: protocolRepo.getNewDynamicCommands().keySet()){
+            MaterialButton currButton = createCommandButton(command);
+            GridLayout.LayoutParams param =new GridLayout.LayoutParams();
+            param.height = GridLayout.LayoutParams.WRAP_CONTENT;
+            param.width = GridLayout.LayoutParams.WRAP_CONTENT;
+            if(buttonGridLayout.getColumnCount()==1)
+                param.columnSpec = GridLayout.spec(0, 1, 1);
+            else param.columnSpec = GridLayout.spec(currentCol, 1, 1);
+            param.rowSpec = GridLayout.spec(currentRow, 1, 1);
+            currButton.setLayoutParams(param);
+            buttonGridLayout.addView(currButton);
+            if(buttonGridLayout.getColumnCount()==1){
+                currentRow++;
+            } else {
                 currentCol++;
                 if(currentCol == 2){
                     currentCol = 0;
                     currentRow++;
                 }
             }
-            buttonScrollLayout.addView(buttonGridLayout);
         }
+        buttonScrollLayout.addView(buttonGridLayout);
     }
 
     private MaterialButton createCommandButton(String command){

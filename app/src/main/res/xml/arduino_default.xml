@@ -2,7 +2,7 @@
     <possibilities>
         <move>1</move>
         <camera>1</camera>
-        <package_data>0</package_data>
+        <package_data>1</package_data>
     </possibilities>
     <ClassFromDevice>
         <class_android>30</class_android>

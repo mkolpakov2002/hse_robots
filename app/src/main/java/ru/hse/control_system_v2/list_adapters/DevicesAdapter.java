@@ -1,21 +1,19 @@
-package ru.hse.control_system_v2.dbdevices;
+package ru.hse.control_system_v2.list_adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Filter;
-import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import ru.hse.control_system_v2.R;
+import ru.hse.control_system_v2.object_classes.DeviceModel;
 
 public class DevicesAdapter extends RecyclerView.Adapter<DevicesAdapter.DevicesAdapterVh> {
 

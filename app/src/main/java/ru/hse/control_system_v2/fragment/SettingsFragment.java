@@ -1,15 +1,9 @@
-package ru.hse.control_system_v2;
+package ru.hse.control_system_v2.fragment;
 
 import android.Manifest;
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.bluetooth.BluetoothAdapter;
-import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -23,27 +17,21 @@ import android.text.Editable;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ScrollView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.MaterialAutoCompleteTextView;
@@ -57,13 +45,21 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import ru.hse.control_system_v2.App;
+import ru.hse.control_system_v2.database.AppDataBase;
+import ru.hse.control_system_v2.Constants;
+import ru.hse.control_system_v2.database.DeviceItemTypeDao;
+import ru.hse.control_system_v2.R;
+import ru.hse.control_system_v2.list_adapters.SpinnerArrayAdapter;
+import ru.hse.control_system_v2.text_classes.TextChangedListener;
+import ru.hse.control_system_v2.ThemeUtils;
+import ru.hse.control_system_v2.activity.MainActivity;
 import ru.hse.control_system_v2.dbprotocol.ProtocolDBHelper;
 import ru.hse.control_system_v2.dbprotocol.ProtocolRepo;
 
 import static android.app.Activity.RESULT_OK;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
-import static ru.hse.control_system_v2.Constants.THEMES_LIST;
 import static ru.hse.control_system_v2.Constants.THEMES_LIST_ANDROID_S;
 
 public class SettingsFragment extends Fragment {
@@ -79,6 +75,7 @@ public class SettingsFragment extends Fragment {
     private ScrollView menuProto;
     private Context fragmentContext;
     private MainActivity ma;
+    SpinnerArrayAdapter<String> themesAdapter;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -153,15 +150,16 @@ public class SettingsFragment extends Fragment {
         } else {
             themes = new ArrayList<String>(Arrays.asList(Constants.THEMES_LIST));
         }
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(fragmentContext, android.R.layout.simple_spinner_item, themes);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        themesAdapter = new SpinnerArrayAdapter<>(fragmentContext, android.R.layout.simple_spinner_item, themes);
+        themesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
 
         MaterialAutoCompleteTextView autoCompleteTextView = view.findViewById(R.id.theme_menu);
         autoCompleteTextView.setThreshold(themes.size());
         SharedPreferences sPref = PreferenceManager.getDefaultSharedPreferences(ma);
         String sTheme = sPref.getString("theme", themes.get(0));
         autoCompleteTextView.setText(sTheme);
-        autoCompleteTextView.setAdapter(adapter);
+        autoCompleteTextView.setAdapter(themesAdapter);
         autoCompleteTextView.setOnItemClickListener((adapterView, view1, position, l) -> {
             if (position < themes.size() && position >= 0 && !ThemeUtils.getCurrentTheme().equals(autoCompleteTextView.getText().toString())) {
                 SharedPreferences.Editor ed = sPref.edit();
@@ -169,6 +167,7 @@ public class SettingsFragment extends Fragment {
                 ed.apply();
                 Log.d("changeTheme", String.valueOf(position));
                 ThemeUtils.changeToTheme(ma);
+                autoCompleteTextView.clearFocus();
             }
         });
 

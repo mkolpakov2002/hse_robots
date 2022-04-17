@@ -1,4 +1,4 @@
-package ru.hse.control_system_v2;
+package ru.hse.control_system_v2.database;
 
 import android.content.Context;
 

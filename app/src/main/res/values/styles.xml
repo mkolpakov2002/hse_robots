@@ -33,11 +33,11 @@
 
     <style name="AppTheme.Dark" parent="Theme.Material3.Dark.NoActionBar">
         <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="colorPrimary">@color/colorPerfectPink</item>
-        <item name="colorOnPrimary">@color/colorOnPerfectPink</item>
+        <item name="colorPrimary">@color/colorPrimaryDark2</item>
+        <item name="colorOnPrimary">@color/colorOnPrimaryDark2</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorPrimaryLight">@color/colorPrimaryLightRuby</item>
-        <item name="colorAccent">@color/colorPerfectPink</item>
+        <item name="colorAccent">@color/colorPrimaryDark2</item>
         <item name="android:windowBackground">@color/colorPrimaryDark</item>
         <item name="titleTextColor">@color/colorAlmostWhite</item>
         <item name="android:textColorPrimary">@color/colorPrimaryDark</item>
@@ -113,16 +113,6 @@
         <item name="simpleThemeSecondaryColor">@color/black</item>
     </style>
 
-    <style name="AppTheme.Pixel" parent="AppTheme.Simple.Light">
-        <item name="simpleThemeWindowSecondaryColor">@color/colorWindowSecondaryLight</item>
-        <item name="simpleThemePrimaryColor">@color/colorPrimaryPixel</item>
-        <item name="simpleThemeOnPrimaryColor">@color/colorOnPrimaryPixel</item>
-        <item name="simpleThemePrimaryLightColor">@color/colorPrimaryLightPixel</item>
-        <item name="simpleThemeAccentColor">@color/colorPrimaryPixel</item>
-        <item name="simpleThemeOnSecondaryColor">@color/colorOnSecondaryPixel</item>
-        <item name="simpleThemeSecondaryColor">@color/colorSecondaryPixel</item>
-    </style>
-
     <style name="AppTheme.FDroid" parent="AppTheme.Simple.Light">
         <item name="simpleThemeWindowSecondaryColor">@color/colorWindowSecondaryLight</item>
         <item name="simpleThemePrimaryColor">@color/colorPrimaryFDroid</item>
@@ -131,16 +121,6 @@
         <item name="simpleThemeAccentColor">@color/colorPrimaryFDroid</item>
         <item name="simpleThemeOnSecondaryColor">@color/black</item>
         <item name="simpleThemeSecondaryColor">@color/colorSecondaryFDroid</item>
-    </style>
-
-    <style name="AppTheme.Dark2" parent="AppTheme.Simple.Dark">
-        <item name="simpleThemeWindowSecondaryColor">@color/colorPrimaryDark</item>
-        <item name="simpleThemePrimaryColor">@color/colorPrimaryDark2</item>
-        <item name="simpleThemeOnPrimaryColor">@color/colorOnPrimaryDark2</item>
-        <item name="simpleThemePrimaryLightColor">@color/colorPrimaryLightDark2</item>
-        <item name="simpleThemeAccentColor">@color/colorPrimaryDark2</item>
-        <item name="simpleThemeOnSecondaryColor">@color/colorOnSecondaryDark2</item>
-        <item name="simpleThemeSecondaryColor">@color/colorSecondaryDark2</item>
     </style>
 
     <style name="AppTheme.Gold" parent="AppTheme.Simple.Dark">

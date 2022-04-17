@@ -4,8 +4,8 @@ import android.view.View;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import ru.hse.control_system_v2.MainActivity;
-import ru.hse.control_system_v2.MainMenuFragment;
+import ru.hse.control_system_v2.activity.MainActivity;
+import ru.hse.control_system_v2.fragment.MainMenuFragment;
 import ru.hse.control_system_v2.R;
 
 public class ButtonItemType implements ItemType {

@@ -1,4 +1,4 @@
-package ru.hse.control_system_v2;
+package ru.hse.control_system_v2.connection_classes;
 
 import static ru.hse.control_system_v2.Constants.APP_LOG_TAG;
 
@@ -18,6 +18,7 @@ import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import ru.hse.control_system_v2.App;
 import ru.hse.control_system_v2.list_devices.DeviceItemType;
 
 public class ConnectionService extends Service {

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="AppTheme.Dark.DayNight" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="colorPrimary">@color/colorPrimaryDark2</item>
+        <item name="colorOnPrimary">@color/colorOnPrimaryDark2</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorPrimaryLight">@color/colorPrimaryLightRuby</item>
+        <item name="colorAccent">@color/colorPrimaryDark2</item>
+        <item name="android:windowBackground">@color/colorPrimaryDark</item>
+        <item name="titleTextColor">@color/colorAlmostWhite</item>
+        <item name="android:textColorPrimary">@color/colorPrimaryDark</item>
+        <item name="android:textColorSecondary">@color/colorAlmostWhite</item>
+        <item name="alertDialogTheme">@style/BottomSheetDialogStyle</item>
+        <item name="android:alertDialogTheme">@style/BottomSheetDialogStyle</item>
+        <item name="dialogTheme">@style/BottomSheetDialogStyle</item>
+        <item name="android:dialogTheme">@style/BottomSheetDialogStyle</item>
+        <item name="android:textViewStyle">@style/HSERobotsTextViewStyle</item>
+        <item name="colorControlActivated">?attr/colorAccent</item>
+        <item name="android:colorControlActivated">?attr/colorAccent</item>
+        <item name="popupMenuStyle">@style/PopupMenu</item>
+        <item name="popupMenuBackgroundTint">?colorPrimaryLight</item>
+        <item name="bottomSheetDialogTheme">@style/BottomSheetDialogStyle</item>
+        <item name="colorSecondary">?attr/simpleThemeSecondaryColor</item>
+        <item name="colorOnSecondary">?attr/simpleThemeOnSecondaryColor</item>
+        <item name="buttonStyle">@style/MaterialButton</item>
+        <item name="materialButtonStyle">@style/MaterialButton</item>
+
+    </style>
+</resources>

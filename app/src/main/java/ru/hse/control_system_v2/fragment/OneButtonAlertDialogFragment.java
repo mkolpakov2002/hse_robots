@@ -1,4 +1,4 @@
-package ru.hse.control_system_v2;
+package ru.hse.control_system_v2.fragment;
 
 import static ru.hse.control_system_v2.Constants.APP_LOG_TAG;
 
@@ -19,6 +19,8 @@ import androidx.fragment.app.DialogFragment;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.Objects;
+
+import ru.hse.control_system_v2.R;
 
 public class OneButtonAlertDialogFragment extends DialogFragment {
     private String mTitle = "title";

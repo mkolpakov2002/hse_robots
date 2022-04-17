@@ -1,11 +1,10 @@
-package ru.hse.control_system_v2;
+package ru.hse.control_system_v2.fragment;
 
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -25,13 +24,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 
+import ru.hse.control_system_v2.App;
+import ru.hse.control_system_v2.database.AppDataBase;
+import ru.hse.control_system_v2.database.DeviceItemTypeDao;
+import ru.hse.control_system_v2.R;
+import ru.hse.control_system_v2.activity.MainActivity;
 import ru.hse.control_system_v2.list_devices.DeviceItemType;
 import ru.hse.control_system_v2.list_devices.MultipleTypesAdapter;
 

@@ -3,20 +3,14 @@ package ru.hse.control_system_v2;
 import android.app.Application;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.database.sqlite.SQLiteDatabase;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
-import android.os.Build;
 import android.util.Log;
 
 import androidx.room.Room;
 
-import com.google.android.material.color.DynamicColors;
-
 import java.util.ArrayList;
 
+import ru.hse.control_system_v2.database.AppDataBase;
 import ru.hse.control_system_v2.dbprotocol.ProtocolDBHelper;
 import ru.hse.control_system_v2.list_devices.DeviceItemType;
 
@@ -40,9 +34,6 @@ public class App extends Application {
                 .allowMainThreadQueries()
                 .fallbackToDestructiveMigration()
                 .build();
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            DynamicColors.applyToActivitiesIfAvailable(this);
-        }
         btAdapter = BluetoothAdapter.getDefaultAdapter();
         wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
         protocolDBHelper = new ProtocolDBHelper(this.getApplicationContext());

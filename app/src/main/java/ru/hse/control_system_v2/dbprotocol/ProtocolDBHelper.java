@@ -7,16 +7,13 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import androidx.room.Room;
-
 import java.io.File;
 import java.util.ArrayList;
 
 import ru.hse.control_system_v2.App;
-import ru.hse.control_system_v2.AppDataBase;
-import ru.hse.control_system_v2.DeviceItemTypeDao;
+import ru.hse.control_system_v2.database.AppDataBase;
+import ru.hse.control_system_v2.database.DeviceItemTypeDao;
 import ru.hse.control_system_v2.R;
-import ru.hse.control_system_v2.list_devices.DeviceItemType;
 
 public class ProtocolDBHelper extends SQLiteOpenHelper {
 

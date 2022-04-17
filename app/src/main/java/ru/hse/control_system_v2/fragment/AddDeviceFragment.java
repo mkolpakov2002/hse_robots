@@ -1,4 +1,4 @@
-package ru.hse.control_system_v2;
+package ru.hse.control_system_v2.fragment;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -7,7 +7,6 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -20,17 +19,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
-import ru.hse.control_system_v2.dbdevices.DeviceModel;
-import ru.hse.control_system_v2.dbdevices.DevicesAdapter;
+import ru.hse.control_system_v2.App;
+import ru.hse.control_system_v2.R;
+import ru.hse.control_system_v2.object_classes.DeviceModel;
+import ru.hse.control_system_v2.list_adapters.DevicesAdapter;
 import ru.hse.control_system_v2.list_devices.DeviceItemType;
 
 /**

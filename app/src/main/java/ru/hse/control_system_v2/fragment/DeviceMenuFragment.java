@@ -1,35 +1,25 @@
-package ru.hse.control_system_v2;
+package ru.hse.control_system_v2.fragment;
 
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
-import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.Toolbar;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
-import androidx.recyclerview.widget.GridLayoutManager;
 
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Patterns;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 
-import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.MaterialAutoCompleteTextView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -38,7 +28,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import ru.hse.control_system_v2.dbprotocol.ProtocolDBHelper;
+import ru.hse.control_system_v2.App;
+import ru.hse.control_system_v2.database.AppDataBase;
+import ru.hse.control_system_v2.database.DeviceItemTypeDao;
+import ru.hse.control_system_v2.R;
+import ru.hse.control_system_v2.list_adapters.SpinnerArrayAdapter;
+import ru.hse.control_system_v2.text_classes.TextChangedListener;
+import ru.hse.control_system_v2.activity.MainActivity;
 import ru.hse.control_system_v2.list_devices.DeviceItemType;
 
 /**
@@ -81,7 +77,7 @@ public class DeviceMenuFragment extends Fragment {
     View view;
     ImageView deviceImage;
     TextInputLayout deviceTypeViewLayout;
-    ArrayAdapter<String> adapterType;
+    SpinnerArrayAdapter<String> adapterType;
     boolean isNew = true;
     ImageView btIcon;
     ImageView wifiIcon;
@@ -245,7 +241,7 @@ public class DeviceMenuFragment extends Fragment {
         });
         deviceClassView = view.findViewById(R.id.device_class_edit);
         deviceClassView.setText(devClass);
-        ArrayAdapter<String> adapterClass = new ArrayAdapter<String>(
+        SpinnerArrayAdapter<String> adapterClass = new SpinnerArrayAdapter<String>(
                 getActivity(), android.R.layout.simple_spinner_dropdown_item,
                 Arrays.asList("class_android", "class_computer", "class_arduino", "no_class"));
         deviceClassView.setAdapter(adapterClass);
@@ -260,7 +256,7 @@ public class DeviceMenuFragment extends Fragment {
         });
         deviceTypeView = view.findViewById(R.id.device_type_edit);
         deviceTypeView.setText(devType);
-        adapterType = new ArrayAdapter<String>(
+        adapterType = new SpinnerArrayAdapter<String>(
                 getActivity(), android.R.layout.simple_spinner_dropdown_item,
                 Arrays.asList("type_sphere", "type_anthropomorphic", "type_cubbi", "type_computer", "no_type"));
 
@@ -276,7 +272,7 @@ public class DeviceMenuFragment extends Fragment {
         });
         deviceProtoView = view.findViewById(R.id.device_proto_edit);
         deviceProtoView.setText(protocol);
-        ArrayAdapter<String> adapterProto = new ArrayAdapter<String>(
+        SpinnerArrayAdapter<String> adapterProto = new SpinnerArrayAdapter<String>(
                 fragmentContext, android.R.layout.simple_spinner_dropdown_item,
                 ((App) fragmentContext.getApplicationContext()).getProtocolNames());
         deviceProtoView.setAdapter(adapterProto);
@@ -455,8 +451,8 @@ public class DeviceMenuFragment extends Fragment {
     void onRefresh() {
         if (deviceClassView.getText().toString().equals("class_arduino")) {
             deviceTypeViewLayout.setEnabled(true);
-            adapterType = new ArrayAdapter<String>(
-                    getActivity(), android.R.layout.simple_spinner_dropdown_item,
+            adapterType = new SpinnerArrayAdapter<String>(
+                    requireActivity(), android.R.layout.simple_spinner_dropdown_item,
                     Arrays.asList("type_sphere", "type_anthropomorphic", "type_cubbi", "type_computer", "no_type"));
             deviceTypeView.setAdapter(adapterType);
         } else {

@@ -1,4 +1,4 @@
-package ru.hse.control_system_v2;
+package ru.hse.control_system_v2.connection_classes;
 
 import static ru.hse.control_system_v2.Constants.APP_LOG_TAG;
 
@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import ru.hse.control_system_v2.activity.ConnectionActivity;
 import ru.hse.control_system_v2.list_devices.DeviceItemType;
 
 public class ConnectionThread extends Thread {

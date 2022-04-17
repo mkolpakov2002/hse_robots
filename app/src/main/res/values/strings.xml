@@ -120,4 +120,8 @@
     <string name="your_string_message">Your text message</string>
     <string name="send">Send</string>
     <string name="cancel">Cancel</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="version_name">"App version "</string>
+    <string name="connect_dev">Connect developers</string>
 </resources>

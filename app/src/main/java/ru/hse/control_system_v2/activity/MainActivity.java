@@ -1,4 +1,4 @@
-package ru.hse.control_system_v2;
+package ru.hse.control_system_v2.activity;
 
 import static ru.hse.control_system_v2.Constants.APP_LOG_TAG;
 
@@ -8,7 +8,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
@@ -24,6 +23,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
@@ -43,6 +43,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 
+import ru.hse.control_system_v2.App;
+import ru.hse.control_system_v2.connection_classes.ConnectionService;
+import ru.hse.control_system_v2.fragment.MainMenuFragment;
+import ru.hse.control_system_v2.fragment.OneButtonAlertDialogFragment;
+import ru.hse.control_system_v2.R;
+import ru.hse.control_system_v2.ThemeUtils;
 import ru.hse.control_system_v2.list_devices.DeviceItemType;
 
 
@@ -64,7 +70,10 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
             App.setActivityConnectionState(false);
         } else super.onCreate(savedInstanceState);
 
-        ThemeUtils.onActivityCreateSetTheme(this);
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            AppCompatDelegate.setDefaultNightMode(
+                    AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY);
+        } else ThemeUtils.onActivityCreateSetTheme(this);
         setContentView(R.layout.activity_main);
         setUpNavigation();
         checkForBtAdapter();

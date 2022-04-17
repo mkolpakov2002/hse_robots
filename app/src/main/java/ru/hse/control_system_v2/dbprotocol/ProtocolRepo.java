@@ -163,7 +163,8 @@ public class ProtocolRepo extends HashMap<String, Byte> {
                             moveCodes.put(curName, xppCode);
                         } else if(possibilitiesSettings.containsKey(curName)){
                             //список возможностей протокола
-                            possibilitiesSettings.put(curName, xppCode);
+                            if(xppCode==0||xppCode==1)
+                                possibilitiesSettings.put(curName, xppCode);
                         } else {
                             //список неизвестных (новых) программе команд
                             newProtoCommands.put(curName, xppCode);

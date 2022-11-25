@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/mainMenuFragment"
-        android:name="ru.hse.control_system_v2.fragment.MainMenuFragment"
+        android:name="ru.hse.control_system_v2.ui.MainMenuFragment"
         android:label="main"
         app:defaultNavHost="true"
         tools:layout="@layout/fragment_main">
@@ -29,16 +29,19 @@
     </fragment>
     <fragment
         android:id="@+id/settingsFragment"
-        android:name="ru.hse.control_system_v2.fragment.SettingsFragment"
+        android:name="ru.hse.control_system_v2.ui.SettingsFragment"
         android:label="settings"
         tools:layout="@layout/fragment_settings">
         <action
             android:id="@+id/action_settings_Fragment_to_mainMenuFragment"
             app:destination="@id/mainMenuFragment" />
+        <action
+            android:id="@+id/action_settingsFragment_to_dialogDataParams"
+            app:destination="@id/dialogDataParams" />
     </fragment>
     <dialog
         android:id="@+id/connection_dialog"
-        android:name="ru.hse.control_system_v2.connection_classes.DialogConnection"
+        android:name="ru.hse.control_system_v2.ui.DialogConnection"
         tools:layout="@layout/dialog_connection"
         android:label="dialog_connection">
         <action
@@ -53,7 +56,7 @@
     </dialog>
     <dialog
         android:id="@+id/oneButtonAlertDialogFragment"
-        android:name="ru.hse.control_system_v2.fragment.OneButtonAlertDialogFragment"
+        android:name="ru.hse.control_system_v2.ui.OneButtonAlertDialogFragment"
         android:label="OneButtonAlertDialogFragment">
 
         <action
@@ -62,7 +65,7 @@
     </dialog>
     <fragment
         android:id="@+id/deviceMenuFragment"
-        android:name="ru.hse.control_system_v2.fragment.DeviceMenuFragment"
+        android:name="ru.hse.control_system_v2.ui.DeviceMenuFragment"
         android:label="DeviceMenuFragment" >
         <action
             android:id="@+id/action_deviceMenuFragment_to_mainMenuFragment"
@@ -71,19 +74,27 @@
             android:id="@+id/action_deviceMenuFragment_to_addDeviceFragment"
             app:destination="@id/addDeviceFragment" />
     </fragment>
+    <activity
+        android:id="@+id/connectionActivity"
+        android:name="ru.hse.control_system_v2.ui.ConnectionActivity"
+        android:label="ConnectionActivity" />
+    <fragment
+        android:id="@+id/dialogDataParams"
+        android:name="ru.hse.control_system_v2.ui.DialogDataParams"
+        android:label="DialogDataParams" >
+        <action
+            android:id="@+id/action_dialogDataParams_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
+    </fragment>
     <fragment
         android:id="@+id/addDeviceFragment"
-        android:name="ru.hse.control_system_v2.fragment.AddDeviceFragment"
+        android:name="ru.hse.control_system_v2.ui.AddDeviceFragment"
         android:label="AddDeviceFragment" >
-        <action
-            android:id="@+id/action_addDeviceFragment_to_mainMenuFragment"
-            app:destination="@id/mainMenuFragment" />
         <action
             android:id="@+id/action_addDeviceFragment_to_deviceMenuFragment"
             app:destination="@id/deviceMenuFragment" />
+        <action
+            android:id="@+id/action_addDeviceFragment_to_mainMenuFragment"
+            app:destination="@id/mainMenuFragment" />
     </fragment>
-    <activity
-        android:id="@+id/connectionActivity"
-        android:name="ru.hse.control_system_v2.activity.ConnectionActivity"
-        android:label="ConnectionActivity" />
 </navigation>

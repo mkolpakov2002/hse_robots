@@ -1,29 +1,22 @@
 package ru.hse.control_system_v2;
 
-import static android.content.Context.MODE_PRIVATE;
-
 import static ru.hse.control_system_v2.Constants.THEMES_LIST;
-import static ru.hse.control_system_v2.Constants.THEMES_LIST_ANDROID_S;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.preference.PreferenceManager;
-
-import com.google.android.material.color.DynamicColors;
 
 public class ThemeUtils {
     private static String sTheme;
 
     public static void changeToTheme(Activity activity) {
-        SharedPreferences sPref = PreferenceManager.getDefaultSharedPreferences(App.getContext());
+        SharedPreferences sPref = PreferenceManager.getDefaultSharedPreferences(AppMain.getContext());
         sTheme = sPref.getString("theme", THEMES_LIST[0]);
         activity.recreate();
     }
 
     public static void onActivityCreateSetTheme(Activity activity) {
-        SharedPreferences sPref = PreferenceManager.getDefaultSharedPreferences(App.getContext());
+        SharedPreferences sPref = PreferenceManager.getDefaultSharedPreferences(AppMain.getContext());
         sTheme = sPref.getString("theme", THEMES_LIST[0]);
         switch (sTheme) {
             default:

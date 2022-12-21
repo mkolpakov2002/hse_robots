@@ -1,4 +1,4 @@
-package ru.hse.control_system_v2.data;
+package ru.hse.control_system_v2.connection;
 
 import static ru.hse.control_system_v2.Constants.APP_LOG_TAG;
 
@@ -18,7 +18,8 @@ import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import ru.hse.control_system_v2.AppMain;
+import ru.hse.control_system_v2.App;
+import ru.hse.control_system_v2.data.DeviceItemType;
 
 public class ConnectionService extends Service {
     private ArrayList<DeviceItemType> devicesList;
@@ -43,7 +44,7 @@ public class ConnectionService extends Service {
 
         devicesList = new ArrayList<>();
         devicesListConnected = new ArrayList<>();
-        devicesList.addAll(AppMain.getDevicesList());
+        devicesList.addAll(App.getDevicesList());
         ExecutorService executorService = Executors.newFixedThreadPool(devicesList.size());
 
         for (int i = 0; i < devicesList.size(); i++) {
@@ -69,7 +70,7 @@ public class ConnectionService extends Service {
                 if(!isBtService)
                     currentDevice.setWifiSocket(new Socket(currentDevice.getDevIp(), currentDevice.getDevPort()));
                 else {
-                    BluetoothDevice device = AppMain.getBtAdapter().getRemoteDevice(currentDevice.getDeviceMAC());
+                    BluetoothDevice device = App.getBtAdapter().getRemoteDevice(currentDevice.getDeviceMAC());
                     currentDevice.setBtSocket((BluetoothSocket) device.getClass().getMethod("createRfcommSocketToServiceRecord", UUID.class).invoke(device, MY_UUID));
                 }
             } catch (IOException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
@@ -99,7 +100,7 @@ public class ConnectionService extends Service {
             Intent resultOfConnectionIntent;
             if (isSuccess) {
                 resultOfConnectionIntent = new Intent("success");
-                AppMain.setDevicesList(devicesList);
+                App.setDevicesList(devicesList);
             } else {
                 resultOfConnectionIntent = new Intent("not_success");
             }

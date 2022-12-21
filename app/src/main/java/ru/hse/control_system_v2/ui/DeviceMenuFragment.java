@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import ru.hse.control_system_v2.AppMain;
+import ru.hse.control_system_v2.App;
 import ru.hse.control_system_v2.R;
 import ru.hse.control_system_v2.data.AppDataBase;
 import ru.hse.control_system_v2.data.DeviceItemTypeDao;
@@ -133,7 +133,7 @@ public class DeviceMenuFragment extends Fragment {
     }
 
     void getDeviceInformation() {
-        currentDevice = AppMain.getDevicesList().get(0);
+        currentDevice = App.getDevicesList().get(0);
         id = currentDevice.getDevId();
         name = currentDevice.getDevName();
         MAC = currentDevice.getDeviceMAC();
@@ -271,7 +271,7 @@ public class DeviceMenuFragment extends Fragment {
         deviceProtoView.setText(protocol);
         SpinnerArrayAdapter<String> adapterProto = new SpinnerArrayAdapter<String>(
                 fragmentContext, android.R.layout.simple_spinner_dropdown_item,
-                ((AppMain) fragmentContext.getApplicationContext()).getProtocolNames());
+                ((App) fragmentContext.getApplicationContext()).getProtocolNames());
         deviceProtoView.setAdapter(adapterProto);
         deviceProtoView.addTextChangedListener(new TextChangedListener<>(deviceProtoView) {
             @Override
@@ -313,7 +313,7 @@ public class DeviceMenuFragment extends Fragment {
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AppDataBase dbDevices = AppMain.getDatabase();
+                AppDataBase dbDevices = App.getDatabase();
                 DeviceItemTypeDao devicesDao = dbDevices.getDeviceItemTypeDao();
                 devicesDao.delete(id);
                 Navigation.findNavController(view).navigate(R.id.action_deviceMenuFragment_to_mainMenuFragment);
@@ -346,7 +346,7 @@ public class DeviceMenuFragment extends Fragment {
             devIp = deviceIpView.getText().toString().trim();
             devPort = devicePortView.getText().toString().trim();
 
-            AppDataBase dbDevices = AppMain.getDatabase();
+            AppDataBase dbDevices = App.getDatabase();
             DeviceItemTypeDao devicesDao = dbDevices.getDeviceItemTypeDao();
             currentDevice.setDevName(newName);
             currentDevice.setDeviceMAC(MAC);

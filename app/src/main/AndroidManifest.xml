@@ -16,7 +16,7 @@
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
 
     <application
-        android:name=".AppMain"
+        android:name=".App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -32,7 +32,7 @@
             android:screenOrientation="landscape"/>
 
         <service
-            android:name=".data.ConnectionService"
+            android:name=".connection.ConnectionService"
             android:enabled="true"
             android:exported="false" />
 

@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.net.Socket;
 
 import ru.hse.control_system_v2.R;
+import ru.hse.control_system_v2.ui.ViewHolderFactory;
 
 @Entity(tableName = "devices")
 public class DeviceItemType implements ItemType {
@@ -327,6 +328,8 @@ public class DeviceItemType implements ItemType {
         return ItemType.DEVICE_ITEM_TYPE;
     }
 
+    //TODO
+    //Это UI слой. Нужно убрать отсюда
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder) {
         ViewHolderFactory.ListDevicesHolder mViewHolder = (ViewHolderFactory.ListDevicesHolder) viewHolder;

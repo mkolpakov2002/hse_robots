@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import ru.hse.control_system_v2.AppMain;
+import ru.hse.control_system_v2.App;
 import ru.hse.control_system_v2.R;
 import ru.hse.control_system_v2.data.DeviceModel;
 import ru.hse.control_system_v2.data.DeviceItemType;
@@ -177,7 +177,7 @@ public class AddDeviceFragment extends Fragment implements DevicesAdapter.Select
         newDev.setDevName(name);
         ArrayList<DeviceItemType> deviceItemTypeArrayList = new ArrayList<DeviceItemType>();
         deviceItemTypeArrayList.add(newDev);
-        AppMain.setDevicesList(deviceItemTypeArrayList);
+        App.setDevicesList(deviceItemTypeArrayList);
         Navigation.findNavController(view).navigate(R.id.deviceMenuFragment);
     }
 

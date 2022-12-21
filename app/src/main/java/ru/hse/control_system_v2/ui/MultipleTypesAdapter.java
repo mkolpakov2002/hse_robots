@@ -1,4 +1,4 @@
-package ru.hse.control_system_v2.data;
+package ru.hse.control_system_v2.ui;
 
 import static android.view.View.VISIBLE;
 
@@ -23,10 +23,13 @@ import com.google.android.material.card.MaterialCardView;
 import java.util.ArrayList;
 import java.util.Objects;
 
-import ru.hse.control_system_v2.AppMain;
+import ru.hse.control_system_v2.App;
 import ru.hse.control_system_v2.R;
-import ru.hse.control_system_v2.ui.MainActivity;
-import ru.hse.control_system_v2.ui.MainMenuFragment;
+import ru.hse.control_system_v2.data.AppDataBase;
+import ru.hse.control_system_v2.data.ButtonItemType;
+import ru.hse.control_system_v2.data.DeviceItemType;
+import ru.hse.control_system_v2.data.DeviceItemTypeDao;
+import ru.hse.control_system_v2.data.ItemType;
 
 public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements ViewHolderFactory.ListDevicesHolder.IListener {
 
@@ -53,7 +56,7 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
     }
 
     public ArrayList<DeviceItemType> getDevicesArrayList() {
-        AppDataBase dbDevices = AppMain.getDatabase();
+        AppDataBase dbDevices = App.getDatabase();
         DeviceItemTypeDao devicesDao = dbDevices.getDeviceItemTypeDao();
         return (ArrayList<DeviceItemType>) devicesDao.getAll();
     }
@@ -124,7 +127,7 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
 
                     itemTypeArrayList.get(itemTypeArrayList.indexOf(item)).setIsSelectedOnScreen(true);
                     selectedDevicesList.add(item);
-                    AppMain.setDevicesList(selectedDevicesList);
+                    App.setDevicesList(selectedDevicesList);
 
                     if (mainMenuFragment != null) {
                         mainMenuFragment.showItemSelectionMenu();
@@ -143,7 +146,7 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
 
             } else {
                 selectedDevicesList.add(item);
-                AppMain.setDevicesList(selectedDevicesList);
+                App.setDevicesList(selectedDevicesList);
                 Log.d(TAG, "...Список пуст, открываю диалог...");
                 //список пуст, открываем диалог для одного устройства
                 Bundle args = new Bundle();
@@ -194,7 +197,7 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
                 }
 
             }
-            AppMain.setDevicesList(selectedDevicesList);
+            App.setDevicesList(selectedDevicesList);
         }
 
     }

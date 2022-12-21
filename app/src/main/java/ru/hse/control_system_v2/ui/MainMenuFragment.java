@@ -30,12 +30,11 @@ import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 
-import ru.hse.control_system_v2.AppMain;
+import ru.hse.control_system_v2.App;
 import ru.hse.control_system_v2.R;
 import ru.hse.control_system_v2.data.AppDataBase;
 import ru.hse.control_system_v2.data.DeviceItemTypeDao;
 import ru.hse.control_system_v2.data.DeviceItemType;
-import ru.hse.control_system_v2.data.MultipleTypesAdapter;
 
 public class MainMenuFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
@@ -117,9 +116,9 @@ public class MainMenuFragment extends Fragment implements SwipeRefreshLayout.OnR
         fabToDelete = view.findViewById(R.id.floating_action_button_delete_selected);
         fabToDelete.hide();
         fabToDelete.setOnClickListener(v -> {
-            AppDataBase dbDevices = AppMain.getDatabase();
+            AppDataBase dbDevices = App.getDatabase();
             DeviceItemTypeDao devicesDao = dbDevices.getDeviceItemTypeDao();
-            for (DeviceItemType device : AppMain.getDevicesList()) {
+            for (DeviceItemType device : App.getDevicesList()) {
                 devicesDao.delete(device.getDevId());
             }
             onRefresh();
@@ -151,7 +150,7 @@ public class MainMenuFragment extends Fragment implements SwipeRefreshLayout.OnR
         if (buttonToAddDevice != null) {
             buttonToAddDevice.setOnClickListener(view1 -> {
                 bottomSheetDialogToAdd.dismiss();
-                if(!AppMain.isBtSupported()){
+                if(!App.isBtSupported()){
                     Snackbar snackbar = Snackbar
                             .make(swipeToRefreshLayout, getString(R.string.suggestionNoBtAdapter),
                                     Snackbar.LENGTH_LONG)
@@ -161,9 +160,9 @@ public class MainMenuFragment extends Fragment implements SwipeRefreshLayout.OnR
                                 }
                             });
                     snackbar.show();
-                } else if(AppMain.isBtEnabled() && !BluetoothAdapter.getDefaultAdapter().getBondedDevices().isEmpty()){
+                } else if(App.isBtEnabled() && !BluetoothAdapter.getDefaultAdapter().getBondedDevices().isEmpty()){
                     Navigation.findNavController(requireParentFragment().requireView()).navigate(R.id.addDeviceFragment);
-                } else if(!AppMain.isBtEnabled()){
+                } else if(!App.isBtEnabled()){
                     Snackbar snackbar = Snackbar
                             .make(swipeToRefreshLayout, getString(R.string.en_bt_for_list),
                                     Snackbar.LENGTH_LONG)
@@ -196,7 +195,7 @@ public class MainMenuFragment extends Fragment implements SwipeRefreshLayout.OnR
                 DeviceItemType newDevice = new DeviceItemType();
                 ArrayList<DeviceItemType> newList = new ArrayList<>();
                 newList.add(newDevice);
-                AppMain.setDevicesList(newList);
+                App.setDevicesList(newList);
                 bottomSheetDialogToAdd.dismiss();
                 Navigation.findNavController(requireParentFragment().requireView()).navigate(R.id.action_mainMenuFragment_to_deviceMenuFragment);
             });

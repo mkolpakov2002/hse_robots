@@ -56,11 +56,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-import ru.hse.control_system_v2.AppMain;
+import ru.hse.control_system_v2.App;
 import ru.hse.control_system_v2.R;
 import ru.hse.control_system_v2.ThemeUtils;
-import ru.hse.control_system_v2.data.ConnectionService;
-import ru.hse.control_system_v2.data.ConnectionThread;
+import ru.hse.control_system_v2.connection.ConnectionService;
+import ru.hse.control_system_v2.connection.ConnectionThread;
 import ru.hse.control_system_v2.data.ProtocolDBHelper;
 import ru.hse.control_system_v2.data.ProtocolRepo;
 import ru.hse.control_system_v2.data.DeviceItemType;
@@ -114,7 +114,7 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
                     AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY);
         } else ThemeUtils.onActivityCreateSetTheme(this);
         setContentView(R.layout.activity_connection);
-        AppMain.setActivityConnectionState(true);
+        App.setActivityConnectionState(true);
 
         MaterialToolbar toolbar = findViewById(R.id.toolbar_connection_activity);
         toolbar.inflateMenu(R.menu.main_toolbar_menu);
@@ -133,7 +133,7 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
 
         disconnectedDevicesList = new ArrayList<>();
         devicesList = new ArrayList<>();
-        devicesList = AppMain.getDevicesList();
+        devicesList = App.getDevicesList();
         checkForActiveDevices();
         if(devicesList.size()>0){
             registerReceiver(mReceiver, new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
@@ -209,7 +209,8 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
             public void onClick(View v) {
                 LayoutInflater inflater = getLayoutInflater();
                 View dialoglayout = inflater.inflate(R.layout.dialog_string_message, null);
-                AlertDialog dialog = new MaterialAlertDialogBuilder(activity, R.style.AlertDialog_AppCompat).create();
+                AlertDialog dialog = new MaterialAlertDialogBuilder(activity,
+                        com.google.android.material.R.style.ThemeOverlay_Material3_MaterialAlertDialog).create();
                 dialog.setView(dialoglayout);
                 EditText input = dialoglayout.findViewById(R.id.stringMessageEditText);
 
@@ -247,8 +248,8 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
 
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         public void onReceive (Context context, Intent intent) {
-            if((isBtService && !AppMain.isBtEnabled()) ||
-                    (!isBtService && !AppMain.isWiFiEnabled())){
+            if((isBtService && !App.isBtEnabled()) ||
+                    (!isBtService && !App.isWiFiEnabled())){
                 showDialogError(false);
             }
         }};
@@ -307,8 +308,8 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
             if(isVideoError){
                 materialAlertDialogBuilder.setMessage(getString(R.string.video_stream_failed)+Arrays.toString(devName));
             } else {
-                if (((isBtService && AppMain.isBtEnabled()) ||
-                        (!isBtService && AppMain.isWiFiEnabled()))){
+                if (((isBtService && App.isBtEnabled()) ||
+                        (!isBtService && App.isWiFiEnabled()))){
                     if (disconnectedDevicesList.size()==1 && devicesList.size()>0) {
                         materialAlertDialogBuilder.setMessage(disconnectedDevicesList.get(0).getDevName()
                                 + getString(R.string.one_dev_disconnected)
@@ -318,9 +319,9 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
                         materialAlertDialogBuilder.setPositiveButton(getString(R.string.reconnect), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                AppMain.setServiceConnecting(true);
-                                AppMain.setDevicesList(disconnectedDevicesList);
-                                Intent startConnectionService = new Intent(AppMain.getContext(), ConnectionService.class);
+                                App.setServiceConnecting(true);
+                                App.setDevicesList(disconnectedDevicesList);
+                                Intent startConnectionService = new Intent(App.getContext(), ConnectionService.class);
                                 startConnectionService.putExtra("isBtService", isBtService);
                                 startService(startConnectionService);
                                 dialogInterface.dismiss();
@@ -339,9 +340,9 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
                     materialAlertDialogBuilder.setPositiveButton(getString(R.string.reconnect), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            AppMain.setServiceConnecting(true);
-                            AppMain.setDevicesList(disconnectedDevicesList);
-                            Intent startConnectionService = new Intent(AppMain.getContext(), ConnectionService.class);
+                            App.setServiceConnecting(true);
+                            App.setDevicesList(disconnectedDevicesList);
+                            Intent startConnectionService = new Intent(App.getContext(), ConnectionService.class);
                             startConnectionService.putExtra("isBtService", isBtService);
                             startService(startConnectionService);
                             dialogInterface.dismiss();

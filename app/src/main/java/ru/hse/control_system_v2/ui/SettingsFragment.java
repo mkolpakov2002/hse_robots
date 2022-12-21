@@ -45,7 +45,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import ru.hse.control_system_v2.AppMain;
+import ru.hse.control_system_v2.App;
 import ru.hse.control_system_v2.R;
 import ru.hse.control_system_v2.data.AppDataBase;
 import ru.hse.control_system_v2.Constants;
@@ -71,14 +71,12 @@ public class SettingsFragment extends Fragment {
     private boolean isEditTextNameChanged, isEditTextLenChanged, isEditTextCodeChanged;
     private ScrollView menuProto;
     private Context fragmentContext;
-    private MainActivity ma;
     SpinnerArrayAdapter<String> themesAdapter;
     private MaterialButton openDataParamsDialog;
 
     @Override
     public void onAttach(@NonNull Context context) {
         fragmentContext = context;
-        ma = ((MainActivity) fragmentContext);
         super.onAttach(context);
     }
 
@@ -162,17 +160,13 @@ public class SettingsFragment extends Fragment {
 
         MaterialAutoCompleteTextView autoCompleteTextView = view.findViewById(R.id.theme_menu);
         autoCompleteTextView.setThreshold(themes.size());
-        SharedPreferences sPref = PreferenceManager.getDefaultSharedPreferences(ma);
+        SharedPreferences sPref = PreferenceManager.getDefaultSharedPreferences(App.getContext());
         String sTheme = sPref.getString("theme", themes.get(0));
         autoCompleteTextView.setText(sTheme);
         autoCompleteTextView.setAdapter(themesAdapter);
         autoCompleteTextView.setOnItemClickListener((adapterView, view1, position, l) -> {
             if (position < themes.size() && position >= 0 && !ThemeUtils.getCurrentTheme().equals(autoCompleteTextView.getText().toString())) {
-                SharedPreferences.Editor ed = sPref.edit();
-                ed.putString("theme", themes.get(position));
-                ed.apply();
-                Log.d("changeTheme", String.valueOf(position));
-                ThemeUtils.changeToTheme(ma);
+                ThemeUtils.setTheme(themes.get(position), requireActivity());
                 autoCompleteTextView.clearFocus();
             }
         });
@@ -238,7 +232,7 @@ public class SettingsFragment extends Fragment {
         buttonDeleteDevices.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AppDataBase dbDevices = AppMain.getDatabase();
+                AppDataBase dbDevices = App.getDatabase();
                 DeviceItemTypeDao devicesDao = dbDevices.getDeviceItemTypeDao();
                 devicesDao.deleteAll();
             }
@@ -314,7 +308,7 @@ public class SettingsFragment extends Fragment {
         String[] permissions = new String[]{Manifest.permission.READ_EXTERNAL_STORAGE};
 
         for (String perms : permissions) {
-            res = ma.checkCallingOrSelfPermission(perms);
+            res = requireActivity().checkCallingOrSelfPermission(perms);
             if (!(res == PackageManager.PERMISSION_GRANTED)) {
                 return false;
             }
@@ -323,10 +317,10 @@ public class SettingsFragment extends Fragment {
     }
 
     public void requestPermissionWithRationale() {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(ma,
+        if (ActivityCompat.shouldShowRequestPermissionRationale(requireActivity(),
                 Manifest.permission.READ_EXTERNAL_STORAGE)) {
             final String message = "Storage permission is needed to show files count";
-            Snackbar.make(ma.findViewById(R.id.activity_explain_perms), message, Snackbar.LENGTH_LONG)
+            Snackbar.make(requireActivity().findViewById(R.id.activity_explain_perms), message, Snackbar.LENGTH_LONG)
                     .setAction("GRANT", v -> requestPerms())
                     .show();
         } else {
@@ -357,7 +351,7 @@ public class SettingsFragment extends Fragment {
         if (!allowed) {
             // we will give warning to user that they haven't granted permissions.
             if (shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                Toast.makeText(ma, "Storage Permissions denied.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireActivity(), "Storage Permissions denied.", Toast.LENGTH_SHORT).show();
             } else {
                 showNoStoragePermissionSnackbar();
             }
@@ -367,7 +361,7 @@ public class SettingsFragment extends Fragment {
 
 
     public void showNoStoragePermissionSnackbar() {
-        Snackbar.make(ma.findViewById(R.id.activity_explain_perms), "Storage permission isn't granted", Snackbar.LENGTH_LONG)
+        Snackbar.make(requireActivity().findViewById(R.id.activity_explain_perms), "Storage permission isn't granted", Snackbar.LENGTH_LONG)
                 .setAction("SETTINGS", new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -384,7 +378,7 @@ public class SettingsFragment extends Fragment {
 
     public void openApplicationSettings() {
         Intent appSettingsIntent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                Uri.parse("package:" + ma.getPackageName()));
+                Uri.parse("package:" + requireActivity().getPackageName()));
         startActivityForResult(appSettingsIntent, PERMISSION_REQUEST_CODE);
     }
 
@@ -397,7 +391,7 @@ public class SettingsFragment extends Fragment {
         BufferedReader reader = null;
         StringBuilder builder = new StringBuilder();
         try {
-            reader = new BufferedReader(new InputStreamReader(ma.getContentResolver().openInputStream(uri)));
+            reader = new BufferedReader(new InputStreamReader(requireActivity().getContentResolver().openInputStream(uri)));
             String line = "";
             while ((line = reader.readLine()) != null) {
                 builder.append(line).append("\n");
@@ -412,7 +406,7 @@ public class SettingsFragment extends Fragment {
     private String saveToFile(String name, String code) throws IOException {
         String fileName = name + ".xml";
         BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(new
-                File(ma.getFilesDir() + File.separator + name + ".xml")));
+                File(requireActivity().getFilesDir() + File.separator + name + ".xml")));
         bufferedWriter.write(code);
         bufferedWriter.close();
         return fileName;

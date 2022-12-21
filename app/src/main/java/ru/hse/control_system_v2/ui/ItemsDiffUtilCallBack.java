@@ -1,8 +1,10 @@
-package ru.hse.control_system_v2.data;
+package ru.hse.control_system_v2.ui;
 
 import androidx.recyclerview.widget.DiffUtil;
 
 import java.util.ArrayList;
+
+import ru.hse.control_system_v2.data.ItemType;
 
 public class ItemsDiffUtilCallBack extends DiffUtil.Callback {
     ArrayList<ItemType> newList;

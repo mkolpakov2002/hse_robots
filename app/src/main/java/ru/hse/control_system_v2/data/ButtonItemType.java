@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import ru.hse.control_system_v2.R;
 import ru.hse.control_system_v2.ui.MainActivity;
 import ru.hse.control_system_v2.ui.MainMenuFragment;
+import ru.hse.control_system_v2.ui.ViewHolderFactory;
 
 public class ButtonItemType implements ItemType {
 
@@ -22,13 +23,10 @@ public class ButtonItemType implements ItemType {
 
     public View.OnClickListener getOnClickListener() {
 
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mainMenuFragment = ma.getMainMenuFragment();
-                if (mainMenuFragment != null) {
-                    mainMenuFragment.showBottomSheetToAdd();
-                }
+        return v -> {
+            mainMenuFragment = ma.getMainMenuFragment();
+            if (mainMenuFragment != null) {
+                mainMenuFragment.showBottomSheetToAdd();
             }
         };
     }

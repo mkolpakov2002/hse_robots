@@ -43,10 +43,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 
-import ru.hse.control_system_v2.AppMain;
+import ru.hse.control_system_v2.App;
 import ru.hse.control_system_v2.R;
 import ru.hse.control_system_v2.ThemeUtils;
-import ru.hse.control_system_v2.data.ConnectionService;
+import ru.hse.control_system_v2.connection.ConnectionService;
 import ru.hse.control_system_v2.data.DeviceItemType;
 
 
@@ -63,9 +63,9 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        if (AppMain.isActivityConnection()) {
+        if (App.isActivityConnection()) {
             super.onCreate(null);
-            AppMain.setActivityConnectionState(false);
+            App.setActivityConnectionState(false);
         } else super.onCreate(savedInstanceState);
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
         setContentView(R.layout.activity_main);
         setUpNavigation();
         checkForBtAdapter();
-        if (AppMain.isServiceConnecting()) {
+        if (App.isServiceConnecting()) {
             navController.navigate(R.id.connection_dialog);
         }
         MaterialToolbar toolbar = findViewById(R.id.toolbar);
@@ -122,9 +122,9 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
         Button buttonToConnectViaBt = bottomSheetDialogToConnect.findViewById(R.id.button_bt);
         if (buttonToConnectViaWiFi != null) {
             buttonToConnectViaWiFi.setOnClickListener(view1 -> {
-                if (AppMain.isWiFiSupported()) {
+                if (App.isWiFiSupported()) {
                     boolean isConnectionPossible = true;
-                    for (DeviceItemType current : AppMain.getDevicesList()) {
+                    for (DeviceItemType current : App.getDevicesList()) {
                         if (!current.isWiFiSupported()) {
                             isConnectionPossible = false;
                             bottomSheetDialogToConnect.dismiss();
@@ -157,9 +157,9 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
         }
         if (buttonToConnectViaBt != null) {
             buttonToConnectViaBt.setOnClickListener(view1 -> {
-                if (AppMain.isBtSupported()) {
+                if (App.isBtSupported()) {
                     boolean isConnectionPossible = true;
-                    for (DeviceItemType current : AppMain.getDevicesList()) {
+                    for (DeviceItemType current : App.getDevicesList()) {
                         if (!current.isBtSupported()) {
                             isConnectionPossible = false;
                             bottomSheetDialogToConnect.dismiss();
@@ -238,9 +238,10 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
     // проверка на наличие адаптеров
     public void checkForBtAdapter() {
 
-        if (!AppMain.isBtWiFiSupported()) {
+        if (!App.isBtWiFiSupported()) {
             // объект Builder для создания диалогового окна
-            AlertDialog dialog = new MaterialAlertDialogBuilder(this, R.style.AlertDialog_AppCompat).create();
+            AlertDialog dialog = new MaterialAlertDialogBuilder(this,
+                    com.google.android.material.R.style.ThemeOverlay_Material3_MaterialAlertDialog).create();
             dialog.setTitle(getString(R.string.error));
             dialog.setMessage(getString(R.string.suggestionNoBtWiFiAdapter));
             dialog.setButton(androidx.appcompat.app.AlertDialog.BUTTON_NEUTRAL, getString(R.string.ok),
@@ -255,8 +256,8 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
     @Override
     public void onResume() {
         super.onResume();
-        if (AppMain.isActivityConnection()) {
-            AppMain.setActivityConnectionState(false);
+        if (App.isActivityConnection()) {
+            App.setActivityConnectionState(false);
         }
         checkForBtAdapter();
     }
@@ -284,7 +285,9 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (Arrays.stream(grantResults).anyMatch(n -> n!= PackageManager.PERMISSION_GRANTED)){
             // объект Builder для создания диалогового окна
-            AlertDialog dialog = new MaterialAlertDialogBuilder(this, R.style.AlertDialog_AppCompat).create();
+            //AlertDialog_AppCompat
+            AlertDialog dialog = new MaterialAlertDialogBuilder(this,
+                    com.google.android.material.R.style.ThemeOverlay_Material3_MaterialAlertDialog).create();
             dialog.setTitle(getString(R.string.error));
             dialog.setMessage("Чтобы использовать приложение Роботы ВШЭ, предоставьте разрешения на доступ к Bluetooth и хранилищу.");
             dialog.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.ok),
@@ -340,7 +343,7 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
         @Override
         public void onReceive(Context context, Intent intent) {
             isBtConnection = true;
-            if (AppMain.isBtEnabled()) {
+            if (App.isBtEnabled()) {
                 startConnectionService();
             } else {
                 Bundle args = new Bundle();
@@ -358,7 +361,7 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
         @Override
         public void onReceive(Context context, Intent intent) {
             isBtConnection = false;
-            if (AppMain.isWiFiEnabled()) {
+            if (App.isWiFiEnabled()) {
                 startConnectionService();
             } else {
                 Bundle args = new Bundle();
@@ -384,7 +387,7 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
                     //nothing
                 }
             }
-            AppMain.setServiceConnecting(false);
+            App.setServiceConnecting(false);
             createOneButtonAlertDialog(getString(R.string.error), getString(R.string.connection_error));
             isBtConnection = null;
         }
@@ -394,14 +397,14 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(!AppMain.isActivityConnection()&& AppMain.isServiceConnecting()){
+            if(!App.isActivityConnection()&& App.isServiceConnecting()){
                 //Устройство подключено, Service выполнился успешно
                 navController.navigate(R.id.mainMenuFragment);
                 Bundle b = new Bundle();
-                b.putBoolean("isBtService", !AppMain.getDevicesList().get(0).isWiFiBtConnected());
+                b.putBoolean("isBtService", !App.getDevicesList().get(0).isWiFiBtConnected());
                 navController.navigate(R.id.connectionActivity, b);
                 isBtConnection = null;
-                AppMain.setServiceConnecting(false);
+                App.setServiceConnecting(false);
             }
         }
     };
@@ -428,9 +431,9 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
     }
 
     private void startConnectionService() {
-        if(!AppMain.isServiceConnecting()){
-            AppMain.setServiceConnecting(true);
-            Intent startConnectionService = new Intent(AppMain.getContext(), ConnectionService.class);
+        if(!App.isServiceConnecting()){
+            App.setServiceConnecting(true);
+            Intent startConnectionService = new Intent(App.getContext(), ConnectionService.class);
             startConnectionService.putExtra("isBtService", isBtConnection);
             startService(startConnectionService);
             navController.navigate(R.id.connection_dialog);
@@ -439,7 +442,7 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
 
     void enableNetwork() {
         if (isBtConnection) {
-            BluetoothAdapter mBluetoothAdapter = AppMain.getBtAdapter();
+            BluetoothAdapter mBluetoothAdapter = App.getBtAdapter();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(MainActivity.this, new String[]{
                         Manifest.permission.BLUETOOTH_CONNECT

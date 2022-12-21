@@ -17,7 +17,7 @@ import androidx.navigation.Navigation;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 
-import ru.hse.control_system_v2.AppMain;
+import ru.hse.control_system_v2.App;
 import ru.hse.control_system_v2.R;
 
 public class DialogDataParams extends Fragment {
@@ -65,7 +65,7 @@ public class DialogDataParams extends Fragment {
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AppMain.updateDataParams(editTextNumberCommandFirstChar.getText().toString().trim(),
+                App.updateDataParams(editTextNumberCommandFirstChar.getText().toString().trim(),
                         editTextNumberCommandLastChar.getText().toString().trim(),
                         editTextStringCommandFirstChar.getText().toString().trim(),
                         editTextStringCommandLastChar.getText().toString().trim());
@@ -73,7 +73,7 @@ public class DialogDataParams extends Fragment {
             }
         });
         editTextNumberCommandFirstChar = view.findViewById(R.id.editTextNumberCommandFirstChar);
-        editTextNumberCommandFirstChar.setText(AppMain.getNumberCommandFirstChar());
+        editTextNumberCommandFirstChar.setText(App.getNumberCommandFirstChar());
         editTextNumberCommandFirstChar.addTextChangedListener(new TextChangedListener<>(editTextNumberCommandFirstChar) {
             @Override
             public void onTextChanged(TextInputEditText target, Editable s) {
@@ -82,7 +82,7 @@ public class DialogDataParams extends Fragment {
         });
 
         editTextNumberCommandLastChar = view.findViewById(R.id.editTextNumberCommandLastChar);
-        editTextNumberCommandLastChar.setText(AppMain.getNumberCommandLastChar());
+        editTextNumberCommandLastChar.setText(App.getNumberCommandLastChar());
         editTextNumberCommandLastChar.addTextChangedListener(new TextChangedListener<>(editTextNumberCommandLastChar) {
             @Override
             public void onTextChanged(TextInputEditText target, Editable s) {
@@ -91,7 +91,7 @@ public class DialogDataParams extends Fragment {
         });
 
         editTextStringCommandFirstChar = view.findViewById(R.id.editTextStringCommandFirstChar);
-        editTextStringCommandFirstChar.setText(AppMain.getStringCommandFirstChar());
+        editTextStringCommandFirstChar.setText(App.getStringCommandFirstChar());
         editTextStringCommandFirstChar.addTextChangedListener(new TextChangedListener<>(editTextStringCommandFirstChar) {
             @Override
             public void onTextChanged(TextInputEditText target, Editable s) {
@@ -100,7 +100,7 @@ public class DialogDataParams extends Fragment {
         });
 
         editTextStringCommandLastChar = view.findViewById(R.id.editTextStringCommandLastChar);
-        editTextStringCommandLastChar.setText(AppMain.getStringCommandLastChar());
+        editTextStringCommandLastChar.setText(App.getStringCommandLastChar());
         editTextStringCommandLastChar.addTextChangedListener(new TextChangedListener<>(editTextStringCommandLastChar) {
             @Override
             public void onTextChanged(TextInputEditText target, Editable s) {
@@ -113,10 +113,10 @@ public class DialogDataParams extends Fragment {
 
 
     void onRefresh(){
-        saveButton.setEnabled(!editTextNumberCommandFirstChar.getText().toString().trim().equals(AppMain.getNumberCommandFirstChar())
-                || !editTextNumberCommandLastChar.getText().toString().trim().equals(AppMain.getNumberCommandLastChar())
-                || !editTextStringCommandFirstChar.getText().toString().trim().equals(AppMain.getStringCommandFirstChar())
-                || !editTextStringCommandLastChar.getText().toString().trim().equals(AppMain.getStringCommandLastChar()));
+        saveButton.setEnabled(!editTextNumberCommandFirstChar.getText().toString().trim().equals(App.getNumberCommandFirstChar())
+                || !editTextNumberCommandLastChar.getText().toString().trim().equals(App.getNumberCommandLastChar())
+                || !editTextStringCommandFirstChar.getText().toString().trim().equals(App.getStringCommandFirstChar())
+                || !editTextStringCommandLastChar.getText().toString().trim().equals(App.getStringCommandLastChar()));
     }
 
 }

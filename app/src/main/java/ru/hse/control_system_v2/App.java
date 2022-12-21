@@ -21,9 +21,9 @@ import ru.hse.control_system_v2.data.AppDataBase;
 import ru.hse.control_system_v2.data.ProtocolDBHelper;
 import ru.hse.control_system_v2.data.DeviceItemType;
 
-public class AppMain extends Application {
+public class App extends Application {
 
-    private static AppMain instance;
+    private static App instance;
 
     private static AppDataBase database;
     private static BluetoothAdapter btAdapter;
@@ -49,7 +49,7 @@ public class AppMain extends Application {
         btAdapter = BluetoothAdapter.getDefaultAdapter();
         wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
         protocolDBHelper = new ProtocolDBHelper(this.getApplicationContext());
-        mSettings = PreferenceManager.getDefaultSharedPreferences(AppMain.getInstance());
+        mSettings = PreferenceManager.getDefaultSharedPreferences(App.getInstance());
 
         numberCommandFirstChar = (mSettings.getString(APP_PREFERENCES_NUMBER_COMMAND_FIRST_CHAR, ""));
         numberCommandLastChar = (mSettings.getString(APP_PREFERENCES_NUMBER_COMMAND_LAST_CHAR, ""));
@@ -75,13 +75,13 @@ public class AppMain extends Application {
     }
 
     public static void updateDataParams(String numberCommandFirstChar, String numberCommandLastChar, String stringCommandFirstChar, String stringCommandLastChar){
-        mSettings = PreferenceManager.getDefaultSharedPreferences(AppMain.getInstance());
+        mSettings = PreferenceManager.getDefaultSharedPreferences(App.getInstance());
         SharedPreferences.Editor editor = mSettings.edit();
 
-        AppMain.numberCommandFirstChar = numberCommandFirstChar;
-        AppMain.numberCommandLastChar = numberCommandLastChar;
-        AppMain.stringCommandFirstChar = stringCommandFirstChar;
-        AppMain.stringCommandLastChar = stringCommandLastChar;
+        App.numberCommandFirstChar = numberCommandFirstChar;
+        App.numberCommandLastChar = numberCommandLastChar;
+        App.stringCommandFirstChar = stringCommandFirstChar;
+        App.stringCommandLastChar = stringCommandLastChar;
         editor.putString(APP_PREFERENCES_NUMBER_COMMAND_FIRST_CHAR, numberCommandFirstChar);
         editor.putString(APP_PREFERENCES_NUMBER_COMMAND_LAST_CHAR, numberCommandLastChar);
         editor.putString(APP_PREFERENCES_STRING_COMMAND_FIRST_CHAR, stringCommandFirstChar);
@@ -94,7 +94,7 @@ public class AppMain extends Application {
         return protocolDBHelper.getProtocolNames();
     }
 
-    public static AppMain getInstance() {
+    public static App getInstance() {
         return instance;
     }
 

@@ -10,7 +10,7 @@ import android.util.Log;
 import java.io.File;
 import java.util.ArrayList;
 
-import ru.hse.control_system_v2.AppMain;
+import ru.hse.control_system_v2.App;
 import ru.hse.control_system_v2.R;
 
 public class ProtocolDBHelper extends SQLiteOpenHelper {
@@ -56,7 +56,7 @@ public class ProtocolDBHelper extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery(query, null);
         cursor.moveToFirst();
         File dir = context.getFilesDir();
-        AppDataBase dbDevices = AppMain.getDatabase();
+        AppDataBase dbDevices = App.getDatabase();
         DeviceItemTypeDao devicesDao = dbDevices.getDeviceItemTypeDao();
 
 

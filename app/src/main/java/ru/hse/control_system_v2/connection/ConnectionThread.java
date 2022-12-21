@@ -1,4 +1,4 @@
-package ru.hse.control_system_v2.data;
+package ru.hse.control_system_v2.connection;
 
 import static ru.hse.control_system_v2.Constants.APP_LOG_TAG;
 
@@ -14,7 +14,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import ru.hse.control_system_v2.AppMain;
+import ru.hse.control_system_v2.App;
+import ru.hse.control_system_v2.data.DeviceItemType;
 import ru.hse.control_system_v2.ui.ConnectionActivity;
 
 public class ConnectionThread extends Thread {
@@ -132,9 +133,9 @@ public class ConnectionThread extends Thread {
                 logMessage.append(message[i]).append(" ");
             Log.d(APP_LOG_TAG, logMessage + "***");
             try {
-                mmOutStream.write(AppMain.getNumberCommandFirstChar().getBytes());
+                mmOutStream.write(App.getNumberCommandFirstChar().getBytes());
                 mmOutStream.write(message);
-                mmOutStream.write(AppMain.getNumberCommandLastChar().getBytes());
+                mmOutStream.write(App.getNumberCommandLastChar().getBytes());
             } catch (IOException e) {
                 disconnectDevice();
             }
@@ -148,9 +149,9 @@ public class ConnectionThread extends Thread {
                     .permitAll().build();
             StrictMode.setThreadPolicy(policy);
             try {
-                mmOutStream.write(AppMain.getStringCommandFirstChar().getBytes());
+                mmOutStream.write(App.getStringCommandFirstChar().getBytes());
                 mmOutStream.write(message.getBytes());
-                mmOutStream.write(AppMain.getStringCommandLastChar().getBytes());
+                mmOutStream.write(App.getStringCommandLastChar().getBytes());
             } catch (IOException e) {
                 disconnectDevice();
             }
@@ -167,9 +168,9 @@ public class ConnectionThread extends Thread {
             logMessage.append(message).append(" ");
             Log.d(APP_LOG_TAG, logMessage + "***");
             try {
-                mmOutStream.write(AppMain.getNumberCommandFirstChar().getBytes());
+                mmOutStream.write(App.getNumberCommandFirstChar().getBytes());
                 mmOutStream.write(message);
-                mmOutStream.write(AppMain.getNumberCommandLastChar().getBytes());
+                mmOutStream.write(App.getNumberCommandLastChar().getBytes());
             } catch (IOException e) {
                 disconnectDevice();
             }

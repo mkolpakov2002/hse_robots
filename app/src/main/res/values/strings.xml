@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">HSE Robots</string>
+    <string name="app_name">GCS 2.0</string>
     <string name="name">Name</string>
     <string name="alert_connect">Connect</string>
     <string name="error">Application Error</string>
@@ -23,7 +23,7 @@
     <string name="alert_save">Save</string>
     <string name="alert_delete">Delete</string>
     <string name="alert_info">Information</string>
-    <string name="alert_connection_attempt">Connecting...</string>
+    <string name="alert_connection_attempt">Connecting…</string>
     <string name="drawer_item_data_base">Delete device database</string>
     <string name="robot_item_image">Robot Appearance</string>
     <string name="instruction_alert">Hint</string>

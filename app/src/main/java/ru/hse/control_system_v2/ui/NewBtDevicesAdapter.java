@@ -13,32 +13,32 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import ru.hse.control_system_v2.R;
-import ru.hse.control_system_v2.data.DeviceModel;
+import ru.hse.control_system_v2.data.NewBtDevice;
 
-public class DevicesAdapter extends RecyclerView.Adapter<DevicesAdapter.DevicesAdapterVh> {
+public class NewBtDevicesAdapter extends RecyclerView.Adapter<NewBtDevicesAdapter.DevicesAdapterVh> {
 
-    private final List<DeviceModel> deviceModelList;
+    private final List<NewBtDevice> newBtDeviceList;
 
     private final SelectedDevice selectedDevice;
 
-    public DevicesAdapter(List<DeviceModel> deviceModelList, SelectedDevice selectedDevice) {
-        this.deviceModelList = deviceModelList;
+    public NewBtDevicesAdapter(List<NewBtDevice> newBtDeviceList, SelectedDevice selectedDevice) {
+        this.newBtDeviceList = newBtDeviceList;
 
         this.selectedDevice = selectedDevice;
     }
 
     @NonNull
     @Override
-    public DevicesAdapter.DevicesAdapterVh onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public NewBtDevicesAdapter.DevicesAdapterVh onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Context context = parent.getContext();
 
         return new DevicesAdapterVh(LayoutInflater.from(context).inflate(R.layout.item_add_bd_device, null));
     }
 
     @Override
-    public void onBindViewHolder(@NonNull DevicesAdapter.DevicesAdapterVh holder, int position) {
+    public void onBindViewHolder(@NonNull NewBtDevicesAdapter.DevicesAdapterVh holder, int position) {
 
-        DeviceModel userModel = deviceModelList.get(position);
+        NewBtDevice userModel = newBtDeviceList.get(position);
 
         String devicename = userModel.getDeviceName();
 
@@ -48,13 +48,13 @@ public class DevicesAdapter extends RecyclerView.Adapter<DevicesAdapter.DevicesA
 
     @Override
     public int getItemCount() {
-        return deviceModelList.size();
+        return newBtDeviceList.size();
     }
 
 
     public interface SelectedDevice {
 
-        void selectedDevice(DeviceModel deviceModel);
+        void selectedDevice(NewBtDevice newBtDevice);
 
     }
 
@@ -68,7 +68,7 @@ public class DevicesAdapter extends RecyclerView.Adapter<DevicesAdapter.DevicesA
             tvDevicename = itemView.findViewById(R.id.devicename);
             imIcon = itemView.findViewById(R.id.imageView);
 
-            itemView.setOnClickListener(view -> selectedDevice.selectedDevice(deviceModelList.get(getAdapterPosition())));
+            itemView.setOnClickListener(view -> selectedDevice.selectedDevice(newBtDeviceList.get(getAdapterPosition())));
         }
     }
 }

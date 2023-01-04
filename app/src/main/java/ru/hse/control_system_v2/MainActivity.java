@@ -1,4 +1,4 @@
-package ru.hse.control_system_v2.ui;
+package ru.hse.control_system_v2;
 
 import static ru.hse.control_system_v2.Constants.APP_LOG_TAG;
 
@@ -39,18 +39,20 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
-import ru.hse.control_system_v2.App;
-import ru.hse.control_system_v2.R;
-import ru.hse.control_system_v2.ThemeUtils;
 import ru.hse.control_system_v2.connection.ConnectionService;
 import ru.hse.control_system_v2.data.DeviceItemType;
+import ru.hse.control_system_v2.ui.MainMenuFragment;
+import ru.hse.control_system_v2.ui.OneButtonAlertDialogFragment;
 
 
-public class MainActivity extends AppCompatActivity implements OneButtonAlertDialogFragment.OnDismissListener {
+public class MainActivity extends AppCompatActivity implements OneButtonAlertDialogFragment.OnDismissListener,
+PassDataToActivityInterface{
 
     private BottomNavigationView main_bottom_menu;
     private NavDestination currentVisibleFragment;
@@ -430,16 +432,6 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
         }
     }
 
-    private void startConnectionService() {
-        if(!App.isServiceConnecting()){
-            App.setServiceConnecting(true);
-            Intent startConnectionService = new Intent(App.getContext(), ConnectionService.class);
-            startConnectionService.putExtra("isBtService", isBtConnection);
-            startService(startConnectionService);
-            navController.navigate(R.id.connection_dialog);
-        }
-    }
-
     void enableNetwork() {
         if (isBtConnection) {
             BluetoothAdapter mBluetoothAdapter = App.getBtAdapter();
@@ -495,4 +487,17 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
         return null;
     }
 
+    @Override
+    public void startConnectionService(List<DeviceItemType> selectedDevices) {
+        if(!App.isServiceConnecting()){
+            App.setServiceConnecting(true);
+            Intent startConnectionService = new Intent(App.getContext(), ConnectionService.class);
+            Bundle b = new Bundle();
+            b.putSerializable("deviceList", (Serializable) selectedDevices);
+            b.putBoolean("isBtService", isBtConnection);
+            startConnectionService.putExtra("bundle", b);
+            startService(startConnectionService);
+            navController.navigate(R.id.connection_dialog);
+        }
+    }
 }

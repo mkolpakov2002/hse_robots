@@ -29,6 +29,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import ru.hse.control_system_v2.App;
+import ru.hse.control_system_v2.MainActivity;
 import ru.hse.control_system_v2.R;
 import ru.hse.control_system_v2.data.AppDataBase;
 import ru.hse.control_system_v2.data.DeviceItemTypeDao;
@@ -115,6 +116,11 @@ public class DeviceMenuFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        Bundle b = getArguments();
+        if(b!=null) {
+            isNew = b.getBoolean("isNew");
+            currentDevice = (DeviceItemType) b.getSerializable("device");
+        }
         getDeviceInformation();
     }
 
@@ -133,7 +139,6 @@ public class DeviceMenuFragment extends Fragment {
     }
 
     void getDeviceInformation() {
-        currentDevice = App.getDevicesList().get(0);
         id = currentDevice.getDevId();
         name = currentDevice.getDevName();
         MAC = currentDevice.getDeviceMAC();
@@ -144,10 +149,6 @@ public class DeviceMenuFragment extends Fragment {
         devPort = String.valueOf(currentDevice.getDevPort());
         imageType = currentDevice.getImageType();
         devVideoCommand = currentDevice.getDevVideoCommand();
-        Bundle b = getArguments();
-        if (b != null) {
-            isNew = b.getBoolean("isNew");
-        }
     }
 
     void showDeviceInformation(View view) {

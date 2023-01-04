@@ -31,6 +31,7 @@ import com.google.android.material.snackbar.Snackbar;
 import java.util.ArrayList;
 
 import ru.hse.control_system_v2.App;
+import ru.hse.control_system_v2.MainActivity;
 import ru.hse.control_system_v2.R;
 import ru.hse.control_system_v2.data.AppDataBase;
 import ru.hse.control_system_v2.data.DeviceItemTypeDao;

@@ -6,6 +6,7 @@ import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothSocket;
 import android.graphics.Color;
+import android.os.Parcelable;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
@@ -21,13 +22,14 @@ import com.google.android.exoplayer2.ui.PlayerView;
 import org.java_websocket.client.WebSocketClient;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.Socket;
 
 import ru.hse.control_system_v2.R;
 import ru.hse.control_system_v2.ui.ViewHolderFactory;
 
 @Entity(tableName = "devices")
-public class DeviceItemType implements ItemType {
+public class DeviceItemType implements ItemType, Serializable {
     @PrimaryKey(autoGenerate = true)
     private int devId;
     private String devName;
@@ -45,8 +47,6 @@ public class DeviceItemType implements ItemType {
     private Socket wifiSocket;
     @Ignore
     private BluetoothSocket bluetoothSocket;
-    @Ignore
-    private boolean isSelectedOnScreen = false;
     @Ignore
     private String imageType;
     @Ignore
@@ -85,14 +85,6 @@ public class DeviceItemType implements ItemType {
         devPort = 0;
         deviceMAC = devName = devIp = "";
         imageType = devClass;
-    }
-
-    public void setIsSelectedOnScreen(boolean isSelectedOnScreen) {
-        this.isSelectedOnScreen = isSelectedOnScreen;
-    }
-
-    public boolean getIsSelectedOnScreen() {
-        return isSelectedOnScreen;
     }
 
     @Override
@@ -321,66 +313,6 @@ public class DeviceItemType implements ItemType {
 
     public boolean isWiFiSupported() {
         return ((devIp != null) && Patterns.IP_ADDRESS.matcher(devIp).matches());
-    }
-
-    @Override
-    public int getItemViewType() {
-        return ItemType.DEVICE_ITEM_TYPE;
-    }
-
-    //TODO
-    //Это UI слой. Нужно убрать отсюда
-    @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder viewHolder) {
-        ViewHolderFactory.ListDevicesHolder mViewHolder = (ViewHolderFactory.ListDevicesHolder) viewHolder;
-        mViewHolder.mName.setText(devName);
-        mViewHolder.checkMark.setVisibility(View.GONE);
-        mViewHolder.materialCardView.setStrokeColor(Color.TRANSPARENT);
-        if (devClass.equals("class_arduino")) {
-            switch (imageType) {
-                case "type_computer":
-                    mViewHolder.deviceImage.setImageResource(R.drawable.type_computer);
-                    break;
-                case "type_sphere":
-                    //mViewHolder.deviceImage.setImageResource(R.drawable.type_computer);
-                    break;
-                case "type_anthropomorphic":
-                    //mViewHolder.deviceImage.setImageResource(R.drawable.type_computer);
-                    break;
-                case "type_cubbi":
-                    mViewHolder.deviceImage.setImageResource(R.drawable.type_cubbi);
-                    break;
-                case "no_type":
-                    mViewHolder.deviceImage.setImageResource(R.drawable.type_no_type);
-                    break;
-            }
-        } else {
-            switch (imageType) {
-                case "class_android":
-                    mViewHolder.deviceImage.setImageResource(R.drawable.class_android);
-                    break;
-                case "no_class":
-                    mViewHolder.deviceImage.setImageResource(R.drawable.type_no_type);
-                    break;
-                case "class_computer":
-                    mViewHolder.deviceImage.setImageResource(R.drawable.class_computer);
-                    break;
-            }
-        }
-        mViewHolder.deviceImage.setVisibility(View.VISIBLE);
-
-        if (isWiFiSupported()) {
-            mViewHolder.wifiSupportIcon.setVisibility(View.VISIBLE);
-        } else {
-            mViewHolder.wifiSupportIcon.setVisibility(View.GONE);
-        }
-
-        if (isBtSupported()) {
-            mViewHolder.btSupportIcon.setVisibility(View.VISIBLE);
-        } else {
-            mViewHolder.btSupportIcon.setVisibility(View.GONE);
-        }
-
     }
 
     @Override

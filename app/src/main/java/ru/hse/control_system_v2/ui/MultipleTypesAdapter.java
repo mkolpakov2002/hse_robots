@@ -21,9 +21,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.card.MaterialCardView;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.Observer;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.functions.Consumer;
+import io.reactivex.rxjava3.functions.Function;
 import ru.hse.control_system_v2.App;
+import ru.hse.control_system_v2.Constants;
+import ru.hse.control_system_v2.MainActivity;
 import ru.hse.control_system_v2.R;
 import ru.hse.control_system_v2.data.AppDataBase;
 import ru.hse.control_system_v2.data.ButtonItemType;
@@ -34,12 +42,11 @@ import ru.hse.control_system_v2.data.ItemType;
 public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements ViewHolderFactory.ListDevicesHolder.IListener {
 
     private ArrayList<ItemType> itemTypeArrayList;
-    private ArrayList<DeviceItemType> mData;
+    private java.util.List<java.util.Map.Entry<Boolean,DeviceItemType>> mData;
     private final Context context;
     private MainActivity ma;
     private MainMenuFragment mainMenuFragment;
     private final DeviceClickedListener listener;
-    private ArrayList<DeviceItemType> selectedDevicesList;
 
 
     public MultipleTypesAdapter(@NonNull Context context) {
@@ -47,10 +54,14 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
         if (context instanceof Activity) {
             ma = (MainActivity) context;
         }
-        this.mData = getDevicesArrayList();
-        this.itemTypeArrayList = new ArrayList<ItemType>();
+        mData = new java.util.ArrayList<>();
+        this.itemTypeArrayList = new ArrayList<>();
         itemTypeArrayList.add(new ButtonItemType(ma));
-        itemTypeArrayList.addAll(mData);
+        for(DeviceItemType itemType: getDevicesArrayList()){
+            java.util.Map.Entry<Boolean, DeviceItemType> pair = new java.util.AbstractMap.SimpleEntry<>(false, itemType);
+            this.mData.add(pair);
+            this.itemTypeArrayList.add(itemType);
+        }
         this.context = context;
         listener = new MyListener();
     }
@@ -58,6 +69,8 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
     public ArrayList<DeviceItemType> getDevicesArrayList() {
         AppDataBase dbDevices = App.getDatabase();
         DeviceItemTypeDao devicesDao = dbDevices.getDeviceItemTypeDao();
+
+
         return (ArrayList<DeviceItemType>) devicesDao.getAll();
     }
 
@@ -68,7 +81,10 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
         newDataSet.addAll(newData);
         DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new ItemsDiffUtilCallBack(newDataSet, itemTypeArrayList), true);
         this.itemTypeArrayList = newDataSet;
-        this.mData = getDevicesArrayList();
+        this.mData.clear();
+        for(DeviceItemType itemType: getDevicesArrayList()){
+            this.mData.add(new java.util.AbstractMap.SimpleEntry<>(false, itemType));
+        }
         diffResult.dispatchUpdatesTo(this);
     }
 
@@ -79,12 +95,12 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     @Override
     public void onDeviceClicked(int id, View itemView) {
-        listener.deviceClicked(mData.get(id - 1), itemView);
+        listener.deviceClicked(mData.get(id - 1).getValue(), itemView);
     }
 
     @Override
     public void onDeviceLongClicked(int id, View itemView) {
-        listener.deviceLongClicked(mData.get(id - 1), itemView);
+        listener.deviceLongClicked(mData.get(id - 1).getValue(), itemView);
     }
 
     public class MyListener implements MultipleTypesAdapter.DeviceClickedListener {
@@ -96,38 +112,33 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
             MaterialCardView materialCardView = itemView.findViewById(R.id.device_item_card_view);
             mainMenuFragment = ma.getMainMenuFragment();
 
-            selectedDevicesList = new ArrayList<DeviceItemType>();
-            for (var i = 1; i < itemTypeArrayList.size(); i++) {
-                if (itemTypeArrayList.get(i).getIsSelectedOnScreen()) {
-                    selectedDevicesList.add(mData.get(i - 1));
+            boolean flag = false;
+            boolean flagWasSelected = false;
+            int position = -1;
+            for(int i = 0; i<mData.size(); i++){
+                if(mData.get(i).getKey()){
+                    flag = true;
+                    if(mData.get(i).getValue().getDevId()==item.getDevId()){
+                        flagWasSelected = true;
+                        position = i;
+                    }
                 }
             }
+
             //проверяю происходит ли выбор списка устройств
-            if (selectedDevicesList.size() != 0) {
+            if (flag) {
                 Log.d(TAG, "...Список не пуст, нажато устройство...");
                 //список не пуст
 
                 //необходимо проверить на присутствие в списке
-                boolean wasAlreadySelected = false;
-                for (DeviceItemType currentDevice : selectedDevicesList) {
-                    if (currentDevice.getDevId() == (item.getDevId())) {
-                        selectedDevicesList.remove(currentDevice);
-                        itemTypeArrayList.get(itemTypeArrayList.indexOf(item)).setIsSelectedOnScreen(false);
-                        wasAlreadySelected = true;
-                        Log.d(TAG, "...В списке нашлось это устройство, удаляю...");
-                        checkMark.setVisibility(View.GONE);
-                        materialCardView.setStrokeColor(Color.TRANSPARENT);
-
-                        break;
-                    }
-                }
-
-                if (!wasAlreadySelected) {
+                if (flagWasSelected) {
+                    mData.set(position, new java.util.AbstractMap.SimpleEntry<>(false, item));
+                    Log.d(TAG, "...В списке нашлось это устройство, удаляю...");
+                    checkMark.setVisibility(View.GONE);
+                    materialCardView.setStrokeColor(Color.TRANSPARENT);
+                } else {
                     Log.d(TAG, "...В списке не нашлось это устройство, добавляю...");
-
-                    itemTypeArrayList.get(itemTypeArrayList.indexOf(item)).setIsSelectedOnScreen(true);
-                    selectedDevicesList.add(item);
-                    App.setDevicesList(selectedDevicesList);
+                    mData.set(position, new java.util.AbstractMap.SimpleEntry<>(true, item));
 
                     if (mainMenuFragment != null) {
                         mainMenuFragment.showItemSelectionMenu();
@@ -135,22 +146,14 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
                     materialCardView.setStrokeColor(ContextCompat.getColor(ma, R.color.color_accent));
                     checkMark.setVisibility(VISIBLE);
                     ((Animatable) checkMark.getDrawable()).start();
-                } else {
-                    if (selectedDevicesList.size() == 0) {
-                        Log.d(TAG, "...Список очищен...");
-                        if (mainMenuFragment != null) {
-                            mainMenuFragment.onRefresh();
-                        }
-                    }
                 }
 
             } else {
-                selectedDevicesList.add(item);
-                App.setDevicesList(selectedDevicesList);
                 Log.d(TAG, "...Список пуст, открываю диалог...");
                 //список пуст, открываем диалог для одного устройства
                 Bundle args = new Bundle();
                 args.putBoolean("isNew", false);
+                args.putSerializable("device", item);
                 Navigation.findNavController(itemView).navigate(R.id.deviceMenuFragment, args);
             }
         }
@@ -161,17 +164,22 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
             ImageView checkMark = (ImageView) itemView.findViewById(R.id.check_mark);
             mainMenuFragment = ma.getMainMenuFragment();
 
-            selectedDevicesList = new ArrayList<DeviceItemType>();
-            for (var i = 1; i < itemTypeArrayList.size(); i++) {
-                if (itemTypeArrayList.get(i).getIsSelectedOnScreen()) {
-                    selectedDevicesList.add(mData.get(i - 1));
+            boolean flag = false;
+            boolean flagWasSelected = false;
+            int position = -1;
+            for(int i = 0; i<mData.size(); i++){
+                if(mData.get(i).getKey()){
+                    flag = true;
+                    if(mData.get(i).getValue().getDevId()==item.getDevId()){
+                        flagWasSelected = true;
+                        position = i;
+                    }
                 }
             }
 
-            if (selectedDevicesList.size() == 0) {
+            if (!flag) {
                 Log.d(TAG, "...Список пуст, добавляю устройство...");
-                itemTypeArrayList.get(itemTypeArrayList.indexOf(item)).setIsSelectedOnScreen(true);
-                selectedDevicesList.add(item);
+                mData.set(position, new java.util.AbstractMap.SimpleEntry<>(true, item));
                 if (mainMenuFragment != null) {
                     mainMenuFragment.showItemSelectionMenu();
                 }
@@ -180,24 +188,13 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
                 ((Animatable) checkMark.getDrawable()).start();
 
             } else {
-                {
-                    boolean wasAlreadySelected = false;
-                    for (int i = 0; i < selectedDevicesList.size(); i++) {
-                        if (selectedDevicesList.get(i).getDevId() == (item.getDevId())) {
-                            wasAlreadySelected = true;
-                        }
-                    }
-                    if (!wasAlreadySelected) {
-                        itemTypeArrayList.get(itemTypeArrayList.indexOf(item)).setIsSelectedOnScreen(true);
-                        selectedDevicesList.add(item);
-                        materialCardView.setStrokeColor(ContextCompat.getColor(ma, R.color.color_accent));
-                        checkMark.setVisibility(VISIBLE);
-                        ((Animatable) checkMark.getDrawable()).start();
-                    }
+                if (!flagWasSelected) {
+                    mData.set(position, new java.util.AbstractMap.SimpleEntry<>(true, item));
+                    materialCardView.setStrokeColor(ContextCompat.getColor(ma, R.color.color_accent));
+                    checkMark.setVisibility(VISIBLE);
+                    ((Animatable) checkMark.getDrawable()).start();
                 }
-
             }
-            App.setDevicesList(selectedDevicesList);
         }
 
     }
@@ -210,7 +207,63 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        itemTypeArrayList.get(position).onBindViewHolder(holder);
+        if(itemTypeArrayList.get(position) instanceof DeviceItemType curr){
+            ViewHolderFactory.ListDevicesHolder mViewHolder = (ViewHolderFactory.ListDevicesHolder) holder;
+            mViewHolder.mName.setText(curr.getDevName());
+            mViewHolder.checkMark.setVisibility(View.GONE);
+            mViewHolder.materialCardView.setStrokeColor(Color.TRANSPARENT);
+            if (curr.getDevClass().equals("class_arduino")) {
+                switch (curr.getImageType()) {
+                    case "type_computer":
+                        mViewHolder.deviceImage.setImageResource(R.drawable.type_computer);
+                        break;
+                    case "type_sphere":
+                        //mViewHolder.deviceImage.setImageResource(R.drawable.type_computer);
+                        break;
+                    case "type_anthropomorphic":
+                        //mViewHolder.deviceImage.setImageResource(R.drawable.type_computer);
+                        break;
+                    case "type_cubbi":
+                        mViewHolder.deviceImage.setImageResource(R.drawable.type_cubbi);
+                        break;
+                    case "no_type":
+                        mViewHolder.deviceImage.setImageResource(R.drawable.type_no_type);
+                        break;
+                }
+            } else {
+                switch (curr.getImageType()) {
+                    case "class_android" -> mViewHolder.deviceImage.setImageResource(R.drawable.class_android);
+                    case "no_class" -> mViewHolder.deviceImage.setImageResource(R.drawable.type_no_type);
+                    case "class_computer" -> mViewHolder.deviceImage.setImageResource(R.drawable.class_computer);
+                }
+            }
+            mViewHolder.deviceImage.setVisibility(View.VISIBLE);
+
+            if (curr.isWiFiSupported()) {
+                mViewHolder.wifiSupportIcon.setVisibility(View.VISIBLE);
+            } else {
+                mViewHolder.wifiSupportIcon.setVisibility(View.GONE);
+            }
+
+            if (curr.isBtSupported()) {
+                mViewHolder.btSupportIcon.setVisibility(View.VISIBLE);
+            } else {
+                mViewHolder.btSupportIcon.setVisibility(View.GONE);
+            }
+        } else if(itemTypeArrayList.get(position) instanceof ButtonItemType curr){
+            ViewHolderFactory.ButtonViewHolder buttonViewHolder = (ViewHolderFactory.ButtonViewHolder) holder;
+            buttonViewHolder.buttonLayout.setOnClickListener(getOnButtonClickListener());
+            buttonViewHolder.buttonTextInfo.setText(curr.getTextInfo());
+        }
+    }
+
+    public View.OnClickListener getOnButtonClickListener() {
+        return v -> {
+            mainMenuFragment = ma.getMainMenuFragment();
+            if (mainMenuFragment != null) {
+                mainMenuFragment.showBottomSheetToAdd();
+            }
+        };
     }
 
     @Override
@@ -220,17 +273,19 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     @Override
     public int getItemViewType(int position) {
-        return itemTypeArrayList.get(position).getItemViewType();
+        if(itemTypeArrayList.get(position) instanceof DeviceItemType)
+            return Constants.DEVICE_ITEM_TYPE;
+        else return Constants.BUTTON_ITEM_TYPE;
     }
 
     public boolean areDevicesConnectable() {
-        for (DeviceItemType deviceItemType : selectedDevicesList) {
-            if (!selectedDevicesList.get(0).getDevClass().equals(deviceItemType.getDevClass())
-                    || !selectedDevicesList.get(0).getDevType().equals(deviceItemType.getDevType())
-                    || !selectedDevicesList.get(0).getDevProtocol().equals(deviceItemType.getDevProtocol())) {
-                return false;
-            }
-        }
+//        for (DeviceItemType deviceItemType : selectedDevicesList) {
+//            if (!selectedDevicesList.get(0).getDevClass().equals(deviceItemType.getDevClass())
+//                    || !selectedDevicesList.get(0).getDevType().equals(deviceItemType.getDevType())
+//                    || !selectedDevicesList.get(0).getDevProtocol().equals(deviceItemType.getDevProtocol())) {
+//                return false;
+//            }
+//        }
         return true;
     }
 

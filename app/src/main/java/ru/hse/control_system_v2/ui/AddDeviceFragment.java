@@ -28,7 +28,7 @@ import java.util.Set;
 
 import ru.hse.control_system_v2.App;
 import ru.hse.control_system_v2.R;
-import ru.hse.control_system_v2.data.DeviceModel;
+import ru.hse.control_system_v2.data.NewBtDevice;
 import ru.hse.control_system_v2.data.DeviceItemType;
 
 /**
@@ -36,7 +36,7 @@ import ru.hse.control_system_v2.data.DeviceItemType;
  * Use the {@link AddDeviceFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class AddDeviceFragment extends Fragment implements DevicesAdapter.SelectedDevice, SwipeRefreshLayout.OnRefreshListener{
+public class AddDeviceFragment extends Fragment implements NewBtDevicesAdapter.SelectedDevice, SwipeRefreshLayout.OnRefreshListener{
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -128,7 +128,7 @@ public class AddDeviceFragment extends Fragment implements DevicesAdapter.Select
         Set<BluetoothDevice> pairedDevices = btAdapter.getBondedDevices();
         // Если список спаренных устройств не пуст
         if(pairedDevices.size()>0) {
-            List<DeviceModel> devicesList = new ArrayList<>();
+            List<NewBtDevice> devicesList = new ArrayList<>();
             List<String> a = new ArrayList<>();
             // устанавливаем связь между данными
             // проходимся в цикле по этому списку
@@ -140,13 +140,13 @@ public class AddDeviceFragment extends Fragment implements DevicesAdapter.Select
             String[] array = a.toArray(new String[0]);
 
             for (String s : array) {
-                DeviceModel deviceModel = new DeviceModel(s);
+                NewBtDevice newBtDevice = new NewBtDevice(s);
 
-                devicesList.add(deviceModel);
+                devicesList.add(newBtDevice);
             }
-            DevicesAdapter devicesAdapter = new DevicesAdapter(devicesList, this);
+            NewBtDevicesAdapter newBtDevicesAdapter = new NewBtDevicesAdapter(devicesList, this);
 
-            pairedList.setAdapter(devicesAdapter);
+            pairedList.setAdapter(newBtDevicesAdapter);
 
             pairedDevicesTitleTextView.setText(R.string.paired_devices);
         } else {
@@ -158,9 +158,9 @@ public class AddDeviceFragment extends Fragment implements DevicesAdapter.Select
     }
 
     //Получаем адрес устройства из List View
-    public void checkDeviceAddress(DeviceModel deviceModel) {
+    public void checkDeviceAddress(NewBtDevice newBtDevice) {
         DeviceItemType newDev = new DeviceItemType();
-        String selectedDeviceInfo = deviceModel.getDeviceName();
+        String selectedDeviceInfo = newBtDevice.getDeviceName();
         String MAC, name;
         //Get information from List View in String
         int i = selectedDeviceInfo.indexOf(':');
@@ -182,8 +182,8 @@ public class AddDeviceFragment extends Fragment implements DevicesAdapter.Select
     }
 
     @Override
-    public void selectedDevice(DeviceModel deviceModel) {
-        checkDeviceAddress(deviceModel);
+    public void selectedDevice(NewBtDevice newBtDevice) {
+        checkDeviceAddress(newBtDevice);
     }
 
     @Override

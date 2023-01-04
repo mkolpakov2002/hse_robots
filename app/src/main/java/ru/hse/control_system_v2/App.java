@@ -146,11 +146,4 @@ public class App extends Application {
 
     public static boolean isActivityConnection(){return connectionState;}
 
-    public static synchronized ArrayList<DeviceItemType> getDevicesList() {
-        return devicesList;
-    }
-
-    public static synchronized void setDevicesList(ArrayList<DeviceItemType> newDevicesList) {
-        devicesList = newDevicesList;
-    }
 }

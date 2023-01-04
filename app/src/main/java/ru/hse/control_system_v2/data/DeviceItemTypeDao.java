@@ -1,5 +1,6 @@
 package ru.hse.control_system_v2.data;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
@@ -8,6 +9,7 @@ import androidx.room.Update;
 
 import java.util.List;
 
+import io.reactivex.rxjava3.core.Observable;
 import ru.hse.control_system_v2.data.DeviceItemType;
 
 @Dao
@@ -31,15 +33,5 @@ public interface DeviceItemTypeDao {
 
     // Получение всех Person из бд
     @Query("SELECT * FROM devices")
-    List<DeviceItemType> getAll();
-
-    // Получение всех DeviceItem из бд с условием
-    @Query("SELECT * FROM devices WHERE devProtocol LIKE :suchProto")
-    List<DeviceItemType> getAllDevicesWithSuchProto(String suchProto);
-
-    @Query("SELECT * FROM devices WHERE deviceMAC LIKE :suchMAC")
-    List<DeviceItemType> getAllDevicesWithSuchMAC(String suchMAC);
-
-    @Query("SELECT * FROM devices WHERE devId = :suchId")
-    DeviceItemType getById(int suchId);
+    LiveData<List<DeviceItemType>> getAll();
 }

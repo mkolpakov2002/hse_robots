@@ -42,6 +42,9 @@ android {
 dependencies {
     def nav_version = "2.5.3"
     def room_version = "2.4.3"
+    def mavlink_lib_version = "0.12.2"
+    def exoplayer_version = "2.18.2"
+    def rxjava3_version = "3.0.0"
 
     implementation fileTree(include: ['*.jar', '*.aar'], dir: 'libs')
 
@@ -49,25 +52,18 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.5.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation "com.google.android.material:material:1.8.0-beta01"
-    implementation 'com.google.firebase:firebase-crashlytics-buildtools:2.9.2'
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.4'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
+
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     implementation "androidx.navigation:navigation-fragment:$nav_version"
     implementation "androidx.navigation:navigation-ui:$nav_version"
-    implementation 'io.reactivex.rxjava3:rxjava:3.1.3'
-    implementation 'androidx.work:work-runtime:2.7.1'
-    implementation 'com.google.android.exoplayer:exoplayer:2.18.2'
-    implementation 'com.google.android.exoplayer:extension-rtmp:2.18.2'
-    implementation 'com.google.android.exoplayer:exoplayer-ui:2.18.2'
+
+
+    implementation "com.google.android.exoplayer:exoplayer:$exoplayer_version"
+    implementation "com.google.android.exoplayer:extension-rtmp:$exoplayer_version"
+    implementation "com.google.android.exoplayer:exoplayer-ui:$exoplayer_version"
 
     implementation "androidx.room:room-runtime:$room_version"
     annotationProcessor "androidx.room:room-compiler:$room_version"
-
-    // optional - RxJava2 support for Room
-    implementation "androidx.room:room-rxjava2:$room_version"
 
     // optional - RxJava3 support for Room
     implementation "androidx.room:room-rxjava3:$room_version"
@@ -78,5 +74,18 @@ dependencies {
     implementation 'org.java-websocket:Java-WebSocket:1.5.3'
 
     implementation 'io.github.medyo:android-about-page:2.0.0'
+
+    //mavlink
+    implementation("xyz.urbanmatrix.mavlink:mavlink-kotlin:$mavlink_lib_version")
+    implementation("xyz.urbanmatrix.mavlink:definitions:$mavlink_lib_version")
+    implementation("xyz.urbanmatrix.mavlink:rxjava2:$mavlink_lib_version")
+
+    // RxJava
+    implementation "io.reactivex.rxjava3:rxjava:$rxjava3_version"
+    implementation "io.reactivex.rxjava3:rxandroid:$rxjava3_version"
+
+    compileOnly 'org.projectlombok:lombok:1.18.24'
+    annotationProcessor "org.projectlombok:lombok:1.18.24"
+
 
 }

@@ -2,12 +2,12 @@ package ru.hse.control_system_v2.data;
 
 import java.io.Serializable;
 
-public class DeviceModel implements Serializable {
+public class NewBtDevice implements Serializable {
 
     private String deviceName;
 
 
-    public DeviceModel(String deviceName) {
+    public NewBtDevice(String deviceName) {
         this.deviceName = deviceName;
     }
 

@@ -12,4 +12,8 @@ public interface Constants {
     String APP_LOG_TAG = "HSE_Robots";
     String[] THEMES_LIST = {"Light", "Dark", "Rena", "Omelette", "FDroid", "Gold", "RenaLight", "Mint", "FDroidDark"};
     String[] THEMES_LIST_ANDROID_S = {"System", "Light", "Dark", "Rena", "Omelette", "FDroid", "Gold", "RenaLight", "Mint", "FDroidDark"};
+    public static int BUTTON_ITEM_TYPE = 0;
+    public static int DEVICE_ITEM_TYPE = 1;
+
+    public static final String TAG = "HSE_GCS";
 }

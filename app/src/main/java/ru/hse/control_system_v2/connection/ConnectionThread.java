@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.security.NoSuchAlgorithmException;
 
 import ru.hse.control_system_v2.App;
 import ru.hse.control_system_v2.data.DeviceItemType;
@@ -23,6 +24,15 @@ public class ConnectionThread extends Thread {
     private Context c;
     private OutputStream mmOutStream;
     boolean isBtService;
+    byte[] key;
+
+    {
+        try {
+            key = Chipper.generateKey().getEncoded();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+    }
 
 
     public ConnectionThread(@NonNull Context context, DeviceItemType deviceItemType, boolean isBtService) {
@@ -39,7 +49,7 @@ public class ConnectionThread extends Thread {
         OutputStream tmpOut = null;
         InputStream tmpIn = null;
         try {
-            if(!isBtService){
+            if (!isBtService) {
                 tmpOut = deviceItemType.getWiFiSocket().getOutputStream();
                 tmpIn = deviceItemType.getWiFiSocket().getInputStream();
             } else {
@@ -56,18 +66,26 @@ public class ConnectionThread extends Thread {
         InputStream mmInStream = tmpIn;
         StringBuilder str = new StringBuilder();
 
-        while (deviceItemType.isWiFiBtConnected()!=null) {
+        while (deviceItemType.isWiFiBtConnected() != null) {
             byte[] buffer = new byte[1024];  // buffer store for the stream
             int bytes = 0; // bytes returned from read()
             // Keep listening to the InputStream until an exception occurs
             // Read from the InputStream
+            //decrypt stream
+            byte[] decryptMessage = new byte[0];
             try {
-                bytes = mmInStream.read(buffer);
+                decryptMessage = Chipper.decrypt(key, buffer);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            try {
+                bytes = mmInStream.read(decryptMessage);
             } catch (IOException e) {
                 Log.e(APP_LOG_TAG, "Ошибка чтения входящих данных в потоке " + e.getMessage());
                 disconnectDevice();
             }
-            if (deviceItemType.isWiFiBtConnected()!=null) {
+            if (deviceItemType.isWiFiBtConnected() != null) {
                 //успешно считываем данные
                 StringBuilder incomingDataBuffer = new StringBuilder();
                 String incomingMessage = new String(buffer, 0, bytes);
@@ -125,16 +143,22 @@ public class ConnectionThread extends Thread {
     public void sendData(byte[] message, int len) {
         int SDK_INT = android.os.Build.VERSION.SDK_INT;
         if (SDK_INT > 8) {
+            byte[] encryptMessage = new byte[0];
+            try {
+                encryptMessage = Chipper.encrypt(key, message);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
                     .permitAll().build();
             StrictMode.setThreadPolicy(policy);
             StringBuilder logMessage = new StringBuilder("Отправляем данные: ");
             for (int i = 0; i < len; i++)
-                logMessage.append(message[i]).append(" ");
+                logMessage.append(encryptMessage[i]).append(" ");
             Log.d(APP_LOG_TAG, logMessage + "***");
             try {
                 mmOutStream.write(App.getNumberCommandFirstChar().getBytes());
-                mmOutStream.write(message);
+                mmOutStream.write(encryptMessage);
                 mmOutStream.write(App.getNumberCommandLastChar().getBytes());
             } catch (IOException e) {
                 disconnectDevice();

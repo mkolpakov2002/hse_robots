@@ -1,74 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
+    <color name="md_theme_light_primary">#124EE5</color>
+    <color name="md_theme_light_onPrimary">#FFFFFF</color>
+    <color name="md_theme_light_primaryContainer">#DCE1FF</color>
+    <color name="md_theme_light_onPrimaryContainer">#001551</color>
+    <color name="md_theme_light_secondary">#006684</color>
+    <color name="md_theme_light_onSecondary">#FFFFFF</color>
+    <color name="md_theme_light_secondaryContainer">#BEE9FF</color>
+    <color name="md_theme_light_onSecondaryContainer">#001F2A</color>
+    <color name="md_theme_light_tertiary">#0360A7</color>
+    <color name="md_theme_light_onTertiary">#FFFFFF</color>
+    <color name="md_theme_light_tertiaryContainer">#D2E4FF</color>
+    <color name="md_theme_light_onTertiaryContainer">#001C37</color>
+    <color name="md_theme_light_error">#BA1A1A</color>
+    <color name="md_theme_light_errorContainer">#FFDAD6</color>
+    <color name="md_theme_light_onError">#FFFFFF</color>
+    <color name="md_theme_light_onErrorContainer">#410002</color>
+    <color name="md_theme_light_background">#FBFCFF</color>
+    <color name="md_theme_light_onBackground">#001E2E</color>
+    <color name="md_theme_light_surface">#FBFCFF</color>
+    <color name="md_theme_light_onSurface">#001E2E</color>
+    <color name="md_theme_light_surfaceVariant">#E2E1EC</color>
+    <color name="md_theme_light_onSurfaceVariant">#45464F</color>
+    <color name="md_theme_light_outline">#767680</color>
+    <color name="md_theme_light_inverseOnSurface">#E5F2FF</color>
+    <color name="md_theme_light_inverseSurface">#00344C</color>
+    <color name="md_theme_light_inversePrimary">#B7C4FF</color>
+    <color name="md_theme_dark_primary">#B7C4FF</color>
+    <color name="md_theme_dark_onPrimary">#002681</color>
+    <color name="md_theme_dark_primaryContainer">#0039B5</color>
+    <color name="md_theme_dark_onPrimaryContainer">#DCE1FF</color>
+    <color name="md_theme_dark_secondary">#69D3FF</color>
+    <color name="md_theme_dark_onSecondary">#003546</color>
+    <color name="md_theme_dark_secondaryContainer">#004D64</color>
+    <color name="md_theme_dark_onSecondaryContainer">#BEE9FF</color>
+    <color name="md_theme_dark_tertiary">#A1C9FF</color>
+    <color name="md_theme_dark_onTertiary">#00325A</color>
+    <color name="md_theme_dark_tertiaryContainer">#004880</color>
+    <color name="md_theme_dark_onTertiaryContainer">#D2E4FF</color>
+    <color name="md_theme_dark_error">#FFB4AB</color>
+    <color name="md_theme_dark_errorContainer">#93000A</color>
+    <color name="md_theme_dark_onError">#690005</color>
+    <color name="md_theme_dark_onErrorContainer">#FFDAD6</color>
+    <color name="md_theme_dark_background">#001E2E</color>
+    <color name="md_theme_dark_onBackground">#C7E7FF</color>
+    <color name="md_theme_dark_surface">#001E2E</color>
+    <color name="md_theme_dark_onSurface">#C7E7FF</color>
+    <color name="md_theme_dark_surfaceVariant">#45464F</color>
+    <color name="md_theme_dark_onSurfaceVariant">#C6C5D0</color>
+    <color name="md_theme_dark_outline">#90909A</color>
+    <color name="md_theme_dark_inverseOnSurface">#001E2E</color>
+    <color name="md_theme_dark_inverseSurface">#C7E7FF</color>
+    <color name="md_theme_dark_inversePrimary">#124EE5</color>
 
-
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
-
-
-
-
-
-    <color name="colorWindowSecondaryLight">#e2e2e2</color>
-
-    <color name="colorPrimaryLight">#507FCC</color>
-    <color name="colorPureWhite">#ffffff</color>
-
-
-    <color name="colorPrimaryDark">#444444</color>
-    <color name="colorPrimaryLightDark">#6f6f6f</color>
-
-
-    <color name="colorAlmostWhite">#e5e5e5</color>
-    <color name="colorPerfectPink">#ffbcbc</color>
-    <color name="colorOnPerfectPink">#CC9797</color>
-    <color name="colorPrimaryLightRuby">#3a404a</color>
-    <color name="colorPrimaryLightSai">#ffffff</color>
-
-    <color name="colorPrimaryRena">#B3224B</color>
-    <color name="colorPrimaryLightRena">#ea5976</color>
-    <color name="colorSecondaryRena">#000000</color>
-
-    <color name="colorOnPrimaryOmelette">#ffffff</color>
-    <color name="colorOnSecondaryOmelette">#ffffff</color>
-
-    <color name="colorPrimaryPixel">#376ECC</color>
-    <color name="colorPrimaryLightPixel">#729cff</color>
-    <color name="colorOnPrimaryPixel">#000000</color>
-    <color name="colorSecondaryPixel">#376ECC</color>
-    <color name="colorOnSecondaryPixel">#000000</color>
-
-    <color name="colorPrimaryFDroid">#8bc34a</color>
-    <color name="colorPrimaryLightFDroid">#bef67a</color>
-    <color name="colorSecondaryFDroid">#8bc34a</color>
-
-    <color name="colorPrimaryDark2">#5C85B8</color>
-    <color name="colorPrimaryLightDark2">#8db4ea</color>
-    <color name="colorOnPrimaryDark2">#ffffff</color>
-    <color name="colorSecondaryDark2">#5C85B8</color>
-    <color name="colorOnSecondaryDark2">#FFFFFF</color>
-
-    <color name="colorPrimaryGold">#B58910</color>
-    <color name="colorPrimaryLightGold">#ebb947</color>
-    <color name="colorOnPrimaryGold">#e6e6e6</color>
-    <color name="colorSecondaryGold">#00449a</color>
-    <color name="colorOnSecondaryGold">#FFFFFF</color>
-
-    <color name="colorPrimaryRenaLight">@color/colorPrimaryRena</color>
-    <color name="colorPrimaryLightRenaLight">@color/colorPrimaryRenaLight</color>
-    <color name="colorOnPrimaryRenaLight">#000000</color>
-    <color name="colorSecondaryRenaLight">@color/colorPrimaryRena</color>
-    <color name="colorOnSecondaryRenaLight">#000000</color>
-
-    <color name="colorPrimaryMint">#63BAB3</color>
-    <color name="colorPrimaryLightMint">#95ede5</color>
-    <color name="colorOnPrimaryMint">#FFFFFF</color>
-    <color name="colorSecondaryMint">#000000</color>
-    <color name="colorOnSecondaryMint">#FFFFFF</color>
-    <color name="colorPrimaryFDroidDark">#658F36</color>
-    <color name="colorPrimaryLightFDroidDark">#95bf63</color>
-    <color name="colorOnPrimaryFDroidDark">#ffffff</color>
-    <color name="colorSecondaryFDroidDark">#000000</color>
-    <color name="colorOnSecondaryFDroidDark">#FFFFFF</color>
 
 </resources>

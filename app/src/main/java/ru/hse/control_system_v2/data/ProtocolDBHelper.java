@@ -16,7 +16,7 @@ import ru.hse.control_system_v2.R;
 public class ProtocolDBHelper extends SQLiteOpenHelper {
 
 
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 3;
     public static final String DATABASE_NAME = "addedProtocols";
     public static final String TABLE_PROTOCOLS = "protocols";
 
@@ -29,9 +29,9 @@ public class ProtocolDBHelper extends SQLiteOpenHelper {
 
     Context context;
 
-    public ProtocolDBHelper(Context context) {
-        super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        this.context = context;
+    public ProtocolDBHelper() {
+        super(App.getContext(), DATABASE_NAME, null, DATABASE_VERSION);
+        context = App.getContext();
     }
 
     @Override
@@ -51,13 +51,14 @@ public class ProtocolDBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase dataBase, int oldVersion, int newVersion) {
+        //TODO
         db = dataBase;
         String query = "select * from " + TABLE_PROTOCOLS + ";";
         Cursor cursor = db.rawQuery(query, null);
         cursor.moveToFirst();
         File dir = context.getFilesDir();
-        AppDataBase dbDevices = App.getDatabase();
-        DeviceItemTypeDao devicesDao = dbDevices.getDeviceItemTypeDao();
+        AppDatabase dbDevices = AppDatabase.Companion.getAppDataBase(context);
+        DeviceItemTypeDao devicesDao = dbDevices.deviceItemTypeDao();
 
 
         for (int i = 0; i < cursor.getCount(); i++) {
@@ -65,7 +66,10 @@ public class ProtocolDBHelper extends SQLiteOpenHelper {
             Log.d("SQL", fileName + " deleting");
             File file = new File(dir, fileName);
             Log.d("delpro", cursor.getString(1));
-            devicesDao.deleteProto(cursor.getString(1), context.getResources().getString(R.string.TAG_default_protocol));
+            if (devicesDao != null) {
+                //TODO
+                //devicesDao.deleteProto(cursor.getString(1), context.getResources().getString(R.string.TAG_default_protocol));
+            }
             boolean result = file.delete();
             Log.d("SQL", cursor.getString(3) + " deleting " + (result ? "yes" : "no"));
             cursor.moveToNext();
@@ -132,7 +136,7 @@ public class ProtocolDBHelper extends SQLiteOpenHelper {
 
     public static synchronized ProtocolDBHelper getInstance(Context context) {
         if (instance == null) {
-            instance = new ProtocolDBHelper(context);
+            instance = new ProtocolDBHelper();
         }
         return instance;
     }

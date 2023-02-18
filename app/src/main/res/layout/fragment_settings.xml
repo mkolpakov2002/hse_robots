@@ -43,7 +43,7 @@
                 android:layout_marginEnd="8dp"
                 android:background="@drawable/textview_bg"
                 android:text="@string/text_protocol_output"
-                android:textColor="@color/colorPureWhite"
+                android:textColor="@android:color/white"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHeight_percent="0.3"
                 app:layout_constraintStart_toStartOf="parent"
@@ -51,7 +51,6 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_delete_protos"
-                style="@style/MaterialButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
@@ -68,7 +67,6 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_delete_devices"
-                style="@style/MaterialButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
@@ -85,7 +83,6 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_show_add_proto"
-                style="@style/MaterialButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -117,7 +114,6 @@
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/textFieldProtocolName"
-                        style="@style/TextInputLayout.OutlinedBox.Dense"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
@@ -136,7 +132,6 @@
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/textFieldLength"
-                        style="@style/TextInputLayout.OutlinedBox.Dense"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
@@ -157,7 +152,6 @@
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/textFieldCodeEdit"
-                        style="@style/TextInputLayout.OutlinedBox.Dense"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
@@ -178,7 +172,6 @@
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/button_choose_file"
-                        style="@style/MaterialButton.Outlined"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
@@ -190,7 +183,6 @@
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/button_add_protocol"
-                        style="@style/MaterialButton"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="bottom"
@@ -202,7 +194,6 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/theme_menu_layout"
-                style="@style/TextInputSpinnerLayout"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -218,7 +209,6 @@
 
                 <AutoCompleteTextView
                     android:id="@+id/theme_menu"
-                    style="@style/HSERobotsTextViewStyle"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:ems="10"

@@ -3,7 +3,11 @@ pluginManagement {
         gradlePluginPortal()
         google()
         mavenCentral()
+        maven{ url 'https://dl.bintray.com/kotlin/kotlin-eap'}
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
         maven { url 'https://jitpack.io' }
+        //noinspection JcenterRepositoryObsolete
+        //jcenter()
     }
 }
 dependencyResolutionManagement {
@@ -11,7 +15,11 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven{ url 'https://dl.bintray.com/kotlin/kotlin-eap'}
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
         maven { url 'https://jitpack.io' }
+        //noinspection JcenterRepositoryObsolete
+        //jcenter()
     }
 }
 rootProject.name = "Control_system_v2"

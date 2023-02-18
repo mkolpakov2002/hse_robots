@@ -1,34 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="AppTheme.Light.DayNight" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/colorPrimaryLight</item>
-        <item name="colorOnPrimary">@color/black</item>
-        <item name="colorPrimaryDark">@color/colorPureWhite</item>
-        <item name="colorPrimaryLight">@color/colorPrimaryLightSai</item>
-        <item name="colorAccent">@color/colorPrimaryLight</item>
-        <item name="android:windowBackground">@color/colorWindowSecondaryLight</item>
-        <item name="titleTextColor">@color/colorPrimaryDark</item>
-        <item name="android:textColorPrimary">@color/colorPrimaryDark</item>
-        <item name="android:textColorSecondary">@color/colorPrimaryDark</item>
-        <item name="alertDialogTheme">@style/AlertDialogStyle</item>
-        <item name="android:alertDialogTheme">@style/AlertDialogStyle</item>
-        <item name="dialogTheme">@style/AlertDialogStyle</item>
-        <item name="android:dialogTheme">@style/AlertDialogStyle</item>
-        <item name="android:textViewStyle">@style/HSERobotsTextViewStyle</item>
-        <item name="colorControlActivated">?attr/colorAccent</item>
-        <item name="android:colorControlActivated">?attr/colorAccent</item>
-        <item name="popupMenuStyle">@style/PopupMenu</item>
-        <item name="popupMenuBackgroundTint">?colorPrimaryLight</item>
-        <item name="android:windowLightNavigationBar">true</item>
-        <item name="android:windowLightStatusBar">true</item>
-        <item name="colorPrimaryContainer">@color/colorPureWhite</item>
-        <item name="colorOnPrimaryContainer">@color/colorPrimaryDark</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="bottomSheetDialogTheme">@style/BottomSheetDialogStyle</item>
-        <item name="floatingActionButtonPrimaryStyle">@style/MaterialButton.Fab.Main</item>
-        <item name="floatingActionButtonSecondaryStyle">@style/MaterialButton.Fab.Secondary</item>
-        <item name="buttonStyle">@style/MaterialButton</item>
-        <item name="materialButtonStyle">@style/MaterialButton</item>
 
+    <style name="AppTheme.Light" parent="Theme.Material3.Light.NoActionBar">
+        <item name="android:progressBarStyleHorizontal">@style/App.ThemeOverlay.ProgressBar.Horizontal</item>
+        <item name="checkboxStyle">@style/App.ThemeOverlay.CheckBox</item>
+        <!--        <item name="colorAccent">@color/md_theme_light_primary</item>-->
+        <item name="editTextStyle">@style/App.ThemeOverlay.EditText</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+
+        <item name="colorPrimary">@color/md_theme_light_primary</item>
+        <item name="colorOnPrimary">@color/md_theme_light_onPrimary</item>
+        <item name="colorPrimaryContainer">@color/md_theme_light_primaryContainer</item>
+        <item name="colorOnPrimaryContainer">@color/md_theme_light_onPrimaryContainer</item>
+        <item name="colorSecondary">@color/md_theme_light_secondary</item>
+        <item name="colorOnSecondary">@color/md_theme_light_onSecondary</item>
+        <item name="colorSecondaryContainer">@color/md_theme_light_secondaryContainer</item>
+        <item name="colorOnSecondaryContainer">@color/md_theme_light_onSecondaryContainer</item>
+        <item name="colorTertiary">@color/md_theme_light_tertiary</item>
+        <item name="colorOnTertiary">@color/md_theme_light_onTertiary</item>
+        <item name="colorTertiaryContainer">@color/md_theme_light_tertiaryContainer</item>
+        <item name="colorOnTertiaryContainer">@color/md_theme_light_onTertiaryContainer</item>
+        <item name="colorError">@color/md_theme_light_error</item>
+        <item name="colorErrorContainer">@color/md_theme_light_errorContainer</item>
+        <item name="colorOnError">@color/md_theme_light_onError</item>
+        <item name="colorOnErrorContainer">@color/md_theme_light_onErrorContainer</item>
+        <item name="android:colorBackground">@color/md_theme_light_background</item>
+        <item name="colorOnBackground">@color/md_theme_light_onBackground</item>
+        <item name="colorSurface">@color/md_theme_light_surface</item>
+        <item name="colorOnSurface">@color/md_theme_light_onSurface</item>
+        <item name="colorSurfaceVariant">@color/md_theme_light_surfaceVariant</item>
+        <item name="colorOnSurfaceVariant">@color/md_theme_light_onSurfaceVariant</item>
+        <item name="colorOutline">@color/md_theme_light_outline</item>
+        <item name="colorOnSurfaceInverse">@color/md_theme_light_inverseOnSurface</item>
+        <item name="colorSurfaceInverse">@color/md_theme_light_inverseSurface</item>
+        <item name="colorPrimaryInverse">@color/md_theme_light_inversePrimary</item>
     </style>
+
+    <style name="App.ThemeOverlay.ProgressBar.Horizontal" parent="@style/Widget.AppCompat.ProgressBar.Horizontal">
+        <item name="android:progressDrawable">@drawable/progress_bar</item>
+    </style>
+
+    <style name="App.ThemeOverlay.EditText" parent="@style/Widget.AppCompat.EditText">
+        <item name="android:background">@drawable/rounded_gray_rect</item>
+        <item name="android:clipToPadding">false</item>
+        <item name="android:capitalize">sentences</item>
+        <item name="android:paddingStart">12dp</item>
+        <item name="android:paddingEnd">12dp</item>
+    </style>
+
+    <style name="App.ThemeOverlay.CheckBox" parent="@style/Widget.AppCompat.CompoundButton.CheckBox">
+        <item name="android:textSize">16sp</item>
+        <item name="android:paddingStart">8dp</item>
+    </style>
+
+
 </resources>

@@ -13,7 +13,6 @@
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/floating_action_button_start_sending_data"
-        style="@style/MaterialButton.ExtendedFab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
@@ -28,7 +27,6 @@
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floating_action_button_delete_selected"
-        style="@style/MaterialButton.Fab.Secondary"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
@@ -68,7 +66,8 @@
             android:clickable="true"
             android:clipToPadding="false"
             android:focusable="true"
-            android:foreground="?android:attr/selectableItemBackground" />
+            android:foreground="?android:attr/selectableItemBackground"
+            tools:listitem="@layout/item_main_list_device"/>
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 

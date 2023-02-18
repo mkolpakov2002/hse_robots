@@ -22,25 +22,15 @@
     <string name="alert_type">Type:\u00A0</string>
     <string name="alert_save">Save</string>
     <string name="alert_delete">Delete</string>
-    <string name="alert_info">Information</string>
     <string name="alert_connection_attempt">Connecting…</string>
     <string name="drawer_item_data_base">Delete device database</string>
     <string name="robot_item_image">Robot Appearance</string>
     <string name="instruction_alert">Hint</string>
     <string name="ok">OK</string>
     <string name="instruction_for_app">Use this app to connect to your robotic devices. If the list of devices is empty, add them by clicking on the appropriate button. You can add devices either manually or using the list of paired Bluetooth devices from the Android device settings. To connect, you can select several devices at once, to start the connection, select them with a long press in the list of available devices. Before starting the connection, you need to select the type of connection - WiFi or Bluetooth. Bluetooth connection requires all devices to have MAC addresses. For a WiFi connection, the devices must have an Ip and a port. For convenience, the indication of Bluetooth and WiFi connectivity for each device is displayed as an icon. \nThe application was created as part of the project work of IWT MIEM NRU HSE.</string>
-    <string name="instruction_for_app_bt">Bluetooth connection requires all devices to have MAC addresses.</string>
-    <string name="instruction_for_app_wifi">For a WiFi connection, devices must have an Ip and a port.</string>
     <string name="instruction_for_app_settings">Use the settings window to control the added protocols and device database.</string>
     <string name="instruction_for_app_device_menu">Use this window to edit and save devices, connect to an already saved device.</string>
     <string name="instruction_for_app_add_device">Use this window to save Bluetooth enabled devices. To add a new one to this list, go to settings and set up a new pairing.</string>
-    <string name="instruction_for_app_connection_activity">Use the main joysticks and separate buttons to transfer basic actions to the robot/robots (forward, backward, left, right) and to transfer additional actions (motor speed adjustment, calibration of servomotors). Track the commands sent via the terminal. To demonstrate the video, use the buttons located in the center of the screen.</string>
-    <string name="TAG_CLASS_FROM">ClassFromDevice</string>
-    <string name="TAG_TYPE_FROM">TypeFromDevice</string>
-    <string name="TAG_CLASS_TO">ClassToDevice</string>
-    <string name="TAG_TYPE_TO">TypeToDevice</string>
-    <string name="TAG_TURN_COM">TurnOfCommand</string>
-    <string name="TAG_TYPE_COM">TypeOfCommand</string>
     <string name="button_add_device">Add Device</string>
     <string name="button_save_protocol">Add protocol</string>
     <string name="button_add_protocol">Add new protocol</string>
@@ -55,9 +45,6 @@
 
     <string name="button_main">Main</string>
     <string name="button_settings">Settings</string>
-    <string name="control_panel">Control Panel</string>
-    <string name="command_hold">Command hold</string>
-    <string name="terminal">Terminal</string>
     <string name="button_add_new_device">Adding new devices</string>
     <string name="button_list_of_paired">from paired list</string>
     <string name="button_manually_by_MAC">manually</string>
@@ -70,58 +57,19 @@
     <string name="button_add_device_label">Add device</string>
     <string name="list_of_available_protocols">List of available protocols</string>
     <string name="no_available_protocols">No protocols available</string>
-    <string name="bluetooth_device_activity_connected_first">Connected</string>
-    <string name="bluetooth_device_activity_from">from</string>
-    <string name="devices_title">devices.</string>
-    <string name="bluetooth_device_activity_list_of_connections">List of successful connections:</string>
-    <string name="device_title">Device</string>
-    <string name="bluetooth_device_activity_connected_second">connected;</string>
-
-    <string name="send_command_stop">to stop</string>
-    <string name="send_command_forward">to move forward</string>
-    <string name="send_command_back">to move back</string>
-    <string name="send_command_left">to move left</string>
-    <string name="send_command_right">to move right</string>
-    <string name="send_command_button_released">Button released, sending stop command.</string>
-    <string name="send_command_insufficient_data">Insufficient data in the protocol used, message not sent.</string>
-    <string name="send_command_hold_enabled">Command hold enabled…</string>
-    <string name="send_command_hold_disabled">Command hold disabled…</string>
 
     <string name="settings_fragment_confirm">Confirmation</string>
     <string name="settings_fragment_delete_protocols">Are you sure you want to delete all custom protocols?</string>
     <string name="settings_fragment_button_ok">OK</string>
     <string name="settings_fragment_button_cancel">Cancel</string>
-    <string name="wifi_not_supported_text">does not support WiFi</string>
-    <string name="bluetooth_not_supported_text">does not support Bluetooth</string>
-    <string name="button_more">More</string>
-    <string name="suggestionNoBtWiFiAdapter">Your device does not have a Bluetooth or WiFi adapter, some app features are limited</string>
-    <string name="suggestionNoWiFiAdapter">Your device does not have a WiFi adapter, WiFi connection is not possible</string>
     <string name="suggestionNoBtAdapter">Your device does not have a Bluetooth adapter, Bluetooth connection is not possible</string>
-    <string name="en_bt_for_connection">Bluetooth must be enabled to connect</string>
-    <string name="en_wifi_for_connection">WiFi must be enabled to connect</string>
-    <string name="connection_error">Connection failed</string>
     <string name="selection_class_device_error">Devices with the same protocol, class, type are needed</string>
     <string name="en_bt_for_list">Please enable Bluetooth to open this menu</string>
     <string name="double_back_click">Press a second time to exit the application</string>
     <string name="label_connection_activity">ConnectionActivity</string>
     <string name="command_for_video_stream">Command for video stream</string>
     <string name="send_string">Send text</string>
-    <string name="network_disconnected_in_connection">The network is disconnected. Further management is impossible.</string>
-    <string name="send_command_title">"Sending command "</string>
-    <string name="video_stream_failed">"Video stream failed for "</string>
-    <string name="exit">Exit</string>
-    <string name="continue_work">Continue working</string>
-    <string name="all_dev_disconnected">All devices are disabled. Further management is impossible.</string>
-    <string name="some_dev_disconnected">Some devices have shut down.</string>
-    <string name="reconnect">Reconnect</string>
-    <string name="continue_work_question">" Continue working?"</string>
-    <string name="one_dev_disconnected">" disconnected."</string>
-    <string name="input_string">Input message</string>
-    <string name="your_string_message">Your text message</string>
-    <string name="send">Send</string>
-    <string name="cancel">Cancel</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="version_name">"App version "</string>
-    <string name="connect_dev">Connect developers</string>
+    <!-- TODO: Remove or change this placeholder text -->
 </resources>

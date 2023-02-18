@@ -2,24 +2,12 @@
   "formatVersion": 1,
   "database": {
     "version": 2,
-    "identityHash": "2d57cdce14df161d42952f2632082878",
+    "identityHash": "36d71f3448e47f768f531c78cb15e9bb",
     "entities": [
       {
         "tableName": "devices",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`devId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `devName` TEXT, `deviceMAC` TEXT, `devClass` TEXT, `devType` TEXT, `devIp` TEXT, `devPort` INTEGER NOT NULL, `devProtocol` TEXT, `devVideoCommand` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`deviceMAC` TEXT, `devClass` TEXT NOT NULL, `devType` TEXT NOT NULL, `videoUrlList` TEXT NOT NULL, `devPort` INTEGER NOT NULL, `devProtocol` TEXT NOT NULL, `devIp` TEXT NOT NULL, `devId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT)",
         "fields": [
-          {
-            "fieldPath": "devId",
-            "columnName": "devId",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "devName",
-            "columnName": "devName",
-            "affinity": "TEXT",
-            "notNull": false
-          },
           {
             "fieldPath": "deviceMAC",
             "columnName": "deviceMAC",
@@ -30,19 +18,19 @@
             "fieldPath": "devClass",
             "columnName": "devClass",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "devType",
             "columnName": "devType",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
-            "fieldPath": "devIp",
-            "columnName": "devIp",
+            "fieldPath": "videoUrlList",
+            "columnName": "videoUrlList",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "devPort",
@@ -54,20 +42,32 @@
             "fieldPath": "devProtocol",
             "columnName": "devProtocol",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
-            "fieldPath": "devVideoCommand",
-            "columnName": "devVideoCommand",
+            "fieldPath": "devIp",
+            "columnName": "devIp",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "devId",
+            "columnName": "devId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
             "affinity": "TEXT",
             "notNull": false
           }
         ],
         "primaryKey": {
+          "autoGenerate": true,
           "columnNames": [
             "devId"
-          ],
-          "autoGenerate": true
+          ]
         },
         "indices": [],
         "foreignKeys": []
@@ -76,7 +76,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '2d57cdce14df161d42952f2632082878')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '36d71f3448e47f768f531c78cb15e9bb')"
     ]
   }
 }

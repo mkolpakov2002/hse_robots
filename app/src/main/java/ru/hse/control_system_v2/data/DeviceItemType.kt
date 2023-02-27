@@ -9,15 +9,14 @@ import ru.hse.control_system_v2.AppConstants.DATABASE_NAME
 import java.io.Serializable
 
 @Entity(tableName = DATABASE_NAME)
-class DeviceItemType constructor(var deviceMAC: String? = "",
-                     var devClass: String = "no_class",
-                     var devType: String = "no_type",
-                     _devIp: String = "",
-                     @PrimaryKey(autoGenerate = true)
-                     override var devId: Int = 0,
-                     override var name: String? = "",
-                     var videoUrlList: ArrayList<String> = ArrayList()
-)
+open class DeviceItemType constructor(var deviceMAC: String? = "",
+                                 var devClass: String = "no_class",
+                                 var devType: String = "no_type",
+                                 _devIp: String = "",
+                                 @PrimaryKey(autoGenerate = true)
+                                 override var devId: Int = 0,
+                                 override var name: String? = "",
+                                 var videoUrlList: ArrayList<String> = ArrayList())
     : ItemType(devId, name), Serializable {
 
     //4141

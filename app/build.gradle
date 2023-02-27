@@ -5,6 +5,7 @@ plugins {
     id 'kotlin-kapt'
     id 'com.google.devtools.ksp' version "$ksp_version"
     id 'org.jetbrains.kotlin.android'
+    id 'org.jetbrains.kotlin.plugin.serialization'
 }
 
 android {
@@ -103,6 +104,7 @@ dependencies {
     implementation "io.ktor:ktor-server-netty:$rootProject.ktorServerVersion"
     implementation "io.ktor:ktor-server-status-pages:$rootProject.ktorServerVersion"
     implementation "io.ktor:ktor-server-default-headers:$rootProject.ktorServerVersion"
+    implementation("io.ktor:ktor-server-websockets:$rootProject.ktorServerVersion")
     implementation "io.ktor:ktor-client-core:$rootProject.ktorClientVersion"
     implementation "io.ktor:ktor-client-android:$rootProject.ktorClientVersion"
 
@@ -110,10 +112,13 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-test-junit:$rootProject.kotlin_version"
     implementation "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable:$rootProject.kotlin_version"
     implementation "org.jetbrains.kotlin:kotlin-script-util:$rootProject.kotlin_version"
-    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.1"
+    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1'
 
     // ExoPlayer video
     implementation "com.google.android.exoplayer:exoplayer-core:$rootProject.exoPlayerVersion"
     implementation "com.google.android.exoplayer:exoplayer-ui:$rootProject.exoPlayerVersion"
     implementation "com.google.android.exoplayer:exoplayer-smoothstreaming:$rootProject.exoPlayerVersion"
+
+    // UVC video
+    implementation 'com.github.jiangdongguo.AndroidUSBCamera:libausbc:3.3.3'
 }

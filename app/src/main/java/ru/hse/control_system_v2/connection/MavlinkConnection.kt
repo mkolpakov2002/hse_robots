@@ -15,7 +15,9 @@ import java.net.Socket
 import java.nio.ByteBuffer
 import kotlin.properties.Delegates
 
-open class MavlinkConnection(deviceItemType: DeviceItemType, connectionName: String?, var connectionVersion: String) :
+open class MavlinkConnection(deviceItemType: DeviceItemType,
+                             connectionName: String?,
+                             var connectionVersion: String) :
     ConnectionClass<Socket?>(deviceItemType, connectionName) {
 
     private lateinit var connection: TcpClientMavConnection

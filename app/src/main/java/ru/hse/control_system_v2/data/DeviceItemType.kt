@@ -8,6 +8,7 @@ import androidx.room.PrimaryKey
 import ru.hse.control_system_v2.AppConstants.DATABASE_NAME
 import java.io.Serializable
 
+// TODO: добавить workspace
 @Entity(tableName = DATABASE_NAME)
 open class DeviceItemType constructor(var deviceMAC: String? = "",
                                  var devClass: String = "no_class",

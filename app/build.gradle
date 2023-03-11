@@ -120,5 +120,12 @@ dependencies {
     implementation "com.google.android.exoplayer:exoplayer-smoothstreaming:$rootProject.exoPlayerVersion"
 
     // UVC video
-    implementation 'com.github.jiangdongguo.AndroidUSBCamera:libausbc:3.3.3'
+    //implementation 'com.github.jiangdongguo.AndroidUSBCamera:libausbc:3.3.3'
+
+    // View Binding
+    implementation 'com.github.kirich1409:viewbindingpropertydelegate-full:1.5.8'
+    implementation 'com.github.kirich1409:viewbindingpropertydelegate-noreflection:1.5.8'
+
+    // Fragment ktx
+    implementation "androidx.fragment:fragment-ktx:1.5.5"
 }

@@ -33,10 +33,11 @@ public class ItemsDiffUtilCallBack extends DiffUtil.Callback {
 
     @Override
     public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
-        return (newList.get(newItemPosition).getTextInfo().equals(oldList.get(oldItemPosition).getTextInfo()))
-                && (newList.get(newItemPosition).getClass() == oldList.get(oldItemPosition).getClass())
-                && (newList.get(newItemPosition).getImageType().equals(oldList.get(oldItemPosition).getImageType()))
-                && (newList.get(newItemPosition).getIsSelectedOnScreen() == oldList.get(oldItemPosition).getIsSelectedOnScreen());
+        return false;
+//        return (newList.get(newItemPosition).getTextInfo().equals(oldList.get(oldItemPosition).getTextInfo()))
+//                && (newList.get(newItemPosition).getClass() == oldList.get(oldItemPosition).getClass())
+//                && (newList.get(newItemPosition).getImageType().equals(oldList.get(oldItemPosition).getImageType()))
+//                && (newList.get(newItemPosition).getIsSelectedOnScreen() == oldList.get(oldItemPosition).getIsSelectedOnScreen());
     }
 
 }

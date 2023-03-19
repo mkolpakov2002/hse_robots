@@ -1,16 +1,13 @@
 package ru.hse.control_system_v2.ui.workspace
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.core.os.bundleOf
-import androidx.fragment.app.setFragmentResult
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import ru.hse.control_system_v2.R
-import ru.hse.control_system_v2.data.workspace.WorkSpaceSharedPreferences
-import ru.hse.control_system_v2.data.workspace.model.WorkSpace
+import ru.hse.control_system_v2.data.classes.workspace.model.WorkSpace
 import ru.hse.control_system_v2.databinding.DialogWorkspaceCreationBinding
 import ru.hse.control_system_v2.ui.device_settings.FRAGMENT_RESULT_WORK_SPACE_KEY
 import ru.hse.control_system_v2.ui.device_settings.WORK_SPACE_KEY

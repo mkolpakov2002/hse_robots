@@ -18,7 +18,11 @@ import java.util.HashMap;
 import java.util.List;
 
 import ru.hse.control_system_v2.R;
+import ru.hse.control_system_v2.data.classes.protocol.ProtocolDBHelper;
 
+/**
+ * класс считывающий значения параметров протокола Лежнёва из файла
+ */
 public class ProtocolRepo extends HashMap<String, Byte> {
 
     private static final String LOG_TAG = "XMLParcer";
@@ -31,8 +35,6 @@ public class ProtocolRepo extends HashMap<String, Byte> {
             "type_cubbi", "type_computer", "no_class", "no_type", "redo_command", "new_command", "type_move", "type_tele",
             "STOP", "FORWARD", "FORWARD_STOP", "BACK", "BACK_STOP", "LEFT", "LEFT_STOP", "RIGHT", "RIGHT_STOP"));
 
-    public static final HashMap<String, Byte> possibilitiesSettings = new HashMap<>();
-
     private final HashMap<String, Byte> newProtoCommands = new HashMap<>();
 
     public ProtocolRepo(Context context, String name) {
@@ -42,65 +44,27 @@ public class ProtocolRepo extends HashMap<String, Byte> {
         queryTags = new ArrayList<>();
         moveCodes = new HashMap<>();
         if (!name.isEmpty()){
-            possibilitiesSettings.put("camera", (byte) 0x0);
-            possibilitiesSettings.put("move", (byte) 0x0);
-            possibilitiesSettings.put("package_data", (byte) 0x0);
             for(String key: mainLabels){
                 moveCodes.put(key, (byte) 0x0);
             }
             parseCodes(name);
         }
 
-        //ArrayList<String> mainMovingCommands = new ArrayList<>(Arrays.asList("STOP", "FORWARD", "FORWARD_STOP", "BACK", "BACK_STOP", "LEFT", "LEFT_STOP", "RIGHT", "RIGHT_STOP"));
     }
 
     public boolean getTag(String tag) {
         return queryTags.contains(tag);
     }
 
-    public boolean isCameraSupported(){
-        if(possibilitiesSettings.containsKey("camera")) {
-            try {
-                return possibilitiesSettings.get("camera") == 1;
-            } catch (NullPointerException e){
-                return false;
-            }
-        } else return false;
-    }
-
-    public boolean isMoveSupported(){
-        if(possibilitiesSettings.containsKey("move")) {
-            try {
-                return possibilitiesSettings.get("move") == 1;
-            } catch (NullPointerException e){
-                return false;
-            }
-        } else return false;
-    }
-
-    public boolean isNeedPackageData(){
-        if(possibilitiesSettings.containsKey("package_data")) {
-            try {
-                return possibilitiesSettings.get("package_data") == 1;
-            } catch (NullPointerException e){
-                return false;
-            }
-        } else return false;
-    }
-
-    //TODO
-    //для package_data
-
     public boolean isNeedNewCommandButton(){
         return !newProtoCommands.isEmpty();
     }
 
     public Byte get(String key) {
-        if(moveCodes.get(key)!=null)
+        if (moveCodes.get(key)!=null)
             return moveCodes.get(key);
-        else if(possibilitiesSettings.get(key)!=null)
-            return possibilitiesSettings.get(key);
-        else return newProtoCommands.get(key);
+        else
+            return newProtoCommands.get(key);
     }
 
 
@@ -145,33 +109,29 @@ public class ProtocolRepo extends HashMap<String, Byte> {
             while (xpp.getEventType() != XmlPullParser.END_DOCUMENT) {
                 switch (xpp.getEventType()) {
                     // начало документа
-                    case XmlPullParser.START_TAG:
+                    case XmlPullParser.START_TAG -> {
                         curName = xpp.getName();
                         queryTags.add(curName);
                         Log.d(LOG_TAG, "At " + curName);
-                        break;
+                    }
                     // содержимое тэга
-                    case XmlPullParser.TEXT:
+                    case XmlPullParser.TEXT -> {
                         Log.d(LOG_TAG, xpp.getText());
                         String codeEl = xpp.getText();
-                        if (codeEl.length() >=2 && codeEl.charAt(1) == 'x')
+                        if (codeEl.length() >= 2 && codeEl.charAt(1) == 'x')
                             codeEl = codeEl.substring(2);
                         Byte xppCode = (byte) Integer.parseInt(codeEl, 16);
                         Log.d(LOG_TAG, "CODE " + curName + " " + xppCode);
                         if (mainLabels.contains(curName)) {
                             //основной список команд и кодов
                             moveCodes.put(curName, xppCode);
-                        } else if(possibilitiesSettings.containsKey(curName)){
-                            //список возможностей протокола
-                            if(xppCode==0||xppCode==1)
-                                possibilitiesSettings.put(curName, xppCode);
                         } else {
                             //список неизвестных (новых) программе команд
                             newProtoCommands.put(curName, xppCode);
                         }
-                        break;
-                    default:
-                        break;
+                    }
+                    default -> {
+                    }
                 }
                 // следующий элемент
                 xpp.next();
@@ -195,10 +155,8 @@ public class ProtocolRepo extends HashMap<String, Byte> {
             String curName = "";
             while (xpp.getEventType() != XmlPullParser.END_DOCUMENT) {
                 switch (xpp.getEventType()) {
-                    case XmlPullParser.START_TAG:
-                        curName = xpp.getName();
-                        break;
-                    case XmlPullParser.TEXT:
+                    case XmlPullParser.START_TAG -> curName = xpp.getName();
+                    case XmlPullParser.TEXT -> {
                         if (curName.equals("length")) {
                             int len = Integer.parseInt(xpp.getText());
                         } else {
@@ -210,10 +168,9 @@ public class ProtocolRepo extends HashMap<String, Byte> {
                                         + Character.digit(codeEl.charAt(1), 16));
                             }
                         }
-                        break;
-
-                    default:
-                        break;
+                    }
+                    default -> {
+                    }
                 }
                 // следующий элемент
                 xpp.next();

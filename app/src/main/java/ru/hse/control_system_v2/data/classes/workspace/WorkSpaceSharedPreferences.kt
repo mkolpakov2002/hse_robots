@@ -1,11 +1,10 @@
-package ru.hse.control_system_v2.data.workspace
+package ru.hse.control_system_v2.data.classes.workspace
 
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.core.content.edit
 import kotlinx.serialization.json.Json
-import ru.hse.control_system_v2.data.workspace.model.WorkSpace
-import kotlin.properties.Delegates
+import ru.hse.control_system_v2.data.classes.workspace.model.WorkSpace
 import kotlin.properties.Delegates.notNull
 
 object WorkSpaceSharedPreferences {

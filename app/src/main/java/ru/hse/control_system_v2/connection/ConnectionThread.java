@@ -10,16 +10,16 @@ import androidx.annotation.NonNull;
 
 import java.io.OutputStream;
 
-import ru.hse.control_system_v2.data.DeviceItemType;
+import ru.hse.control_system_v2.data.classes.device.model.DeviceModel;
 
 public class ConnectionThread extends Thread {
-    private final DeviceItemType deviceItemType;
+    private final DeviceModel deviceItemType;
     private Context c;
     private OutputStream mmOutStream;
     boolean isBtService;
 
 
-    public ConnectionThread(@NonNull Context context, DeviceItemType deviceItemType, boolean isBtService) {
+    public ConnectionThread(@NonNull Context context, DeviceModel deviceItemType, boolean isBtService) {
         if (context instanceof Activity) {
             c = context;
         }

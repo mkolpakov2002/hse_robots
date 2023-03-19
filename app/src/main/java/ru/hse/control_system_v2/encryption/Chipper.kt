@@ -8,6 +8,9 @@ import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
 import javax.crypto.spec.SecretKeySpec
 
+/**
+ * логика шифрования AES
+ */
 object Chipper {
     private const val KEY_TYPE = "AES"
     private const val CIPHER_TRANSFORMATION = "AES"

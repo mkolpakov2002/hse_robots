@@ -2,10 +2,12 @@ package ru.hse.control_system_v2.connection
 
 import android.content.Context
 import ru.hse.control_system_v2.AppConstants
-import ru.hse.control_system_v2.data.DeviceItemType
+import ru.hse.control_system_v2.connection.bluetooth.BluetoothConnection
+import ru.hse.control_system_v2.connection.wifi.IpClientConnection
+import ru.hse.control_system_v2.data.classes.device.model.DeviceModel
 
 //Single instance менеджер всех соединений
-class ConnectionManager(deviceItemTypeList: Map<DeviceItemType, String>?) {
+class ConnectionManager(deviceItemTypeList: Map<DeviceModel, String>?) {
 
     private lateinit var connectionType: String
 
@@ -28,7 +30,7 @@ class ConnectionManager(deviceItemTypeList: Map<DeviceItemType, String>?) {
     }
 
     companion object {
-        private var deviceItemTypeList: Map<DeviceItemType, String>? = null
+        private var deviceItemTypeList: Map<DeviceModel, String>? = null
 
         private var INSTANCE: ConnectionManager? = null
 
@@ -47,7 +49,7 @@ class ConnectionManager(deviceItemTypeList: Map<DeviceItemType, String>?) {
             deviceItemTypeList = null
         }
 
-        fun setDevicesForConnection(devices: Map<DeviceItemType, String>){
+        fun setDevicesForConnection(devices: Map<DeviceModel, String>){
             deviceItemTypeList = devices
         }
     }

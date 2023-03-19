@@ -1,4 +1,4 @@
-package ru.hse.control_system_v2.ui;
+package ru.hse.control_system_v2.ui.connection;
 
 import static ru.hse.control_system_v2.AppConstants.APP_LOG_TAG;
 

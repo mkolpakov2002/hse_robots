@@ -63,7 +63,7 @@ public class DialogDataParams extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         saveButton = view.findViewById(R.id.button);
-        //TODO
+        //TODO: пока не трогать
 //        saveButton.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
@@ -84,7 +84,7 @@ public class DialogDataParams extends Fragment {
         });
 
         editTextNumberCommandLastChar = view.findViewById(R.id.editTextNumberCommandLastChar);
-        //TODO
+        //TODO: пока не трогать
 //        editTextNumberCommandLastChar.setText(App.getNumberCommandLastChar());
 //        editTextNumberCommandLastChar.addTextChangedListener(new TextChangedListener<>(editTextNumberCommandLastChar) {
 //            @Override
@@ -116,7 +116,7 @@ public class DialogDataParams extends Fragment {
 
 
     void onRefresh(){
-        //TODO
+        //TODO: пока не трогать
 //        saveButton.setEnabled(!editTextNumberCommandFirstChar.getText().toString().trim().equals(App.getNumberCommandFirstChar())
 //                || !editTextNumberCommandLastChar.getText().toString().trim().equals(App.getNumberCommandLastChar())
 //                || !editTextStringCommandFirstChar.getText().toString().trim().equals(App.getStringCommandFirstChar())

@@ -1,5 +1,7 @@
 package ru.hse.control_system_v2.ui.device_settings;
 
+import android.annotation.SuppressLint;
+import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,39 +12,40 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import ru.hse.control_system_v2.R;
-import ru.hse.control_system_v2.data.DevicePrototype;
+import ru.hse.control_system_v2.data.classes.device.model.DeviceModel;
 
 public class NewBtDevicesAdapter extends RecyclerView.Adapter<NewBtDevicesAdapter.DevicesAdapterVh> {
 
-    private final List<DevicePrototype> devicePrototypeList;
+    private final ArrayList<BluetoothDevice> devicePrototypeList;
 
-    private final SelectedDevice selectedDevice;
+    private final OnDeviceClicked onDeviceClicked;
 
-    public NewBtDevicesAdapter(List<DevicePrototype> devicePrototypeList, SelectedDevice selectedDevice) {
+    public NewBtDevicesAdapter(ArrayList<BluetoothDevice> devicePrototypeList, OnDeviceClicked onDeviceClicked) {
         this.devicePrototypeList = devicePrototypeList;
-
-        this.selectedDevice = selectedDevice;
+        this.onDeviceClicked = onDeviceClicked;
     }
 
     @NonNull
     @Override
     public NewBtDevicesAdapter.DevicesAdapterVh onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Context context = parent.getContext();
-
-        return new DevicesAdapterVh(LayoutInflater.from(context).inflate(R.layout.item_add_bd_device, null));
+        return new DevicesAdapterVh(
+                LayoutInflater.from(context).inflate(R.layout.item_add_bd_device,
+                        parent,
+                        false));
     }
 
+    @SuppressLint("MissingPermission")
     @Override
     public void onBindViewHolder(@NonNull NewBtDevicesAdapter.DevicesAdapterVh holder, int position) {
 
-        DevicePrototype userModel = devicePrototypeList.get(position);
+        BluetoothDevice userModel = devicePrototypeList.get(position);
 
-        String devicename = userModel.getName();
-
-        holder.tvDevicename.setText(devicename);
+        holder.deviceNameTextView.setText(userModel.getName());
+        holder.deviceAddressTextView.setText(userModel.getAddress());
 
     }
 
@@ -52,23 +55,32 @@ public class NewBtDevicesAdapter extends RecyclerView.Adapter<NewBtDevicesAdapte
     }
 
 
-    public interface SelectedDevice {
+    public interface OnDeviceClicked {
 
-        void selectedDevice(DevicePrototype devicePrototype);
+        void selectedDevice(DeviceModel devicePrototype);
 
     }
 
     public class DevicesAdapterVh extends RecyclerView.ViewHolder {
 
-        TextView tvDevicename;
+        TextView deviceNameTextView;
+        TextView deviceAddressTextView;
         ImageView imIcon;
 
+        @SuppressLint("MissingPermission")
         public DevicesAdapterVh(@NonNull View itemView) {
             super(itemView);
-            tvDevicename = itemView.findViewById(R.id.devicename);
+            deviceNameTextView = itemView.findViewById(R.id.deviceName);
+            deviceAddressTextView = itemView.findViewById(R.id.deviceAddress);
             imIcon = itemView.findViewById(R.id.imageView);
-
-            itemView.setOnClickListener(view -> selectedDevice.selectedDevice(devicePrototypeList.get(getAdapterPosition())));
+            itemView.setOnClickListener(view -> {
+                DeviceModel selected = new DeviceModel();
+                selected.setName(
+                        devicePrototypeList.get(getBindingAdapterPosition()).getName());
+                selected.setBluetoothAddress(
+                        devicePrototypeList.get(getBindingAdapterPosition()).getAddress());
+                onDeviceClicked.selectedDevice(selected);
+            });
         }
     }
 }

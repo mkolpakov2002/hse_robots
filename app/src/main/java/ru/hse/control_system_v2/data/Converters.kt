@@ -2,6 +2,9 @@ package ru.hse.control_system_v2.data
 
 import androidx.room.TypeConverter
 
+/**
+ * конвертеры для записи и получения данных из БД
+ */
 class Converters {
 
     @TypeConverter

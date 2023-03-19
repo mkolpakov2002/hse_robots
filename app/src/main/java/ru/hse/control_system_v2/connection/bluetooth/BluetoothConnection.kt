@@ -1,4 +1,4 @@
-package ru.hse.control_system_v2.connection
+package ru.hse.control_system_v2.connection.bluetooth
 
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
@@ -6,14 +6,15 @@ import android.bluetooth.BluetoothSocket
 import android.util.Log
 import kotlinx.coroutines.*
 import ru.hse.control_system_v2.AppConstants
-import ru.hse.control_system_v2.data.DeviceItemType
+import ru.hse.control_system_v2.connection.ConnectionClass
+import ru.hse.control_system_v2.data.classes.device.model.DeviceModel
 import java.io.IOException
 import java.lang.reflect.InvocationTargetException
 import java.nio.ByteBuffer
 import java.util.*
 
 //реализация соединения по bluetooth
-class BluetoothConnection constructor(deviceItemType: DeviceItemType, connectionName: String?)
+class BluetoothConnection constructor(deviceItemType: DeviceModel, connectionName: String?)
     : ConnectionClass<BluetoothSocket?>(deviceItemType, connectionName) {
     // SPP UUID сервиса согласно документации Android:
     /*
@@ -44,7 +45,7 @@ class BluetoothConnection constructor(deviceItemType: DeviceItemType, connection
         btAdapter = BluetoothAdapter.getDefaultAdapter()
         //ещё одна проверка на состояние Bluetooth
         //устройство с выбранным MAC как объект
-        val device = btAdapter!!.getRemoteDevice(deviceItemType.deviceMAC)
+        val device = btAdapter!!.getRemoteDevice(deviceItemType.bluetoothAddress)
         // Попытка подключиться к устройству
         try {
             clientSocket = device.javaClass

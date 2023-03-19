@@ -1,21 +1,18 @@
-package ru.hse.control_system_v2.connection
+package ru.hse.control_system_v2.connection.wifi
 
-import ru.hse.control_system_v2.data.DeviceItemType
-import xyz.urbanmatrix.mavlink.api.MavBitmaskValue
-import xyz.urbanmatrix.mavlink.api.MavEnumValue
-import xyz.urbanmatrix.mavlink.api.MavMessage
+import ru.hse.control_system_v2.connection.ConnectionClass
+import ru.hse.control_system_v2.data.classes.device.model.DeviceModel
 import xyz.urbanmatrix.mavlink.connection.tcp.TcpClientMavConnection
 import xyz.urbanmatrix.mavlink.definitions.common.CommonDialect
 import xyz.urbanmatrix.mavlink.definitions.minimal.Heartbeat
 import xyz.urbanmatrix.mavlink.definitions.minimal.MavAutopilot
-import xyz.urbanmatrix.mavlink.definitions.minimal.MavModeFlag
 import xyz.urbanmatrix.mavlink.definitions.minimal.MavType
 import xyz.urbanmatrix.mavlink.wrap
 import java.net.Socket
 import java.nio.ByteBuffer
 import kotlin.properties.Delegates
 
-open class MavlinkConnection(deviceItemType: DeviceItemType,
+open class MavlinkConnection(deviceItemType: DeviceModel,
                              connectionName: String?,
                              var connectionVersion: String) :
     ConnectionClass<Socket?>(deviceItemType, connectionName) {
@@ -90,8 +87,10 @@ open class MavlinkConnection(deviceItemType: DeviceItemType,
     }
 
     override suspend fun openConnection() {
-        connection = TcpClientMavConnection(deviceItemType.devIp,
-            deviceItemType.devPort, CommonDialect)
+        connection = TcpClientMavConnection(
+            deviceItemType.wifiAddress,
+            deviceItemType.port,
+            CommonDialect)
         // Non-blocking
         connection.connect()
     }
@@ -101,7 +100,7 @@ open class MavlinkConnection(deviceItemType: DeviceItemType,
     }
 
     private fun createSecretKey() : ByteArray {
-        //TODO
+        //TODO("Not yet implemented")
         return byteArrayOf(0x2E, 0x38)
     }
 

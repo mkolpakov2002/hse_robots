@@ -1,10 +1,10 @@
 package ru.hse.control_system_v2.connection
 
-import ru.hse.control_system_v2.data.DeviceItemType
+import ru.hse.control_system_v2.data.classes.device.model.DeviceModel
 import java.nio.ByteBuffer
 
 //класс обёртка сокета для одного устройства
-abstract class ConnectionClass<T>(val deviceItemType: DeviceItemType,
+abstract class ConnectionClass<T>(val deviceItemType: DeviceModel,
                                   val connectionName: String?) {
     var isNeedToConnect = false
 

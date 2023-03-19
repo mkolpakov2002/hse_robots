@@ -5,14 +5,16 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import androidx.sqlite.db.SupportSQLiteDatabase
-import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
-import ru.hse.control_system_v2.data.ProtocolDBHelper.DATABASE_NAME
-import androidx.sqlite.db.SupportSQLiteOpenHelper
+import ru.hse.control_system_v2.data.classes.device.DeviceItemTypeDao
+import ru.hse.control_system_v2.data.classes.device.model.DeviceModel
+import ru.hse.control_system_v2.data.classes.protocol.ProtocolDBHelper.DATABASE_NAME
 
+/**
+ * Класс локальной базы данных
+ */
 @Database(
-    entities = [DeviceItemType::class /*, AnotherEntityType.class, AThirdEntityType.class */],
-    version = 3
+    entities = [DeviceModel::class /*, AnotherEntityType.class, AThirdEntityType.class */],
+    version = 4
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {

@@ -77,7 +77,7 @@
     </fragment>
     <activity
         android:id="@+id/connectionActivity"
-        android:name="ru.hse.control_system_v2.ui.ConnectionActivity"
+        android:name="ru.hse.control_system_v2.ui.connection.ConnectionActivity"
         android:label="ConnectionActivity"
         tools:layout="@layout/activity_connection"/>
     <fragment
@@ -91,7 +91,7 @@
     </fragment>
     <fragment
         android:id="@+id/addDeviceFragment"
-        android:name="ru.hse.control_system_v2.ui.device_settings.AddDeviceFragment"
+        android:name="ru.hse.control_system_v2.ui.device_settings.BluetoothPairedDevicesFragment"
         android:label="AddDeviceFragment"
         tools:layout="@layout/fragment_add_device">
         <action

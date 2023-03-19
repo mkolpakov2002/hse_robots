@@ -14,10 +14,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.card.MaterialCardView;
 
 import ru.hse.control_system_v2.AppConstants;
-import ru.hse.control_system_v2.data.ButtonItemType;
 import ru.hse.control_system_v2.ui.MainActivity;
 import ru.hse.control_system_v2.R;
-import ru.hse.control_system_v2.data.ItemType;
 
 public class ViewHolderFactory {
 

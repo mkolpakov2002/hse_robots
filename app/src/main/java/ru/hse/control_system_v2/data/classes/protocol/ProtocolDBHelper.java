@@ -1,4 +1,4 @@
-package ru.hse.control_system_v2.data;
+package ru.hse.control_system_v2.data.classes.protocol;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -12,11 +12,13 @@ import java.util.ArrayList;
 
 import ru.hse.control_system_v2.App;
 import ru.hse.control_system_v2.R;
+import ru.hse.control_system_v2.data.AppDatabase;
+import ru.hse.control_system_v2.data.classes.device.DeviceItemTypeDao;
 
 public class ProtocolDBHelper extends SQLiteOpenHelper {
 
 
-    public static final int DATABASE_VERSION = 3;
+    public static final int DATABASE_VERSION = 4;
     public static final String DATABASE_NAME = "addedProtocols";
     public static final String TABLE_PROTOCOLS = "protocols";
 
@@ -51,7 +53,7 @@ public class ProtocolDBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase dataBase, int oldVersion, int newVersion) {
-        //TODO
+        //TODO: заменить на Android Room, удалить этот ужас
         db = dataBase;
         String query = "select * from " + TABLE_PROTOCOLS + ";";
         Cursor cursor = db.rawQuery(query, null);
@@ -67,7 +69,8 @@ public class ProtocolDBHelper extends SQLiteOpenHelper {
             File file = new File(dir, fileName);
             Log.d("delpro", cursor.getString(1));
             if (devicesDao != null) {
-                //TODO
+                //TODO: заменить на Android Room, удалить этот ужас
+                //TODO: при удалении протокола у всех устройств с ним ставится стандартный протокол
                 //devicesDao.deleteProto(cursor.getString(1), context.getResources().getString(R.string.TAG_default_protocol));
             }
             boolean result = file.delete();

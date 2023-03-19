@@ -12,7 +12,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:weightSum="100"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -44,7 +43,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/paired_list"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginStart="3dp"
             android:layout_marginTop="3dp"
             android:clipToPadding="false"
@@ -52,7 +51,6 @@
             android:paddingBottom="96dp"
             android:scrollbarSize="5dp"
             android:scrollbarStyle="outsideOverlay"
-            android:scrollbarThumbVertical="@android:color/darker_gray"
             android:scrollbars="vertical"
             android:textSize="16sp"
             tools:listitem="@layout/item_add_bd_device">

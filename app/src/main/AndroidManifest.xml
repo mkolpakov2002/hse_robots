@@ -26,7 +26,7 @@
         android:theme="@style/AppTheme.Light"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".ui.ConnectionActivity"
+            android:name=".ui.connection.ConnectionActivity"
             android:exported="true"
             android:label="@string/label_connection_activity"
             android:screenOrientation="sensorLandscape" />

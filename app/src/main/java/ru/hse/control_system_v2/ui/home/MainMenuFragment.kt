@@ -27,8 +27,8 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 import ru.hse.control_system_v2.R
 import ru.hse.control_system_v2.connection.ConnectionFactory
+import ru.hse.control_system_v2.data.classes.device.model.DeviceModel
 import ru.hse.control_system_v2.data.AppDatabase
-import ru.hse.control_system_v2.data.DeviceItemType
 import ru.hse.control_system_v2.databinding.FragmentMainBinding
 import ru.hse.control_system_v2.ui.MainActivity
 
@@ -43,7 +43,7 @@ class MainMenuFragment : Fragment(), OnRefreshListener {
         FragmentMainBinding.inflate(layoutInflater)
     }
 
-    private lateinit var deviceItemTypeList: ArrayList<DeviceItemType>
+    private lateinit var deviceItemTypeList: ArrayList<DeviceModel>
 
     override fun onAttach(context: Context) {
         fragmentContext = context
@@ -116,9 +116,9 @@ class MainMenuFragment : Fragment(), OnRefreshListener {
         dataBinding.floatingActionButtonDeleteSelected.setOnClickListener(View.OnClickListener { v: View? ->
 //            AppDatabase dbDevices = App.getDatabase();
 //            DeviceItemTypeDao devicesDao = dbDevices.getDeviceItemTypeDao();
-            //TODO
+            //TODO: заменить способ доступа к БД на корутины
             //
-//            for (DeviceItemType device : App.getDevicesList()) {
+//            for (DeviceModel device : App.getDevicesList()) {
 //                devicesDao.delete(device.getDevId());
 //            }
             onRefresh()
@@ -186,11 +186,6 @@ class MainMenuFragment : Fragment(), OnRefreshListener {
         }
 
         buttonToAddDeviceViaMAC?.setOnClickListener {
-            val newDevice = DeviceItemType()
-            val newList = ArrayList<DeviceItemType>()
-            newList.add(newDevice)
-            //TODO
-            //App.setDevicesList(newList);
             bottomSheetDialogToAdd!!.dismiss()
             findNavController(requireParentFragment().requireView()).navigate(R.id.action_mainMenuFragment_to_deviceMenuFragment)
         }
@@ -242,11 +237,11 @@ class MainMenuFragment : Fragment(), OnRefreshListener {
 
     @Synchronized
     fun showBottomSheetToAdd() {
-        bottomSheetDialogToAdd!!.show()
+        bottomSheetDialogToAdd?.show()
     }
 
     @Synchronized
     fun hideBottomSheetToAdd() {
-        bottomSheetDialogToAdd!!.cancel()
+        bottomSheetDialogToAdd?.cancel()
     }
 }

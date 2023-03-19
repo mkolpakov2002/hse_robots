@@ -2,11 +2,10 @@ package ru.hse.control_system_v2.ui.device_settings
 
 import android.bluetooth.BluetoothAdapter
 import android.content.Context
+import android.net.InetAddresses
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
-import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,19 +13,17 @@ import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.setFragmentResult
-import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.Navigation.findNavController
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
-import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.Json.Default.decodeFromString
 import ru.hse.control_system_v2.R
+import ru.hse.control_system_v2.data.classes.device.model.DeviceModel
 import ru.hse.control_system_v2.data.AppDatabase.Companion.getAppDataBase
-import ru.hse.control_system_v2.data.DeviceItemType
-import ru.hse.control_system_v2.data.workspace.model.WorkSpace
+import ru.hse.control_system_v2.data.classes.workspace.model.WorkSpace
+import ru.hse.control_system_v2.databinding.FragmentDeviceMenuBinding
 import ru.hse.control_system_v2.ui.MainActivity
 import ru.hse.control_system_v2.ui.SpinnerArrayAdapter
 import ru.hse.control_system_v2.ui.TextChangedListener
@@ -37,49 +34,47 @@ internal const val FRAGMENT_RESULT_WORK_SPACE_KEY = "FRAGMENT_RESULT_WORK_SPACE_
 internal const val WORK_SPACE_KEY = "WORK_SPACE_KEY"
 
 class DeviceMenuFragment : Fragment() {
+    private lateinit var binding: FragmentDeviceMenuBinding
+
     // TODO: Rename and change types of parameters
     private var mParam1: String? = null
     private var mParam2: String? = null
-    private var name: String? = null
-    private var MAC: String? = null
-    private var protocol: String? = null
-    private var devClass: String? = null
-    private var devType: String? = null
-    private var devIp: String? = null
-    private var devPort: String? = null
-    private var imageType: String? = null
-    private var devVideoCommand: String? = null
-    private var deviceId = 0
-    private var currentDevice: DeviceItemType? = null
+    private lateinit var name: String
+    private lateinit var bluetoothAddress: String
+    private lateinit var protocol: String
+    private lateinit var devClass: String
+    private lateinit var devType: String
+    private lateinit var devIp: String
+    private lateinit var devPort: String
+    private lateinit var imageType: String
+    private lateinit var devVideoCommand: String
+    private lateinit var currentDevice: DeviceModel
     private var ma: MainActivity? = null
-    private val alertDialog: AlertDialog? = null
-    var deviceNameView: TextInputEditText? = null
-    var deviceMACView: TextInputEditText? = null
-    var deviceVideoCommandView: TextInputEditText? = null
-    var deviceDevVideoCommandLayout: TextInputLayout? = null
-    var deviceClassView: MaterialAutoCompleteTextView? = null
-    var deviceTypeView: MaterialAutoCompleteTextView? = null
-    var deviceProtoView: MaterialAutoCompleteTextView? = null
-    var deviceIpView: TextInputEditText? = null
-    var devicePortView: TextInputEditText? = null
-    private var mPreviousMac: String? = null
-    private val listClasses: List<String>? = null
-    private val listTypes: List<String>? = null
-    private val data: ArrayList<String>? = null
-    var connectButton: MaterialButton? = null
-    var deleteButton: MaterialButton? = null
-    var saveButton: MaterialButton? = null
-    var fragmentContext: Context? = null
-    var deviceImage: ImageView? = null
-    var deviceTypeViewLayout: TextInputLayout? = null
-    var adapterType: SpinnerArrayAdapter<String>? = null
-    var isNew = true
-    var btIcon: ImageView? = null
-    var wifiIcon: ImageView? = null
+
+    lateinit var deviceNameView: TextInputEditText
+    lateinit var deviceMACView: TextInputEditText
+    //lateinit var deviceVideoCommandView: TextInputEditText
+    //TODO: дать возможность создания множественных объектов VideoModel для видеострима
+    //private lateinit var deviceDevVideoCommandLayout: TextInputLayout
+    lateinit var deviceClassView: MaterialAutoCompleteTextView
+    lateinit var deviceTypeView: MaterialAutoCompleteTextView
+    lateinit var deviceProtoView: MaterialAutoCompleteTextView
+    lateinit var deviceIpView: TextInputEditText
+    lateinit var devicePortView: TextInputEditText
+    private lateinit var mPreviousMac: String
+    private lateinit var connectButton: MaterialButton
+    private lateinit var deleteButton: MaterialButton
+    private lateinit var saveButton: MaterialButton
+    private var fragmentContext: Context? = null
+    private lateinit var deviceImage: ImageView
+    private lateinit var deviceTypeViewLayout: TextInputLayout
+    private var adapterType: SpinnerArrayAdapter<String>? = null
+    private var isNew = true
+    private lateinit var btIcon: ImageView
+    private lateinit var wifiIcon: ImageView
     override fun onAttach(context: Context) {
         fragmentContext = context
         ma = fragmentContext as MainActivity?
-        currentDevice = DeviceItemType()
         super.onAttach(context)
     }
 
@@ -91,8 +86,8 @@ class DeviceMenuFragment : Fragment() {
         }
         val b = arguments
         if (b != null) {
-            isNew = b.getBoolean("isNew")
-            currentDevice = b.getSerializable("device") as DeviceItemType?
+            isNew = b.getBoolean("isNew", true)
+            currentDevice = b.getSerializable("device") as DeviceModel
         }
         deviceInformation
     }
@@ -100,9 +95,10 @@ class DeviceMenuFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_device_menu, container, false)
+        binding = FragmentDeviceMenuBinding.inflate(inflater)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -117,27 +113,28 @@ class DeviceMenuFragment : Fragment() {
     }
 
     //        imageType = currentDevice.getImageType();
-    val deviceInformation: Unit
+    private val deviceInformation: Unit
         get() {
-            deviceId = currentDevice!!.devId
-            name = currentDevice!!.name
-            MAC = currentDevice!!.deviceMAC
-            protocol = currentDevice!!.devProtocol
-            devClass = currentDevice!!.devClass
-            devType = currentDevice!!.devType
-            devIp = currentDevice!!.devIp
-            devPort = currentDevice!!.devPort.toString()
+            if(!this::currentDevice.isInitialized)
+                currentDevice = DeviceModel()
+            name = currentDevice.name
+            bluetoothAddress = currentDevice.bluetoothAddress
+            protocol = currentDevice.protocol
+            devClass = currentDevice.uiClass
+            devType = currentDevice.uiType
+            devIp = currentDevice.wifiAddress
+            devPort = currentDevice.port.toString()
             //        imageType = currentDevice.getImageType();
         }
 
-    fun showDeviceInformation(view: View) {
-        deviceImage = view.findViewById(R.id.icon_image_view_menu)
-        saveButton = view.findViewById(R.id.device_save)
-        saveButton?.setOnClickListener(View.OnClickListener { saveDevice() })
-        deviceTypeViewLayout = view.findViewById(R.id.device_type_layout)
-        deviceNameView = view.findViewById(R.id.device_name_edit)
-        deviceNameView?.setText(name)
-        deviceNameView?.addTextChangedListener(object :
+    private fun showDeviceInformation(view: View) {
+        deviceImage = binding.iconImageViewMenu
+        saveButton = binding.deviceSave
+        saveButton.setOnClickListener(View.OnClickListener { saveDevice() })
+        deviceTypeViewLayout = binding.deviceTypeLayout
+        deviceNameView = binding.deviceNameEdit
+        deviceNameView.setText(name)
+        deviceNameView.addTextChangedListener(object :
             TextChangedListener<TextInputEditText?>(deviceNameView) {
             override fun onTextChanged(target: TextInputEditText?, s: Editable?) {
                 name = s.toString().trim { it <= ' ' }
@@ -147,25 +144,25 @@ class DeviceMenuFragment : Fragment() {
                 onRefresh()
             }
         })
-        deviceVideoCommandView = view.findViewById(R.id.device_dev_video_command_edit)
-        deviceVideoCommandView?.setText(devVideoCommand)
-        deviceVideoCommandView?.addTextChangedListener(object :
-            TextChangedListener<TextInputEditText?>(deviceVideoCommandView) {
-            override fun onTextChanged(target: TextInputEditText?, s: Editable?) {
-                devVideoCommand = s.toString().trim { it <= ' ' }
-                onRefresh()
-            }
-        })
-        deviceDevVideoCommandLayout = view.findViewById(R.id.device_dev_video_command_layout)
-        if (!isWiFiSupported) {
-            deviceDevVideoCommandLayout?.setEnabled(false)
-        }
-        deviceDevVideoCommandLayout?.setEndIconOnClickListener(View.OnClickListener {
-            //TODO
-        })
-        deviceMACView = view.findViewById(R.id.device_mac_edit)
-        deviceMACView?.setText(MAC)
-        deviceMACView?.addTextChangedListener(object : TextWatcher {
+//        deviceVideoCommandView = binding.deviceDevVideoCommandEdit
+//        deviceVideoCommandView.setText(devVideoCommand)
+//        deviceVideoCommandView.addTextChangedListener(object :
+//            TextChangedListener<TextInputEditText?>(deviceVideoCommandView) {
+//            override fun onTextChanged(target: TextInputEditText?, s: Editable?) {
+//                devVideoCommand = s.toString().trim { it <= ' ' }
+//                onRefresh()
+//            }
+//        })
+//        deviceDevVideoCommandLayout = binding.deviceDevVideoCommandLayout
+//        if (!isWiFiSupported) {
+//            deviceDevVideoCommandLayout.isEnabled = false
+//        }
+//        deviceDevVideoCommandLayout.setEndIconOnClickListener({
+        //TODO: замена ввода одного адреса ввода на сразу несколько, создание VideoModel
+//        })
+        deviceMACView = binding.deviceMacEdit
+        deviceMACView.setText(bluetoothAddress)
+        deviceMACView.addTextChangedListener(object : TextWatcher {
             //https://github.com/r-cohen/macaddress-edittext
             private fun setMacEdit(
                 cleanMac: String,
@@ -173,47 +170,47 @@ class DeviceMenuFragment : Fragment() {
                 selectionStart: Int,
                 lengthDiff: Int
             ) {
-                deviceMACView!!.removeTextChangedListener(this)
+                deviceMACView.removeTextChangedListener(this)
                 if (cleanMac.length <= 12) {
-                    deviceMACView!!.setText(formattedMac)
-                    deviceMACView!!.setSelection(selectionStart + lengthDiff)
+                    deviceMACView.setText(formattedMac)
+                    deviceMACView.setSelection(selectionStart + lengthDiff)
                     mPreviousMac = formattedMac
                 } else {
-                    deviceMACView?.setText(mPreviousMac)
-                    deviceMACView?.setSelection(mPreviousMac!!.length)
+                    deviceMACView.setText(mPreviousMac)
+                    deviceMACView.setSelection(mPreviousMac.length)
                 }
-                deviceMACView?.addTextChangedListener(this)
+                deviceMACView.addTextChangedListener(this)
             }
 
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                if (deviceMACView?.getText().toString() != deviceMACView?.getText().toString()) {
+                if (deviceMACView.text.toString() != deviceMACView.text.toString()) {
                     val upperText =
-                        deviceMACView?.getText().toString().uppercase(Locale.getDefault())
-                    deviceMACView?.setText(upperText)
-                    deviceMACView?.setSelection(deviceMACView!!.length()) //fix reverse texting
+                        deviceMACView.text.toString().uppercase(Locale.getDefault())
+                    deviceMACView.setText(upperText)
+                    deviceMACView.setSelection(deviceMACView.length()) //fix reverse texting
                 }
-                val enteredMac = deviceMACView?.getText().toString().uppercase(Locale.getDefault())
+                val enteredMac = deviceMACView.text.toString().uppercase(Locale.getDefault())
                 val cleanMac = clearNonMacCharacters(enteredMac)
                 var formattedMac = formatMacAddress(cleanMac)
-                val selectionStart = deviceMACView?.getSelectionStart()
-                formattedMac = handleColonDeletion(enteredMac, formattedMac, selectionStart!!)
+                val selectionStart = deviceMACView.selectionStart
+                formattedMac = handleColonDeletion(enteredMac, formattedMac, selectionStart)
                 val lengthDiff = formattedMac.length - enteredMac.length
-                setMacEdit(cleanMac, formattedMac, selectionStart!!, lengthDiff)
-                MAC = s.toString().trim { it <= ' ' }
+                setMacEdit(cleanMac, formattedMac, selectionStart, lengthDiff)
+                bluetoothAddress = s.toString().trim { it <= ' ' }
                 onRefresh()
             }
 
             override fun afterTextChanged(s: Editable) {}
         })
         deviceClassView = view.findViewById(R.id.device_class_edit)
-        deviceClassView?.setText(devClass)
+        deviceClassView.setText(devClass)
         val adapterClass = SpinnerArrayAdapter(
             requireActivity(), android.R.layout.simple_spinner_dropdown_item,
-            Arrays.asList("class_android", "class_computer", "class_arduino", "no_class")
+            listOf("class_android", "class_computer", "class_arduino", "no_class")
         )
-        deviceClassView?.setAdapter(adapterClass)
-        deviceClassView?.addTextChangedListener(object :
+        deviceClassView.setAdapter(adapterClass)
+        deviceClassView.addTextChangedListener(object :
             TextChangedListener<MaterialAutoCompleteTextView?>(deviceClassView) {
             override fun onTextChanged(target: MaterialAutoCompleteTextView?, s: Editable?) {
                 if (devClass != s.toString()) {
@@ -223,10 +220,10 @@ class DeviceMenuFragment : Fragment() {
             }
         })
         deviceTypeView = view.findViewById(R.id.device_type_edit)
-        deviceTypeView?.setText(devType)
+        deviceTypeView.setText(devType)
         adapterType = SpinnerArrayAdapter(
             requireActivity(), android.R.layout.simple_spinner_dropdown_item,
-            Arrays.asList(
+            listOf(
                 "type_sphere",
                 "type_anthropomorphic",
                 "type_cubbi",
@@ -234,113 +231,111 @@ class DeviceMenuFragment : Fragment() {
                 "no_type"
             )
         )
-        deviceTypeView?.setAdapter(adapterType)
-        deviceTypeView?.addTextChangedListener(object :
+        deviceTypeView.setAdapter(adapterType)
+        deviceTypeView.addTextChangedListener(object :
             TextChangedListener<MaterialAutoCompleteTextView?>(deviceTypeView) {
             override fun onTextChanged(target: MaterialAutoCompleteTextView?, s: Editable?) {
-                if (deviceTypeViewLayout!!.isEnabled() && devType != s.toString()) {
+                if (deviceTypeViewLayout.isEnabled && devType != s.toString()) {
                     devType = s.toString()
                     onRefresh()
                 }
             }
         })
-        deviceProtoView = view.findViewById(R.id.device_proto_edit)
-        deviceProtoView!!.setText(protocol)
-        //TODO
+        deviceProtoView = binding.deviceProtoEdit
+        deviceProtoView.setText(protocol)
+        //TODO: после создания БД для протоколов, выводить их тут
 //        SpinnerArrayAdapter<String> adapterProto = new SpinnerArrayAdapter<String>(
 //                fragmentContext, android.R.layout.simple_spinner_dropdown_item,
 //                AppDatabase.Companion.getProtocolNames());
 //        deviceProtoView.setAdapter(adapterProto);
-        deviceProtoView?.addTextChangedListener(object :
+        deviceProtoView.addTextChangedListener(object :
             TextChangedListener<MaterialAutoCompleteTextView?>(deviceProtoView) {
             override fun onTextChanged(target: MaterialAutoCompleteTextView?, s: Editable?) {
                 protocol = s.toString().trim { it <= ' ' }
                 onRefresh()
             }
         })
-        deviceIpView = view.findViewById(R.id.device_ip_edit)
-        deviceIpView!!.setText(devIp)
-        deviceIpView!!.addTextChangedListener(object :
+        deviceIpView = binding.deviceIpEdit
+        deviceIpView.setText(devIp)
+        deviceIpView.addTextChangedListener(object :
             TextChangedListener<TextInputEditText?>(deviceIpView) {
             override fun onTextChanged(target: TextInputEditText?, s: Editable?) {
                 devIp = s.toString().trim { it <= ' ' }
                 onRefresh()
             }
         })
-        devicePortView = view.findViewById(R.id.device_port_edit)
-        devicePortView?.setText(devPort)
-        devicePortView?.addTextChangedListener(object :
+        devicePortView = binding.devicePortEdit
+        devicePortView.setText(devPort)
+        devicePortView.addTextChangedListener(object :
             TextChangedListener<TextInputEditText?>(devicePortView) {
             override fun onTextChanged(target: TextInputEditText?, s: Editable?) {
                 devPort = s.toString().trim { it <= ' ' }
-                if (devPort!!.isEmpty()) devPort = "0"
+                if (devPort.isEmpty()) devPort = "0"
                 onRefresh()
             }
         })
-        connectButton = view.findViewById(R.id.device_connect)
-        connectButton?.setOnClickListener(View.OnClickListener { ma!!.showBottomSheetToConnect() })
-        if (isNew) connectButton?.setVisibility(View.GONE)
-        deleteButton = view.findViewById(R.id.device_delete)
-        deleteButton?.setOnClickListener(View.OnClickListener { view ->
+        connectButton = binding.deviceConnect
+        connectButton.setOnClickListener(View.OnClickListener { ma!!.showBottomSheetToConnect() })
+        if (isNew) connectButton.visibility = View.GONE
+        deleteButton = binding.deviceDelete
+        deleteButton.setOnClickListener(View.OnClickListener {
             val dbDevices = getAppDataBase(requireContext())
-            //TODO
+            //TODO: после обновления БД на корутины
             val devicesDao = dbDevices.deviceItemTypeDao()
             if (devicesDao != null) {
-                //TODO
+                //TODO: после обновления БД на корутины
                 //devicesDao.delete(deviceId);
             }
             findNavController(view).navigate(R.id.action_deviceMenuFragment_to_mainMenuFragment)
         })
-        if (isNew) deleteButton?.setVisibility(View.GONE)
-        requireView().findViewById<View>(R.id.workspace_edit).setOnClickListener { view1: View? ->
+        if (isNew) deleteButton.visibility = View.GONE
+        binding.workspaceEdit.setOnClickListener {
             newInstance().show(childFragmentManager, null)
         }
-        btIcon = view.findViewById(R.id.device_menu_bt_icon)
-        wifiIcon = view.findViewById(R.id.device_menu_wifi_icon)
+        btIcon = binding.deviceMenuBtIcon
+        wifiIcon = binding.deviceMenuWifiIcon
         onRefresh()
     }
 
-    fun saveDevice() {
-        if (deviceNameView!!.text.toString().trim { it <= ' ' }.isEmpty()) {
-            deviceNameView!!.error = getString(R.string.error_incorrect)
-        } else if (deviceMACView!!.text.toString()
+    private fun saveDevice() {
+        if (deviceNameView.text.toString().trim { it <= ' ' }.isEmpty()) {
+            deviceNameView.error = getString(R.string.error_incorrect)
+        } else if (deviceMACView.text.toString()
                 .trim { it <= ' ' }.isNotEmpty() && !isBtSupported
         ) {
-            deviceMACView!!.error = getString(R.string.error_incorrect)
-        } else if (deviceIpView!!.text.toString()
+            deviceMACView.error = getString(R.string.error_incorrect)
+        } else if (deviceIpView.text.toString()
                 .trim { it <= ' ' }.isNotEmpty() && !isWiFiSupported
         ) {
-            deviceIpView!!.error = getString(R.string.error_incorrect)
+            deviceIpView.error = getString(R.string.error_incorrect)
         } else {
-            val newName = deviceNameView!!.text.toString()
-            protocol = deviceProtoView!!.text.toString()
-            val classDevice = deviceClassView!!.text.toString()
-            val typeDevice: String
-            typeDevice =
-                if (classDevice == "class_arduino") deviceTypeView!!.text.toString() else "no_type"
-            MAC = deviceMACView!!.text.toString().trim { it <= ' ' }
-            devIp = deviceIpView!!.text.toString().trim { it <= ' ' }
-            devPort = devicePortView!!.text.toString().trim { it <= ' ' }
+            val newName = deviceNameView.text.toString()
+            protocol = deviceProtoView.text.toString()
+            val classDevice = deviceClassView.text.toString()
+            val typeDevice: String = if (classDevice == "class_arduino") deviceTypeView.text.toString() else "no_type"
+            bluetoothAddress = deviceMACView.text.toString().trim { it <= ' ' }
+            devIp = deviceIpView.text.toString().trim { it <= ' ' }
+            devPort = devicePortView.text.toString().trim { it <= ' ' }
 
-            //TODO
+            //TODO: после обновления БД на корутины
 //            AppDatabase dbDevices = App.getDatabase();
 //            DeviceItemTypeDao devicesDao = dbDevices.getDeviceItemTypeDao();
-            currentDevice!!.name = newName
-            currentDevice!!.deviceMAC = MAC
-            currentDevice!!.devClass = classDevice
-            currentDevice!!.devType = typeDevice
-            currentDevice!!.devProtocol = protocol!!
-            currentDevice!!.devIp = devIp!!
-            //TODO
+            currentDevice.name = newName
+            currentDevice.bluetoothAddress = bluetoothAddress as String
+            currentDevice.uiClass = classDevice
+            currentDevice.uiType = typeDevice
+            currentDevice.protocol = protocol
+            currentDevice.wifiAddress = devIp
+            //TODO: работа с VideoModel
             //currentDevice.setDevVideoCommand(devVideoCommand);
             try {
-                val i = devPort!!.toInt()
-                currentDevice!!.devPort = i
+                val i = devPort.toInt()
+                currentDevice.port = i
             } catch (e: NumberFormatException) {
-                currentDevice!!.devPort = 0
+                currentDevice.port = 0
             }
-            currentDevice!!.devPort = devPort!!.toInt()
-            //TODO
+            currentDevice.port = devPort.toInt()
+            //TODO: после обновления БД на корутины
 //            devicesDao.insertAll(currentDevice);
             findNavController(requireView()).navigate(R.id.mainMenuFragment)
         }
@@ -352,8 +347,8 @@ class DeviceMenuFragment : Fragment() {
         selectionStart: Int
     ): String {
         var formattedMac = formattedMac
-        if (mPreviousMac != null && mPreviousMac!!.length > 1) {
-            val previousColonCount = colonCount(mPreviousMac!!)
+        if (this::mPreviousMac.isInitialized && mPreviousMac.length > 1) {
+            val previousColonCount = colonCount(mPreviousMac)
             val currentColonCount = colonCount(enteredMac)
             if (currentColonCount < previousColonCount) {
                 formattedMac =
@@ -367,7 +362,7 @@ class DeviceMenuFragment : Fragment() {
         return formattedMac
     }
 
-    fun setDeviceImage() {
+    private fun setDeviceImage() {
         imageType = if (devClass == "class_arduino") {
             devType
         } else {
@@ -375,19 +370,19 @@ class DeviceMenuFragment : Fragment() {
         }
         if (devClass == "class_arduino") {
             when (imageType) {
-                "type_computer" -> deviceImage!!.setImageDrawable(
+                "type_computer" -> deviceImage.setImageDrawable(
                     ContextCompat.getDrawable(
                         fragmentContext!!, R.drawable.type_computer
                     )
                 )
                 "type_sphere" -> {}
                 "type_anthropomorphic" -> {}
-                "type_cubbi" -> deviceImage!!.setImageDrawable(
+                "type_cubbi" -> deviceImage.setImageDrawable(
                     ContextCompat.getDrawable(
                         fragmentContext!!, R.drawable.type_cubbi
                     )
                 )
-                "no_type" -> deviceImage!!.setImageDrawable(
+                "no_type" -> deviceImage.setImageDrawable(
                     ContextCompat.getDrawable(
                         fragmentContext!!, R.drawable.type_no_type
                     )
@@ -395,17 +390,17 @@ class DeviceMenuFragment : Fragment() {
             }
         } else {
             when (imageType) {
-                "class_android" -> deviceImage!!.setImageDrawable(
+                "class_android" -> deviceImage.setImageDrawable(
                     ContextCompat.getDrawable(
                         fragmentContext!!, R.drawable.class_android
                     )
                 )
-                "no_class" -> deviceImage!!.setImageDrawable(
+                "no_class" -> deviceImage.setImageDrawable(
                     ContextCompat.getDrawable(
                         fragmentContext!!, R.drawable.type_no_type
                     )
                 )
-                "class_computer" -> deviceImage!!.setImageDrawable(
+                "class_computer" -> deviceImage.setImageDrawable(
                     ContextCompat.getDrawable(
                         fragmentContext!!, R.drawable.class_computer
                     )
@@ -415,11 +410,11 @@ class DeviceMenuFragment : Fragment() {
     }
 
     fun onRefresh() {
-        if (deviceClassView!!.text.toString() == "class_arduino") {
-            deviceTypeViewLayout!!.isEnabled = true
+        if (deviceClassView.text.toString() == "class_arduino") {
+            deviceTypeViewLayout.isEnabled = true
             adapterType = SpinnerArrayAdapter(
                 requireActivity(), android.R.layout.simple_spinner_dropdown_item,
-                Arrays.asList(
+                listOf(
                     "type_sphere",
                     "type_anthropomorphic",
                     "type_cubbi",
@@ -427,41 +422,48 @@ class DeviceMenuFragment : Fragment() {
                     "no_type"
                 )
             )
-            deviceTypeView!!.setAdapter(adapterType)
+            deviceTypeView.setAdapter(adapterType)
         } else {
-            deviceTypeViewLayout!!.isEnabled = false
-            deviceTypeView!!.setText("no_type")
+            deviceTypeViewLayout.isEnabled = false
+            deviceTypeView.setText("no_type")
         }
         setDeviceImage()
-        if (name == currentDevice!!.name && MAC == currentDevice!!.deviceMAC && protocol == currentDevice!!.devProtocol && devClass == currentDevice!!.devClass && devType == currentDevice!!.devType && devIp == currentDevice!!.devIp && devPort == currentDevice!!.devPort.toString() //TODO
+        // изменений в информации нет
+        if ((name == currentDevice.name
+            && bluetoothAddress == currentDevice.bluetoothAddress
+            && protocol == currentDevice.protocol
+            && devClass == currentDevice.uiClass
+            && devType == currentDevice.uiType
+            && devIp == currentDevice.wifiAddress
+            && devPort == currentDevice.port.toString() //TODO
         //                &&
         //                imageType.equals(currentDevice.getImageType())
-        ) {
-            if (currentDevice!!.isBtSupported ||
-                currentDevice!!.isWiFiSupported
+        ) && !isNew) {
+            if (currentDevice.isBluetoothSupported ||
+                currentDevice.isWiFiSupported
             ) {
-                connectButton!!.isEnabled = true
+                connectButton.isEnabled = true
             }
-            if (!isNew) {
-                saveButton!!.isEnabled = false
-                deleteButton!!.isEnabled = true
-            }
+            saveButton.isEnabled = false
+            deleteButton.isEnabled = true
         } else {
-            saveButton!!.isEnabled = true
-            connectButton!!.isEnabled = false
-            deleteButton!!.isEnabled = false
+            // есть что сохранить
+            saveButton.isEnabled = true
+            connectButton.isEnabled = false
+            deleteButton.isEnabled = false
         }
-        if (isBtSupported) btIcon!!.visibility = View.VISIBLE else btIcon!!.visibility =
+        if (isBtSupported) btIcon.visibility = View.VISIBLE else btIcon.visibility =
             View.INVISIBLE
-        if (isWiFiSupported) wifiIcon!!.visibility = View.VISIBLE else wifiIcon!!.visibility =
+        if (isWiFiSupported) wifiIcon.visibility = View.VISIBLE else wifiIcon.visibility =
             View.INVISIBLE
-        deviceDevVideoCommandLayout!!.isEnabled = isWiFiSupported
+        //TODO: см. VideoModel
+        //deviceDevVideoCommandLayout.isEnabled = isWiFiSupported
     }
 
-    val isBtSupported: Boolean
-        get() = MAC != null && BluetoothAdapter.checkBluetoothAddress(MAC)
-    val isWiFiSupported: Boolean
-        get() = devIp != null && Patterns.IP_ADDRESS.matcher(devIp).matches()
+    private val isBtSupported: Boolean
+        get() = BluetoothAdapter.checkBluetoothAddress(bluetoothAddress)
+    private val isWiFiSupported: Boolean
+        get() = devIp.let { InetAddresses.isNumericAddress(it) }
 
     companion object {
 

@@ -21,7 +21,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
@@ -43,7 +42,7 @@ import java.util.List;
 import java.util.Objects;
 
 import ru.hse.control_system_v2.R;
-import ru.hse.control_system_v2.data.DeviceItemType;
+import ru.hse.control_system_v2.data.classes.device.model.DeviceModel;
 import ru.hse.control_system_v2.ui.home.MainMenuFragment;
 import ru.hse.control_system_v2.ui.dialog.OneButtonAlertDialogFragment;
 import ru.hse.control_system_v2.ui.theming.ThemeUtils;
@@ -114,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
 //            buttonToConnectViaWiFi.setOnClickListener(view1 -> {
 //                if (App.isWiFiSupported()) {
 //                    boolean isConnectionPossible = true;
-//                    for (DeviceItemType current : App.getDevicesList()) {
+//                    for (DeviceModel current : App.getDevicesList()) {
 //                        if (!current.isWiFiSupported()) {
 //                            isConnectionPossible = false;
 //                            bottomSheetDialogToConnect.dismiss();
@@ -149,7 +148,7 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
 //            buttonToConnectViaBt.setOnClickListener(view1 -> {
 //                if (App.isBtSupported()) {
 //                    boolean isConnectionPossible = true;
-//                    for (DeviceItemType current : App.getDevicesList()) {
+//                    for (DeviceModel current : App.getDevicesList()) {
 //                        if (!current.isBtSupported()) {
 //                            isConnectionPossible = false;
 //                            bottomSheetDialogToConnect.dismiss();
@@ -334,7 +333,7 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
         public void onReceive(Context context, Intent intent) {
 //            isBtConnection = true;
 //            if (App.isBtEnabled()) {
-//                //TODO
+//                //TODO: стартовать соединение через новые классы, это удалить
 //                //startConnectionService();
 //            } else {
 //                Bundle args = new Bundle();
@@ -353,7 +352,7 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
         public void onReceive(Context context, Intent intent) {
             isBtConnection = false;
 //            if (App.isWiFiEnabled()) {
-//                //TODO
+//                //TODO: стартовать соединение через новые классы, это удалить
 //                //startConnectionService();
 //            } else {
 //                Bundle args = new Bundle();
@@ -370,6 +369,7 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
 
         @Override
         public void onReceive(Context context, Intent intent) {
+            //TODO: обновить логику при неудачном соединении
 //            navController.navigate(R.id.mainMenuFragment);
 //            {
 //                try {
@@ -393,7 +393,7 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
 //                //Устройство подключено, Service выполнился успешно
 //                navController.navigate(R.id.mainMenuFragment);
 //                Bundle b = new Bundle();
-//                //TODO
+//                //TODO: обновить логику при удачном соединении
 //                //b.putBoolean("isBtService", !App.getDevicesList().get(0).isWiFiBtConnected());
 //                navController.navigate(R.id.connectionActivity, b);
 //                isBtConnection = null;
@@ -479,10 +479,10 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
     }
 
     @Override
-    public void startConnectionService(List<DeviceItemType> selectedDevices) {
+    public void startConnectionService(List<DeviceModel> selectedDevices) {
 //        if(!App.isServiceConnecting()){
 //            App.setServiceConnecting(true);
-//            //TODO
+//            //TODO: обновить логику старта соединения с новыми классами
 //            //Intent startConnectionService = new Intent(App.getContext(), ConnectionService.class);
 //            Bundle b = new Bundle();
 //            b.putSerializable("deviceList", (Serializable) selectedDevices);

@@ -4,14 +4,11 @@ import android.Manifest;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.text.Editable;
 import android.text.method.ScrollingMovementMethod;
@@ -33,7 +30,6 @@ import androidx.navigation.Navigation;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
-import com.google.android.material.textfield.MaterialAutoCompleteTextView;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.io.BufferedReader;
@@ -42,22 +38,16 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Arrays;
 
-import ru.hse.control_system_v2.App;
 import ru.hse.control_system_v2.R;
-import ru.hse.control_system_v2.AppConstants;
 import ru.hse.control_system_v2.ui.SpinnerArrayAdapter;
 import ru.hse.control_system_v2.ui.TextChangedListener;
-import ru.hse.control_system_v2.ui.theming.ThemeUtils;
-import ru.hse.control_system_v2.data.ProtocolDBHelper;
+import ru.hse.control_system_v2.data.classes.protocol.ProtocolDBHelper;
 import ru.hse.control_system_v2.data.ProtocolRepo;
 
 import static android.app.Activity.RESULT_OK;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
-import static ru.hse.control_system_v2.AppConstants.THEMES_LIST_ANDROID_S;
 
 public class SettingsFragment extends Fragment {
 
@@ -145,32 +135,10 @@ public class SettingsFragment extends Fragment {
 
             }
         });
-        //TODO
+        //TODO: вообще переделать механизм выбора протокола
         //buttonAdd.setBackgroundColor(getResources().getColor(R.color.colorPrimaryLightDark));
         buttonAdd.setEnabled(false);
 
-        ArrayList<String> themes;
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            themes = new ArrayList<String>(Arrays.asList(THEMES_LIST_ANDROID_S));
-        } else {
-            themes = new ArrayList<String>(Arrays.asList(AppConstants.THEMES_LIST));
-        }
-        themesAdapter = new SpinnerArrayAdapter<>(fragmentContext, android.R.layout.simple_spinner_item, themes);
-        themesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-
-        MaterialAutoCompleteTextView autoCompleteTextView = view.findViewById(R.id.theme_menu);
-        autoCompleteTextView.setThreshold(themes.size());
-        SharedPreferences sPref = PreferenceManager.getDefaultSharedPreferences(App.getContext());
-        String sTheme = sPref.getString("theme", themes.get(0));
-        autoCompleteTextView.setText(sTheme);
-        autoCompleteTextView.setAdapter(themesAdapter);
-        autoCompleteTextView.setOnItemClickListener((adapterView, view1, position, l) -> {
-            if (position < themes.size() && position >= 0 && !ThemeUtils.getCurrentTheme().equals(autoCompleteTextView.getText().toString())) {
-                ThemeUtils.switchTheme(themes.get(position));
-                autoCompleteTextView.clearFocus();
-            }
-        });
 
         editTextName = view.findViewById(R.id.editTextProtocolName);
         editTextName.addTextChangedListener(new TextChangedListener<>(editTextName) {
@@ -233,7 +201,7 @@ public class SettingsFragment extends Fragment {
         buttonDeleteDevices.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //TODO
+                //TODO: заменить на работу через корутины
 //                AppDatabase dbDevices = App.getDatabase();
 //                DeviceItemTypeDao devicesDao = dbDevices.getDeviceItemTypeDao();
 //                devicesDao.deleteAll();
@@ -283,14 +251,7 @@ public class SettingsFragment extends Fragment {
     }
 
     void canShowSaveButton() {
-        if (isEditTextNameChanged && isEditTextLenChanged && isEditTextCodeChanged) {
-            buttonAdd.setEnabled(true);
-            //TODO
-            //buttonAdd.setBackgroundColor(fragmentContext.getColor(R.color.white));
-        } else {
-            buttonAdd.setEnabled(false);
-            //buttonAdd.setBackgroundColor(fragmentContext.getColor(R.color.colorPrimaryLightDark));
-        }
+        buttonAdd.setEnabled(isEditTextNameChanged && isEditTextLenChanged && isEditTextCodeChanged);
     }
 
     @Override

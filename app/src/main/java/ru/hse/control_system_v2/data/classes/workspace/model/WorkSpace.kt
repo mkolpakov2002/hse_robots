@@ -1,4 +1,4 @@
-package ru.hse.control_system_v2.data.workspace.model
+package ru.hse.control_system_v2.data.classes.workspace.model
 
 import kotlinx.serialization.json.Json
 

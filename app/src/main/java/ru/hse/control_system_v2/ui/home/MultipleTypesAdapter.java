@@ -21,31 +21,28 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.card.MaterialCardView;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
-import ru.hse.control_system_v2.App;
 import ru.hse.control_system_v2.AppConstants;
 import ru.hse.control_system_v2.R;
-import ru.hse.control_system_v2.data.ButtonItemType;
-import ru.hse.control_system_v2.data.DeviceItemType;
-import ru.hse.control_system_v2.data.DeviceItemTypeDao;
-import ru.hse.control_system_v2.data.ItemType;
+import ru.hse.control_system_v2.data.classes.ButtonItemType;
+import ru.hse.control_system_v2.data.classes.device.model.ItemType;
+import ru.hse.control_system_v2.data.classes.device.model.DeviceModel;
 import ru.hse.control_system_v2.ui.MainActivity;
 
 public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements ViewHolderFactory.ListDevicesHolder.IListener {
 
     private ArrayList<ItemType> itemTypeArrayList;
-    private java.util.List<java.util.Map.Entry<Boolean,DeviceItemType>> mData;
+    private final java.util.List<java.util.Map.Entry<Boolean, DeviceModel>> mData;
     private final Context context;
     private MainActivity ma;
     private MainMenuFragment mainMenuFragment;
     private final DeviceClickedListener listener;
 
-    ArrayList<DeviceItemType> deviceItemTypes;
+    ArrayList<DeviceModel> deviceItemTypes;
 
 
-    public MultipleTypesAdapter(@NonNull Context context, ArrayList<DeviceItemType> deviceItemTypes) {
+    public MultipleTypesAdapter(@NonNull Context context, ArrayList<DeviceModel> deviceItemTypes) {
         super();
         if (context instanceof Activity) {
             ma = (MainActivity) context;
@@ -53,9 +50,9 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
         this.deviceItemTypes = deviceItemTypes;
         mData = new java.util.ArrayList<>();
         this.itemTypeArrayList = new ArrayList<>();
-        itemTypeArrayList.add(new ButtonItemType(ma));
-        for(DeviceItemType itemType: deviceItemTypes){
-            java.util.Map.Entry<Boolean, DeviceItemType> pair = new java.util.AbstractMap.SimpleEntry<>(false, itemType);
+        itemTypeArrayList.add(new ButtonItemType(-1, ma.getString(R.string.button_add_device)));
+        for(DeviceModel itemType: deviceItemTypes){
+            java.util.Map.Entry<Boolean, DeviceModel> pair = new java.util.AbstractMap.SimpleEntry<>(false, itemType);
             this.mData.add(pair);
             this.itemTypeArrayList.add(itemType);
         }
@@ -63,22 +60,22 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
         listener = new MyListener();
     }
 
-    public void refreshAdapterData(ArrayList<DeviceItemType> newDeviceItemTypes) {
+    public void refreshAdapterData(ArrayList<DeviceModel> newDeviceItemTypes) {
         ArrayList<ItemType> newDataSet = new ArrayList<>();
         newDataSet.add(itemTypeArrayList.get(0));
         newDataSet.addAll(newDeviceItemTypes);
         DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new ItemsDiffUtilCallBack(newDataSet, itemTypeArrayList), true);
         this.itemTypeArrayList = newDataSet;
         this.mData.clear();
-        for(DeviceItemType itemType: deviceItemTypes){
+        for(DeviceModel itemType: deviceItemTypes){
             this.mData.add(new java.util.AbstractMap.SimpleEntry<>(false, itemType));
         }
         diffResult.dispatchUpdatesTo(this);
     }
 
     public interface DeviceClickedListener {
-        void deviceClicked(DeviceItemType item, View itemView);
-        void deviceLongClicked(DeviceItemType item, View itemView);
+        void deviceClicked(DeviceModel item, View itemView);
+        void deviceLongClicked(DeviceModel item, View itemView);
     }
 
     @Override
@@ -95,7 +92,7 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
         private static final String TAG = "MA_ItemsAdapter";
 
         @Override
-        public void deviceClicked(DeviceItemType item, View itemView) {
+        public void deviceClicked(DeviceModel item, View itemView) {
             ImageView checkMark = (ImageView) itemView.findViewById(R.id.check_mark);
             MaterialCardView materialCardView = itemView.findViewById(R.id.device_item_card_view);
             mainMenuFragment = ma.getMainMenuFragment();
@@ -106,7 +103,7 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
             for(int i = 0; i<mData.size(); i++){
                 if(mData.get(i).getKey()){
                     flag = true;
-                    if(mData.get(i).getValue().getDevId()==item.getDevId()){
+                    if(mData.get(i).getValue().getId()==item.getId()){
                         flagWasSelected = true;
                         position = i;
                     }
@@ -147,7 +144,7 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
         }
 
         @Override
-        public void deviceLongClicked(DeviceItemType item, View itemView) {
+        public void deviceLongClicked(DeviceModel item, View itemView) {
             MaterialCardView materialCardView = itemView.findViewById(R.id.device_item_card_view);
             ImageView checkMark = (ImageView) itemView.findViewById(R.id.check_mark);
             mainMenuFragment = ma.getMainMenuFragment();
@@ -158,7 +155,7 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
             for(int i = 0; i<mData.size(); i++){
                 if(mData.get(i).getKey()){
                     flag = true;
-                    if(mData.get(i).getValue().getDevId()==item.getDevId()){
+                    if(mData.get(i).getValue().getId()==item.getId()){
                         flagWasSelected = true;
                         position = i;
                     }
@@ -195,13 +192,13 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        if(itemTypeArrayList.get(position) instanceof DeviceItemType curr){
+        if(itemTypeArrayList.get(position) instanceof DeviceModel curr){
             ViewHolderFactory.ListDevicesHolder mViewHolder = (ViewHolderFactory.ListDevicesHolder) holder;
             mViewHolder.mName.setText(curr.getName());
             mViewHolder.checkMark.setVisibility(View.GONE);
             mViewHolder.materialCardView.setStrokeColor(Color.TRANSPARENT);
-            if (curr.getDevClass().equals("class_arduino")) {
-                switch (curr.getDevType()) {
+            if (curr.getUiClass().equals("class_arduino")) {
+                switch (curr.getUiType()) {
                     case "type_computer":
                         mViewHolder.deviceImage.setImageResource(R.drawable.type_computer);
                         break;
@@ -219,7 +216,7 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
                         break;
                 }
             } else {
-                switch (curr.getDevType()) {
+                switch (curr.getUiType()) {
                     case "class_android" -> mViewHolder.deviceImage.setImageResource(R.drawable.class_android);
                     case "no_class" -> mViewHolder.deviceImage.setImageResource(R.drawable.type_no_type);
                     case "class_computer" -> mViewHolder.deviceImage.setImageResource(R.drawable.class_computer);
@@ -233,7 +230,7 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
                 mViewHolder.wifiSupportIcon.setVisibility(View.GONE);
             }
 
-            if (curr.isBtSupported()) {
+            if (curr.isBluetoothSupported()) {
                 mViewHolder.btSupportIcon.setVisibility(View.VISIBLE);
             } else {
                 mViewHolder.btSupportIcon.setVisibility(View.GONE);
@@ -261,19 +258,12 @@ public class MultipleTypesAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     @Override
     public int getItemViewType(int position) {
-        if(itemTypeArrayList.get(position) instanceof DeviceItemType)
+        if(itemTypeArrayList.get(position) instanceof DeviceModel)
             return AppConstants.DEVICE_ITEM_TYPE;
         else return AppConstants.BUTTON_ITEM_TYPE;
     }
 
     public boolean areDevicesConnectable() {
-//        for (DeviceItemType deviceItemType : selectedDevicesList) {
-//            if (!selectedDevicesList.get(0).getDevClass().equals(deviceItemType.getDevClass())
-//                    || !selectedDevicesList.get(0).getDevType().equals(deviceItemType.getDevType())
-//                    || !selectedDevicesList.get(0).getDevProtocol().equals(deviceItemType.getDevProtocol())) {
-//                return false;
-//            }
-//        }
         return true;
     }
 

@@ -2,6 +2,7 @@ package ru.hse.control_system_v2.data.classes.file
 
 import android.net.Uri
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserFactory
@@ -26,48 +27,66 @@ class FileParse {
         }
 
         suspend fun parseXml(xml: String) : ProtocolModel{
-
-            try{
             val tagList = ArrayList<XmlTag>()
-            withContext(Dispatchers.IO) {
-                val factory = XmlPullParserFactory.newInstance()
-                factory.isNamespaceAware = true
-                val parser = factory.newPullParser()
-                parser.setInput(xml.reader())
+            try {
+                // Запускаем корутину с диспатчером IO для работы с файлом
+                runBlocking(Dispatchers.IO) {
+                    val factory = XmlPullParserFactory.newInstance()
+                    factory.isNamespaceAware = true
+                    val parser = factory.newPullParser()
+                    parser.setInput(xml.reader())
 
-                var eventType = parser.eventType
-                while (eventType != XmlPullParser.END_DOCUMENT) {
-                    var xmlTag = XmlTag()
-                    when (eventType) {
-                        XmlPullParser.START_TAG -> {
-                            // Обработка начального тега
-                            xmlTag.name = parser.name
-                        }
+                    var eventType = parser.eventType
+                    // Создаем переменную для хранения текущего тега
+                    var currentTag: XmlTag? = null
+                    while (eventType != XmlPullParser.END_DOCUMENT) {
+                        when (eventType) {
+                            XmlPullParser.START_TAG -> {
+                                currentTag = null
+                                // Обработка начального тега
+                                val name = parser.name
+                                // Если имя тега не равно xml (заголовок документа)
+                                if (name != "xml") {
+                                    // Создаем новый тег с именем и пустым значением
+                                    currentTag = XmlTag(name, "")
+                                }
+                            }
 
-                        XmlPullParser.TEXT -> {
-                            // Обработка текста внутри тега
-                            xmlTag.value = parser.text
-                            tagList.add(xmlTag)
-                        }
+                            XmlPullParser.TEXT -> {
+                                /// Получаем текст тега
+                                val text = parser.text
+                                // Если текущий тег не пустой и текст не пустой или пробельный
+                                if (currentTag != null && text.isNotBlank()) {
+                                    // Устанавливаем значение текущего тега равным тексту
+                                    currentTag.value = text
+                                }
+                            }
 
-                        XmlPullParser.END_TAG -> {
-                            // Обработка конечного тега
+                            XmlPullParser.END_TAG -> {
+                                // Обработка конечного тега
+                                // Если текущий тег не пустой
+                                if (currentTag != null) {
+                                    // Добавляем текущий тег в список тегов
+                                    tagList.add(currentTag)
+                                    // Обнуляем текущий тег
+                                    currentTag = null
+                                }
+                            }
                         }
+                        eventType = parser.next()
                     }
-                    eventType = parser.next()
                 }
-            }
-            return ProtocolModel(
-                id = 0,
-                name = "",
-                tagList = tagList
-            )
+                return ProtocolModel(
+                    id = 0,
+                    name = "",
+                    tagList = tagList
+                )
             } catch (e : Exception) {
                 e.printStackTrace()
                 return ProtocolModel(
                     id = 0,
                     name = "",
-                    tagList = ArrayList()
+                    tagList = tagList
                 )
             }
         }

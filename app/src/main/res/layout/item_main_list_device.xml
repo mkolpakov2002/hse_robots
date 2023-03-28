@@ -9,7 +9,8 @@
     app:cardElevation="5dp"
     app:cardPreventCornerOverlap="true"
     app:cardUseCompatPadding="true"
-    app:strokeWidth="2dp">
+    app:strokeWidth="2dp"
+    app:strokeColor="@android:color/transparent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraint_layout"

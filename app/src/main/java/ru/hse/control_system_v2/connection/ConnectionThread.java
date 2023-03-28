@@ -12,6 +12,9 @@ import java.io.OutputStream;
 
 import ru.hse.control_system_v2.data.classes.device.model.DeviceModel;
 
+/**
+ * Поток для прослушивания данных
+ */
 public class ConnectionThread extends Thread {
     private final DeviceModel deviceItemType;
     private Context c;

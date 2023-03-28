@@ -38,6 +38,9 @@
         <action
             android:id="@+id/action_settingsFragment_to_dialogDataParams"
             app:destination="@id/dialogDataParams" />
+        <action
+            android:id="@+id/action_settingsFragment_to_navigationDialog"
+            app:destination="@id/navigationDialog" />
     </fragment>
     <dialog
         android:id="@+id/connection_dialog"
@@ -100,5 +103,26 @@
         <action
             android:id="@+id/action_addDeviceFragment_to_mainMenuFragment"
             app:destination="@id/mainMenuFragment" />
+    </fragment>
+    <dialog
+        android:id="@+id/navigationDialog"
+        android:name="ru.hse.control_system_v2.ui.protocol.NavigationDialog"
+        android:label="NavigationDialog"
+        tools:layout="@layout/protocol_navigation_dialog">
+        <action
+            android:id="@+id/action_navigationDialog_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
+        <action
+            android:id="@+id/action_navigationDialog_to_lezhnyovProtocolMenuFragment"
+            app:destination="@id/lezhnyovProtocolMenuFragment" />
+    </dialog>
+    <fragment
+        android:id="@+id/lezhnyovProtocolMenuFragment"
+        android:name="ru.hse.control_system_v2.ui.protocol.LezhnyovProtocolMenuFragment"
+        android:label="fragment_lezhnyov_protocol_menu"
+        tools:layout="@layout/fragment_lezhnyov_protocol_menu" >
+        <action
+            android:id="@+id/action_lezhnyovProtocolMenuFragment_to_navigationDialog"
+            app:destination="@id/navigationDialog" />
     </fragment>
 </navigation>

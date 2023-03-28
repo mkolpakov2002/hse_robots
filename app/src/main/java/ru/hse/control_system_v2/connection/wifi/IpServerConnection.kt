@@ -3,6 +3,7 @@ package ru.hse.control_system_v2.connection.wifi
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.server.application.call
+import io.ktor.server.netty.NettyApplicationEngine
 
 import io.ktor.server.response.respond
 import io.ktor.server.routing.get
@@ -10,11 +11,15 @@ import io.ktor.server.routing.routing
 import ru.hse.control_system_v2.connection.ConnectionClass
 import ru.hse.control_system_v2.data.classes.device.model.DeviceModel
 import java.net.Socket
-import java.nio.ByteBuffer
 
+/**
+ * Класс серверного типа соединения
+ */
 class IpServerConnection(deviceItemType: DeviceModel, connectionName: String?) :
     ConnectionClass<Socket?>(deviceItemType, connectionName) {
-    override suspend fun sentData() {
+
+    private lateinit var server: NettyApplicationEngine
+    override suspend fun sentData(data: ByteArray) {
         TODO("Not yet implemented")
     }
 
@@ -23,7 +28,7 @@ class IpServerConnection(deviceItemType: DeviceModel, connectionName: String?) :
     }
 
     override suspend fun openConnection() {
-        embeddedServer(Netty, 8080) {
+        server = embeddedServer(Netty, 8080) {
 //            install(ContentNegotiation) {
 //                gson {}
 //            }
@@ -32,10 +37,12 @@ class IpServerConnection(deviceItemType: DeviceModel, connectionName: String?) :
                     call.respond(mapOf("message" to "Hello world"))
                 }
             }
-        }.start(wait = true)
+            //calling server.start(false) doesn't block the main thread
+        }.start(wait = false)
+
     }
 
-    override suspend fun read(buffer: ByteBuffer): Int {
+    override suspend fun read(buffer: ByteArray, bytesRead: Int): Int {
         TODO("Not yet implemented")
     }
 }

@@ -9,7 +9,6 @@ import xyz.urbanmatrix.mavlink.definitions.minimal.MavAutopilot
 import xyz.urbanmatrix.mavlink.definitions.minimal.MavType
 import xyz.urbanmatrix.mavlink.wrap
 import java.net.Socket
-import java.nio.ByteBuffer
 import kotlin.properties.Delegates
 
 open class MavlinkConnection(deviceItemType: DeviceModel,
@@ -17,21 +16,27 @@ open class MavlinkConnection(deviceItemType: DeviceModel,
                              var connectionVersion: String) :
     ConnectionClass<Socket?>(deviceItemType, connectionName) {
 
+    // Переменная для хранения объекта TcpClientMavConnection
     private lateinit var connection: TcpClientMavConnection
 
+    // Переменная для хранения идентификатора соединения
     private var linkId by Delegates.notNull<Int>()
 
+    // Переменная для хранения объекта Heartbeat
     private lateinit var heartbeat: Heartbeat
 
+    // Переменная для хранения секретного ключа для подписи сообщений
     private lateinit var secretKey: ByteArray
 
+    // Переменная для хранения временной метки для подписи сообщений
     private var timestamp by Delegates.notNull<Long>()
 
+    // Инициализация переменных heartbeat и secretKey в зависимости от версии соединения
     init {
-
         val connectionVersionNumber: Int = when (connectionVersion) {
             "1" -> 1
             else -> {
+                // Для версии 2 соединения генерируется секретный ключ
                 secretKey = createSecretKey()
                 2
             }
@@ -43,7 +48,9 @@ open class MavlinkConnection(deviceItemType: DeviceModel,
         builder.mavlinkVersion = connectionVersionNumber
         heartbeat = builder.build()
     }
-    override suspend fun sentData() {
+
+    // Метод для отправки данных по MAVLink-соединению в зависимости от версии соединения
+    override suspend fun sentData(data: ByteArray) {
         when (connectionVersion) {
             "1" -> sentDataV1()
             "2" -> sentDataUnsignedV2()
@@ -51,7 +58,7 @@ open class MavlinkConnection(deviceItemType: DeviceModel,
         }
     }
 
-    // MAVLink v1 packet
+    // Метод для отправки данных по MAVLink-соединению версии 1
     private fun sentDataV1(){
         val completable = connection.sendV1(
             systemId = 250,
@@ -60,7 +67,7 @@ open class MavlinkConnection(deviceItemType: DeviceModel,
         )
     }
 
-    // Unsigned MAVLink v2 packet
+    // Метод для отправки данных по MAVLink-соединению версии 2 без подписи
     private fun sentDataUnsignedV2(){
         val completable = connection.sendUnsignedV2(
             systemId = 250,
@@ -69,20 +76,18 @@ open class MavlinkConnection(deviceItemType: DeviceModel,
         )
     }
 
-    // Signed MAVLink v2 packet
     private fun sentDataSignedV2(){
         val completable = connection.sendSignedV2(
             systemId = 250,
             componentId = 1,
             payload = heartbeat,
-            linkId = linkId,       // Integer link ID
-            timestamp = timestamp, // Long microseconds
-            secretKey = secretKey  // ByteArray passcode
+            linkId = linkId,
+            timestamp = timestamp,
+            secretKey = secretKey
         )
     }
 
     override suspend fun closeConnection() {
-        // Non-blocking
         connection.close()
     }
 
@@ -91,11 +96,10 @@ open class MavlinkConnection(deviceItemType: DeviceModel,
             deviceItemType.wifiAddress,
             deviceItemType.port,
             CommonDialect)
-        // Non-blocking
         connection.connect()
     }
 
-    override suspend fun read(buffer: ByteBuffer): Int {
+    override suspend fun read(buffer: ByteArray, bytesRead: Int): Int {
         TODO("Not yet implemented")
     }
 

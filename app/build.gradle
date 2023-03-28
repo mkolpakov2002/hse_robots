@@ -72,7 +72,7 @@ dependencies {
     implementation 'androidx.preference:preference-ktx:1.2.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
 
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.1'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.1'
 
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     implementation "androidx.navigation:navigation-fragment-ktx:$rootProject.navVersion"
@@ -100,13 +100,17 @@ dependencies {
     implementation "xyz.urbanmatrix.mavlink:rxjava2:$rootProject.mavlinkVersion"
 
     // ktor communication
-    implementation "io.ktor:ktor-server-core:$rootProject.ktorServerVersion"
-    implementation "io.ktor:ktor-server-netty:$rootProject.ktorServerVersion"
-    implementation "io.ktor:ktor-server-status-pages:$rootProject.ktorServerVersion"
-    implementation "io.ktor:ktor-server-default-headers:$rootProject.ktorServerVersion"
-    implementation("io.ktor:ktor-server-websockets:$rootProject.ktorServerVersion")
-    implementation "io.ktor:ktor-client-core:$rootProject.ktorClientVersion"
-    implementation "io.ktor:ktor-client-android:$rootProject.ktorClientVersion"
+    implementation "io.ktor:ktor-server-core:$rootProject.ktorVersion"
+    implementation "io.ktor:ktor-server-netty:$rootProject.ktorVersion"
+    implementation "io.ktor:ktor-server-status-pages:$rootProject.ktorVersion"
+    implementation "io.ktor:ktor-server-default-headers:$rootProject.ktorVersion"
+    implementation("io.ktor:ktor-server-websockets:$rootProject.ktorVersion")
+    implementation "io.ktor:ktor-client-core:$rootProject.ktorVersion"
+    implementation "io.ktor:ktor-client-android:$rootProject.ktorVersion"
+    implementation "io.ktor:ktor-server-content-negotiation:$ktorVersion"
+    implementation "io.ktor:ktor-client-content-negotiation:$ktorVersion"
+    implementation "io.ktor:ktor-serialization-kotlinx-json:$ktorVersion"
+    implementation "io.ktor:ktor-client-websockets:$ktorVersion"
 
     // kotlin
     implementation "org.jetbrains.kotlin:kotlin-test-junit:$rootProject.kotlin_version"
@@ -127,5 +131,9 @@ dependencies {
     implementation 'com.github.kirich1409:viewbindingpropertydelegate-noreflection:1.5.8'
 
     // Fragment ktx
-    implementation "androidx.fragment:fragment-ktx:1.5.5"
+    implementation "androidx.fragment:fragment-ktx:1.5.6"
+
+    // USB serial for usb arduino communication
+    implementation 'com.github.mik3y:usb-serial-for-android:3.5.1'
+
 }

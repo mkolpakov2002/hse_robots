@@ -5,49 +5,56 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
+import com.google.android.material.button.MaterialButton
 import ru.hse.control_system_v2.R
 
-private const val PROTOCOL_NAME = "param1"
-private const val UI_MODE = "param2"
-
+// Класс фрагмента для отображения произвольного количества кнопок
 class CommandsFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var protocolName: String? = null
-    private var uiMode: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            protocolName = it.getString(PROTOCOL_NAME)
-            uiMode = it.getString(UI_MODE)
-        }
+    // Ключ для передачи списка текстов кнопок в аргументах фрагмента
+    companion object {
+        const val BUTTON_TEXT_LIST_KEY = "buttonTextList"
     }
 
+    // Поле для хранения списка текстов кнопок
+    private var buttonTextList: List<String>? = null
+
+    // Поле для хранения списка кнопок
+    private var buttonList: MutableList<MaterialButton> = mutableListOf()
+
+    // Фабричный метод для создания нового экземпляра фрагмента с заданным списком текстов кнопок
+    fun newInstance(buttonTextList: List<String>): CommandsFragment {
+        val fragment = CommandsFragment()
+        val args = Bundle()
+        args.putStringArrayList(BUTTON_TEXT_LIST_KEY, ArrayList(buttonTextList))
+        fragment.arguments = args
+        return fragment
+    }
+
+    // Метод для получения списка текстов кнопок из аргументов фрагмента
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        buttonTextList = arguments?.getStringArrayList(BUTTON_TEXT_LIST_KEY)
+    }
+
+    // Метод для создания представления фрагмента и добавления кнопок в макет
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_commands, container, false)
-    }
-
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param protocolName Parameter 1.
-         * @param uiMode Parameter 2.
-         * @return A new instance of fragment CommandsFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(protocolName: String, uiMode: String) =
-            CommandsFragment().apply {
-                arguments = Bundle().apply {
-                    putString(PROTOCOL_NAME, protocolName)
-                    putString(UI_MODE, uiMode)
-                }
-            }
+        val view = inflater.inflate(R.layout.fragment_commands, container, false)
+        val buttonContainer = view.findViewById<LinearLayout>(R.id.button_container)
+        buttonTextList?.forEach { buttonText ->
+            val button = MaterialButton(requireContext())
+            button.layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            )
+            button.text = buttonText
+            buttonContainer.addView(button)
+            buttonList.add(button)
+        }
+        return view
     }
 }

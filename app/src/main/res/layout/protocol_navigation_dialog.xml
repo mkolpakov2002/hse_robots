@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <!-- Создаем радио группу для выбора фрагмента -->
+    <RadioGroup
+        android:id="@+id/radioGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:checkedButton="@+id/firstRadioButton">
+
+        <!-- Создаем радио баттон для первого фрагмента -->
+        <RadioButton
+            android:id="@+id/firstRadioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Протокол Лежнёва" />
+
+        <!-- Создаем радио баттон для второго фрагмента -->
+        <RadioButton
+            android:id="@+id/secondRadioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ROS конфигурация" />
+    </RadioGroup>
+</LinearLayout>

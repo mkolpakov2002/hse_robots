@@ -41,7 +41,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+import ru.hse.control_system_v2.App;
 import ru.hse.control_system_v2.R;
+import ru.hse.control_system_v2.connection.ConnectionManager;
 import ru.hse.control_system_v2.data.classes.device.model.DeviceModel;
 import ru.hse.control_system_v2.ui.home.MainMenuFragment;
 import ru.hse.control_system_v2.ui.dialog.OneButtonAlertDialogFragment;
@@ -56,7 +58,6 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
     private NavHostFragment navHostFragment;
     private NavController navController;
     private Boolean isBtConnection;
-    private BottomSheetDialog bottomSheetDialogToConnect;
     //Переменная для хранения времени между нажатиями кнопки назад
     private static long back_pressed = 0;
 
@@ -100,15 +101,7 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
         registerReceiver(mMessageReceiverSuccess, new IntentFilter("success"));
 
         isBtConnection = null;
-        // настройка поведения нижнего экрана
 
-        bottomSheetDialogToConnect = new BottomSheetDialog(this);
-        bottomSheetDialogToConnect.setContentView(R.layout.bottom_sheet_dialog_connection_type);
-        bottomSheetDialogToConnect.setCancelable(true);
-        bottomSheetDialogToConnect.dismiss();
-
-        Button buttonToConnectViaWiFi = bottomSheetDialogToConnect.findViewById(R.id.button_wifi);
-        Button buttonToConnectViaBt = bottomSheetDialogToConnect.findViewById(R.id.button_bt);
 //        if (buttonToConnectViaWiFi != null) {
 //            buttonToConnectViaWiFi.setOnClickListener(view1 -> {
 //                if (App.isWiFiSupported()) {
@@ -451,14 +444,6 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
         if (isBtConnection != null) {
             enableNetwork();
         }
-    }
-
-    public synchronized void showBottomSheetToConnect() {
-        bottomSheetDialogToConnect.show();
-    }
-
-    public synchronized void hideBottomSheetToConnect() {
-        bottomSheetDialogToConnect.cancel();
     }
 
     public MainMenuFragment getMainMenuFragment() {

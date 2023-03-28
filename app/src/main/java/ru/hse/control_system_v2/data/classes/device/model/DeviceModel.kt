@@ -24,8 +24,6 @@ open class DeviceModel
 constructor(@PrimaryKey(autoGenerate = true)
             override var id: Int = 0,
             override var name: String = DEFAULT_DEVICE_NAME,
-            var uiClass: String = DEFAULT_DEVICE_CLASS,
-            var uiType: String = DEFAULT_DEVICE_TYPE,
             var protocol: String = DEFAULT_DEVICE_PROTOCOL,
             override var bluetoothAddress: String = DEFAULT_DEVICE_BLUETOOTH_ADDRESS,
             override var manufacture: String = DEFAULT_DEVICE_MANUFACTURE,
@@ -38,13 +36,16 @@ constructor(@PrimaryKey(autoGenerate = true)
                 isPackageDataEnabled = false,
                 isVideoStreamEnabled = false),
             @Ignore
-            var videoList: ArrayList<VideoModel> = ArrayList()
+            var videoList: ArrayList<VideoModel> = ArrayList(),
+            override var vendorId: Int = 0,
+            override var uiClass: String = "class_arduino",
+            override var uiType: String = "type_computer"
 )
     :
     ItemType,
     Serializable,
     BluetoothConnectable,
     WiFiConnectable,
-    USBConnectable {
+    DeviceModelSelectable {
 
 }

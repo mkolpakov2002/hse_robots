@@ -13,13 +13,18 @@ import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.Navigation.findNavController
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json.Default.decodeFromString
 import ru.hse.control_system_v2.R
+import ru.hse.control_system_v2.data.AppDatabase
 import ru.hse.control_system_v2.data.classes.device.model.DeviceModel
 import ru.hse.control_system_v2.data.AppDatabase.Companion.getAppDataBase
 import ru.hse.control_system_v2.data.classes.workspace.model.WorkSpace
@@ -106,6 +111,7 @@ class DeviceMenuFragment : Fragment() {
 
         requireActivity().supportFragmentManager.setFragmentResultListener(FRAGMENT_RESULT_WORK_SPACE_KEY, viewLifecycleOwner) { key, bundle ->
             val workspace = decodeFromString(WorkSpace.serializer(), bundle.getString(WORK_SPACE_KEY)!!)
+            currentDevice.workSpace = workspace
             // TODO: currentDevice.workspace = workspace
         }
 
@@ -275,18 +281,14 @@ class DeviceMenuFragment : Fragment() {
             }
         })
         connectButton = binding.deviceConnect
-        connectButton.setOnClickListener(View.OnClickListener { ma!!.showBottomSheetToConnect() })
+        //connectButton.setOnClickListener(View.OnClickListener { ma!!.showBottomSheetToConnect() })
         if (isNew) connectButton.visibility = View.GONE
         deleteButton = binding.deviceDelete
         deleteButton.setOnClickListener(View.OnClickListener {
-            val dbDevices = getAppDataBase(requireContext())
-            //TODO: после обновления БД на корутины
-            val devicesDao = dbDevices.deviceItemTypeDao()
-            if (devicesDao != null) {
-                //TODO: после обновления БД на корутины
-                //devicesDao.delete(deviceId);
+            lifecycleScope.launch {
+                getAppDataBase(requireContext()).deviceItemTypeDao()?.delete(currentDevice.id)
+                findNavController(view).navigate(R.id.action_deviceMenuFragment_to_mainMenuFragment)
             }
-            findNavController(view).navigate(R.id.action_deviceMenuFragment_to_mainMenuFragment)
         })
         if (isNew) deleteButton.visibility = View.GONE
         binding.workspaceEdit.setOnClickListener {
@@ -317,9 +319,6 @@ class DeviceMenuFragment : Fragment() {
             devIp = deviceIpView.text.toString().trim { it <= ' ' }
             devPort = devicePortView.text.toString().trim { it <= ' ' }
 
-            //TODO: после обновления БД на корутины
-//            AppDatabase dbDevices = App.getDatabase();
-//            DeviceItemTypeDao devicesDao = dbDevices.getDeviceItemTypeDao();
             currentDevice.name = newName
             currentDevice.bluetoothAddress = bluetoothAddress as String
             currentDevice.uiClass = classDevice
@@ -335,8 +334,12 @@ class DeviceMenuFragment : Fragment() {
                 currentDevice.port = 0
             }
             currentDevice.port = devPort.toInt()
-            //TODO: после обновления БД на корутины
-//            devicesDao.insertAll(currentDevice);
+            lifecycleScope.launch {
+                // Suspend the coroutine until the lifecycle is DESTROYED.
+                // repeatOnLifecycle launches the block in a new coroutine every time the
+                // lifecycle is in the STARTED state (or above) and cancels it when it's STOPPED.
+                getAppDataBase(requireContext()).deviceItemTypeDao()?.insertAll(currentDevice)
+            }
             findNavController(requireView()).navigate(R.id.mainMenuFragment)
         }
     }
@@ -427,6 +430,12 @@ class DeviceMenuFragment : Fragment() {
             deviceTypeViewLayout.isEnabled = false
             deviceTypeView.setText("no_type")
         }
+        deviceImage.setImageDrawable(
+            ContextCompat.getDrawable(
+                fragmentContext!!, R.drawable.type_cubbi
+            )
+        )
+
         setDeviceImage()
         // изменений в информации нет
         if ((name == currentDevice.name

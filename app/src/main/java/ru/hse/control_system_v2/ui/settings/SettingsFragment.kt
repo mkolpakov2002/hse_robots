@@ -15,6 +15,8 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import ru.hse.control_system_v2.R
 import ru.hse.control_system_v2.data.classes.file.FileParse
@@ -117,7 +119,7 @@ class SettingsFragment : Fragment(){
 
     private fun loadXmlFile(fileUri: Uri) {
         // Реализовать логику для загрузки xml файла из памяти по Uri
-        lifecycleScope.launch {
+        CoroutineScope(Dispatchers.Main).launch {
             // Suspend the coroutine until the lifecycle is DESTROYED.
             // repeatOnLifecycle launches the block in a new coroutine every time the
             // lifecycle is in the STARTED state (or above) and cancels it when it's STOPPED.

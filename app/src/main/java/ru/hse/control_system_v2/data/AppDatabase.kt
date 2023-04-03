@@ -7,29 +7,25 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import ru.hse.control_system_v2.data.classes.device.DeviceItemTypeDao
 import ru.hse.control_system_v2.data.classes.device.model.DeviceModel
+import ru.hse.control_system_v2.data.classes.protocol.LezhnyovProtocolDao
+import ru.hse.control_system_v2.data.classes.protocol.LezhnyovProtocolModel
 import ru.hse.control_system_v2.data.classes.protocol.ProtocolDBHelper.DATABASE_NAME
 
 /**
  * Класс локальной базы данных
  */
 @Database(
-    entities = [DeviceModel::class /*, AnotherEntityType.class, AThirdEntityType.class */],
+    entities = [DeviceModel::class, LezhnyovProtocolModel::class /*, AnotherEntityType.class, AThirdEntityType.class */],
     version = 4
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun deviceItemTypeDao(): DeviceItemTypeDao?
 
+    abstract fun lezhnyovProtocolDao(): LezhnyovProtocolDao?
+
     companion object {
         private var INSTANCE: AppDatabase? = null
-        //private var protocolDBHelper: ProtocolDBHelper? = null
-
-//        private val DB_CALLBACK = object : RoomDatabase.Callback() {
-//            override fun onCreate(db: SupportSQLiteDatabase) {
-//                super.onCreate(db)
-//                //
-//            }
-//        }
 
         fun getAppDataBase(context: Context): AppDatabase {
             if (INSTANCE == null){
@@ -43,27 +39,6 @@ abstract class AppDatabase : RoomDatabase() {
             }
             return INSTANCE!!
         }
-
-//        fun getProtoAppDataBase(context: Context): ProtocolDBHelper? {
-//            if (protocolDBHelper == null){
-//                synchronized(AppDatabase::class){
-//                    protocolDBHelper = ProtocolDBHelper()
-//                }
-//            }
-//            return protocolDBHelper
-//        }
-//
-//        fun getProtocolNames(): ArrayList<String?>? {
-//            return protocolDBHelper?.protocolNames
-//        }
-//
-//        fun destroyDataBase(){
-//            INSTANCE = null
-//        }
-//
-//        fun destroyProtoDataBase(){
-//            protocolDBHelper = null
-//        }
     }
 
 }

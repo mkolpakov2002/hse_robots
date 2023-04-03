@@ -9,7 +9,7 @@ import org.xmlpull.v1.XmlPullParserFactory
 import java.net.URL
 import org.json.JSONObject
 import ru.hse.control_system_v2.App
-import ru.hse.control_system_v2.data.classes.protocol.ProtocolModel
+import ru.hse.control_system_v2.data.classes.protocol.ProtocolPrototypeModel
 import ru.hse.control_system_v2.ui.protocol.XmlTag
 
 class FileParse {
@@ -26,7 +26,7 @@ class FileParse {
             }
         }
 
-        suspend fun parseXml(xml: String) : ProtocolModel{
+        suspend fun parseXml(xml: String) : ProtocolPrototypeModel {
             val tagList = ArrayList<XmlTag>()
             try {
                 // Запускаем корутину с диспатчером IO для работы с файлом
@@ -76,14 +76,14 @@ class FileParse {
                         eventType = parser.next()
                     }
                 }
-                return ProtocolModel(
+                return ProtocolPrototypeModel(
                     id = 0,
                     name = "",
                     tagList = tagList
                 )
             } catch (e : Exception) {
                 e.printStackTrace()
-                return ProtocolModel(
+                return ProtocolPrototypeModel(
                     id = 0,
                     name = "",
                     tagList = tagList

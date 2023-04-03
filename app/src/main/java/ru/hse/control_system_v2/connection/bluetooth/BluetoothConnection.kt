@@ -74,24 +74,24 @@ class BluetoothConnection constructor(deviceItemType: DeviceModel, connectionNam
         } catch (e: Exception) {
             e.message?.let { Log.d(AppConstants.TAG, it) }
             //подключение неуспешно
-            isNeedToReConnect = true
+            connectionState = isOnError
         }
         try {
-            isNeedToReConnect = if (socket != null) {
+            connectionState = if (socket != null) {
                 socket?.connect()
                 Log.d(
                     AppConstants.TAG,
                     "...Соединение установлено и готово к передачи данных..."
                 )
                 //соединение успешно
-                false
+                isAlive
             } else {
                 //подключение неуспешно
-                true
+                isOnError
             }
         } catch (e: Exception) {
             //подключение неуспешно
-            isNeedToReConnect = true
+            connectionState = isOnError
             try {
                 // В случае ошибки пытаемся закрыть соединение
                 socket?.close()

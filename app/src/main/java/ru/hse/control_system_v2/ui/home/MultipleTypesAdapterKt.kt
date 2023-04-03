@@ -94,11 +94,6 @@ open class MultipleTypesAdapterKt(val context: Context, deviceItemTypes: ArrayLi
     private var items = ArrayList<Item>()
     // Список для хранения пар из состояния и модели устройства
     private var mData = ArrayList<Map.Entry<Boolean, DeviceModel>>()
-    // Переменная для хранения ссылки на MainActivity
-    //private var ma: MainActivity? = null
-    // Переменная для хранения ссылки на MainMenuFragment
-    private var mainMenuFragment: MainMenuFragment? = null
-
 
     init {
         mData = ArrayList()

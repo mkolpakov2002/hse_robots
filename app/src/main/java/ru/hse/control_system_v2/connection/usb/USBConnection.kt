@@ -73,6 +73,7 @@ class USBConnection(deviceItemType: DeviceModel, connectionName: String?) :
             // Внутри блока launch выполняем код для коммуникации с устройством
             // Пытаемся читать данные от устройства в цикле while, пока соединение активно и корутина не отменена
             while (socket != null && isActive) {
+                connectionState = isAlive
                 // Создаем буфер для хранения данных с помощью функции ByteBuffer.allocate
                 val buffer = ByteBuffer.allocate(bufferSize)
                 // Получаем ссылку на конечную точку для чтения данных
@@ -88,6 +89,7 @@ class USBConnection(deviceItemType: DeviceModel, connectionName: String?) :
                     )
                 }
             }
+
         }
     }
 }

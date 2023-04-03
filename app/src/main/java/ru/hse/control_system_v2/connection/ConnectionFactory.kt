@@ -10,19 +10,13 @@ import ru.hse.control_system_v2.App
 // Класс для создания и управления разными типами соединений
 class ConnectionFactory private constructor(application: App) {
     var applicationContext: Context
-
     // Переменная для хранения объекта USBManager
-    lateinit var usbManager: UsbManager
+    var usbManager: UsbManager
     // Переменная для хранения объекта BluetoothManager
-    lateinit var bluetoothManager: BluetoothManager
+    var bluetoothManager: BluetoothManager
         private set
     // Переменная для хранения объекта WifiManager
-    private lateinit var wifiManager: WifiManager
-    // Переменная для хранения состояния подключения сервиса
-    var isServiceConnecting = false
-    // Переменная для хранения состояния подключения активности
-    var isActivityConnection = true
-        private set
+    private var wifiManager: WifiManager
     // Свойство для проверки включен ли Bluetooth на устройстве
     val isBtEnabled: Boolean
         get() = (bluetoothManager.adapter.state == BluetoothAdapter.STATE_ON
@@ -40,11 +34,6 @@ class ConnectionFactory private constructor(application: App) {
     // Свойство для проверки поддерживает ли устройство WiFi
     val isWiFiSupported: Boolean
         get() = true
-
-    // Метод для установки состояния подключения активности
-    fun setActivityConnectionState(connecting: Boolean) {
-        isActivityConnection = connecting
-    }
 
     // Инициализация переменных контекста и менеджеров соединений
 

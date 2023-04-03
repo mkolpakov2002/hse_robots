@@ -19,7 +19,7 @@ class ConnectionManager(deviceItemTypeList: Map<DeviceModel, String>?) {
     public val isActive: Boolean
         get() {
             connectionList.forEach {
-                if (it.isActive){
+                if (it.connectionState == ConnectionClass.isAlive){
                     return true
                 }
             }

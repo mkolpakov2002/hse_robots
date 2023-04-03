@@ -10,7 +10,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import ru.hse.control_system_v2.R
-import ru.hse.control_system_v2.data.classes.protocol.ProtocolModel
+import ru.hse.control_system_v2.data.classes.protocol.ProtocolPrototypeModel
 
 /**
  * Диалог выбора типа только что считанного протокола
@@ -31,7 +31,11 @@ class NavigationDialog : DialogFragment() {
             val inflater = requireActivity().layoutInflater
             // Инфлейтим макет диалога
             val view = inflater.inflate(R.layout.protocol_navigation_dialog, null)
-            val protocol = arguments?.getSerializable("protocol") ?: ProtocolModel(0, "", ArrayList())
+            val protocol = arguments?.getSerializable("protocol") ?: ProtocolPrototypeModel(
+                0,
+                "",
+                ArrayList()
+            )
             val b = Bundle()
             b.putSerializable("protocol", protocol)
             // Находим радио группу по идентификатору

@@ -1,4 +1,4 @@
-package ru.hse.control_system_v2.encryption
+package ru.hse.control_system_v2.connection.encryption
 
 import android.annotation.SuppressLint
 import java.security.Key

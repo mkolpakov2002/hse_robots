@@ -5,17 +5,36 @@
     android:orientation="horizontal"
     android:padding="8dp">
 
-    <TextView
-        android:id="@+id/tag_name_text_view"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/text_input_layout_1"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:textStyle="bold" />
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+        android:padding="8dp">
 
-    <EditText
-        android:id="@+id/tag_value_edit_text"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/tag_name_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Имя тега" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/text_input_layout_2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+        android:padding="8dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/tag_value_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Значение" />
+
+    </com.google.android.material.textfield.TextInputLayout>
 
 </LinearLayout>

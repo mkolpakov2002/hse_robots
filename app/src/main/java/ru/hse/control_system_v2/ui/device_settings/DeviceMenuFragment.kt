@@ -10,21 +10,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.Navigation.findNavController
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json.Default.decodeFromString
 import ru.hse.control_system_v2.R
-import ru.hse.control_system_v2.data.AppDatabase
 import ru.hse.control_system_v2.data.classes.device.model.DeviceModel
 import ru.hse.control_system_v2.data.AppDatabase.Companion.getAppDataBase
 import ru.hse.control_system_v2.data.classes.workspace.model.WorkSpace
@@ -285,7 +283,7 @@ class DeviceMenuFragment : Fragment() {
         if (isNew) connectButton.visibility = View.GONE
         deleteButton = binding.deviceDelete
         deleteButton.setOnClickListener(View.OnClickListener {
-            lifecycleScope.launch {
+            CoroutineScope(Dispatchers.IO).launch {
                 getAppDataBase(requireContext()).deviceItemTypeDao()?.delete(currentDevice.id)
                 findNavController(view).navigate(R.id.action_deviceMenuFragment_to_mainMenuFragment)
             }
@@ -334,7 +332,7 @@ class DeviceMenuFragment : Fragment() {
                 currentDevice.port = 0
             }
             currentDevice.port = devPort.toInt()
-            lifecycleScope.launch {
+            CoroutineScope(Dispatchers.IO).launch {
                 // Suspend the coroutine until the lifecycle is DESTROYED.
                 // repeatOnLifecycle launches the block in a new coroutine every time the
                 // lifecycle is in the STARTED state (or above) and cancels it when it's STOPPED.
@@ -346,10 +344,10 @@ class DeviceMenuFragment : Fragment() {
 
     private fun handleColonDeletion(
         enteredMac: String,
-        formattedMac: String,
+        formattedMacParam: String,
         selectionStart: Int
     ): String {
-        var formattedMac = formattedMac
+        var formattedMac = formattedMacParam
         if (this::mPreviousMac.isInitialized && mPreviousMac.length > 1) {
             val previousColonCount = colonCount(mPreviousMac)
             val currentColonCount = colonCount(enteredMac)

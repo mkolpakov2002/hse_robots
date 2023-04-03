@@ -1,4 +1,4 @@
-package ru.hse.control_system_v2.encryption
+package ru.hse.control_system_v2.connection.encryption
 
 import java.security.NoSuchAlgorithmException
 import java.security.SecureRandom

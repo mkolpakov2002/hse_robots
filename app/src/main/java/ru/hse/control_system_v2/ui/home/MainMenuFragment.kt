@@ -23,6 +23,8 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import ru.hse.control_system_v2.R
 import ru.hse.control_system_v2.connection.ConnectionFactory
@@ -119,7 +121,7 @@ class MainMenuFragment : Fragment(), OnRefreshListener, MultipleTypesAdapterKt.O
         }
         dataBinding.floatingActionButtonDeleteSelected.hide()
         dataBinding.floatingActionButtonDeleteSelected.setOnClickListener {
-            lifecycleScope.launch {
+            CoroutineScope(Dispatchers.IO).launch {
                 for(item in multipleTypesAdapter.getSelectedItems())
                     AppDatabase.getAppDataBase(requireContext()).deviceItemTypeDao()?.delete(item.id)
                 onRefresh()

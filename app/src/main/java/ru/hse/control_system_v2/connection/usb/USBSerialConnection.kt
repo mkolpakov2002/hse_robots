@@ -75,6 +75,7 @@ class USBSerialConnection(deviceItemType: DeviceModel, connectionName: String?) 
 
             // Пытаемся читать данные от устройства в цикле while, пока соединение активно и корутина не отменена
             while (socket != null && isActive) {
+                connectionState = isAlive
                 // Создаем буфер для хранения данных с помощью функции ByteBuffer.allocate
                 val buffer = ByteBuffer.allocate(bufferSize)
                 // Читаем данные по USB с помощью функции socket?.read и сохраняем их в буфере

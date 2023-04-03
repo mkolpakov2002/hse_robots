@@ -63,7 +63,7 @@ open class IpClientConnection(deviceItemType: DeviceModel, connectionName: Strin
             while (socket != null && socket?.isActive == true && isActive) {
                 // Получаем сообщение с помощью функции socket.incoming.receiveOrNull
                 val message = socket?.incoming?.receiveCatching()?.getOrNull()
-
+                connectionState = isAlive
                 // Проверяем тип сообщения и приводим его к строке или байтам
                 when (message) {
                     is Frame.Text -> {
@@ -92,6 +92,7 @@ open class IpClientConnection(deviceItemType: DeviceModel, connectionName: Strin
         } finally {
             // В конце закрываем клиент Ktor с помощью функции client.close
             client.close()
+            connectionState = isOnError
         }
     }
 

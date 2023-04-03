@@ -4,15 +4,15 @@ import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import ru.hse.control_system_v2.AppConstants
-import ru.hse.control_system_v2.AppConstants.Companion.DEFAULT_DEVICE_BLUETOOTH_ADDRESS
-import ru.hse.control_system_v2.AppConstants.Companion.DEFAULT_DEVICE_CLASS
-import ru.hse.control_system_v2.AppConstants.Companion.DEFAULT_DEVICE_MANUFACTURE
-import ru.hse.control_system_v2.AppConstants.Companion.DEFAULT_DEVICE_MODEL
-import ru.hse.control_system_v2.AppConstants.Companion.DEFAULT_DEVICE_NAME
-import ru.hse.control_system_v2.AppConstants.Companion.DEFAULT_DEVICE_PORT
-import ru.hse.control_system_v2.AppConstants.Companion.DEFAULT_DEVICE_PROTOCOL
-import ru.hse.control_system_v2.AppConstants.Companion.DEFAULT_DEVICE_TYPE
-import ru.hse.control_system_v2.AppConstants.Companion.DEFAULT_DEVICE_WIFI_ADDRESS
+import ru.hse.control_system_v2.AppConstants.DEFAULT_DEVICE_BLUETOOTH_ADDRESS
+import ru.hse.control_system_v2.AppConstants.DEFAULT_DEVICE_CLASS
+import ru.hse.control_system_v2.AppConstants.DEFAULT_DEVICE_MANUFACTURE
+import ru.hse.control_system_v2.AppConstants.DEFAULT_DEVICE_MODEL
+import ru.hse.control_system_v2.AppConstants.DEFAULT_DEVICE_NAME
+import ru.hse.control_system_v2.AppConstants.DEFAULT_DEVICE_PORT
+import ru.hse.control_system_v2.AppConstants.DEFAULT_DEVICE_PROTOCOL
+import ru.hse.control_system_v2.AppConstants.DEFAULT_DEVICE_TYPE
+import ru.hse.control_system_v2.AppConstants.DEFAULT_DEVICE_WIFI_ADDRESS
 import ru.hse.control_system_v2.data.classes.workspace.model.WorkSpace
 import java.io.Serializable
 

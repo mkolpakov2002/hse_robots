@@ -1,4 +1,4 @@
-package ru.hse.control_system_v2.data.classes.protocol
+package ru.hse.control_system_v2.data.classes.packages
 
 import androidx.room.Dao
 import androidx.room.Insert
@@ -11,9 +11,9 @@ import kotlinx.coroutines.flow.Flow
  * логика таблицы БД с данными о вариациях протокола Лежнёва
  */
 @Dao
-interface LezhnyovProtocolDao {
+interface LezhnyovPackageDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(item: LezhnyovProtocolModel): Long
+    suspend fun insertAll(item: LezhnyovPackageModel): Long
 
     @Query("DELETE FROM lezhnyovProtocol WHERE id = :id")
     suspend fun delete(id: Long)
@@ -22,11 +22,11 @@ interface LezhnyovProtocolDao {
     suspend fun deleteAll()
 
     @Update
-    suspend fun update(item: LezhnyovProtocolModel)
+    suspend fun update(item: LezhnyovPackageModel)
 
     @Query("SELECT * FROM lezhnyovProtocol")
-    fun getAll(): Flow<List<LezhnyovProtocolModel>>
+    fun getAll(): Flow<List<LezhnyovPackageModel>>
 
     @Query("SELECT * FROM lezhnyovProtocol WHERE id = :id")
-    fun getById(id: Long): LezhnyovProtocolModel
+    fun getById(id: Long): LezhnyovPackageModel
 }

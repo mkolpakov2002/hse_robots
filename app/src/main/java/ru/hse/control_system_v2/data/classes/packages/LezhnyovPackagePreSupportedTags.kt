@@ -1,8 +1,8 @@
-package ru.hse.control_system_v2.data.classes.protocol
+package ru.hse.control_system_v2.data.classes.packages
 
-import ru.hse.control_system_v2.ui.protocol.XmlTag
+import ru.hse.control_system_v2.ui.packages.XmlTag
 
-object LezhnyovProtocolPreSupportedTags {
+object LezhnyovPackagePreSupportedTags {
     val classFromDevice : ArrayList<XmlTag> = arrayListOf(
         XmlTag(name = "class_android", value = "30"),
         XmlTag(name = "class_computer", value = "65"),

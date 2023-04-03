@@ -1,4 +1,4 @@
-package ru.hse.control_system_v2.ui.protocol
+package ru.hse.control_system_v2.ui.packages
 
 import android.text.Editable
 import android.text.TextWatcher
@@ -9,7 +9,7 @@ import android.widget.EditText
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import ru.hse.control_system_v2.R
-import ru.hse.control_system_v2.data.classes.protocol.LezhnyovProtocolPreSupportedTags
+import ru.hse.control_system_v2.data.classes.packages.LezhnyovPackagePreSupportedTags
 
 class XmlTagAdapter(private val xmlTags: ArrayList<XmlTag>) : RecyclerView.Adapter<XmlTagAdapter.XmlTagViewHolder>() {
 
@@ -28,7 +28,7 @@ class XmlTagAdapter(private val xmlTags: ArrayList<XmlTag>) : RecyclerView.Adapt
         holder.tagNameTextView.text = xmlTag.name
         // Установить текст для значения тега
         holder.tagValueEditText.setText(xmlTag.value)
-        holder.tagNameTextView.isEnabled = !LezhnyovProtocolPreSupportedTags.preSupportedTagList.any { it.name == xmlTag.name }
+        holder.tagNameTextView.isEnabled = !LezhnyovPackagePreSupportedTags.preSupportedTagList.any { it.name == xmlTag.name }
         // Добавить слушатель изменения текста для редактирования значения тега
         holder.tagValueEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {

@@ -1,4 +1,4 @@
-package ru.hse.control_system_v2.connection.wifi
+package ru.hse.control_system_v2.connection.protocols.wifi
 
 import android.util.Log
 import io.ktor.client.*

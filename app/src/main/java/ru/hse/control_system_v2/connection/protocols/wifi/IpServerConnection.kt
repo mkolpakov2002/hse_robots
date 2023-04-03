@@ -1,4 +1,4 @@
-package ru.hse.control_system_v2.connection.wifi
+package ru.hse.control_system_v2.connection.protocols.wifi
 
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty

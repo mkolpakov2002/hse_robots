@@ -1,4 +1,4 @@
-package ru.hse.control_system_v2.connection.bluetooth
+package ru.hse.control_system_v2.connection.protocols.bluetooth
 
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter

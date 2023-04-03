@@ -1,12 +1,12 @@
-package ru.hse.control_system_v2.data.classes.protocol
+package ru.hse.control_system_v2.data.classes.packages
 
 /**
  * логика таблицы БД с данными о протоколах Лежнёва
  */
-interface ProtocolDao {
+interface PackageDao {
 //    // Добавление Note в бд
 //    @Insert(onConflict = OnConflictStrategy.REPLACE)
-//    suspend fun insertAll(vararg item: ProtocolPrototypeModel?)
+//    suspend fun insertAll(vararg item: PackagePrototypeModel?)
 //
 //    // Удаление Note из бд
 //    @Query("DELETE FROM {$PROTO_DATABASE_NAME} WHERE devId = :id")
@@ -16,9 +16,9 @@ interface ProtocolDao {
 //    suspend fun deleteAll()
 //
 //    @Update
-//    suspend fun update(item: ProtocolPrototypeModel?)
+//    suspend fun update(item: PackagePrototypeModel?)
 //
 //    // Получение всех Person из бд
 //    @Query("SELECT * FROM addedProtocols")
-//    suspend fun getAll(): ArrayList<ProtocolPrototypeModel>
+//    suspend fun getAll(): ArrayList<PackagePrototypeModel>
 }

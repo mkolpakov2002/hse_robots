@@ -1,4 +1,4 @@
-package ru.hse.control_system_v2.ui.protocol
+package ru.hse.control_system_v2.ui.packages
 
 import android.app.Dialog
 import android.content.Context
@@ -7,10 +7,9 @@ import android.widget.RadioButton
 import android.widget.RadioGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import ru.hse.control_system_v2.R
-import ru.hse.control_system_v2.data.classes.protocol.ProtocolPrototypeModel
+import ru.hse.control_system_v2.data.classes.packages.PackagePrototypeModel
 
 /**
  * Диалог выбора типа только что считанного протокола
@@ -31,13 +30,13 @@ class NavigationDialog : DialogFragment() {
             val inflater = requireActivity().layoutInflater
             // Инфлейтим макет диалога
             val view = inflater.inflate(R.layout.protocol_navigation_dialog, null)
-            val protocol = arguments?.getSerializable("protocol") ?: ProtocolPrototypeModel(
+            val protocol = arguments?.getSerializable("packages") ?: PackagePrototypeModel(
                 0,
                 "",
                 ArrayList()
             )
             val b = Bundle()
-            b.putSerializable("protocol", protocol)
+            b.putSerializable("packages", protocol)
             // Находим радио группу по идентификатору
             val radioGroup: RadioGroup = view.findViewById(R.id.radioGroup)
             // Устанавливаем заголовок диалога

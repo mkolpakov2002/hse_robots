@@ -1,24 +1,24 @@
-package ru.hse.control_system_v2.data.classes.protocol
+package ru.hse.control_system_v2.data.classes.packages
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import ru.hse.control_system_v2.ui.protocol.XmlTag
+import ru.hse.control_system_v2.ui.packages.XmlTag
 
 /**
  * Model класс протокола типа Лежнёва с считанными из файла тегами
  */
 @Entity(tableName = "lezhnyovProtocol")
-class LezhnyovProtocolModel(
+class LezhnyovPackageModel(
     @PrimaryKey(autoGenerate = true)
     override var id: Long,
     name: String,
     var isPackageData: Boolean = false,
-    tagList: ArrayList<XmlTag>): ProtocolPrototypeModel(id, name, tagList) {
+    tagList: ArrayList<XmlTag>): PackagePrototypeModel(id, name, tagList) {
 
     override var tagList: ArrayList<XmlTag>
         get() = super.tagList
         set(value) {
-            for (item in LezhnyovProtocolPreSupportedTags.preSupportedTagList) {
+            for (item in LezhnyovPackagePreSupportedTags.preSupportedTagList) {
                 val index = value.indexOfFirst{
                     it.name == item.name
                 }

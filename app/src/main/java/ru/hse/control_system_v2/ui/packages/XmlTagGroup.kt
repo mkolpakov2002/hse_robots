@@ -1,4 +1,4 @@
-package ru.hse.control_system_v2.ui.protocol
+package ru.hse.control_system_v2.ui.packages
 
 class XmlTagGroup {
     // Список для хранения тегов

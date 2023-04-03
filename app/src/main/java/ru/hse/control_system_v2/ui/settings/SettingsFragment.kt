@@ -13,7 +13,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -21,7 +20,6 @@ import kotlinx.coroutines.launch
 import ru.hse.control_system_v2.R
 import ru.hse.control_system_v2.data.classes.file.FileParse
 import ru.hse.control_system_v2.databinding.FragmentSettingsBinding
-import ru.hse.control_system_v2.ui.protocol.NavigationDialog
 
 private const val REQUEST_CODE_PERMISSION = 100 // Код запроса разрешения
 private const val REQUEST_CODE_PICK_FILE = 101 // Код запроса выбора файла
@@ -125,7 +123,7 @@ class SettingsFragment : Fragment(){
             // lifecycle is in the STARTED state (or above) and cancels it when it's STOPPED.
             val protocol = FileParse.parseXml(FileParse.getXmlFromUrl(fileUri))
             val b = Bundle()
-            b.putSerializable("protocol", protocol)
+            b.putSerializable("packages", protocol)
             Navigation.findNavController(requireParentFragment().requireView())
                 .navigate(R.id.action_settingsFragment_to_navigationDialog, b)
         }

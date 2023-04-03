@@ -2,8 +2,8 @@ package ru.hse.control_system_v2.connection
 
 import android.content.Context
 import ru.hse.control_system_v2.AppConstants
-import ru.hse.control_system_v2.connection.bluetooth.BluetoothConnection
-import ru.hse.control_system_v2.connection.wifi.IpClientConnection
+import ru.hse.control_system_v2.connection.protocols.bluetooth.BluetoothConnection
+import ru.hse.control_system_v2.connection.protocols.wifi.IpClientConnection
 import ru.hse.control_system_v2.data.classes.device.model.DeviceModel
 
 // Класс для управления разными типами соединений с устройствами

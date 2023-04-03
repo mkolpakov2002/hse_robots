@@ -1,4 +1,4 @@
-package ru.hse.control_system_v2.connection.wifi
+package ru.hse.control_system_v2.connection.protocols.wifi
 
 import ru.hse.control_system_v2.connection.ConnectionClass
 import ru.hse.control_system_v2.data.classes.device.model.DeviceModel

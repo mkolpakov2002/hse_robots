@@ -23,8 +23,9 @@ interface DeviceItemTypeDao {
     @Update
     suspend fun update(item: DeviceModel?)
 
-    @Query("UPDATE device SET protocol=:newProto WHERE protocol = :deletingProto")
-    suspend fun deleteProto(deletingProto: String?, newProto: String?)
+    //TODO
+//    @Query("UPDATE device SET packages=:newProto WHERE packages = :deletingProto")
+//    suspend fun deleteProto(deletingProto: String?, newProto: String?)
 
     // Получение всех Person из бд
     @Query("SELECT * FROM device")

@@ -1,7 +1,7 @@
 package ru.hse.control_system_v2.data
 
 import androidx.room.TypeConverter
-import ru.hse.control_system_v2.ui.protocol.XmlTag
+import ru.hse.control_system_v2.ui.packages.XmlTag
 
 /**
  * конвертеры для записи и получения данных из БД

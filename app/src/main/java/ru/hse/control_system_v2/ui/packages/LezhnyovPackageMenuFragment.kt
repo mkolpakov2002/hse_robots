@@ -1,4 +1,4 @@
-package ru.hse.control_system_v2.ui.protocol
+package ru.hse.control_system_v2.ui.packages
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -14,11 +14,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import ru.hse.control_system_v2.R
 import ru.hse.control_system_v2.data.AppDatabase
-import ru.hse.control_system_v2.data.classes.protocol.LezhnyovProtocolModel
+import ru.hse.control_system_v2.data.classes.packages.LezhnyovPackageModel
 import ru.hse.control_system_v2.databinding.FragmentLezhnyovProtocolMenuBinding
 import kotlin.properties.Delegates
 
-class LezhnyovProtocolMenuFragment : Fragment(), XmlTagAdapter.OnTagValueChangeListener {
+class LezhnyovPackageMenuFragment : Fragment(), XmlTagAdapter.OnTagValueChangeListener {
 
     private val dataBinding by lazy {
         FragmentLezhnyovProtocolMenuBinding.inflate(layoutInflater)
@@ -31,7 +31,7 @@ class LezhnyovProtocolMenuFragment : Fragment(), XmlTagAdapter.OnTagValueChangeL
     private var isNew by Delegates.notNull<Boolean>()
     private lateinit var saveButton: MaterialButton
     private lateinit var deleteButton: MaterialButton
-    private lateinit var currentProtocol: LezhnyovProtocolModel
+    private lateinit var currentProtocol: LezhnyovPackageModel
 
     // Создаем вид RecycleView для фрагмента из макета xml_tag_fragment.xml
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -42,12 +42,12 @@ class LezhnyovProtocolMenuFragment : Fragment(), XmlTagAdapter.OnTagValueChangeL
     // Инициализируем RecycleView после создания фрагмента
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        currentProtocol = LezhnyovProtocolModel(0, "", false, ArrayList())
+        currentProtocol = LezhnyovPackageModel(0, "", false, ArrayList())
         val b = arguments
         if (b != null) {
             isNew = b.getBoolean("isNew", true)
-            currentProtocol = (arguments?.getSerializable("protocol"))
-                    as LezhnyovProtocolModel
+            currentProtocol = (arguments?.getSerializable("packages"))
+                    as LezhnyovPackageModel
         }
         saveButton = dataBinding.protocolSave2
         saveButton.setOnClickListener {

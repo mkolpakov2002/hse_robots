@@ -106,7 +106,7 @@
     </fragment>
     <dialog
         android:id="@+id/navigationDialog"
-        android:name="ru.hse.control_system_v2.ui.protocol.NavigationDialog"
+        android:name="ru.hse.control_system_v2.ui.packages.NavigationDialog"
         android:label="NavigationDialog"
         tools:layout="@layout/protocol_navigation_dialog">
         <action
@@ -118,7 +118,7 @@
     </dialog>
     <fragment
         android:id="@+id/lezhnyovProtocolMenuFragment"
-        android:name="ru.hse.control_system_v2.ui.protocol.LezhnyovProtocolMenuFragment"
+        android:name="ru.hse.control_system_v2.ui.packages.LezhnyovPackageMenuFragment"
         android:label="fragment_lezhnyov_protocol_menu"
         tools:layout="@layout/fragment_lezhnyov_protocol_menu" >
         <action

@@ -1,4 +1,4 @@
-package ru.hse.control_system_v2.connection.usb
+package ru.hse.control_system_v2.connection.protocols.usb
 
 import android.hardware.usb.UsbDevice
 import android.hardware.usb.UsbDeviceConnection

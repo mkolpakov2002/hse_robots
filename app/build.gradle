@@ -3,7 +3,7 @@ plugins {
     id 'androidx.navigation.safeargs'
     id 'kotlin-android'
     id 'kotlin-kapt'
-    id 'com.google.devtools.ksp' version "$ksp_version"
+    //id 'com.google.devtools.ksp'
     id 'org.jetbrains.kotlin.android'
     id 'org.jetbrains.kotlin.plugin.serialization'
 }
@@ -67,7 +67,7 @@ dependencies {
 
     implementation fileTree(include: ['*.jar', '*.aar'], dir: 'libs')
 
-    implementation 'androidx.core:core-ktx:1.9.0'
+    implementation 'androidx.core:core-ktx:1.10.0'
 
     implementation 'androidx.preference:preference-ktx:1.2.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
@@ -83,6 +83,7 @@ dependencies {
 
     // Room components
     implementation "androidx.room:room-runtime:$rootProject.roomVersion"
+    implementation project(path: ':jcraft')
     // To use Kotlin annotation processing tool (kapt)
     kapt "androidx.room:room-compiler:$rootProject.roomVersion"
     // To use Kotlin Symbol Processing (KSP)
@@ -135,5 +136,31 @@ dependencies {
 
     // USB serial for usb arduino communication
     implementation 'com.github.mik3y:usb-serial-for-android:3.5.1'
+
+    // ROS
+    implementation "org.ros.rosjava_core:rosjava:0.3.6"
+    implementation "org.ros.rosjava_messages:diagnostic_msgs:1.12.7"
+    implementation 'org.ros.rosjava_messages:geometry_msgs:1.12.7'
+    implementation 'org.ros.rosjava_messages:nav_msgs:1.12.7'
+    implementation 'org.ros.rosjava_messages:std_msgs:0.5.11'
+    implementation 'org.ros.rosjava_messages:map_msgs:1.13.0'
+    implementation 'org.ros.rosjava_messages:sensor_msgs:1.12.7'
+    implementation 'org.ros.rosjava_messages:tf2_msgs:0.5.20'
+    implementation 'org.ros.rosjava_bootstrap:message_generation:0.3.3'
+    implementation 'org.ros.android_core:android_core_components:0.4.0'
+
+    // Parsing
+    implementation 'com.google.code.gson:gson:2.9.0'
+
+    // Open Street Maps (e.g. for GPS)
+    implementation 'org.osmdroid:osmdroid-android:6.1.6'
+
+    // Playing Youtube Videos
+    implementation 'com.pierfrancescosoffritti.androidyoutubeplayer:core:10.0.5'
+
+    // Color picker
+    implementation "com.github.skydoves:colorpickerview:2.2.3"
+
+
 
 }

@@ -3,11 +3,12 @@ pluginManagement {
         gradlePluginPortal()
         google()
         mavenCentral()
-        maven{ url 'https://dl.bintray.com/kotlin/kotlin-eap'}
+        maven { url 'https://dl.bintray.com/kotlin/kotlin-eap'}
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
         maven { url 'https://jitpack.io' }
-        //noinspection JcenterRepositoryObsolete
-        //jcenter()
+        maven { url 'https://repo1.maven.org/maven2' }
+        maven { url 'https://github.com/rosjava/rosjava_mvn_repo/raw/master' }
+        jcenter()
     }
 }
 dependencyResolutionManagement {
@@ -18,9 +19,11 @@ dependencyResolutionManagement {
         maven{ url 'https://dl.bintray.com/kotlin/kotlin-eap'}
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
         maven { url 'https://jitpack.io' }
-        //noinspection JcenterRepositoryObsolete
-        //jcenter()
+        maven { url 'https://repo1.maven.org/maven2' }
+        maven { url 'https://github.com/rosjava/rosjava_mvn_repo/raw/master' }
+        jcenter()
     }
 }
 rootProject.name = "Control_system_v2"
 include ':app'
+include ':jcraft'

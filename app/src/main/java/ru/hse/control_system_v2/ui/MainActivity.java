@@ -265,8 +265,6 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        // TODO убрать
-        if (true) return;
         if (Arrays.stream(grantResults).anyMatch(n -> n!= PackageManager.PERMISSION_GRANTED)){
             // объект Builder для создания диалогового окна
             //AlertDialog_AppCompat

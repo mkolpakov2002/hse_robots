@@ -49,5 +49,25 @@
             <item name="android:textColor">@color/color_attention</item>
         </style>
 
+    <style name="TextAppearanceRegular">
+        <item name="android:textSize">14sp</item>
+        <item name="fontFamily">@font/euclid_circular_a_regular</item>
+    </style>
 
-        </resources>
+    <style name="TextAppearanceBold">
+        <item name="android:textSize">14sp</item>
+        <item name="fontFamily">@font/euclid_circular_a_semibold</item>
+    </style>
+
+    <style name="TextAppearanceHeader">
+        <item name="android:textSize">18sp</item>
+        <item name="fontFamily">@font/euclid_circular_a_semibold</item>
+    </style>
+
+    <style name="TextAppearanceSecondary">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">#14000000</item>
+        <item name="fontFamily">@font/euclid_circular_a_semibold</item>
+    </style>
+
+</resources>

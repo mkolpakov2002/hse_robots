@@ -69,4 +69,7 @@
     <string name="label_connection_activity">ConnectionActivity</string>
     <string name="command_for_video_stream">Команда для видео стрима</string>
     <string name="send_string">Отправить текст</string>
+
+    <!-- Диалоги -->
+    <string name="dialog_permissions_bluetooth_rationale">Чтобы использовать приложение Роботы ВШЭ, предоставьте разрешения на доступ к Bluetooth и хранилищу.</string>
 </resources>

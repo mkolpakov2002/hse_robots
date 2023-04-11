@@ -271,7 +271,7 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
             AlertDialog dialog = new MaterialAlertDialogBuilder(this,
                     com.google.android.material.R.style.ThemeOverlay_Material3_MaterialAlertDialog).create();
             dialog.setTitle(getString(R.string.error));
-            dialog.setMessage("Чтобы использовать приложение Роботы ВШЭ, предоставьте разрешения на доступ к Bluetooth и хранилищу.");
+            dialog.setMessage(getString(R.string.dialog_permissions_bluetooth_rationale));
             dialog.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.ok),
                     (dialog1, which) -> {
                         // Closes the dialog and terminates the activity.

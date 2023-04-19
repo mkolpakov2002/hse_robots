@@ -45,6 +45,7 @@ import ru.hse.control_system_v2.App;
 import ru.hse.control_system_v2.R;
 import ru.hse.control_system_v2.connection.ConnectionManager;
 import ru.hse.control_system_v2.data.classes.device.model.DeviceModel;
+import ru.hse.control_system_v2.databinding.ActivityMainBinding;
 import ru.hse.control_system_v2.ui.home.MainMenuFragment;
 import ru.hse.control_system_v2.ui.dialog.OneButtonAlertDialogFragment;
 import ru.hse.control_system_v2.ui.theming.ThemeUtils;
@@ -52,6 +53,8 @@ import ru.hse.control_system_v2.ui.theming.ThemeUtils;
 
 public class MainActivity extends AppCompatActivity implements OneButtonAlertDialogFragment.OnDismissListener,
         PassDataToActivityInterface {
+
+    private ActivityMainBinding binding;
 
     private BottomNavigationView main_bottom_menu;
     private NavDestination currentVisibleFragment;
@@ -64,6 +67,8 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        View view = binding.getRoot();
+        setContentView(view);
 
         ThemeUtils.onActivityCreateSetTheme(this);
         setContentView(R.layout.activity_main);
@@ -72,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
 //        if (App.isServiceConnecting()) {
 //            navController.navigate(R.id.connection_dialog);
 //        }
-        MaterialToolbar toolbar = findViewById(R.id.toolbar);
+        MaterialToolbar toolbar = binding.toolbar;
         toolbar.inflateMenu(R.menu.main_toolbar_menu);
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
@@ -176,7 +181,7 @@ public class MainActivity extends AppCompatActivity implements OneButtonAlertDia
     }
 
     void setUpNavigation() {
-        main_bottom_menu = findViewById(R.id.bottomnav);
+        main_bottom_menu = binding.bottomnav;
         navHostFragment = (NavHostFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.nav_host_fragment);
         if (navHostFragment != null) {

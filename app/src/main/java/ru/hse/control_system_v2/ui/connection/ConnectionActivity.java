@@ -22,6 +22,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import java.util.Objects;
 
 import ru.hse.control_system_v2.R;
+import ru.hse.control_system_v2.databinding.ActivityConnectionBinding;
 
 public class ConnectionActivity extends AppCompatActivity {
 
@@ -33,7 +34,9 @@ public class ConnectionActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        ru.hse.control_system_v2.databinding.ActivityConnectionBinding binding = ActivityConnectionBinding.inflate(getLayoutInflater());
+        View view = binding.getRoot();
+        setContentView(view);
     }
 
     void setUpNavigation() {

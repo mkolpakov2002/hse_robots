@@ -19,6 +19,7 @@ import com.google.android.material.textfield.TextInputEditText;
 
 import ru.hse.control_system_v2.App;
 import ru.hse.control_system_v2.R;
+import ru.hse.control_system_v2.databinding.DialogSendDataParamsBinding;
 import ru.hse.control_system_v2.ui.TextChangedListener;
 
 public class DialogDataParams extends Fragment {
@@ -28,6 +29,8 @@ public class DialogDataParams extends Fragment {
     MaterialButton saveButton;
     private Toolbar toolbar;
     private View view;
+
+    private DialogSendDataParamsBinding binding;
 
     public DialogDataParams() {
         //nothing
@@ -56,13 +59,14 @@ public class DialogDataParams extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        binding = DialogSendDataParamsBinding.inflate(getLayoutInflater());
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        saveButton = view.findViewById(R.id.button);
+        saveButton = binding.button;
         //TODO: пока не трогать
 //        saveButton.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -83,7 +87,7 @@ public class DialogDataParams extends Fragment {
             }
         });
 
-        editTextNumberCommandLastChar = view.findViewById(R.id.editTextNumberCommandLastChar);
+        editTextNumberCommandLastChar = binding.editTextNumberCommandLastChar;
         //TODO: пока не трогать
 //        editTextNumberCommandLastChar.setText(App.getNumberCommandLastChar());
 //        editTextNumberCommandLastChar.addTextChangedListener(new TextChangedListener<>(editTextNumberCommandLastChar) {

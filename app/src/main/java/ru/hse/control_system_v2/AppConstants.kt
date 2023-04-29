@@ -19,6 +19,7 @@ object AppConstants {
     const val DEFAULT_DEVICE_CLASS = "no_class"
     const val DEFAULT_DEVICE_TYPE = "no_type"
     const val DEFAULT_DEVICE_PROTOCOL = "arduino_default"
+    const val DEFAULT_DEVICE_PROTOCOL_ENCRYPTION = "Kuznechik"
     const val DEFAULT_DEVICE_BLUETOOTH_ADDRESS = ""
     const val DEFAULT_DEVICE_WIFI_ADDRESS = ""
     const val DEFAULT_DEVICE_PORT = 0

@@ -23,6 +23,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json.Default.decodeFromString
 import ru.hse.control_system_v2.R
+import ru.hse.control_system_v2.connection.encryption.*
 import ru.hse.control_system_v2.data.classes.device.model.DeviceModel
 import ru.hse.control_system_v2.data.AppDatabase.Companion.getAppDataBase
 import ru.hse.control_system_v2.data.classes.workspace.model.WorkSpace
@@ -45,8 +46,10 @@ class DeviceMenuFragment : Fragment() {
     private lateinit var name: String
     private lateinit var bluetoothAddress: String
     private lateinit var protocol: String
+    private lateinit var protocolEncryption: String
     private lateinit var devClass: String
     private lateinit var devType: String
+    private lateinit var encryptionType: String
     private lateinit var devIp: String
     private lateinit var devPort: String
     private lateinit var imageType: String
@@ -62,6 +65,7 @@ class DeviceMenuFragment : Fragment() {
     lateinit var deviceClassView: MaterialAutoCompleteTextView
     lateinit var deviceTypeView: MaterialAutoCompleteTextView
     lateinit var deviceProtoView: MaterialAutoCompleteTextView
+    lateinit var protocolEncryptionView: MaterialAutoCompleteTextView
     lateinit var deviceIpView: TextInputEditText
     lateinit var devicePortView: TextInputEditText
     private lateinit var mPreviousMac: String
@@ -71,6 +75,7 @@ class DeviceMenuFragment : Fragment() {
     private var fragmentContext: Context? = null
     private lateinit var deviceImage: ImageView
     private lateinit var deviceTypeViewLayout: TextInputLayout
+    private lateinit var encryptionProtocolLayout: TextInputLayout
     private var adapterType: SpinnerArrayAdapter<String>? = null
     private var isNew = true
     private lateinit var btIcon: ImageView
@@ -245,6 +250,31 @@ class DeviceMenuFragment : Fragment() {
                 }
             }
         })
+
+        protocolEncryptionView = binding.encryptionProtocolEdit
+        protocolEncryptionView.setText(encryptionType)
+        val adapterEncryption = SpinnerArrayAdapter(
+            requireActivity(), android.R.layout.simple_spinner_dropdown_item,
+            listOf(
+                "AES128",
+                "AES256",
+                "Blowfish",
+                "ChaCha20",
+                "Salsa20",
+                "Kuznechik"
+            )
+        )
+        protocolEncryptionView.setAdapter(adapterEncryption)
+        protocolEncryptionView.addTextChangedListener(object :
+            TextChangedListener<MaterialAutoCompleteTextView?>(protocolEncryptionView) {
+            override fun onTextChanged(target: MaterialAutoCompleteTextView?, s: Editable?) {
+                if (encryptionProtocolLayout.isEnabled && encryptionType != s.toString()) {
+                    encryptionType = s.toString()
+                    onRefresh()
+                }
+            }
+        })
+
         deviceProtoView = binding.deviceProtoEdit
         deviceProtoView.setText(protocol)
         //TODO: после создания БД для протоколов, выводить их тут
@@ -322,6 +352,7 @@ class DeviceMenuFragment : Fragment() {
             currentDevice.uiClass = classDevice
             currentDevice.uiType = typeDevice
             currentDevice.protocol = protocol
+            currentDevice.protocol_encryption = protocolEncryption
             currentDevice.wifiAddress = devIp
             //TODO: работа с VideoModel
             //currentDevice.setDevVideoCommand(devVideoCommand);
@@ -406,6 +437,18 @@ class DeviceMenuFragment : Fragment() {
                         fragmentContext!!, R.drawable.class_computer
                     )
                 )
+            }
+        }
+    }
+
+    private fun selectEncryptionMethod(): Class<out Any> {
+        return when (encryptionType) {
+            "AES" -> AES::class.java
+            "Blowfish" -> Blowfish::class.java
+            "ChaCha20" -> ChaCha20::class.java
+            "Salsa20" -> Salsa20::class.java
+            else -> {
+                ChipperGost34_12_2015::class.java
             }
         }
     }

@@ -11,6 +11,7 @@ import ru.hse.control_system_v2.AppConstants.DEFAULT_DEVICE_MODEL
 import ru.hse.control_system_v2.AppConstants.DEFAULT_DEVICE_NAME
 import ru.hse.control_system_v2.AppConstants.DEFAULT_DEVICE_PORT
 import ru.hse.control_system_v2.AppConstants.DEFAULT_DEVICE_PROTOCOL
+import ru.hse.control_system_v2.AppConstants.DEFAULT_DEVICE_PROTOCOL_ENCRYPTION
 import ru.hse.control_system_v2.AppConstants.DEFAULT_DEVICE_TYPE
 import ru.hse.control_system_v2.AppConstants.DEFAULT_DEVICE_WIFI_ADDRESS
 import ru.hse.control_system_v2.data.classes.workspace.model.WorkSpace
@@ -25,6 +26,7 @@ constructor(@PrimaryKey(autoGenerate = true)
             override var id: Int = 0,
             override var name: String = DEFAULT_DEVICE_NAME,
             var protocol: String = DEFAULT_DEVICE_PROTOCOL,
+            var protocol_encryption: String = DEFAULT_DEVICE_PROTOCOL_ENCRYPTION,
             override var bluetoothAddress: String = DEFAULT_DEVICE_BLUETOOTH_ADDRESS,
             override var manufacture: String = DEFAULT_DEVICE_MANUFACTURE,
             override var model: String = DEFAULT_DEVICE_MODEL,

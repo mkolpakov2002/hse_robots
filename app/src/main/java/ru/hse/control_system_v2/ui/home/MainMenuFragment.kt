@@ -214,7 +214,8 @@ class MainMenuFragment : Fragment(), OnRefreshListener, MultipleTypesAdapterKt.O
 
     //Обновляем внешний вид приложения, скрываем и добавляем нужные элементы интерфейса
     override fun onRefresh() {
-        ma?.showMainMenu()
+        //TODO
+        //ma?.showMainMenu()
         hideAllButtons()
         dataBinding.pairedDevicesTitleAddActivity.setText(R.string.favorites_devices)
         // Bluetooth включён, надо показать кнопку добавления устройств и другую информацию
@@ -253,7 +254,8 @@ class MainMenuFragment : Fragment(), OnRefreshListener, MultipleTypesAdapterKt.O
     private fun showItemSelectionMenu() {
         hideBottomSheetToAdd()
         hideBottomSheetToConnect()
-        ma?.hideMainMenu()
+        //TODO
+        //ma?.hideMainMenu()
         dataBinding.floatingActionButtonDeleteSelected.show()
         dataBinding.floatingActionButtonStartSendingData.show()
         isMultiSelectVisible = true
@@ -272,7 +274,8 @@ class MainMenuFragment : Fragment(), OnRefreshListener, MultipleTypesAdapterKt.O
             showBottomSheetToAdd()
         } else if(!multipleTypesAdapter.isMultiSelect && isMultiSelectVisible){
             hideAllButtons()
-            ma?.showMainMenu()
+            //TODO
+            //ma?.showMainMenu()
         } else if(!multipleTypesAdapter.isMultiSelect){
             val args = Bundle()
             args.putBoolean("isNew", false)

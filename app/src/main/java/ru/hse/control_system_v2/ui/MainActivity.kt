@@ -30,8 +30,8 @@ import java.util.*
 
 class MainActivity : AppCompatActivity(), OneButtonAlertDialogFragment.OnDismissListener,
     PassDataToActivityInterface {
-    private val binding: ActivityMainBinding? = null
-    private var main_bottom_menu: BottomNavigationView? = null
+    private lateinit var binding: ActivityMainBinding
+    private lateinit var main_bottom_menu: BottomNavigationView
     var currentVisibleFragment: NavDestination? = null
         private set
     private var navHostFragment: NavHostFragment? = null
@@ -41,12 +41,13 @@ class MainActivity : AppCompatActivity(), OneButtonAlertDialogFragment.OnDismiss
     private lateinit var viewModel: MainViewModel
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val view: View = binding!!.root
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        val view: View = binding.root
         setContentView(view)
         onActivityCreateSetTheme(this)
         setContentView(R.layout.activity_main)
         // Создание экземпляра ViewModel с помощью ViewModelProvider
-        viewModel = ViewModelProvider(this, MainViewModelFactory()).get(MainViewModel::class.java)
+        viewModel = ViewModelProvider(this, MainViewModelFactory())[MainViewModel::class.java]
         setUpNavigation()
 
 
@@ -164,7 +165,7 @@ class MainActivity : AppCompatActivity(), OneButtonAlertDialogFragment.OnDismiss
     }
 
     private fun setUpNavigation() {
-        val main_bottom_menu = binding!!.bottomnav
+        val main_bottom_menu = binding.bottomnav
         val navHostFragment = supportFragmentManager
             .findFragmentById(R.id.nav_host_fragment) as NavHostFragment?
 
@@ -197,7 +198,7 @@ class MainActivity : AppCompatActivity(), OneButtonAlertDialogFragment.OnDismiss
     }
 
     // проверка на наличие адаптеров
-    fun checkForBtAdapter() {
+    private fun checkForBtAdapter() {
 
 //        if (!App.isBtWiFiSupported()) {
 //            // объект Builder для создания диалогового окна
@@ -262,12 +263,12 @@ class MainActivity : AppCompatActivity(), OneButtonAlertDialogFragment.OnDismiss
 
     @Synchronized
     fun showMainMenu() {
-        main_bottom_menu!!.visibility = View.VISIBLE
+        main_bottom_menu.visibility = View.VISIBLE
     }
 
     @Synchronized
     fun hideMainMenu() {
-        main_bottom_menu!!.visibility = View.GONE
+        main_bottom_menu.visibility = View.GONE
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -363,7 +364,7 @@ class MainActivity : AppCompatActivity(), OneButtonAlertDialogFragment.OnDismiss
                 //показ сообщения, о необходимости второго нажатия кнопки назад при выходе
                 val snackbar = Snackbar
                     .make(
-                        main_bottom_menu!!, getString(R.string.double_back_click),
+                        main_bottom_menu, getString(R.string.double_back_click),
                         Snackbar.LENGTH_LONG
                     )
                 snackbar.show()

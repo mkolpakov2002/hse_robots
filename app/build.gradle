@@ -124,7 +124,6 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
     implementation 'pub.devrel:easypermissions:3.0.0'
-    implementation 'pub.devrel:easypermissions:3.1.0'
 
     // ExoPlayer video
     implementation "com.google.android.exoplayer:exoplayer-core:$rootProject.exoPlayerVersion"
@@ -139,7 +138,7 @@ dependencies {
     implementation 'com.github.kirich1409:viewbindingpropertydelegate-noreflection:1.5.8'
 
     // Fragment ktx
-    implementation "androidx.fragment:fragment-ktx:1.5.6"
+    implementation "androidx.fragment:fragment-ktx:1.5.7"
 
     // USB serial for usb arduino communication
     implementation 'com.github.mik3y:usb-serial-for-android:3.5.1'

@@ -92,11 +92,8 @@ open class MultipleTypesAdapterKt(val context: Context, deviceItemTypes: ArrayLi
 
     // Список для хранения элементов разных типов
     private var items = ArrayList<Item>()
-    // Список для хранения пар из состояния и модели устройства
-    private var mData = ArrayList<Map.Entry<Boolean, DeviceModel>>()
 
     init {
-        mData = ArrayList()
         items.add(Item(
             device = null,
             isSelected = false,

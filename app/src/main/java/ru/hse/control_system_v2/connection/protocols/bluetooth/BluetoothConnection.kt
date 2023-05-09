@@ -62,7 +62,7 @@ class BluetoothConnection constructor(deviceItemType: DeviceModel, connectionNam
     @SuppressLint("MissingPermission")
     override suspend fun openConnection() {
         // Получаем ссылку на Bluetooth адаптер с помощью функции BluetoothAdapter.getDefaultAdapter
-        bluetoothAdapter = ConnectionFactory.connectionFactory.bluetoothManager.adapter
+        bluetoothAdapter = ConnectionFactory.bluetoothManager.adapter
         //ещё одна проверка на состояние Bluetooth
         //устройство с выбранным MAC как объект
         val device = bluetoothAdapter.getRemoteDevice(deviceItemType.bluetoothAddress)

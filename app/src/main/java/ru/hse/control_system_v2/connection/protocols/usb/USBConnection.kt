@@ -53,7 +53,7 @@ class USBConnection(deviceItemType: DeviceModel, connectionName: String?) :
     // Переопределяем метод openConnection для открытия соединения по USB
     override suspend fun openConnection() {
         // Получаем ссылку на USB менеджер с помощью функции getSystemService
-        usbManager = ConnectionFactory.connectionFactory.usbManager
+        usbManager = ConnectionFactory.usbManager
         // Получаем список подключенных USB устройств с помощью функции usbManager.deviceList
         val deviceList = usbManager.deviceList
         // Находим нужное устройство по имени или идентификатору из deviceItemType

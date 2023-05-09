@@ -1,86 +1,64 @@
 plugins {
-    id 'com.android.application'
-    id 'androidx.navigation.safeargs'
-    id 'kotlin-android'
-    id 'kotlin-kapt'
-    //id 'com.google.devtools.ksp'
-    id 'org.jetbrains.kotlin.android'
-    id 'org.jetbrains.kotlin.plugin.serialization'
+    id("com.android.application")
+    id("androidx.navigation.safeargs")
+    id("kotlin-android")
+    id("kotlin-kapt")
+    //id("com.google.devtools.ksp")
+    id("org.jetbrains.kotlin.android")
+    id("org.jetbrains.kotlin.plugin.serialization")
 }
 
 android {
-    compileSdk 33
+    compileSdk = 33
 
     defaultConfig {
-        applicationId "ru.hse.control_system_v2"
-        minSdk 29
-        targetSdk 33
-        versionCode 17
-        versionName "3.0.0"
+        applicationId = "ru.hse.control_system_v2"
+        minSdk = 29
+        targetSdk = 33
+        versionCode = 17
+        versionName = "3.0.0"
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         javaCompileOptions {
-            annotationProcessorOptions {
-                arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
-            }
+            annotationProcessorOptions.arguments["room.schemaLocation"] = "$projectDir/schemas".toString()
         }
-        vectorDrawables {
-            useSupportLibrary true
-        }
+        vectorDrawables.useSupportLibrary = true
     }
 
     buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        getByName("release") {
+            isMinifyEnabled = false
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     buildFeatures {
-        dataBinding true
-        viewBinding true
-        compose false
+        dataBinding = true
+        viewBinding = true
+        compose = false
     }
-    namespace 'ru.hse.control_system_v2'
-    kotlin {
-        jvmToolchain(17)
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion '1.4.0-alpha02'
-    }
-    packagingOptions {
-        exclude "META-INF/library_release.kotlin_module"
-        resources {
-            excludes += '/META-INF/{AL2.0,LGPL2.1}'
-            excludes += 'META-INF/io.netty.versions.properties'
-            excludes += 'META-INF/atomicfu.kotlin_module'
-            excludes += 'META-INF/INDEX.LIST'
-        }
-    }
+    namespace("ru.hse.control_system_v2")
+    kotlinOptions.jvmTarget = "17"
+    composeOptions.kotlinCompilerExtensionVersion = "1.4.0-alpha02"
+    packagingOptions.excludes.add("META-INF/library_release.kotlin_module")
+
 }
 
 dependencies {
-
-    implementation fileTree(include: ['*.jar', '*.aar'], dir: 'libs')
-
+    implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
     implementation 'androidx.core:core-ktx:1.10.0'
-
     implementation 'androidx.preference:preference-ktx:1.2.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
-
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.1'
-
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     implementation "androidx.navigation:navigation-fragment-ktx:$rootProject.navVersion"
     implementation "androidx.navigation:navigation-ui-ktx:$rootProject.navVersion"
-
     implementation "androidx.appcompat:appcompat:$rootProject.appCompatVersion"
     implementation "androidx.activity:activity-ktx:$rootProject.activityVersion"
-
     // Room components
     implementation "androidx.room:room-runtime:$rootProject.roomVersion"
     implementation project(path: ':jcraft')
@@ -96,9 +74,9 @@ dependencies {
     implementation "com.google.android.material:material:$rootProject.materialVersion"
 
     // mavlink
-    implementation "xyz.urbanmatrix.mavlink:mavlink-kotlin:$rootProject.mavlinkVersion"
-    implementation "xyz.urbanmatrix.mavlink:definitions:$rootProject.mavlinkVersion"
-    implementation "xyz.urbanmatrix.mavlink:rxjava2:$rootProject.mavlinkVersion"
+    implementation "com.divpundir.mavlink:mavlink-kotlin:$rootProject.mavlinkVersion"
+    implementation "com.divpundir.mavlink:mavlink-kotlin:$rootProject.mavlinkVersion"
+    implementation "com.divpundir.mavlink:mavlink-kotlin:$rootProject.mavlinkVersion"
 
     // ktor communication
     implementation "io.ktor:ktor-server-core:$rootProject.ktorVersion"
@@ -166,7 +144,4 @@ dependencies {
 
     // Color picker
     implementation "com.github.skydoves:colorpickerview:2.2.3"
-
-
-
 }

@@ -19,7 +19,7 @@ import ru.hse.control_system_v2.data.classes.device.model.DeviceModel;
 
 public class NewBtDevicesAdapter extends RecyclerView.Adapter<NewBtDevicesAdapter.DevicesAdapterVh> {
 
-    private final ArrayList<BluetoothDevice> devicePrototypeList;
+    private ArrayList<BluetoothDevice> devicePrototypeList;
 
     private final OnDeviceClicked onDeviceClicked;
 
@@ -52,6 +52,11 @@ public class NewBtDevicesAdapter extends RecyclerView.Adapter<NewBtDevicesAdapte
     @Override
     public int getItemCount() {
         return devicePrototypeList.size();
+    }
+
+    public void setDevicePrototypeList(ArrayList<BluetoothDevice> devicePrototypeList){
+        this.devicePrototypeList = devicePrototypeList;
+        notifyDataSetChanged();
     }
 
 

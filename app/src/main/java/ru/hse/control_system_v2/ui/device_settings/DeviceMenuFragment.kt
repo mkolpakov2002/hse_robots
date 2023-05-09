@@ -40,9 +40,6 @@ internal const val WORK_SPACE_KEY = "WORK_SPACE_KEY"
 class DeviceMenuFragment : Fragment() {
     private lateinit var binding: FragmentDeviceMenuBinding
 
-    // TODO: Rename and change types of parameters
-    private var mParam1: String? = null
-    private var mParam2: String? = null
     private lateinit var name: String
     private lateinit var bluetoothAddress: String
     private lateinit var protocol: String
@@ -88,14 +85,9 @@ class DeviceMenuFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (arguments != null) {
-            mParam1 = requireArguments().getString(ARG_PARAM1)
-            mParam2 = requireArguments().getString(ARG_PARAM2)
-        }
-        val b = arguments
-        if (b != null) {
-            isNew = b.getBoolean("isNew", true)
-            currentDevice = b.getSerializable("device") as DeviceModel
+        arguments?.let {
+            isNew = it.getBoolean("isNew", true)
+            currentDevice = it.getSerializable("device") as DeviceModel
         }
         deviceInformation
     }
@@ -121,7 +113,6 @@ class DeviceMenuFragment : Fragment() {
         showDeviceInformation(view)
     }
 
-    //        imageType = currentDevice.getImageType();
     private val deviceInformation: Unit
         get() {
             if(!this::currentDevice.isInitialized)
@@ -133,7 +124,7 @@ class DeviceMenuFragment : Fragment() {
             devType = currentDevice.uiType
             devIp = currentDevice.wifiAddress
             devPort = currentDevice.port.toString()
-            //        imageType = currentDevice.getImageType();
+            encryptionType = currentDevice.protocol_encryption
         }
 
     private fun showDeviceInformation(view: View) {
@@ -352,7 +343,7 @@ class DeviceMenuFragment : Fragment() {
             currentDevice.uiClass = classDevice
             currentDevice.uiType = typeDevice
             currentDevice.protocol = protocol
-            currentDevice.protocol_encryption = protocolEncryption
+            currentDevice.protocol_encryption = encryptionType
             currentDevice.wifiAddress = devIp
             //TODO: работа с VideoModel
             //currentDevice.setDevVideoCommand(devVideoCommand);

@@ -15,9 +15,6 @@
             android:id="@+id/action_mainMenuFragment_to_settings_Fragment"
             app:destination="@id/settingsFragment" />
         <action
-            android:id="@+id/action_mainMenuFragment_to_connection_dialog"
-            app:destination="@id/connection_dialog" />
-        <action
             android:id="@+id/action_mainMenuFragment_to_oneButtonAlertDialogFragment"
             app:destination="@id/oneButtonAlertDialogFragment" />
         <action
@@ -26,6 +23,9 @@
         <action
             android:id="@+id/action_mainMenuFragment_to_addDeviceFragment"
             app:destination="@id/addDeviceFragment" />
+        <action
+            android:id="@+id/action_mainMenuFragment_to_connectionTypeFragment"
+            app:destination="@id/connectionTypeFragment" />
     </fragment>
     <fragment
         android:id="@+id/settingsFragment"
@@ -124,5 +124,14 @@
         <action
             android:id="@+id/action_lezhnyovProtocolMenuFragment_to_navigationDialog"
             app:destination="@id/navigationDialog" />
+    </fragment>
+    <fragment
+        android:id="@+id/connectionTypeFragment"
+        android:name="ru.hse.control_system_v2.ui.connection_type.ConnectionTypeFragment"
+        android:label="ConnectionTypeFragment"
+        tools:layout="@layout/fragment_connection_type">
+        <action
+            android:id="@+id/action_connectionTypeFragment_to_connection_dialog"
+            app:destination="@id/connection_dialog" />
     </fragment>
 </navigation>

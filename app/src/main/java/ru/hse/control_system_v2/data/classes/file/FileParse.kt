@@ -1,7 +1,9 @@
 package ru.hse.control_system_v2.data.classes.file
 
 import android.net.Uri
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import org.xmlpull.v1.XmlPullParser
@@ -30,7 +32,7 @@ class FileParse {
             val tagList = ArrayList<XmlTag>()
             try {
                 // Запускаем корутину с диспатчером IO для работы с файлом
-                runBlocking(Dispatchers.IO) {
+                CoroutineScope(Dispatchers.IO).launch {
                     val factory = XmlPullParserFactory.newInstance()
                     factory.isNamespaceAware = true
                     val parser = factory.newPullParser()

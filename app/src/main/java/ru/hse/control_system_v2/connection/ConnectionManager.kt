@@ -1,77 +1,68 @@
 package ru.hse.control_system_v2.connection
 
 import android.content.Context
+import androidx.lifecycle.MutableLiveData
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import org.hamcrest.core.AnyOf
 import ru.hse.control_system_v2.AppConstants
+import ru.hse.control_system_v2.connection.data.classes.ConnectionDeviceModel
 import ru.hse.control_system_v2.connection.protocols.bluetooth.BluetoothConnection
 import ru.hse.control_system_v2.connection.protocols.wifi.IpClientConnection
-import ru.hse.control_system_v2.data.classes.device.model.DeviceModel
 
 // Класс для управления разными типами соединений с устройствами
-class ConnectionManager(deviceItemTypeList: Map<DeviceModel, String>?) {
+object ConnectionManager {
 
     // Переменная для хранения типа соединения
     private lateinit var connectionType: String
 
     // Список объектов, представляющих разные соединения
-    private var connectionList: ArrayList<ConnectionClass<*>> = ArrayList()
-
-    // Проверка на наличие активных соединений
-    public val isActive: Boolean
-        get() {
-            connectionList.forEach {
-                if (it.connectionState == ConnectionClass.isAlive){
-                    return true
-                }
-            }
-            return false
-        }
-
-    // Метод для создания списка соединений в зависимости от типа устройства
-    public fun createConnectionList(){
-        deviceItemTypeList?.forEach {
-            if (it.value == AppConstants.CONNECTION_LIST[0]) {
-                // Создание объекта для Bluetooth-соединения с устройством
-                val connectionItem = BluetoothConnection(it.key, it.key.name)
-                connectionList.add(connectionItem)
-            } else if(it.value == AppConstants.CONNECTION_LIST[1]){
-                // Создание объекта для IP-соединения с устройством
-                val connectionItem = IpClientConnection(it.key, it.key.name)
-                connectionList.add(connectionItem)
-            }
-        }
+    private var connectionList: MutableList<ConnectionClass<*>> = ArrayList()
+    // Создаем Flow для эмитирования списка соединений
+    private val connectionListFlow = MutableStateFlow(connectionList)
+    // Создаем функцию для получения Flow извне
+    fun getConnectionListFlow(): Flow<List<ConnectionClass<*>>> {
+        return connectionListFlow
     }
 
-    companion object {
-        // Переменная для хранения карты устройств и их типов соединений
-        private var deviceItemTypeList: Map<DeviceModel, String>? = null
-
-        // Переменная для хранения единственного экземпляра класса ConnectionManager
-        private var INSTANCE: ConnectionManager? = null
-
-        // Метод для получения экземпляра класса ConnectionManager
-        fun getConnectionManager(context: Context): ConnectionManager? {
-            if (INSTANCE == null){
-                // Создание экземпляра класса ConnectionManager с переданной картой устройств и их типов соединений
-                INSTANCE = ConnectionManager(deviceItemTypeList)
+    // Метод для создания списка соединений в зависимости от типа устройства
+    public suspend fun openConnection(connectionDeviceModelList: List<ConnectionDeviceModel>):
+            MutableList<ConnectionClass<*>> {
+        connectionDeviceModelList.forEach {
+            if (it.connectionType.connectionProtocol == AppConstants.CONNECTION_LIST[0]) {
+                // Создание объекта для Bluetooth-соединения с устройством
+                val connectionItem = BluetoothConnection(it)
+                connectionItem.openConnection()
+                connectionList.add(connectionItem)
+            } else if(it.connectionType.connectionProtocol == AppConstants.CONNECTION_LIST[1]){
+                // Создание объекта для IP-соединения с устройством
+                val connectionItem = IpClientConnection(it)
+                connectionItem.openConnection()
+                connectionList.add(connectionItem)
             }
-            return INSTANCE
         }
+        return connectionList
+    }
 
-        // Метод для закрытия всех соединений и удаления экземпляра класса ConnectionManager
-        suspend fun destroyConnectionManager(){
-            INSTANCE?.connectionList?.forEach {
-                // Закрытие каждого соединения в списке
-                it.closeConnection()
-            }
-            INSTANCE = null
-            deviceItemTypeList = null
+
+
+    // Переменная для хранения карты устройств и их типов соединений
+    private var deviceItemTypeList: ArrayList<ConnectionDeviceModel>? = null
+
+    // Метод для получения экземпляра класса ConnectionManager
+
+    // Метод для закрытия всех соединений и удаления экземпляра класса ConnectionManager
+    suspend fun destroyConnectionManager(){
+        this.connectionList.forEach {
+            // Закрытие каждого соединения в списке
+            it.closeConnection()
         }
+        deviceItemTypeList = null
+    }
 
-        // Метод для установки карты устройств и их типов соединений
-        fun setDevicesForConnection(devices: Map<DeviceModel, String>){
-            deviceItemTypeList = devices
-        }
-
+    // Метод для установки карты устройств и их типов соединений
+    fun setDevicesForConnection(connectionDeviceModel: ArrayList<ConnectionDeviceModel>){
+        deviceItemTypeList = connectionDeviceModel
     }
 
 }

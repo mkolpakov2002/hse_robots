@@ -11,14 +11,15 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import ru.hse.control_system_v2.connection.ConnectionClass
 import ru.hse.control_system_v2.connection.ConnectionFactory
+import ru.hse.control_system_v2.connection.data.classes.ConnectionDeviceModel
 import ru.hse.control_system_v2.data.classes.device.model.DeviceModel
 import java.nio.ByteBuffer
 
 /**
  * Класс USB соединения
  */
-class USBConnection(deviceItemType: DeviceModel, connectionName: String?) :
-    ConnectionClass<UsbDeviceConnection?>(deviceItemType, connectionName) {
+class USBConnection(connectionDeviceModel: ConnectionDeviceModel) :
+    ConnectionClass<UsbDeviceConnection?>(connectionDeviceModel) {
 
     // Объявляем переменные для хранения ссылок на USB менеджер, устройство и интерфейс
     private lateinit var usbManager: UsbManager
@@ -52,12 +53,13 @@ class USBConnection(deviceItemType: DeviceModel, connectionName: String?) :
 
     // Переопределяем метод openConnection для открытия соединения по USB
     override suspend fun openConnection() {
+        connectionState = ConnectionState.CONNECTING
         // Получаем ссылку на USB менеджер с помощью функции getSystemService
         usbManager = ConnectionFactory.usbManager
         // Получаем список подключенных USB устройств с помощью функции usbManager.deviceList
         val deviceList = usbManager.deviceList
         // Находим нужное устройство по имени или идентификатору из deviceItemType
-        usbDevice = deviceList[deviceItemType.name] ?: return
+        usbDevice = deviceList[connectionDeviceModel.deviceItemType.name] ?: return
         // Получаем ссылку на первый интерфейс USB устройства с помощью функции usbDevice.getInterface
         usbInterface = usbDevice.getInterface(0)
         // Открываем соединение по USB с помощью функции usbManager.openDevice и присваиваем его socket
@@ -73,7 +75,7 @@ class USBConnection(deviceItemType: DeviceModel, connectionName: String?) :
             // Внутри блока launch выполняем код для коммуникации с устройством
             // Пытаемся читать данные от устройства в цикле while, пока соединение активно и корутина не отменена
             while (socket != null && isActive) {
-                connectionState = isAlive
+                connectionState = ConnectionState.ALIVE
                 // Создаем буфер для хранения данных с помощью функции ByteBuffer.allocate
                 val buffer = ByteBuffer.allocate(bufferSize)
                 // Получаем ссылку на конечную точку для чтения данных
@@ -89,6 +91,7 @@ class USBConnection(deviceItemType: DeviceModel, connectionName: String?) :
                     )
                 }
             }
+            connectionState = ConnectionState.ON_ERROR
 
         }
     }

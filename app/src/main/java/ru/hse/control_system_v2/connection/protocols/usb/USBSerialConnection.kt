@@ -13,12 +13,13 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import ru.hse.control_system_v2.App
 import ru.hse.control_system_v2.connection.ConnectionClass
+import ru.hse.control_system_v2.connection.data.classes.ConnectionDeviceModel
 import ru.hse.control_system_v2.data.classes.device.model.DeviceModel
 import java.nio.ByteBuffer
 
 
-class USBSerialConnection(deviceItemType: DeviceModel, connectionName: String?) :
-    ConnectionClass<UsbSerialPort?>(deviceItemType, connectionName) {
+class USBSerialConnection(connectionDeviceModel: ConnectionDeviceModel) :
+    ConnectionClass<UsbSerialPort?>(connectionDeviceModel) {
 
     // Объявляем переменные для хранения ссылок на USB менеджер и драйвер
     private lateinit var usbManager: UsbManager
@@ -43,13 +44,14 @@ class USBSerialConnection(deviceItemType: DeviceModel, connectionName: String?) 
 
     // Переопределяем метод openConnection для открытия соединения по USB
     override suspend fun openConnection() {
+        connectionState = ConnectionState.CONNECTING
         // Получаем ссылку на USB менеджер с помощью функции getSystemService
         usbManager = App.context.getSystemService(USB_SERVICE) as UsbManager
         // Получаем список доступных USB драйверов с помощью функции UsbSerialProber.getDefaultProber().findAllDrivers
         val drivers = UsbSerialProber.getDefaultProber().findAllDrivers(usbManager)
         // Находим нужный драйвер по имени или идентификатору из deviceItemType
-        usbDriver = drivers.find { it.device.manufacturerName == deviceItemType.manufacture
-                && it.device.vendorId == deviceItemType.vendorId } ?: return
+        usbDriver = drivers.find { it.device.manufacturerName == connectionDeviceModel.deviceItemType.manufacture
+                && it.device.vendorId == connectionDeviceModel.deviceItemType.vendorId } ?: return
         // Получаем ссылку на первый порт USB драйвера с помощью функции usbDriver.ports[0]
         socket = usbDriver.ports[0]
 
@@ -75,7 +77,7 @@ class USBSerialConnection(deviceItemType: DeviceModel, connectionName: String?) 
 
             // Пытаемся читать данные от устройства в цикле while, пока соединение активно и корутина не отменена
             while (socket != null && isActive) {
-                connectionState = isAlive
+                connectionState = ConnectionState.ALIVE
                 // Создаем буфер для хранения данных с помощью функции ByteBuffer.allocate
                 val buffer = ByteBuffer.allocate(bufferSize)
                 // Читаем данные по USB с помощью функции socket?.read и сохраняем их в буфере
@@ -86,6 +88,7 @@ class USBSerialConnection(deviceItemType: DeviceModel, connectionName: String?) 
                     Log.d("MainActivity", "Received data: ${buffer.array().sliceArray(0 until bytesRead)}")
                 }
             }
+            connectionState = ConnectionState.ON_ERROR
         }
     }
 

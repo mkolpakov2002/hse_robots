@@ -263,7 +263,7 @@
 
             <Space
                 android:layout_width="match_parent"
-                android:layout_height="96dp" />
+                android:layout_height="16dp" />
 
         </LinearLayout>
     </ScrollView>

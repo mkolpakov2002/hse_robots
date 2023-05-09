@@ -14,6 +14,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.Navigation.findNavController
@@ -32,6 +33,7 @@ import ru.hse.control_system_v2.data.AppDatabase
 import ru.hse.control_system_v2.data.classes.device.model.DeviceModel
 import ru.hse.control_system_v2.databinding.FragmentMainBinding
 import ru.hse.control_system_v2.ui.MainActivity
+import ru.hse.control_system_v2.ui.MainViewModel
 
 
 class MainMenuFragment : Fragment(), OnRefreshListener, MultipleTypesAdapterKt.OnItemClickListener,
@@ -47,7 +49,7 @@ class MainMenuFragment : Fragment(), OnRefreshListener, MultipleTypesAdapterKt.O
         FragmentMainBinding.inflate(layoutInflater)
     }
 
-    private lateinit var deviceItemTypeList: ArrayList<DeviceModel>
+    private lateinit var deviceItemTypeList: List<DeviceModel>
 
     override fun onAttach(context: Context) {
         fragmentContext = context
@@ -75,21 +77,13 @@ class MainMenuFragment : Fragment(), OnRefreshListener, MultipleTypesAdapterKt.O
             IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED)
         )
 
-        lifecycleScope.launch {
-            // Suspend the coroutine until the lifecycle is DESTROYED.
-            // repeatOnLifecycle launches the block in a new coroutine every time the
-            // lifecycle is in the STARTED state (or above) and cancels it when it's STOPPED.
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                // Safely collect from db when the lifecycle is RESUMED
-                // and stop collecting when the lifecycle is PAUSED
-                AppDatabase.getAppDataBase(requireContext()).deviceItemTypeDao()?.getAll()
-                    ?.collect { data ->
-                        if(!::deviceItemTypeList.isInitialized)
-                            deviceItemTypeList = ArrayList()
-                        deviceItemTypeList.clear()
-                        deviceItemTypeList.addAll(data)
-                        onRefresh()
-                    }
+        val viewModel = ViewModelProvider(this)[MainViewModel::class.java]
+
+        // Наблюдать за списком всех устройств
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.devices?.collect { devices ->
+                deviceItemTypeList = devices
+                onRefresh()
             }
         }
 
@@ -151,7 +145,7 @@ class MainMenuFragment : Fragment(), OnRefreshListener, MultipleTypesAdapterKt.O
 
         buttonToAddDevice?.setOnClickListener {
             bottomSheetDialogToAdd.dismiss()
-            if (!ConnectionFactory.connectionFactory.isBtSupported) {
+            if (!ConnectionFactory.isBtSupported) {
                 val snackbar = Snackbar
                     .make(
                         dataBinding.swipeRefreshLayout, getString(R.string.suggestionNoBtAdapter),
@@ -159,10 +153,12 @@ class MainMenuFragment : Fragment(), OnRefreshListener, MultipleTypesAdapterKt.O
                     )
                     .setAction(getString(R.string.ok)) { }
                 snackbar.show()
-            } else if (ConnectionFactory.connectionFactory.isBtEnabled && BluetoothAdapter.getDefaultAdapter().bondedDevices.isNotEmpty()) {
+            } else if (
+                ConnectionFactory.isBtEnabled &&
+                ConnectionFactory.isNotEmptyBluetoothBounded) {
                 findNavController(requireParentFragment().requireView())
                     .navigate(R.id.addDeviceFragment)
-            } else if (!ConnectionFactory.connectionFactory.isBtEnabled) {
+            } else if (!ConnectionFactory.isBtEnabled) {
                 val snackbar = Snackbar
                     .make(
                         dataBinding.swipeRefreshLayout, getString(R.string.en_bt_for_list),
@@ -216,7 +212,7 @@ class MainMenuFragment : Fragment(), OnRefreshListener, MultipleTypesAdapterKt.O
     override fun onRefresh() {
         //TODO
         //ma?.showMainMenu()
-        hideAllButtons()
+        //hideAllButtons()
         dataBinding.pairedDevicesTitleAddActivity.setText(R.string.favorites_devices)
         // Bluetooth включён, надо показать кнопку добавления устройств и другую информацию
         if (!this::multipleTypesAdapter.isInitialized) { // it works first time

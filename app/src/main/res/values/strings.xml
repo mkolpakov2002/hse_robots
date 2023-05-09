@@ -153,4 +153,5 @@
     <!-- Диалоги -->
     <string name="dialog_permissions_bluetooth_rationale">To use the HSE Robots app, grant Bluetooth and storage permissions.</string>
     <string name="encryption_method">Encryption method:</string>
+    <string name="suggestionNoBtWiFiAdapter">No Bluetooth or WiFi adapter detected on your device!</string>
 </resources>

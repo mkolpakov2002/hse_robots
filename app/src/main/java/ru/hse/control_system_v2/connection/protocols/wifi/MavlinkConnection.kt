@@ -2,19 +2,15 @@ package ru.hse.control_system_v2.connection.protocols.wifi
 
 import ru.hse.control_system_v2.connection.ConnectionClass
 import ru.hse.control_system_v2.data.classes.device.model.DeviceModel
-import xyz.urbanmatrix.mavlink.connection.tcp.TcpClientMavConnection
-import xyz.urbanmatrix.mavlink.definitions.common.CommonDialect
-import xyz.urbanmatrix.mavlink.definitions.minimal.Heartbeat
-import xyz.urbanmatrix.mavlink.definitions.minimal.MavAutopilot
-import xyz.urbanmatrix.mavlink.definitions.minimal.MavType
-import xyz.urbanmatrix.mavlink.wrap
+
+import com.divpundir.mavlink.connection.tcp.TcpClientMavConnection
+import ru.hse.control_system_v2.connection.data.classes.ConnectionDeviceModel
 import java.net.Socket
 import kotlin.properties.Delegates
 
-open class MavlinkConnection(deviceItemType: DeviceModel,
-                             connectionName: String?,
+open class MavlinkConnection(connectionDeviceModel: ConnectionDeviceModel,
                              var connectionVersion: String) :
-    ConnectionClass<Socket?>(deviceItemType, connectionName) {
+    ConnectionClass<Socket?>(connectionDeviceModel) {
 
     // Переменная для хранения объекта TcpClientMavConnection
     private lateinit var connection: TcpClientMavConnection
@@ -23,7 +19,7 @@ open class MavlinkConnection(deviceItemType: DeviceModel,
     private var linkId by Delegates.notNull<Int>()
 
     // Переменная для хранения объекта Heartbeat
-    private lateinit var heartbeat: Heartbeat
+//    private lateinit var heartbeat: Heartbeat
 
     // Переменная для хранения секретного ключа для подписи сообщений
     private lateinit var secretKey: ByteArray
@@ -42,11 +38,11 @@ open class MavlinkConnection(deviceItemType: DeviceModel,
             }
         }
 
-        val builder = Heartbeat.Builder()
-        builder.type = MavType.FIXED_WING.wrap()
-        builder.autopilot = MavAutopilot.PX4.wrap()
-        builder.mavlinkVersion = connectionVersionNumber
-        heartbeat = builder.build()
+//        val builder = Heartbeat.Builder()
+//        builder.type = MavType.FIXED_WING.wrap()
+//        builder.autopilot = MavAutopilot.PX4.wrap()
+//        builder.mavlinkVersion = connectionVersionNumber
+//        heartbeat = builder.build()
     }
 
     // Метод для отправки данных по MAVLink-соединению в зависимости от версии соединения
@@ -60,31 +56,31 @@ open class MavlinkConnection(deviceItemType: DeviceModel,
 
     // Метод для отправки данных по MAVLink-соединению версии 1
     private fun sentDataV1(){
-        val completable = connection.sendV1(
-            systemId = 250,
-            componentId = 1,
-            payload = heartbeat
-        )
+//        val completable = connection.sendV1(
+//            systemId = 6u,
+//            componentId = 1u,
+//            payload = heartbeat
+//        )
     }
 
     // Метод для отправки данных по MAVLink-соединению версии 2 без подписи
     private fun sentDataUnsignedV2(){
-        val completable = connection.sendUnsignedV2(
-            systemId = 250,
-            componentId = 1,
-            payload = heartbeat
-        )
+//        val completable = connection.sendUnsignedV2(
+//            systemId = 6u,
+//            componentId = 1u,
+//            payload = heartbeat
+//        )
     }
 
     private fun sentDataSignedV2(){
-        val completable = connection.sendSignedV2(
-            systemId = 250,
-            componentId = 1,
-            payload = heartbeat,
-            linkId = linkId,
-            timestamp = timestamp,
-            secretKey = secretKey
-        )
+//        val completable = connection.sendSignedV2(
+//            systemId = 6u,
+//            componentId = 1u,
+//            payload = heartbeat,
+//            linkId = linkId,
+//            timestamp = timestamp,
+//            secretKey = secretKey
+//        )
     }
 
     override suspend fun closeConnection() {
@@ -92,11 +88,11 @@ open class MavlinkConnection(deviceItemType: DeviceModel,
     }
 
     override suspend fun openConnection() {
-        connection = TcpClientMavConnection(
-            deviceItemType.wifiAddress,
-            deviceItemType.port,
-            CommonDialect)
-        connection.connect()
+//        val dialect: MavDialect
+//        connection = TcpClientMavConnection(
+//            deviceItemType.wifiAddress,
+//            deviceItemType.port, dialect)
+//        connection.connect()
     }
 
     override suspend fun read(buffer: ByteArray, bytesRead: Int): Int {

@@ -15,6 +15,7 @@ import kotlinx.coroutines.launch
 import ru.hse.control_system_v2.R
 import ru.hse.control_system_v2.data.AppDatabase
 import ru.hse.control_system_v2.data.classes.packages.LezhnyovPackageModel
+import ru.hse.control_system_v2.data.classes.packages.PackagePrototypeModel
 import ru.hse.control_system_v2.databinding.FragmentLezhnyovProtocolMenuBinding
 import kotlin.properties.Delegates
 
@@ -46,8 +47,10 @@ class LezhnyovPackageMenuFragment : Fragment(), XmlTagAdapter.OnTagValueChangeLi
         val b = arguments
         if (b != null) {
             isNew = b.getBoolean("isNew", true)
-            currentProtocol = (arguments?.getSerializable("packages"))
-                    as LezhnyovPackageModel
+            val loadedProtocol = (arguments?.getSerializable("packages")) as PackagePrototypeModel
+            currentProtocol.id = loadedProtocol.id
+            currentProtocol.name = loadedProtocol.name
+            currentProtocol.tagList = loadedProtocol.tagList
         }
         saveButton = dataBinding.protocolSave2
         saveButton.setOnClickListener {
@@ -76,6 +79,7 @@ class LezhnyovPackageMenuFragment : Fragment(), XmlTagAdapter.OnTagValueChangeLi
         recyclerView.adapter = xmlTagAdapter
         // Устанавливаем линейный менеджер для RecycleView
         recyclerView.layoutManager = LinearLayoutManager(context)
+        onRefresh()
     }
 
     private fun onRefresh(){

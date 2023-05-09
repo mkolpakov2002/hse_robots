@@ -21,27 +21,26 @@ import java.io.Serializable
  * Model класс сложного устройства для общения по протоколу
  */
 @Entity(tableName = AppConstants.DATABASE_NAME)
-open class DeviceModel
-constructor(@PrimaryKey(autoGenerate = true)
+open class DeviceModel(@PrimaryKey(autoGenerate = true)
             override var id: Int = 0,
-            override var name: String = DEFAULT_DEVICE_NAME,
-            var protocol: String = DEFAULT_DEVICE_PROTOCOL,
-            var protocol_encryption: String = DEFAULT_DEVICE_PROTOCOL_ENCRYPTION,
-            override var bluetoothAddress: String = DEFAULT_DEVICE_BLUETOOTH_ADDRESS,
-            override var manufacture: String = DEFAULT_DEVICE_MANUFACTURE,
-            override var model: String = DEFAULT_DEVICE_MODEL,
-            override var wifiAddress: String = DEFAULT_DEVICE_WIFI_ADDRESS,
-            override var port: Int = DEFAULT_DEVICE_PORT,
-            @Ignore
+                       override var name: String = DEFAULT_DEVICE_NAME,
+                       var protocol: String = DEFAULT_DEVICE_PROTOCOL,
+                       var protocol_encryption: String = DEFAULT_DEVICE_PROTOCOL_ENCRYPTION,
+                       override var bluetoothAddress: String = DEFAULT_DEVICE_BLUETOOTH_ADDRESS,
+                       override var manufacture: String = DEFAULT_DEVICE_MANUFACTURE,
+                       override var model: String = DEFAULT_DEVICE_MODEL,
+                       override var wifiAddress: String = DEFAULT_DEVICE_WIFI_ADDRESS,
+                       override var port: Int = DEFAULT_DEVICE_PORT,
+                       @Ignore
             var workSpace: WorkSpace = WorkSpace(
                 isJoystickEnabled = false,
                 isPackageDataEnabled = false,
                 isVideoStreamEnabled = false),
-            @Ignore
+                       @Ignore
             var videoList: ArrayList<VideoModel> = ArrayList(),
-            override var vendorId: Int = 0,
-            override var uiClass: String = "class_arduino",
-            override var uiType: String = "type_computer"
+                       override var vendorId: Int = 0,
+                       override var uiClass: String = "class_arduino",
+                       override var uiType: String = "type_computer"
 )
     :
     ItemType,

@@ -3,6 +3,7 @@ package ru.hse.control_system_v2.connection.protocols.wifi
 import android.util.Log
 import io.ktor.client.*
 import io.ktor.client.engine.android.Android
+import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.Dispatchers
@@ -11,16 +12,20 @@ import ru.hse.control_system_v2.data.classes.device.model.DeviceModel
 import io.ktor.client.plugins.websocket.*
 import io.ktor.http.*
 import io.ktor.websocket.*
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.isActive
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.launch
+import ru.hse.control_system_v2.connection.data.classes.ConnectionDeviceModel
 
 /**
  * Класс клиентского типа соединения
  */
-open class IpClientConnection(deviceItemType: DeviceModel, connectionName: String?) :
-    ConnectionClass<DefaultClientWebSocketSession?>(deviceItemType, connectionName) {
+open class IpClientConnection(connectionDeviceModel: ConnectionDeviceModel) :
+    ConnectionClass<DefaultClientWebSocketSession?>(connectionDeviceModel) {
 
-    private lateinit var client: HttpClient
+    private val client = HttpClient(CIO) {
+        install(WebSockets)
+    }
 
     override suspend fun sentData(data: ByteArray) {
         socket?.send(data)
@@ -30,69 +35,87 @@ open class IpClientConnection(deviceItemType: DeviceModel, connectionName: Strin
         coroutine?.cancel()
         client.close()
     }
+    // Определяем интерфейс для разных алгоритмов обработки сообщений
+    interface MessageHandler {
+        fun handle(message: Frame)
+    }
 
-    override suspend fun openConnection(): Unit = runBlocking(Dispatchers.IO) {
-        client = HttpClient(Android){
-            install(ContentNegotiation) {
-                json()
+    // Реализуем конкретные алгоритмы для текстовых и бинарных сообщений
+    class TextMessageHandler : MessageHandler {
+        override fun handle(message: Frame) {
+            // Проверяем, что сообщение является текстовым
+            if (message is Frame.Text) {
+                val text = message.readText()
+                Log.d("MainActivity", "Received text: $text")
             }
         }
+    }
 
-        // Определяем таймаут для соединения в миллисекундах
+    class BinaryMessageHandler : MessageHandler {
+        override fun handle(message: Frame) {
+            // Проверяем, что сообщение является бинарным
+            if (message is Frame.Binary) {
+                val bytes = message.readBytes()
+                Log.d("MainActivity", "Received bytes: ${bytes.size}")
+            }
+        }
+    }
+
+    // Создаем класс контекста, который хранит ссылку на текущий алгоритм
+    class MessageContext(var handler: MessageHandler) {
+        // Вызываем метод обработки сообщения у текущего алгоритма
+        fun processMessage(message: Frame) {
+            handler.handle(message)
+        }
+    }
+
+    // В методе openConnection() создаем экземпляры алгоритмов и контекста
+    override suspend fun openConnection() {
         val timeout = 5000L
-
-        // Внутри блока launch выполняем код для коммуникации с сервером
-        // Пытаемся установить соединение с сервером в блоке try-catch
         try {
-            // Создаем объект сессии веб-сокета с помощью функции client.webSocketSession
             socket = client.webSocketSession {
                 url {
                     protocol = URLProtocol.WS
-                    host = deviceItemType.wifiAddress
-                    port = deviceItemType.port
+                    host = connectionDeviceModel.deviceItemType.wifiAddress
+                    port = connectionDeviceModel.deviceItemType.port
                 }
             }
-
-            // Устанавливаем таймаут для сессии
             socket?.timeoutMillis = timeout
-
-            // Отправляем сообщение серверу с помощью функции socket.send
-            socket?.send("Hello from Android")
-
-            // Получаем сообщения от сервера в цикле while, пока сессия активна и корутина не отменена
-            while (socket != null && socket?.isActive == true && isActive) {
-                // Получаем сообщение с помощью функции socket.incoming.receiveOrNull
-                val message = socket?.incoming?.receiveCatching()?.getOrNull()
-                connectionState = isAlive
-                // Проверяем тип сообщения и приводим его к строке или байтам
-                when (message) {
-                    is Frame.Text -> {
-                        val text = message.readText()
-                        // Выводим текст в лог или UI
-                        Log.d("MainActivity", "Received text: $text")
-                    }
-                    is Frame.Binary -> {
-                        val bytes = message.readBytes()
-                        // Обрабатываем байты как нужно
-                        Log.d("MainActivity", "Received bytes: ${bytes.size}")
-                    }
-                    else -> {
-                        // Ничего не делаем или выходим из цикла
-                        break
+            coroutine = CoroutineScope(Dispatchers.IO).launch {
+                socket?.send("Hello from Android")
+                // Создаем объекты для обработки текстовых и бинарных сообщений
+                val textHandler = TextMessageHandler()
+                val binaryHandler = BinaryMessageHandler()
+                // Создаем контекст и устанавливаем начальный алгоритм
+                val context = MessageContext(textHandler)
+                while (socket != null && socket?.isActive == true && isActive) {
+                    val message = socket?.incoming?.receiveCatching()?.getOrNull()
+                    connectionState = ConnectionState.ALIVE
+                    when (message) {
+                        is Frame.Text -> {
+                            // Используем алгоритм для текстовых сообщений
+                            context.handler = textHandler
+                            context.processMessage(message)
+                        }
+                        is Frame.Binary -> {
+                            // Используем алгоритм для бинарных сообщений
+                            context.handler = binaryHandler
+                            context.processMessage(message)
+                        }
+                        else -> {
+                            // Ничего не делаем или выходим из цикла
+                            break
+                        }
                     }
                 }
             }
-
-            // Закрываем соединение с сервером с помощью функции socket.close
-            socket?.close()
-
         } catch (e: Exception) {
             // В случае исключения выводим его в лог или UI
             Log.e("MainActivity", "Error: ${e.message}")
         } finally {
             // В конце закрываем клиент Ktor с помощью функции client.close
             client.close()
-            connectionState = isOnError
+            ConnectionState.ON_ERROR
         }
     }
 

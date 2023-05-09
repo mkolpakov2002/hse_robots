@@ -9,14 +9,15 @@ import io.ktor.server.response.respond
 import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
 import ru.hse.control_system_v2.connection.ConnectionClass
+import ru.hse.control_system_v2.connection.data.classes.ConnectionDeviceModel
 import ru.hse.control_system_v2.data.classes.device.model.DeviceModel
 import java.net.Socket
 
 /**
  * Класс серверного типа соединения
  */
-class IpServerConnection(deviceItemType: DeviceModel, connectionName: String?) :
-    ConnectionClass<Socket?>(deviceItemType, connectionName) {
+class IpServerConnection(connectionDeviceModel: ConnectionDeviceModel) :
+    ConnectionClass<Socket?>(connectionDeviceModel) {
 
     private lateinit var server: NettyApplicationEngine
     override suspend fun sentData(data: ByteArray) {

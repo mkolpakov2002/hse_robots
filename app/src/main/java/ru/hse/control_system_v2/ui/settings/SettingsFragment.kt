@@ -7,18 +7,22 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
+import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import ru.hse.control_system_v2.R
 import ru.hse.control_system_v2.data.classes.file.FileParse
+import ru.hse.control_system_v2.data.classes.packages.PackagePrototypeModel
 import ru.hse.control_system_v2.databinding.FragmentSettingsBinding
 
 private const val REQUEST_CODE_PERMISSION = 100 // Код запроса разрешения
@@ -49,13 +53,32 @@ class SettingsFragment : Fragment(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Найти кнопку по id в разметке
-        val buttonPickFile = dataBinding.buttonPickFile
-        // Установить слушатель нажатия на кнопку
-        buttonPickFile.setOnClickListener {
-            // Вызвать функцию для проверки и запроса разрешения на чтение внешнего хранилища
-            checkAndRequestPermission()
+        val recyclerView = dataBinding.settingItems
+        val layoutManager = LinearLayoutManager(requireContext())
+        layoutManager.orientation = LinearLayoutManager.VERTICAL
+        recyclerView.layoutManager = layoutManager
+        recyclerView.adapter = SettingsAdapter(getSettingsList()) {
+            settingsItemModel ->
+            when(settingsItemModel.itemId){
+                1 -> {
+                    checkAndRequestPermission()
+                }
+                2 -> {
+
+                }
+                else -> {
+
+                }
+            }
         }
+    }
+
+    private fun getSettingsList(): List<SettingsItemModel> {
+        return listOf(
+            SettingsItemModel(1, "Загрузка файла конфигурации протокола", R.drawable.ic_baseline_upload_file_24),
+            SettingsItemModel(2, "Выбор темы оформления", R.drawable.ic_application_theme),
+            SettingsItemModel(3, "Информация о приложении", R.drawable.baseline_info_24)
+        )
     }
 
     // Перенести логику проверки и запроса разрешения в отдельную функцию
@@ -116,18 +139,19 @@ class SettingsFragment : Fragment(){
     }
 
     private fun loadXmlFile(fileUri: Uri) {
+        var protocol: PackagePrototypeModel
         // Реализовать логику для загрузки xml файла из памяти по Uri
-        CoroutineScope(Dispatchers.Main).launch {
+        lifecycleScope.launch(Dispatchers.Main) {
             // Suspend the coroutine until the lifecycle is DESTROYED.
             // repeatOnLifecycle launches the block in a new coroutine every time the
             // lifecycle is in the STARTED state (or above) and cancels it when it's STOPPED.
-            val protocol = FileParse.parseXml(FileParse.getXmlFromUrl(fileUri))
-            val b = Bundle()
-            b.putSerializable("packages", protocol)
+            protocol = FileParse.parseXml(FileParse.getXmlFromUrl(fileUri))
+            val bundle = Bundle().apply {
+                putSerializable("packages", protocol)
+            }
             Navigation.findNavController(requireParentFragment().requireView())
-                .navigate(R.id.action_settingsFragment_to_navigationDialog, b)
+                .navigate(R.id.action_settingsFragment_to_navigationDialog, bundle)
         }
-
     }
 
 }

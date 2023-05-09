@@ -76,7 +76,7 @@
             android:id="@+id/fragment_container"
             android:name="androidx.navigation.fragment.NavHostFragment"
             app:defaultNavHost="true"
-            app:navGraph="@navigation/main_navigation"/>
+            app:navGraph="@navigation/ros_navigation"/>
 
 
     </LinearLayout>

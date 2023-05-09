@@ -17,7 +17,7 @@ import ru.hse.control_system_v2.R
 import ru.hse.control_system_v2.data.classes.device.model.DeviceModel
 import ru.hse.control_system_v2.ui.MainActivity
 
-open class MultipleTypesAdapterKt(val context: Context, deviceItemTypes: ArrayList<DeviceModel>) :
+open class MultipleTypesAdapterKt(val context: Context, deviceItemTypes: List<DeviceModel>) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     data class Item(val device: DeviceModel?, var isSelected: Boolean = false, var isButton: Boolean)
@@ -235,7 +235,7 @@ open class MultipleTypesAdapterKt(val context: Context, deviceItemTypes: ArrayLi
     }
 
     // Метод для обновления списка элементов
-    fun updateItems(newItems: ArrayList<DeviceModel>) {
+    fun updateItems(newItems: List<DeviceModel>) {
         items.clear()
         items.add(Item(
             device = null,

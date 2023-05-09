@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Set;
 
 import ru.hse.control_system_v2.R;
+import ru.hse.control_system_v2.connection.ConnectionFactory;
 import ru.hse.control_system_v2.data.classes.device.model.DeviceModel;
 
 public class BluetoothPairedDevicesFragment extends Fragment implements NewBtDevicesAdapter.OnDeviceClicked, SwipeRefreshLayout.OnRefreshListener{
@@ -34,28 +35,13 @@ public class BluetoothPairedDevicesFragment extends Fragment implements NewBtDev
     private RecyclerView pairedList;
     private BluetoothAdapter btAdapter;
     private TextView pairedDevicesTitleTextView;
-    //инициализация swipe refresh
     private SwipeRefreshLayout swipeToRefreshLayout;
     View view;
 
+    NewBtDevicesAdapter newBtDevicesAdapter;
+
     public BluetoothPairedDevicesFragment() {
         // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment AddDeviceFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static BluetoothPairedDevicesFragment newInstance(String param1, String param2) {
-        BluetoothPairedDevicesFragment fragment = new BluetoothPairedDevicesFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
     }
 
     @Override
@@ -80,10 +66,7 @@ public class BluetoothPairedDevicesFragment extends Fragment implements NewBtDev
         ExtendedFloatingActionButton fabToOpenSettings = view.findViewById(R.id.floating_action_button_open_settings);
         fabToOpenSettings.setOnClickListener(this::openSettings);
 
-
         pairedDevicesTitleTextView = view.findViewById(R.id.paired_devices_title_add_activity);
-
-        btAdapter = BluetoothAdapter.getDefaultAdapter();
 
         pairedList = view.findViewById(R.id.paired_list);
         pairedList.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -98,21 +81,19 @@ public class BluetoothPairedDevicesFragment extends Fragment implements NewBtDev
     }
 
     // Добавляем сопряжённые устройства в List View
-    @SuppressLint("MissingPermission")
     public void searchForDevice(){
-        // Обновление List View - удаление старых данных
-        pairedList.setAdapter(null);
-        //TODO: запросить на старте все разрешения
-        @SuppressLint("MissingPermission")
-        Set<BluetoothDevice> pairedDevices = btAdapter.getBondedDevices();
+        //SuppressLint MissingPermission
+        Set<BluetoothDevice> pairedDevices = ConnectionFactory.INSTANCE.getBluetoothBounded();
         // Если список спаренных устройств не пуст
         if(pairedDevices.size()>0) {
-            NewBtDevicesAdapter newBtDevicesAdapter =
+            newBtDevicesAdapter =
                     new NewBtDevicesAdapter(
                     new ArrayList<>(pairedDevices),
                     this);
-
-            pairedList.setAdapter(newBtDevicesAdapter);
+            if(pairedList.getAdapter()!=null)
+                newBtDevicesAdapter.setDevicePrototypeList(new ArrayList<>(pairedDevices));
+            else
+                pairedList.setAdapter(newBtDevicesAdapter);
 
             pairedDevicesTitleTextView.setText(R.string.paired_devices);
         } else {

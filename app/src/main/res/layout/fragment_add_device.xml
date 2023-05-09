@@ -20,6 +20,7 @@
             android:id="@+id/paired_devices_title_add_activity"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearanceRegular"
             android:text="@string/paired_devices"
             android:textAlignment="center"
             android:visibility="visible" />

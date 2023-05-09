@@ -16,10 +16,8 @@
         android:layout_marginTop="16dp"
         android:text="Widgets"
         android:textAllCaps="true"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Button"
+        android:textAppearance="@style/TextAppearanceBold"
         android:textColor="@color/colorAccent"
-        android:textSize="14sp"
-        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -35,7 +33,7 @@
         android:lineSpacingMultiplier="1.2"
         android:text="@string/add_widgets_to_your_configuration"
         android:textAlignment="center"
-        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+        android:textAppearance="@style/TextAppearanceRegular"
         app:layout_constraintBottom_toBottomOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

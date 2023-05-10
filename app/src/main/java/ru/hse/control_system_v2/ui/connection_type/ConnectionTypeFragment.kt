@@ -4,25 +4,49 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import kotlinx.coroutines.launch
+import ru.hse.control_system_v2.AppConstants.CONNECTION_LIST
 import ru.hse.control_system_v2.R
 import ru.hse.control_system_v2.connection.data.classes.ConnectionDeviceModel
 import ru.hse.control_system_v2.connection.data.classes.ConnectionType
 import ru.hse.control_system_v2.data.classes.device.model.DeviceModel
+import ru.hse.control_system_v2.ui.MainViewModel
 
-class ConnectionTypeFragment (val devices: ArrayList<DeviceModel>) : Fragment() {
+class ConnectionTypeFragment: Fragment() {
+
+    private lateinit var bottomSheetDialogToConnect: BottomSheetDialog
+
+    lateinit var devicesIdList: ArrayList<Int>
+
+    lateinit var devices: ArrayList<DeviceModel>
 
     // A list of connection types to choose from
-    val connectionTypes = listOf("WiFi", "Bluetooth", "USB")
+    val connectionTypes = CONNECTION_LIST.toMutableList()
 
     // A list of connection device models to store the selected protocol for each device
     val connectionDeviceModels = ArrayList<ConnectionDeviceModel>()
 
     // A recycler view adapter to display the devices and their connection types
     lateinit var adapter: DeviceAdapter
+
+    val viewModel = ViewModelProvider(this)[MainViewModel::class.java]
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        arguments?.let {bundle ->
+            bundle.getIntegerArrayList("deviceIdList")?.let {
+                devicesIdList.addAll(it)
+            }
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -32,9 +56,30 @@ class ConnectionTypeFragment (val devices: ArrayList<DeviceModel>) : Fragment() 
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_connection_type, container, false)
 
+        // Наблюдать за списком всех устройств
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.devices?.collect { savedDevices ->
+                // Создаем пустой список для хранения найденных объектов
+                val foundDevices = ArrayList<DeviceModel>()
+                // Перебираем все id из списка devicesIdList
+                for (id in devicesIdList) {
+                    // Ищем объект с таким id в списке savedDevices
+                    val device = savedDevices.find { it.id == id }
+                    // Если нашли, добавляем его в список foundDevices
+                    if (device != null) {
+                        foundDevices.add(device)
+                    }
+                }
+                devices = foundDevices
+            }
+        }
+
         // Initialize the connection device models with the default protocol for each device
         devices.forEach { device ->
-            connectionDeviceModels.add(ConnectionDeviceModel(device, ConnectionType(device.protocol)))
+            if(device.isBluetoothSupported)
+                connectionDeviceModels.add(ConnectionDeviceModel(device, ConnectionType(CONNECTION_LIST[0])))
+            else if(device.isWiFiSupported)
+                connectionDeviceModels.add(ConnectionDeviceModel(device, ConnectionType(CONNECTION_LIST[1])))
         }
 
         // Initialize the recycler view and its adapter
@@ -45,6 +90,22 @@ class ConnectionTypeFragment (val devices: ArrayList<DeviceModel>) : Fragment() 
             showConnectionTypeDialog(position)
         }
         recyclerView.adapter = adapter
+
+        // настройка поведения нижнего экрана
+        bottomSheetDialogToConnect = BottomSheetDialog(requireContext())
+        bottomSheetDialogToConnect.setContentView(R.layout.bottom_sheet_dialog_connection_type)
+        bottomSheetDialogToConnect.setCancelable(true)
+        bottomSheetDialogToConnect.dismiss()
+
+        val buttonToConnectViaWiFi: Button? =
+            bottomSheetDialogToConnect.findViewById(R.id.button_wifi)
+        buttonToConnectViaWiFi?.setOnClickListener {
+
+        }
+        val buttonToConnectViaBt: Button? = bottomSheetDialogToConnect.findViewById(R.id.button_bt)
+        buttonToConnectViaBt?.setOnClickListener {
+
+        }
 
         return view
     }

@@ -123,5 +123,4 @@ open class IpClientConnection(connectionDeviceModel: ConnectionDeviceModel) :
         TODO("Not yet implemented")
     }
 
-
 }

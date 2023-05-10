@@ -17,6 +17,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.Navigation
 import androidx.navigation.Navigation.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -42,7 +43,6 @@ class MainMenuFragment : Fragment(), OnRefreshListener, MultipleTypesAdapterKt.O
     private lateinit var fragmentContext: Context
     private var ma: MainActivity? = null
     private lateinit var bottomSheetDialogToAdd: BottomSheetDialog
-    private lateinit var bottomSheetDialogToConnect: BottomSheetDialog
     private var isMultiSelectVisible = false
 
     private val dataBinding by lazy {
@@ -98,9 +98,15 @@ class MainMenuFragment : Fragment(), OnRefreshListener, MultipleTypesAdapterKt.O
 
         dataBinding.swipeRefreshLayout.setOnRefreshListener(this)
         dataBinding.floatingActionButtonStartSendingData.setOnClickListener {
-            if (multipleTypesAdapter.areDevicesConnectable())
-                showBottomSheetToConnect()
-            else {
+            if (multipleTypesAdapter.areDevicesConnectable()){
+                val list = ArrayList<Int>()
+                for (item in multipleTypesAdapter.getSelectedItems()) {
+                    list.add(item.id)
+                }
+                val b = Bundle()
+                b.putIntegerArrayList("deviceIdList", list)
+                findNavController(dataBinding.root).navigate(R.id.connection_type, b)
+            } else {
                 (Snackbar.make(
                         dataBinding.root,
                         getString(R.string.selection_class_device_error),
@@ -184,23 +190,6 @@ class MainMenuFragment : Fragment(), OnRefreshListener, MultipleTypesAdapterKt.O
             bottomSheetDialogToAdd.dismiss()
             findNavController(requireParentFragment().requireView()).navigate(R.id.action_mainMenuFragment_to_deviceMenuFragment)
         }
-
-
-        // настройка поведения нижнего экрана
-        bottomSheetDialogToConnect = BottomSheetDialog(requireContext())
-        bottomSheetDialogToConnect.setContentView(R.layout.bottom_sheet_dialog_connection_type)
-        bottomSheetDialogToConnect.setCancelable(true)
-        bottomSheetDialogToConnect.dismiss()
-
-        val buttonToConnectViaWiFi: Button? =
-            bottomSheetDialogToConnect.findViewById(R.id.button_wifi)
-        buttonToConnectViaWiFi?.setOnClickListener {
-
-        }
-        val buttonToConnectViaBt: Button? = bottomSheetDialogToConnect.findViewById(R.id.button_bt)
-        buttonToConnectViaBt?.setOnClickListener {
-
-        }
     }
 
     //Обновляем внешний вид приложения, скрываем и добавляем нужные элементы интерфейса
@@ -235,13 +224,11 @@ class MainMenuFragment : Fragment(), OnRefreshListener, MultipleTypesAdapterKt.O
         dataBinding.floatingActionButtonDeleteSelected.hide()
         dataBinding.floatingActionButtonStartSendingData.hide()
         hideBottomSheetToAdd()
-        hideBottomSheetToConnect()
         isMultiSelectVisible = false
     }
 
     private fun showItemSelectionMenu() {
         hideBottomSheetToAdd()
-        hideBottomSheetToConnect()
         dataBinding.floatingActionButtonDeleteSelected.show()
         dataBinding.floatingActionButtonStartSendingData.show()
         isMultiSelectVisible = true
@@ -275,11 +262,4 @@ class MainMenuFragment : Fragment(), OnRefreshListener, MultipleTypesAdapterKt.O
         }
     }
 
-    private fun showBottomSheetToConnect() {
-        bottomSheetDialogToConnect.show()
-    }
-
-    private fun hideBottomSheetToConnect() {
-        bottomSheetDialogToConnect.cancel()
-    }
 }

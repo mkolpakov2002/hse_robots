@@ -17,7 +17,7 @@ interface DeviceModelSelectable {
     var uiClass: String
     var uiType: String
 
-    private fun getDeviceImage() : Int {
+    fun getDeviceImage() : Int {
         val imageType = if (uiClass == "class_arduino") {
             uiType
         } else {

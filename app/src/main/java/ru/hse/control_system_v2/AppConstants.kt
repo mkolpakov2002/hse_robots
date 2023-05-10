@@ -12,8 +12,7 @@ object AppConstants {
     const val REPO_LINK = "https://github.com/mkolpakov2002/hse_robots"
     const val APP_LOG_TAG = "HSE_Robots"
     val THEMES_LIST = arrayOf("Light", "Dark")
-    val THEMES_LIST_ANDROID_S = arrayOf("System", "Light", "Dark")
-    val CONNECTION_LIST = arrayOf("Bluetooth", "IP")
+    val CONNECTION_LIST = arrayOf("Bluetooth", "Wi-Fi", "USB", "ROS")
 
     const val DEFAULT_DEVICE_NAME = ""
     val DEVICE_UI_TYPE_LIST = arrayListOf(

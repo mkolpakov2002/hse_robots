@@ -148,7 +148,7 @@ open class MultipleTypesAdapterKt(val context: Context, deviceItemTypes: List<De
                     holder.materialCardView.strokeColor = Color.TRANSPARENT
                 }
 
-                item.device?.let { holder.deviceImage.setImageResource(it.deviceDrawable) }
+                item.device?.let { holder.deviceImage.setImageResource(it.getDeviceImage()) }
 
                 holder.deviceImage.visibility = View.VISIBLE
                 if (item.device?.isWiFiSupported == true) {

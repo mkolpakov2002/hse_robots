@@ -1,5 +1,6 @@
 package ru.hse.control_system_v2.data.classes.device.model
 
+import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
@@ -48,27 +49,7 @@ open class DeviceModel(@PrimaryKey(autoGenerate = true)
     Serializable,
     BluetoothConnectable,
     WiFiConnectable,
-    DeviceModelSelectable {
-
-    val deviceDrawable: Int
-        get() {
-        if (uiClass == "class_arduino") {
-            when (uiType) {
-                "type_computer" -> return (R.drawable.type_computer)
-                "type_sphere" -> {}
-                "type_anthropomorphic" -> {}
-                "type_cubbi" -> return (R.drawable.type_cubbi)
-                "no_type" -> return (R.drawable.type_no_type)
-            }
-        } else {
-            when (uiType) {
-                "class_android" -> return (R.drawable.class_android)
-                "no_class" -> return (R.drawable.type_no_type)
-                "class_computer" -> return (R.drawable.class_computer)
-            }
-        }
-            return R.drawable.class_computer
-    }
+    DeviceModelSelectable{
 
     // Копирующий конструктор
     constructor(other: DeviceModel) : this(

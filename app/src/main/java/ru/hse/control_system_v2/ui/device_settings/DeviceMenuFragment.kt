@@ -35,6 +35,7 @@ import ru.hse.control_system_v2.ui.TextChangedListener
 import ru.hse.control_system_v2.ui.connection_type.DeviceAdapter
 import ru.hse.control_system_v2.ui.workspace.WorkSpaceCreationDialogFragment.Companion.newInstance
 import java.util.*
+import kotlin.collections.ArrayList
 
 internal const val FRAGMENT_RESULT_WORK_SPACE_KEY = "FRAGMENT_RESULT_WORK_SPACE_KEY"
 internal const val WORK_SPACE_KEY = "WORK_SPACE_KEY"
@@ -269,7 +270,12 @@ class DeviceMenuFragment : Fragment() {
             }
         })
         connectButton = binding.deviceConnect
-        //connectButton.setOnClickListener(View.OnClickListener { ma!!.showBottomSheetToConnect() })
+        connectButton.setOnClickListener{
+            val list = ArrayList<Int>(currentDevice.id)
+            val b = Bundle()
+            b.putIntegerArrayList("deviceIdList", list)
+            findNavController(binding.root).navigate(R.id.connection_type, b)
+        }
         if (isNew) connectButton.visibility = View.GONE
         deleteButton = binding.deviceDelete
         deleteButton.setOnClickListener(View.OnClickListener {
@@ -338,7 +344,7 @@ class DeviceMenuFragment : Fragment() {
     private fun setDeviceImage() {
         deviceImage.setImageDrawable(
             ContextCompat.getDrawable(
-                fragmentContext!!, currentDevice.deviceDrawable
+                fragmentContext!!, currentDevice.getDeviceImage()
             )
         )
     }

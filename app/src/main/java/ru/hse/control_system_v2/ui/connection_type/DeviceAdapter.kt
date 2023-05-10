@@ -1,6 +1,5 @@
 package ru.hse.control_system_v2.ui.connection_type
 
-import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -36,7 +35,7 @@ class DeviceAdapter(
 
         // Set the device name and connection type text views
         holder.deviceName.text = connectionDeviceModel.deviceItemType.name
-        holder.deviceUiType.setImageResource(connectionDeviceModel.deviceItemType.deviceDrawable)
+        holder.deviceUiType.setImageResource(connectionDeviceModel.deviceItemType.getDeviceImage())
         holder.connectionType.text = connectionDeviceModel.connectionType.connectionProtocol
 
         // Set the item click listener

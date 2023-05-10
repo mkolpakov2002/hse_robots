@@ -18,9 +18,10 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:contentDescription=""
-        app:icon="@drawable/ic_connection"
         android:text="@string/floating_action_button_connection"
         android:textAlignment="center"
+        android:visibility="gone"
+        app:icon="@drawable/ic_connection"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         tools:ignore="SpeakableTextPresentCheck" />
@@ -32,6 +33,7 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:src="@drawable/ic_baseline_delete_outline_24"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/floating_action_button_start_sending_data"
         app:layout_constraintEnd_toEndOf="parent"
         tools:ignore="SpeakableTextPresentCheck" />

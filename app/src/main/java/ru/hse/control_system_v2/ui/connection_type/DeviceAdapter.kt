@@ -36,11 +36,7 @@ class DeviceAdapter(
 
         // Set the device name and connection type text views
         holder.deviceName.text = connectionDeviceModel.deviceItemType.name
-        val drawable: Int = when(connectionDeviceModel.deviceItemType.uiType){
-            "class_arduino" -> R.drawable.type_computer
-            else -> R.drawable.type_computer
-        }
-        holder.deviceUiType.setImageResource(drawable)
+        holder.deviceUiType.setImageResource(connectionDeviceModel.deviceItemType.deviceDrawable)
         holder.connectionType.text = connectionDeviceModel.connectionType.connectionProtocol
 
         // Set the item click listener

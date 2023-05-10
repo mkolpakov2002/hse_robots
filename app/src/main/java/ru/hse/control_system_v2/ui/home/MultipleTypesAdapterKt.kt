@@ -148,21 +148,7 @@ open class MultipleTypesAdapterKt(val context: Context, deviceItemTypes: List<De
                     holder.materialCardView.strokeColor = Color.TRANSPARENT
                 }
 
-                if (item.device?.uiClass == "class_arduino") {
-                    when (item.device.uiType) {
-                        "type_computer" -> holder.deviceImage.setImageResource(R.drawable.type_computer)
-                        "type_sphere" -> {}
-                        "type_anthropomorphic" -> {}
-                        "type_cubbi" -> holder.deviceImage.setImageResource(R.drawable.type_cubbi)
-                        "no_type" -> holder.deviceImage.setImageResource(R.drawable.type_no_type)
-                    }
-                } else {
-                    when (item.device?.uiType) {
-                        "class_android" -> holder.deviceImage.setImageResource(R.drawable.class_android)
-                        "no_class" -> holder.deviceImage.setImageResource(R.drawable.type_no_type)
-                        "class_computer" -> holder.deviceImage.setImageResource(R.drawable.class_computer)
-                    }
-                }
+                item.device?.let { holder.deviceImage.setImageResource(it.deviceDrawable) }
 
                 holder.deviceImage.visibility = View.VISIBLE
                 if (item.device?.isWiFiSupported == true) {

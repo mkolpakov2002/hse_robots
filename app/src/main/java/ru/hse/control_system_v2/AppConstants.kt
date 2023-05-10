@@ -16,10 +16,30 @@ object AppConstants {
     val CONNECTION_LIST = arrayOf("Bluetooth", "IP")
 
     const val DEFAULT_DEVICE_NAME = ""
+    val DEVICE_UI_TYPE_LIST = arrayListOf(
+        "type_sphere",
+        "type_anthropomorphic",
+        "type_cubbi",
+        "type_computer",
+        "no_type"
+    )
+    val DEVICE_UI_CLASS_LIST = arrayListOf(
+        "class_android",
+        "class_computer",
+        "class_arduino",
+        "no_class"
+    )
     const val DEFAULT_DEVICE_CLASS = "no_class"
     const val DEFAULT_DEVICE_TYPE = "no_type"
     const val DEFAULT_DEVICE_PROTOCOL = "arduino_default"
-    const val DEFAULT_DEVICE_PROTOCOL_ENCRYPTION = "Kuznechik"
+    val DEVICE_PROTOCOL_ENCRYPTION_LIST = arrayListOf(
+        "AES128",
+        "AES256",
+        "Blowfish",
+        "ChaCha20",
+        "Salsa20",
+        "Kuznechik"
+    )
     const val DEFAULT_DEVICE_BLUETOOTH_ADDRESS = ""
     const val DEFAULT_DEVICE_WIFI_ADDRESS = ""
     const val DEFAULT_DEVICE_PORT = 0

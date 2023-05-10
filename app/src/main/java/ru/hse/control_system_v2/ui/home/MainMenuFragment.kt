@@ -101,16 +101,11 @@ class MainMenuFragment : Fragment(), OnRefreshListener, MultipleTypesAdapterKt.O
             if (multipleTypesAdapter.areDevicesConnectable())
                 showBottomSheetToConnect()
             else {
-                val snackbar = Snackbar
-                    .make(
+                (Snackbar.make(
                         dataBinding.root,
                         getString(R.string.selection_class_device_error),
                         Snackbar.LENGTH_LONG
-                    )
-                    .setAction(getString(R.string.ok)) {
-                        //nothing
-                    }
-                snackbar.show()
+                    ).setAction(getString(R.string.ok)) {}).show()
             }
         }
         dataBinding.floatingActionButtonDeleteSelected.hide()
@@ -210,9 +205,6 @@ class MainMenuFragment : Fragment(), OnRefreshListener, MultipleTypesAdapterKt.O
 
     //Обновляем внешний вид приложения, скрываем и добавляем нужные элементы интерфейса
     override fun onRefresh() {
-        //TODO
-        //ma?.showMainMenu()
-        //hideAllButtons()
         dataBinding.pairedDevicesTitleAddActivity.setText(R.string.favorites_devices)
         // Bluetooth включён, надо показать кнопку добавления устройств и другую информацию
         if (!this::multipleTypesAdapter.isInitialized) { // it works first time
@@ -250,8 +242,6 @@ class MainMenuFragment : Fragment(), OnRefreshListener, MultipleTypesAdapterKt.O
     private fun showItemSelectionMenu() {
         hideBottomSheetToAdd()
         hideBottomSheetToConnect()
-        //TODO
-        //ma?.hideMainMenu()
         dataBinding.floatingActionButtonDeleteSelected.show()
         dataBinding.floatingActionButtonStartSendingData.show()
         isMultiSelectVisible = true
@@ -270,8 +260,6 @@ class MainMenuFragment : Fragment(), OnRefreshListener, MultipleTypesAdapterKt.O
             showBottomSheetToAdd()
         } else if(!multipleTypesAdapter.isMultiSelect && isMultiSelectVisible){
             hideAllButtons()
-            //TODO
-            //ma?.showMainMenu()
         } else if(!multipleTypesAdapter.isMultiSelect){
             val args = Bundle()
             args.putBoolean("isNew", false)

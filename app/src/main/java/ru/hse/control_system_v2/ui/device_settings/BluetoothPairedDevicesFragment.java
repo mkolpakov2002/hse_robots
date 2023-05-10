@@ -70,7 +70,6 @@ public class BluetoothPairedDevicesFragment extends Fragment implements NewBtDev
 
         pairedList = view.findViewById(R.id.paired_list);
         pairedList.setLayoutManager(new LinearLayoutManager(getContext()));
-        pairedList.addItemDecoration(new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL));
 
         searchForDevice();
     }

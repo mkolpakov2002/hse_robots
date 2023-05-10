@@ -10,4 +10,4 @@
     android:clickable="true"
     android:focusable="true"
     android:text="Default"
-    android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+    android:textAppearance="@style/TextAppearanceRegular" />

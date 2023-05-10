@@ -13,11 +13,11 @@
         android:layout_height="wrap_content">
         <TextView
             android:layout_alignParentStart="true"
-            android:textColor="#000000"
             android:textSize="16sp"
             android:layout_centerVertical="true"
             android:paddingStart="16dp"
             android:text="Видео"
+            android:textAppearance="@style/TextAppearanceRegular"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
         <androidx.appcompat.widget.SwitchCompat
@@ -36,6 +36,7 @@
             android:textSize="16sp"
             android:layout_centerVertical="true"
             android:paddingStart="16dp"
+            android:textAppearance="@style/TextAppearanceRegular"
             android:text="Джойстик"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
@@ -56,6 +57,7 @@
             android:textSize="16sp"
             android:layout_centerVertical="true"
             android:paddingStart="16dp"
+            android:textAppearance="@style/TextAppearanceRegular"
             android:text="Пакетная передача данных"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -72,6 +74,8 @@
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnApply"
         android:textSize="16sp"
+        android:theme="@style/AppTheme.Light"
+        android:textAppearance="@style/TextAppearanceRegular"
         android:text="Сохранить"
         android:layout_marginTop="12dp"
         android:layout_width="match_parent"

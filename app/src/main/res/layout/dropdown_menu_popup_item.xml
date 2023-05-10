@@ -8,4 +8,4 @@
     android:padding="16dp"
     android:singleLine="false"
     android:text="/move_base/cmd_test/lol/amksheesh_setup/mehmdiesgehtnicht"
-    android:textAppearance="?attr/textAppearanceSubtitle1" />
+    android:textAppearance="@style/TextAppearanceSecondary" />

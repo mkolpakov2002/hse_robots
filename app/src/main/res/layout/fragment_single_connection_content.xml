@@ -128,7 +128,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent">
 
-            <ru.hse.control_system_v2.ui.joystick_view.JoyStickView
+            <ru.hse.control_system_v2.ui.widgets.joystick_view.JoyStickView
                 android:layout_width="128dp"
                 android:layout_height="128dp"
                 android:layout_marginStart="16dp"

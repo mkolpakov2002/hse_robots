@@ -13,11 +13,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.Navigation
 import androidx.navigation.Navigation.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -34,7 +31,6 @@ import ru.hse.control_system_v2.data.AppDatabase
 import ru.hse.control_system_v2.data.classes.device.model.DeviceModel
 import ru.hse.control_system_v2.databinding.FragmentMainBinding
 import ru.hse.control_system_v2.ui.MainActivity
-import ru.hse.control_system_v2.ui.MainViewModel
 
 
 class MainMenuFragment : Fragment(), OnRefreshListener, MultipleTypesAdapterKt.OnItemClickListener,
@@ -105,7 +101,7 @@ class MainMenuFragment : Fragment(), OnRefreshListener, MultipleTypesAdapterKt.O
                 }
                 val b = Bundle()
                 b.putIntegerArrayList("deviceIdList", list)
-                findNavController(dataBinding.root).navigate(R.id.connection_type, b)
+                findNavController(dataBinding.root).navigate(R.id.action_mainMenuFragment_to_connectionTypeFragment, b)
             } else {
                 (Snackbar.make(
                         dataBinding.root,

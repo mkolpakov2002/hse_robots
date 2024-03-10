@@ -11,7 +11,7 @@ import ru.hse.control_system_v2.data.classes.device.model.DeviceModel
 interface DeviceItemTypeDao {
     // Добавление Device в бд
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(vararg item: DeviceModel?)
+    suspend fun insertAll(vararg item: DeviceModel)
 
     // Удаление Note из бд
     @Query("DELETE FROM device WHERE id = :id")
@@ -21,7 +21,7 @@ interface DeviceItemTypeDao {
     suspend fun deleteAll()
 
     @Update
-    suspend fun update(item: DeviceModel?)
+    suspend fun update(item: DeviceModel)
 
     //TODO
 //    @Query("UPDATE device SET packages=:newProto WHERE packages = :deletingProto")

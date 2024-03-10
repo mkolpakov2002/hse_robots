@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <ru.hse.control_system_v2.ui.exoplayer.PlayerView
+    <ru.hse.control_system_v2.ui.widgets.exoplayer.PlayerView
         android:id="@+id/exo_player_view"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

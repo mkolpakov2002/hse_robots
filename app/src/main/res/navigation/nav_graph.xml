@@ -77,6 +77,9 @@
         <action
             android:id="@+id/action_deviceMenuFragment_to_addDeviceFragment"
             app:destination="@id/addDeviceFragment" />
+        <action
+            android:id="@+id/action_deviceMenuFragment_to_connectionTypeFragment"
+            app:destination="@id/connectionTypeFragment" />
     </fragment>
     <activity
         android:id="@+id/connectionActivity"
@@ -133,5 +136,8 @@
         <action
             android:id="@+id/action_connectionTypeFragment_to_connection_dialog"
             app:destination="@id/connection_dialog" />
+        <action
+            android:id="@+id/action_connectionTypeFragment_to_deviceMenuFragment"
+            app:destination="@id/deviceMenuFragment" />
     </fragment>
 </navigation>

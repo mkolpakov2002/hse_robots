@@ -95,6 +95,7 @@ class SettingsFragment : Fragment(){
     }
 
     // Обработать результат запроса разрешения
+    @Deprecated("Deprecated in Java")
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -124,6 +125,7 @@ class SettingsFragment : Fragment(){
     }
 
     // Обработать результат выбора файла и получить Uri файла
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_CODE_PICK_FILE && resultCode == Activity.RESULT_OK) {

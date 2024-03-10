@@ -17,6 +17,8 @@ import ru.hse.control_system_v2.R
 import ru.hse.control_system_v2.connection.ConnectionFactory
 import ru.hse.control_system_v2.databinding.ActivityMainBinding
 import ru.hse.control_system_v2.ui.dialog.OneButtonAlertDialogFragment
+import ru.hse.control_system_v2.ui.home.MainViewModel
+import ru.hse.control_system_v2.ui.home.MainViewModelFactory
 import ru.hse.control_system_v2.ui.theming.ThemeUtils.onActivityCreateSetTheme
 import java.util.*
 
@@ -240,6 +242,7 @@ class MainActivity : AppCompatActivity(), OneButtonAlertDialogFragment.OnDismiss
             return height
         }
 
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         if (viewModel.getCurrentVisibleFragment()?.id == R.id.mainMenuFragment) {
             if (back_pressed + 2000 > System.currentTimeMillis()) {

@@ -271,10 +271,11 @@ class DeviceMenuFragment : Fragment() {
         })
         connectButton = binding.deviceConnect
         connectButton.setOnClickListener{
-            val list = ArrayList<Int>(currentDevice.id)
+            val list = ArrayList<Int>()
+            list.add(currentDevice.id)
             val b = Bundle()
             b.putIntegerArrayList("deviceIdList", list)
-            findNavController(binding.root).navigate(R.id.connection_type, b)
+            findNavController(binding.root).navigate(R.id.action_deviceMenuFragment_to_connectionTypeFragment, b)
         }
         if (isNew) connectButton.visibility = View.GONE
         deleteButton = binding.deviceDelete

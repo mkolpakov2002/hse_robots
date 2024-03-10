@@ -5,7 +5,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
-    <ru.hse.control_system_v2.ui.joystick_view.OuterCircleView
+    <ru.hse.control_system_v2.ui.widgets.joystick_view.OuterCircleView
         android:id="@+id/outerCircle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -16,7 +16,7 @@
         app:layout_constraintTop_toTopOf="parent"
         android:background="?attr/colorAccent"/>
 
-    <ru.hse.control_system_v2.ui.joystick_view.InnerCircleView
+    <ru.hse.control_system_v2.ui.widgets.joystick_view.InnerCircleView
         android:id="@+id/innerCircle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

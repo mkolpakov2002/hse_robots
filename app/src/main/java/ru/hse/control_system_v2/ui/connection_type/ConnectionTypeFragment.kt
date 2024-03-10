@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,7 +19,6 @@ import ru.hse.control_system_v2.R
 import ru.hse.control_system_v2.connection.data.classes.ConnectionDeviceModel
 import ru.hse.control_system_v2.connection.data.classes.ConnectionType
 import ru.hse.control_system_v2.data.classes.device.model.DeviceModel
-import ru.hse.control_system_v2.ui.MainViewModel
 
 class ConnectionTypeFragment: Fragment() {
 
@@ -37,10 +37,12 @@ class ConnectionTypeFragment: Fragment() {
     // A recycler view adapter to display the devices and their connection types
     lateinit var adapter: DeviceAdapter
 
-    val viewModel = ViewModelProvider(this)[MainViewModel::class.java]
+    //val viewModel: ConnectionTypeViewModel = ViewModelProvider(this)[ConnectionTypeViewModel::class.java]
+    private val viewModel : ConnectionTypeViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        devicesIdList = ArrayList()
         arguments?.let {bundle ->
             bundle.getIntegerArrayList("deviceIdList")?.let {
                 devicesIdList.addAll(it)
@@ -71,15 +73,15 @@ class ConnectionTypeFragment: Fragment() {
                     }
                 }
                 devices = foundDevices
-            }
-        }
 
-        // Initialize the connection device models with the default protocol for each device
-        devices.forEach { device ->
-            if(device.isBluetoothSupported)
-                connectionDeviceModels.add(ConnectionDeviceModel(device, ConnectionType(CONNECTION_LIST[0])))
-            else if(device.isWiFiSupported)
-                connectionDeviceModels.add(ConnectionDeviceModel(device, ConnectionType(CONNECTION_LIST[1])))
+                // Initialize the connection device models with the default protocol for each device
+                devices.forEach { device ->
+                    if(device.isBluetoothSupported)
+                        connectionDeviceModels.add(ConnectionDeviceModel(device, ConnectionType(CONNECTION_LIST[0])))
+                    else if(device.isWiFiSupported)
+                        connectionDeviceModels.add(ConnectionDeviceModel(device, ConnectionType(CONNECTION_LIST[1])))
+                }
+            }
         }
 
         // Initialize the recycler view and its adapter

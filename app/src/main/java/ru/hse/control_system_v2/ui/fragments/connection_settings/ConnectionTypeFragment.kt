@@ -42,7 +42,7 @@ class ConnectionTypeFragment: Fragment() {
     lateinit var adapter: ConnectionTypeAdapter
 
     //TODO
-    lateinit var connectionStatusAdapter: ConnectionStatusAdapter
+    //lateinit var connectionStatusAdapter: ConnectionStatusAdapter
 
     private val viewModel : ConnectionTypeViewModel by viewModels()
 

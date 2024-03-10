@@ -89,7 +89,9 @@ class DeviceMenuFragment : Fragment() {
         currentDevice = Device(inputDevice)
         deviceImage = binding.iconImageViewMenu
         saveButton = binding.deviceSave
-        saveButton.setOnClickListener{ saveDevice() }
+        saveButton.setOnClickListener{
+            saveDevice()
+        }
         deviceNameView = binding.deviceNameEdit
         deviceNameView.setText(currentDevice.name)
         deviceNameView.addTextChangedListener(object :
@@ -105,9 +107,6 @@ class DeviceMenuFragment : Fragment() {
 
         deviceMACView = binding.deviceMacEdit
         deviceMACView.setText(currentDevice.bluetoothAddress)
-        //TODO
-        //deviceMACView addTextChangedListener
-
         protocolEncryptionView = binding.encryptionProtocolEdit
         protocolEncryptionView.setText(currentDevice.protocol_encryption)
         val adapterEncryption = SpinnerArrayAdapter(
@@ -180,54 +179,21 @@ class DeviceMenuFragment : Fragment() {
     }
 
     private fun saveDevice() {
-        var isDataAcceptable = true
-        if (deviceNameView.text.toString().trim { it <= ' ' }.isEmpty()) {
-            deviceNameView.error = getString(R.string.error_incorrect)
-            isDataAcceptable = false
+        //TODO
+        //Check data
+        currentDevice.wifiAddress = deviceIpView.text.toString()
+        currentDevice.port = devicePortView.text.toString().toInt()
+        currentDevice.bluetoothAddress = deviceMACView.text.toString()
+        CoroutineScope(Dispatchers.IO).launch {
+            getAppDataBase(requireContext()).deviceItemTypeDao()?.insertAll(currentDevice)
         }
-        if (deviceMACView.text.toString()
-                .trim { it <= ' ' }.isNotEmpty() && !isBtSupported) {
-            deviceMACView.error = getString(R.string.error_incorrect)
-            isDataAcceptable = false
-        }
-        if (deviceIpView.text.toString()
-                .trim { it <= ' ' }.isNotEmpty() && !isWiFiSupported) {
-            deviceIpView.error = getString(R.string.error_incorrect)
-            isDataAcceptable = false
-        }
-        if(isDataAcceptable){
-            CoroutineScope(Dispatchers.IO).launch {
-                getAppDataBase(requireContext()).deviceItemTypeDao()?.insertAll(currentDevice)
-            }
-            findNavController(requireView()).navigate(R.id.mainMenuFragment)
-        }
-    }
-
-    private fun handleColonDeletion(
-        enteredMac: String,
-        formattedMacParam: String,
-        selectionStart: Int
-    ): String {
-        var formattedMac = formattedMacParam
-        if (this::mPreviousMac.isInitialized && mPreviousMac.length > 1) {
-            val previousColonCount = colonCount(mPreviousMac)
-            val currentColonCount = colonCount(enteredMac)
-            if (currentColonCount < previousColonCount) {
-                formattedMac =
-                    formattedMac.substring(0, selectionStart - 1) + formattedMac.substring(
-                        selectionStart
-                    )
-                val cleanMac = clearNonMacCharacters(formattedMac)
-                formattedMac = formatMacAddress(cleanMac)
-            }
-        }
-        return formattedMac
+        findNavController(requireView()).navigate(R.id.mainMenuFragment)
     }
 
     private fun setDeviceImage() {
         deviceImage.setImageDrawable(
             ContextCompat.getDrawable(
-                fragmentContext!!, currentDevice.getDeviceImage()
+                requireContext(), currentDevice.getDeviceImage()
             )
         )
     }
@@ -261,31 +227,4 @@ class DeviceMenuFragment : Fragment() {
         get() = BluetoothAdapter.checkBluetoothAddress(currentDevice.bluetoothAddress)
     private val isWiFiSupported: Boolean
         get() = currentDevice.wifiAddress.let { InetAddresses.isNumericAddress(it) }
-
-    companion object {
-        private fun formatMacAddress(cleanMac: String): String {
-            var groupedCharacters = 0
-            var formattedMac = StringBuilder()
-            for (element in cleanMac) {
-                formattedMac.append(element)
-                ++groupedCharacters
-                if (groupedCharacters == 2) {
-                    formattedMac.append(":")
-                    groupedCharacters = 0
-                }
-            }
-            if (cleanMac.length == 12) {
-                formattedMac = StringBuilder(formattedMac.substring(0, formattedMac.length - 1))
-            }
-            return formattedMac.toString()
-        }
-
-        private fun clearNonMacCharacters(mac: String): String {
-            return mac.replace("[^A-Fa-f/d]".toRegex(), "")
-        }
-
-        private fun colonCount(formattedMac: String): Int {
-            return formattedMac.replace("[^:]".toRegex(), "").length
-        }
-    }
 }

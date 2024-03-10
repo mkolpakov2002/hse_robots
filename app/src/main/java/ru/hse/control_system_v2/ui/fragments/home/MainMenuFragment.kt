@@ -25,6 +25,7 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import ru.hse.control_system_v2.R
 import ru.hse.control_system_v2.domain.connection.ConnectionFactory
 import ru.hse.control_system_v2.model.db.AppDatabase
@@ -188,18 +189,19 @@ class MainMenuFragment : Fragment(), OnRefreshListener, MultipleTypesAdapterKt.O
         }
     }
 
-    //Обновляем внешний вид приложения, скрываем и добавляем нужные элементы интерфейса
     override fun onRefresh() {
-        dataBinding.pairedDevicesTitleAddActivity.setText(R.string.favorites_devices)
-        // Bluetooth включён, надо показать кнопку добавления устройств и другую информацию
-        if (!this::multipleTypesAdapter.isInitialized) { // it works first time
-            initAdapter()
-        } else {
-            // it works second time and later
-            multipleTypesAdapter.updateItems(deviceItemTypeList)
+        lifecycleScope.launch {
+            withContext(Dispatchers.Main) {
+                hideAllButtons()
+                dataBinding.pairedDevicesTitleAddActivity.setText(R.string.favorites_devices)
+                if (!this@MainMenuFragment::multipleTypesAdapter.isInitialized) {
+                    initAdapter()
+                } else {
+                    multipleTypesAdapter.updateItems(deviceItemTypeList)
+                }
+                dataBinding.swipeRefreshLayout.isRefreshing = false
+            }
         }
-        // Приложение обновлено, завершаем анимацию обновления
-        dataBinding.swipeRefreshLayout.isRefreshing = false
     }
 
     private fun initAdapter(){
@@ -217,10 +219,14 @@ class MainMenuFragment : Fragment(), OnRefreshListener, MultipleTypesAdapterKt.O
     }
 
     private fun hideAllButtons() {
-        dataBinding.floatingActionButtonDeleteSelected.hide()
-        dataBinding.floatingActionButtonStartSendingData.hide()
-        hideBottomSheetToAdd()
-        isMultiSelectVisible = false
+        lifecycleScope.launch {
+            withContext(Dispatchers.Main) {
+                dataBinding.floatingActionButtonDeleteSelected.hide()
+                dataBinding.floatingActionButtonStartSendingData.hide()
+                hideBottomSheetToAdd()
+                isMultiSelectVisible = false
+            }
+        }
     }
 
     private fun showItemSelectionMenu() {

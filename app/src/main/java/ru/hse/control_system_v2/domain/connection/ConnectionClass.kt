@@ -14,7 +14,7 @@ abstract class ConnectionClass<T>(val connectionDeviceModel: ConnectionDeviceMod
         DISABLED
     }
 
-    private val _stateFlow = MutableStateFlow(ConnectionState.CONNECTING)
+    private val _stateFlow = MutableStateFlow(ConnectionState.DISABLED)
     val stateFlow: StateFlow<ConnectionState> = _stateFlow.asStateFlow()
 
     protected var socket: T? = null
@@ -30,6 +30,6 @@ abstract class ConnectionClass<T>(val connectionDeviceModel: ConnectionDeviceMod
     }
 
     init {
-        updateState(ConnectionState.CONNECTING)
+        updateState(ConnectionState.DISABLED)
     }
 }

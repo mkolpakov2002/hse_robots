@@ -41,6 +41,9 @@ class ConnectionTypeFragment: Fragment() {
 
     lateinit var adapter: ConnectionTypeAdapter
 
+    //TODO
+    lateinit var connectionStatusAdapter: ConnectionStatusAdapter
+
     private val viewModel : ConnectionTypeViewModel by viewModels()
 
     // Словарь для отслеживания состояний устройств
@@ -85,14 +88,13 @@ class ConnectionTypeFragment: Fragment() {
                             .add(ConnectionDeviceModel(device, ConnectionType(CONNECTION_LIST[1])))
                 }
 
-                // Initialize the recycler view and its adapter
-                val recyclerView = binding.recyclerView
-                recyclerView.layoutManager = LinearLayoutManager(requireContext())
+
+                binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
                 adapter = ConnectionTypeAdapter(connectionDeviceModels) { position ->
                     // This is a lambda function that is invoked when a device item is clicked
                     showConnectionTypeDialog(position)
                 }
-                recyclerView.adapter = adapter
+                binding.recyclerView.adapter = adapter
             }
         }
 
@@ -103,10 +105,14 @@ class ConnectionTypeFragment: Fragment() {
             // Открываем соединения и начинаем наблюдение за их состояниями
             viewLifecycleOwner.lifecycleScope.launch {
                 ConnectionManager.prepareConnections(connectionDeviceModels)
-                val connections = ConnectionManager.openPendingConnections()
+                val connections: List<ConnectionClass<*>> = ConnectionManager.openPendingConnections()
                 connections.forEach { connection ->
                     observeConnectionState(connection)
                 }
+                binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
+                //TODO
+                //connectionStatusAdapter =
+                //binding.recyclerView.adapter = connectionStatusAdapter
             }
         }
 
@@ -163,6 +169,8 @@ class ConnectionTypeFragment: Fragment() {
                         ConnectionManager.removeConnection(connection)
                     }
                 }
+                //TODO
+                //connectionStatusAdapter.updateConnectionState(...)
             }
         }
     }

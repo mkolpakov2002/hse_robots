@@ -12,14 +12,14 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI.setupWithNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
-import ru.hse.control_system_v2.AppConstants.APP_LOG_TAG
+import ru.hse.control_system_v2.utility.AppConstants.APP_LOG_TAG
 import ru.hse.control_system_v2.R
-import ru.hse.control_system_v2.connection.ConnectionFactory
+import ru.hse.control_system_v2.domain.connection.ConnectionFactory
 import ru.hse.control_system_v2.databinding.ActivityMainBinding
-import ru.hse.control_system_v2.ui.dialog.OneButtonAlertDialogFragment
-import ru.hse.control_system_v2.ui.home.MainViewModel
-import ru.hse.control_system_v2.ui.home.MainViewModelFactory
-import ru.hse.control_system_v2.ui.theming.ThemeUtils.onActivityCreateSetTheme
+import ru.hse.control_system_v2.ui.fragments.dialog.OneButtonAlertDialogFragment
+import ru.hse.control_system_v2.ui.fragments.home.MainViewModel
+import ru.hse.control_system_v2.ui.fragments.home.MainViewModelFactory
+import ru.hse.control_system_v2.utility.ThemeUtils.onActivityCreateSetTheme
 import java.util.*
 
 class MainActivity : AppCompatActivity(), OneButtonAlertDialogFragment.OnDismissListener{
@@ -60,78 +60,6 @@ class MainActivity : AppCompatActivity(), OneButtonAlertDialogFragment.OnDismiss
             }
             true
         }
-
-
-//        if (buttonToConnectViaWiFi != null) {
-//            buttonToConnectViaWiFi.setOnClickListener(view1 -> {
-//                if (App.isWiFiSupported()) {
-//                    boolean isConnectionPossible = true;
-//                    for (DeviceModel current : App.getDevicesList()) {
-//                        if (!current.isWiFiSupported()) {
-//                            isConnectionPossible = false;
-//                            bottomSheetDialogToConnect.dismiss();
-//                            Snackbar snackbar = Snackbar
-//                                    .make(main_bottom_menu, getString(R.string.device_title) +
-//                                                    " " + current.getDevName() + " " +
-//                                                    getString(R.string.wifi_not_supported_text),
-//                                            Snackbar.LENGTH_LONG)
-//                                    .setAction(getString(R.string.button_more), new View.OnClickListener() {
-//                                        @Override
-//                                        public void onClick(View view) {
-//                                            createOneButtonAlertDialog(getString(R.string.alert_info), getString(R.string.instruction_for_app_wifi));
-//                                        }
-//                                    });
-//                            snackbar.show();
-//                            break;
-//                        }
-//                    }
-//                    if (isConnectionPossible) {
-//                        Intent serviceStarted;
-//                        serviceStarted = new Intent("startingWiFiService");
-//                        sendBroadcast(serviceStarted);
-//                        bottomSheetDialogToConnect.dismiss();
-//                    }
-//                } else {
-//                    createOneButtonAlertDialog(getString(R.string.error), getString(R.string.suggestionNoWiFiAdapter));
-//                }
-//
-//            });
-//        }
-//        if (buttonToConnectViaBt != null) {
-//            buttonToConnectViaBt.setOnClickListener(view1 -> {
-//                if (App.isBtSupported()) {
-//                    boolean isConnectionPossible = true;
-//                    for (DeviceModel current : App.getDevicesList()) {
-//                        if (!current.isBtSupported()) {
-//                            isConnectionPossible = false;
-//                            bottomSheetDialogToConnect.dismiss();
-//                            Snackbar snackbar = Snackbar
-//                                    .make(main_bottom_menu, getString(R.string.device_title) +
-//                                                    " " + current.getDevName() + " " +
-//                                                    getString(R.string.bluetooth_not_supported_text),
-//                                            Snackbar.LENGTH_LONG)
-//                                    .setAction(getString(R.string.button_more), new View.OnClickListener() {
-//                                        @Override
-//                                        public void onClick(View view) {
-//                                            createOneButtonAlertDialog(getString(R.string.alert_info), getString(R.string.instruction_for_app_bt));
-//                                        }
-//                                    });
-//                            snackbar.show();
-//                            break;
-//                        }
-//                    }
-//                    if (isConnectionPossible) {
-//                        Intent serviceStarted;
-//                        serviceStarted = new Intent("startingBtService");
-//                        sendBroadcast(serviceStarted);
-//                        bottomSheetDialogToConnect.dismiss();
-//                    }
-//                } else {
-//                    createOneButtonAlertDialog(getString(R.string.error), getString(R.string.suggestionNoBtAdapter));
-//                }
-//
-//            });
-//        }
         requestMultiplePermissions()
     }
 
@@ -147,7 +75,6 @@ class MainActivity : AppCompatActivity(), OneButtonAlertDialogFragment.OnDismiss
 
             navHost.navController.addOnDestinationChangedListener { _, destination, _ ->
                 Log.e(APP_LOG_TAG, "onDestinationChanged: " + destination.label)
-                // Отслеживаем текущий фрагмент на главном экране
                 viewModel.setCurrentVisibleFragment(destination)
             }
 

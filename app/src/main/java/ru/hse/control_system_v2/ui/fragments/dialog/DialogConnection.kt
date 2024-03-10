@@ -1,46 +1,30 @@
-package ru.hse.control_system_v2.ui.connection;
+package ru.hse.control_system_v2.ui.fragments.dialog
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.Context;
-import android.os.Bundle;
+import android.app.Activity
+import android.app.Dialog
+import android.content.Context
+import android.os.Bundle
+import androidx.fragment.app.DialogFragment
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import ru.hse.control_system_v2.R
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.DialogFragment;
-
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-
-import ru.hse.control_system_v2.R;
-
-
-public class DialogConnection extends DialogFragment {
-    Context c;
-
-    public DialogConnection() {
-        //nothing
-    }
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        if (context instanceof Activity) {
-            c = context;
+class DialogConnection : DialogFragment() {
+    lateinit var c: Context
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is Activity) {
+            c = context
         }
     }
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setCancelable(false);
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        isCancelable = false
     }
 
-    @NonNull
-    @Override
-    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(c);
-        builder.setView(R.layout.dialog_connection);
-        return builder.create();
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val builder = MaterialAlertDialogBuilder(c)
+        builder.setView(R.layout.dialog_connection)
+        return builder.create()
     }
 }

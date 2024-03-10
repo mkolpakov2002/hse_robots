@@ -1,130 +1,102 @@
-package ru.hse.control_system_v2.ui.device_settings;
+package ru.hse.control_system_v2.ui.fragments.device_settings
 
-import android.annotation.SuppressLint;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.content.Intent;
-import android.os.Bundle;
+import android.content.Intent
+import android.os.Bundle
+import android.provider.Settings
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
+import androidx.fragment.app.Fragment
+import androidx.navigation.Navigation.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
+import ru.hse.control_system_v2.R
+import ru.hse.control_system_v2.domain.connection.ConnectionFactory.bluetoothBounded
+import ru.hse.control_system_v2.model.entities.Device
+import ru.hse.control_system_v2.databinding.FragmentBluetoothPairedDevicesBinding
+import ru.hse.control_system_v2.ui.fragments.device_settings.NewBtDevicesAdapter.OnDeviceClicked
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.navigation.Navigation;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
-import android.provider.Settings;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
-
-import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
-
-import java.util.ArrayList;
-import java.util.Set;
-
-import ru.hse.control_system_v2.R;
-import ru.hse.control_system_v2.connection.ConnectionFactory;
-import ru.hse.control_system_v2.data.classes.device.model.DeviceModel;
-
-public class BluetoothPairedDevicesFragment extends Fragment implements NewBtDevicesAdapter.OnDeviceClicked, SwipeRefreshLayout.OnRefreshListener{
-
-    private RecyclerView pairedList;
-    private BluetoothAdapter btAdapter;
-    private TextView pairedDevicesTitleTextView;
-    private SwipeRefreshLayout swipeToRefreshLayout;
-    View view;
-
-    NewBtDevicesAdapter newBtDevicesAdapter;
-
-    public BluetoothPairedDevicesFragment() {
-        // Required empty public constructor
+class BluetoothPairedDevicesFragment : Fragment(), OnDeviceClicked, OnRefreshListener {
+    private lateinit var binding: FragmentBluetoothPairedDevicesBinding
+    private lateinit var pairedList: RecyclerView
+    private lateinit var pairedDevicesTitleTextView: TextView
+    private lateinit var swipeToRefreshLayout: SwipeRefreshLayout
+    var newBtDevicesAdapter: NewBtDevicesAdapter? = null
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_add_device, container, false);
+        binding = FragmentBluetoothPairedDevicesBinding.inflate(inflater,container,false)
+        return binding.root
     }
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        this.view = view;
-        swipeToRefreshLayout = view.findViewById(R.id.swipeRefreshLayout_add_device);
-        swipeToRefreshLayout.setOnRefreshListener(this);
-
-        ExtendedFloatingActionButton fabToOpenSettings = view.findViewById(R.id.floating_action_button_open_settings);
-        fabToOpenSettings.setOnClickListener(this::openSettings);
-
-        pairedDevicesTitleTextView = view.findViewById(R.id.paired_devices_title_add_activity);
-
-        pairedList = view.findViewById(R.id.paired_list);
-        pairedList.setLayoutManager(new LinearLayoutManager(getContext()));
-
-        searchForDevice();
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        swipeToRefreshLayout = binding.swipeRefreshLayoutAddDevice
+        swipeToRefreshLayout.setOnRefreshListener(this)
+        val fabToOpenSettings = binding.floatingActionButtonOpenSettings
+        fabToOpenSettings.setOnClickListener { view: View -> openSettings(view) }
+        pairedDevicesTitleTextView = binding.pairedDevicesTitleAddActivity
+        pairedList = binding.pairedList
+        pairedList.layoutManager = LinearLayoutManager(context)
+        searchForDevice()
     }
 
-    private void openSettings(View view) {
-        Intent intent_add_device = new Intent(Settings.ACTION_BLUETOOTH_SETTINGS);
-        startActivity(intent_add_device);
+    private fun openSettings(view: View) {
+        val intent_add_device = Intent(Settings.ACTION_BLUETOOTH_SETTINGS)
+        startActivity(intent_add_device)
     }
 
     // Добавляем сопряжённые устройства в List View
-    public void searchForDevice(){
+    fun searchForDevice() {
         //SuppressLint MissingPermission
-        Set<BluetoothDevice> pairedDevices = ConnectionFactory.INSTANCE.getBluetoothBounded();
+        val pairedDevices = bluetoothBounded
         // Если список спаренных устройств не пуст
-        if(pairedDevices.size()>0) {
-            newBtDevicesAdapter =
-                    new NewBtDevicesAdapter(
-                    new ArrayList<>(pairedDevices),
-                    this);
-            if(pairedList.getAdapter()!=null)
-                newBtDevicesAdapter.setDevicePrototypeList(new ArrayList<>(pairedDevices));
-            else
-                pairedList.setAdapter(newBtDevicesAdapter);
-
-            pairedDevicesTitleTextView.setText(R.string.paired_devices);
+        if (pairedDevices.isNotEmpty()) {
+            newBtDevicesAdapter = NewBtDevicesAdapter(
+                ArrayList(pairedDevices),
+                this
+            )
+            if (pairedList.adapter != null) newBtDevicesAdapter!!.setDevicePrototypeList(
+                ArrayList(
+                    pairedDevices
+                )
+            ) else pairedList.adapter = newBtDevicesAdapter
+            pairedDevicesTitleTextView.setText(R.string.paired_devices)
         } else {
             //no_devices_added
-            pairedDevicesTitleTextView.setText(R.string.no_devices_added);
-            pairedList.setAdapter(null);
+            pairedDevicesTitleTextView.setText(R.string.no_devices_added)
+            pairedList.adapter = null
         }
-        swipeToRefreshLayout.setRefreshing(false);
+        swipeToRefreshLayout.isRefreshing = false
     }
 
-    public void checkDeviceAddress(DeviceModel devicePrototype) {
-        Bundle b = new Bundle();
-        b.putSerializable("device", devicePrototype);
-        Navigation.findNavController(view).navigate(R.id.deviceMenuFragment, b);
+    fun checkDeviceAddress(devicePrototype: Device?) {
+        val b = Bundle()
+        b.putSerializable("device", devicePrototype)
+        findNavController(requireView()).navigate(R.id.deviceMenuFragment, b)
     }
 
-    @Override
-    public void selectedDevice(DeviceModel devicePrototype) {
-        checkDeviceAddress(devicePrototype);
+    override fun selectedDevice(devicePrototype: Device) {
+        checkDeviceAddress(devicePrototype)
     }
 
-    @Override
-    public void onResume(){
-        super.onResume();
-        onRefresh();
+    override fun onResume() {
+        super.onResume()
+        onRefresh()
     }
 
-    @Override
-    public void onRefresh() {
-        swipeToRefreshLayout.setRefreshing(true);
+    override fun onRefresh() {
+        swipeToRefreshLayout.isRefreshing = true
         // Bluetooth включён. Предложим пользователю добавить устройства и начать передачу данных.
-        searchForDevice();
+        searchForDevice()
     }
-
 }

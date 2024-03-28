@@ -29,7 +29,7 @@ import kotlinx.coroutines.withContext
 import ru.hse.control_system_v2.R
 import ru.hse.control_system_v2.domain.connection.ConnectionFactory
 import ru.hse.control_system_v2.model.db.AppDatabase
-import ru.hse.control_system_v2.model.entities.Device
+import ru.hse.control_system_v2.model.entities.DeviceOld
 import ru.hse.control_system_v2.databinding.FragmentMainBinding
 import ru.hse.control_system_v2.ui.MainActivity
 
@@ -46,7 +46,7 @@ class MainMenuFragment : Fragment(), OnRefreshListener, MultipleTypesAdapterKt.O
         FragmentMainBinding.inflate(layoutInflater)
     }
 
-    private lateinit var deviceItemTypeList: List<Device>
+    private lateinit var deviceOldItemTypeList: List<DeviceOld>
 
     override fun onAttach(context: Context) {
         fragmentContext = context
@@ -79,7 +79,7 @@ class MainMenuFragment : Fragment(), OnRefreshListener, MultipleTypesAdapterKt.O
         // Наблюдать за списком всех устройств
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.devices?.collect { devices ->
-                deviceItemTypeList = devices
+                deviceOldItemTypeList = devices
                 onRefresh()
             }
         }
@@ -115,7 +115,7 @@ class MainMenuFragment : Fragment(), OnRefreshListener, MultipleTypesAdapterKt.O
         dataBinding.floatingActionButtonDeleteSelected.setOnClickListener {
             CoroutineScope(Dispatchers.IO).launch {
                 for(item in multipleTypesAdapter.getSelectedItems())
-                    AppDatabase.getAppDataBase(requireContext()).deviceItemTypeDao()?.delete(item.id)
+                    AppDatabase.getInstance(requireContext()).deviceOldItemTypeDao()?.delete(item.id)
                 onRefresh()
             }
         }
@@ -197,7 +197,7 @@ class MainMenuFragment : Fragment(), OnRefreshListener, MultipleTypesAdapterKt.O
                 if (!this@MainMenuFragment::multipleTypesAdapter.isInitialized) {
                     initAdapter()
                 } else {
-                    multipleTypesAdapter.updateItems(deviceItemTypeList)
+                    multipleTypesAdapter.updateItems(deviceOldItemTypeList)
                 }
                 dataBinding.swipeRefreshLayout.isRefreshing = false
             }
@@ -205,7 +205,7 @@ class MainMenuFragment : Fragment(), OnRefreshListener, MultipleTypesAdapterKt.O
     }
 
     private fun initAdapter(){
-        multipleTypesAdapter = MultipleTypesAdapterKt(requireContext(), deviceItemTypeList)
+        multipleTypesAdapter = MultipleTypesAdapterKt(requireContext(), deviceOldItemTypeList)
         dataBinding.recyclerMain.adapter = multipleTypesAdapter
         multipleTypesAdapter.onItemLongClickListener = this
         multipleTypesAdapter.onItemClickListener = this
@@ -252,7 +252,7 @@ class MainMenuFragment : Fragment(), OnRefreshListener, MultipleTypesAdapterKt.O
         } else if(!multipleTypesAdapter.isMultiSelect){
             val args = Bundle()
             args.putBoolean("isNew", false)
-            args.putSerializable("device", item.device)
+            args.putSerializable("deviceOld", item.deviceOld)
             findNavController(dataBinding.root).navigate(R.id.deviceMenuFragment, args)
         }
 

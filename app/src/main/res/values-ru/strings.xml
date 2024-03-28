@@ -70,6 +70,12 @@
     <string name="command_for_video_stream">Команда для видео стрима</string>
     <string name="send_string">Отправить текст</string>
 
+    <string name="dialog_permissions_bluetooth_connect_rationale">Приложению требуется разрешение на подключение к Bluetooth для работы с устройствами.</string>
+    <string name="dialog_permissions_bluetooth_admin_rationale">Приложению требуется разрешение на управление Bluetooth для работы с устройствами.</string>
+    <string name="dialog_permissions_change_wifi_state_rationale">Приложению требуется разрешение на изменение состояния Wi-Fi для работы с устройствами.</string>
+    <string name="dialog_permissions_manage_wifi_network_selection_rationale">Приложению требуется разрешение на управление выбором сети Wi-Fi для работы с устройствами.</string>
+    <string name="dialog_permissions_write_external_storage_rationale">Приложению требуется разрешение на запись во внешнее хранилище для сохранения данных.</string>
+    <string name="dialog_permissions_general_rationale">Приложению требуются необходимые разрешения для корректной работы.</string>
     <!-- Диалоги -->
     <string name="dialog_permissions_bluetooth_rationale">Чтобы использовать приложение Роботы ВШЭ, предоставьте разрешения на доступ к Bluetooth и хранилищу.</string>
 </resources>

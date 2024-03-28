@@ -2,7 +2,6 @@ plugins {
     id("com.android.application")
     id("androidx.navigation.safeargs")
     id("kotlin-android")
-//    id("kotlin-kapt")
     id("com.google.devtools.ksp")
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.serialization")
@@ -67,6 +66,10 @@ dependencies {
     implementation "androidx.navigation:navigation-ui-ktx:$rootProject.navVersion"
     implementation "androidx.appcompat:appcompat:$rootProject.appCompatVersion"
     implementation "androidx.activity:activity-ktx:$rootProject.activityVersion"
+
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.0'
+
     // Room components
     implementation "androidx.room:room-runtime:$rootProject.roomVersion"
     implementation project(path: ':jcraft')
@@ -83,20 +86,6 @@ dependencies {
     implementation "com.divpundir.mavlink:mavlink-kotlin:$rootProject.mavlinkVersion"
     implementation "com.divpundir.mavlink:mavlink-kotlin:$rootProject.mavlinkVersion"
     implementation "com.divpundir.mavlink:mavlink-kotlin:$rootProject.mavlinkVersion"
-
-    // ktor communication
-    implementation "io.ktor:ktor-server-core:$rootProject.ktorVersion"
-    implementation "io.ktor:ktor-server-netty:$rootProject.ktorVersion"
-    implementation "io.ktor:ktor-server-status-pages:$rootProject.ktorVersion"
-    implementation "io.ktor:ktor-server-default-headers:$rootProject.ktorVersion"
-    implementation("io.ktor:ktor-server-websockets:$rootProject.ktorVersion")
-    implementation "io.ktor:ktor-client-core:$rootProject.ktorVersion"
-    implementation "io.ktor:ktor-client-android:$rootProject.ktorVersion"
-    implementation "io.ktor:ktor-server-content-negotiation:$ktorVersion"
-    implementation "io.ktor:ktor-client-content-negotiation:$ktorVersion"
-    implementation "io.ktor:ktor-serialization-kotlinx-json:$ktorVersion"
-    implementation "io.ktor:ktor-client-websockets:$ktorVersion"
-    implementation "io.ktor:ktor-client-cio:$ktorVersion"
 
     // kotlin
     implementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
@@ -127,5 +116,21 @@ dependencies {
 
     // USB serial for usb arduino communication
     implementation 'com.github.mik3y:usb-serial-for-android:3.5.1'
+
+    implementation("com.beepiz.blegattcoroutines:blegattcoroutines-core:0.5.0")
+    implementation("com.beepiz.blegattcoroutines:blegattcoroutines-genericaccess:0.5.0")
+    implementation("com.juul.kable:core:0.29.1")
+
+    implementation 'com.google.code.gson:gson:2.10.1'
+
+    implementation ("io.ktor:ktor-client-core:1.6.1")
+    implementation("io.ktor:ktor-client-android:1.6.1")
+    implementation ("io.ktor:ktor-client-json:1.6.1")
+    implementation ("io.ktor:ktor-client-serialization:1.6.1")
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0")
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
+    implementation ("io.ktor:ktor-client-logging-native:1.3.1")
+    implementation("io.ktor:ktor-client-auth:1.6.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
 
 }

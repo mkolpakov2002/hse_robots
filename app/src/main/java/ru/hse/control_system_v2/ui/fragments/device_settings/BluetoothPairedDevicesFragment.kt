@@ -15,7 +15,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import ru.hse.control_system_v2.R
 import ru.hse.control_system_v2.domain.connection.ConnectionFactory.bluetoothBounded
-import ru.hse.control_system_v2.model.entities.Device
+import ru.hse.control_system_v2.model.entities.DeviceOld
 import ru.hse.control_system_v2.databinding.FragmentBluetoothPairedDevicesBinding
 import ru.hse.control_system_v2.ui.fragments.device_settings.NewBtDevicesAdapter.OnDeviceClicked
 
@@ -79,14 +79,10 @@ class BluetoothPairedDevicesFragment : Fragment(), OnDeviceClicked, OnRefreshLis
         swipeToRefreshLayout.isRefreshing = false
     }
 
-    fun checkDeviceAddress(devicePrototype: Device?) {
+    fun checkDeviceAddress(deviceOldPrototype: DeviceOld?) {
         val b = Bundle()
-        b.putSerializable("device", devicePrototype)
+        b.putSerializable("deviceOld", deviceOldPrototype)
         findNavController(requireView()).navigate(R.id.deviceMenuFragment, b)
-    }
-
-    override fun selectedDevice(devicePrototype: Device) {
-        checkDeviceAddress(devicePrototype)
     }
 
     override fun onResume() {
@@ -98,5 +94,9 @@ class BluetoothPairedDevicesFragment : Fragment(), OnDeviceClicked, OnRefreshLis
         swipeToRefreshLayout.isRefreshing = true
         // Bluetooth включён. Предложим пользователю добавить устройства и начать передачу данных.
         searchForDevice()
+    }
+
+    override fun selectedDevice(deviceOldPrototype: DeviceOld?) {
+        checkDeviceAddress(deviceOldPrototype)
     }
 }

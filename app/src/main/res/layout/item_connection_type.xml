@@ -14,7 +14,7 @@
         android:orientation="horizontal"
         android:padding="16dp">
 
-        <!-- An image view to display the device icon based on the uiType -->
+        <!-- An image view to display the deviceOld icon based on the uiType -->
         <ImageView
             android:id="@+id/device_icon"
             android:layout_width="48dp"
@@ -24,15 +24,15 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- A text view to display the device name -->
+        <!-- A text view to display the deviceOld name -->
         <TextView
-            android:id="@+id/device_name"
+            android:id="@+id/textViewDeviceName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_weight="1"
             android:textAppearance="?attr/textAppearanceHeadline6"
-            app:layout_constraintEnd_toStartOf="@+id/connectionStatus"
+            app:layout_constraintEnd_toStartOf="@+id/imageViewConnectionState"
             app:layout_constraintStart_toEndOf="@+id/device_icon"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -45,12 +45,12 @@
             android:layout_marginTop="16dp"
             android:textAppearance="?attr/textAppearanceBody2"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/connectionStatus"
+            app:layout_constraintEnd_toStartOf="@+id/imageViewConnectionState"
             app:layout_constraintStart_toEndOf="@+id/device_icon"
-            app:layout_constraintTop_toBottomOf="@+id/device_name" />
+            app:layout_constraintTop_toBottomOf="@+id/textViewDeviceName" />
 
         <ImageView
-            android:id="@+id/connectionStatus"
+            android:id="@+id/imageViewConnectionState"
             android:layout_width="32dp"
             android:layout_height="32dp"
             app:layout_constraintBottom_toBottomOf="parent"

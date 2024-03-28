@@ -3,20 +3,17 @@ package ru.hse.control_system_v2.model.entities.universal.classes.connection_des
 import android.util.Log
 import io.ktor.client.HttpClient
 import io.ktor.client.call.receive
-import io.ktor.client.engine.android.Android
-import io.ktor.client.features.HttpResponseValidator
-import io.ktor.client.features.auth.Auth
-import io.ktor.client.features.auth.providers.BearerTokens
-import io.ktor.client.features.auth.providers.bearer
-import io.ktor.client.features.json.JsonFeature
-import io.ktor.client.features.json.serializer.KotlinxSerializer
-import io.ktor.client.features.logging.LogLevel
-import io.ktor.client.features.logging.Logging
 import io.ktor.client.request.header
+import io.ktor.client.request.post
 import io.ktor.client.request.request
+import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
+import io.ktor.client.statement.bodyAsText
+import io.ktor.client.utils.EmptyContent.contentType
+import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
+import io.ktor.http.contentType
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
@@ -63,14 +60,13 @@ class DeviceService() {
             val response: HttpResponse
             App.httpClient.use { client ->
                 try {
-                    response = client.request("https://api.iot.yandex.net/v1.0/devices/actions") {
-                        method = HttpMethod.Post
-                        header(HttpHeaders.ContentType, "application/json")
-                        body = requestBody
+                    response = client.post("https://api.iot.yandex.net/v1.0/devices/actions") {
+                        contentType(ContentType.Application.Json)
+                        setBody(requestBody)
                     }
 
                     // Логгирование ответа
-                    response.receive<String>().also { responseBody ->
+                    response.bodyAsText().also { responseBody ->
                         Log.i("MIEM", "Response: $responseBody")
                     }
                 } catch (e: Exception) {
@@ -87,17 +83,32 @@ class DeviceService() {
 
     private fun createCapabilityAction(deviceId: String, capability: Capability): CapabilityAction {
         val state = when (capability.type) {
-            "devices.capabilities.on_off" -> OnOffState(value = capability.state?.get("value")?.toString()?.toBoolean() ?: false)
-            "devices.capabilities.color_setting" -> ColorSettingState(value = capability.state?.get("value")?.toString() ?: "")
-            "devices.capabilities.mode" -> ModeState(value = capability.state?.get("value")?.toString() ?: "")
-            "devices.capabilities.range" -> RangeState(value = capability.state?.get("value")?.toString()?.toInt() ?: 0)
-            "devices.capabilities.toggle" -> ToggleState(value = capability.state?.get("value")?.toString()?.toBoolean() ?: false)
+            "devices.capabilities.on_off" -> OnOffState(
+                value = capability.state?.get("value")?.toString()?.toBoolean() ?: false
+            )
+
+            "devices.capabilities.color_setting" -> ColorSettingState(
+                value = capability.state?.get(
+                    "value"
+                )?.toString() ?: ""
+            )
+
+            "devices.capabilities.mode" -> ModeState(
+                value = capability.state?.get("value")?.toString() ?: ""
+            )
+
+            "devices.capabilities.range" -> RangeState(
+                value = capability.state?.get("value")?.toString()?.toInt() ?: 0
+            )
+
+            "devices.capabilities.toggle" -> ToggleState(
+                value = capability.state?.get("value")?.toString()?.toBoolean() ?: false
+            )
+
             else -> throw IllegalArgumentException("Unsupported capability type: ${capability.type}")
         }
         return CapabilityAction(capability.type, state)
     }
-
-
 }
 
 @Serializable

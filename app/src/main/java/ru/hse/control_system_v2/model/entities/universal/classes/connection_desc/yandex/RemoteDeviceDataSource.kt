@@ -2,8 +2,10 @@ package ru.hse.control_system_v2.model.entities.universal.classes.connection_des
 
 import android.util.Log
 import io.ktor.client.HttpClient
+import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.post
+import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import ru.hse.control_system_v2.model.entities.universal.classes.device_desc.api.Capability
@@ -13,7 +15,7 @@ import ru.hse.control_system_v2.model.entities.universal.classes.device_desc.api
 class RemoteDeviceDataSource(private val client: HttpClient) : DeviceDataSource {
     override suspend fun getDevices(): List<Device> {
         return try {
-            val response: UserInfo = client.get("https://api.iot.yandex.net/v1.0/user/info")
+            val response: UserInfo = client.get("https://api.iot.yandex.net/v1.0/user/info").body()
             Log.i("MIEM", "Response: $response")
             response.devices
         } catch (e: Exception) {
@@ -23,7 +25,7 @@ class RemoteDeviceDataSource(private val client: HttpClient) : DeviceDataSource 
 
     override suspend fun getDeviceById(deviceId: String): Device? {
         return try {
-            val response: Device = client.get("https://api.iot.yandex.net/v1.0/devices/$deviceId")
+            val response: Device = client.get("https://api.iot.yandex.net/v1.0/devices/$deviceId").body()
             Log.i("MIEM", "Response: $response")
             response
         } catch (e: Exception) {
@@ -31,16 +33,16 @@ class RemoteDeviceDataSource(private val client: HttpClient) : DeviceDataSource 
         }
     }
 
-    override suspend fun handleDeviceAction(deviceId: String, capability: Capability): DeviceActionResult? {
+    override suspend fun handleDeviceAction(deviceId: String, capability: Capability): DeviceActionsResponse? {
         val action = createCapabilityAction(deviceId, capability)
         val requestBody = DeviceActionsRequest(listOf(DeviceAction(deviceId, listOf(action))))
         Log.i("MIEM", "Request: $requestBody")
         return try {
             val response: DeviceActionsResponse = client.post("https://api.iot.yandex.net/v1.0/devices/actions") {
                 contentType(ContentType.Application.Json)
-                body = (requestBody)
-            }
-            response.devices.firstOrNull()
+                setBody(requestBody)
+            }.body()
+            response
         } catch (e: Exception) {
             null
         }

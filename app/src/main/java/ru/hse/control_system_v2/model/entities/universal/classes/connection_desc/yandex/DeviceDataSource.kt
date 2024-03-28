@@ -6,5 +6,5 @@ import ru.hse.control_system_v2.model.entities.universal.classes.device_desc.api
 interface DeviceDataSource {
     suspend fun getDevices(): List<Device>
     suspend fun getDeviceById(deviceId: String): Device?
-    suspend fun handleDeviceAction(deviceId: String, capability: Capability): DeviceActionResult?
+    suspend fun handleDeviceAction(deviceId: String, capability: Capability): DeviceActionsResponse?
 }

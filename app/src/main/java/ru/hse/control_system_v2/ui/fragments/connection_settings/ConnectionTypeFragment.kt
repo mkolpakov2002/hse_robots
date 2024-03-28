@@ -15,16 +15,6 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import io.ktor.client.*
-import io.ktor.client.engine.android.Android
-import io.ktor.client.features.auth.Auth
-import io.ktor.client.features.auth.providers.BearerTokens
-import io.ktor.client.features.auth.providers.bearer
-import io.ktor.client.request.*
-import io.ktor.client.features.json.*
-import io.ktor.client.features.json.serializer.*
-import io.ktor.client.features.logging.LogLevel
-import io.ktor.client.features.logging.Logging
-import io.ktor.http.*
 import kotlinx.coroutines.launch
 import ru.hse.control_system_v2.R
 import ru.hse.control_system_v2.model.entities.DeviceOld

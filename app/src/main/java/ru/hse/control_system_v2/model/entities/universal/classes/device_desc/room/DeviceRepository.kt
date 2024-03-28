@@ -1,6 +1,7 @@
 package ru.hse.control_system_v2.model.entities.universal.classes.device_desc.room
 
 import ru.hse.control_system_v2.model.entities.universal.classes.connection_desc.yandex.DeviceActionResult
+import ru.hse.control_system_v2.model.entities.universal.classes.connection_desc.yandex.DeviceActionsResponse
 import ru.hse.control_system_v2.model.entities.universal.classes.connection_desc.yandex.RemoteDeviceDataSource
 import ru.hse.control_system_v2.model.entities.universal.classes.device_desc.api.Capability
 import ru.hse.control_system_v2.model.entities.universal.classes.device_desc.api.Device
@@ -46,7 +47,7 @@ class DeviceRepository(
         return devices
     }
 
-    suspend fun handleDeviceAction(deviceId: String, capability: Capability): DeviceActionResult? {
+    suspend fun handleDeviceAction(deviceId: String, capability: Capability): DeviceActionsResponse? {
         return remoteDataSource.handleDeviceAction(deviceId, capability)
     }
 

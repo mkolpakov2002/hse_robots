@@ -1,20 +1,21 @@
 package ru.hse.control_system_v2.model.entities.universal.scheme
 
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.serializer
 
+/**
+ * Базовый класс для моделей ответов API.
+ * https://yandex.ru/dev/dialogs/smart-home/doc/reference-alerts/resources-alerts.html
+ * https://raw.githubusercontent.com/dext0r/yandex_smart_home/master/custom_components/yandex_smart_home/schema/base.py
+ */
 @Serializable
-abstract class APIModel {
-    fun asJson(): String {
-        return Json.encodeToString(this)
-    }
+sealed interface APIModel
 
-    fun asMap(): Map<String, Any?> {
-        return Json.decodeFromString(asJson())
-    }
-}
-
+/**
+ * Базовый класс для generic-моделей ответов API.
+ * https://yandex.ru/dev/dialogs/smart-home/doc/reference-alerts/resources-alerts.html
+ * https://raw.githubusercontent.com/dext0r/yandex_smart_home/master/custom_components/yandex_smart_home/schema/base.py
+ */
 @Serializable
-abstract class GenericAPIModel<T> : APIModel()
+open class GenericAPIModel<T>: APIModel

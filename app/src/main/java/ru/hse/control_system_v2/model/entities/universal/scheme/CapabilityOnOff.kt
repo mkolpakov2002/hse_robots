@@ -1,20 +1,29 @@
 package ru.hse.control_system_v2.model.entities.universal.scheme
 
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
 /**
- * Schema for on_off capability.
- *
- * https://yandex.ru/dev/dialogs/smart-home/doc/concepts/on_off.html
+ * Экземпляр возможности включения/выключения.
  */
-enum class OnOffCapabilityInstance {
-    ON
+@Serializable
+enum class OnOffCapabilityInstance: CapabilityInstance {
+    @SerialName("on") ON
 }
 
+/**
+ * Параметры возможности включения/выключения.
+ */
+@Serializable
 data class OnOffCapabilityParameters(
     val split: Boolean
-)
+): CapabilityParameters
 
-@kotlinx.serialization.Serializable
+/**
+ * Новое значение для возможности включения/выключения.
+ */
+@Serializable
 data class OnOffCapabilityInstanceActionState(
     val instance: OnOffCapabilityInstance,
     val value: Boolean
-)
+): APIModel

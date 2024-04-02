@@ -1,19 +1,35 @@
 package ru.hse.control_system_v2.model.entities.universal.scheme
 
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
 /**
- * Schema for toggle capability.
- *
- * https://yandex.ru/dev/dialogs/smart-home/doc/concepts/toggle.html
+ * Экземпляр возможности переключения.
+ * https://yandex.ru/dev/dialogs/smart-home/doc/concepts/toggle-instance.html
  */
-enum class ToggleCapabilityInstance {
-    BACKLIGHT, CONTROLS_LOCKED, IONIZATION, KEEP_WARM, MUTE, OSCILLATION, PAUSE
+@Serializable
+enum class ToggleCapabilityInstance: CapabilityInstance {
+    @SerialName("backlight") BACKLIGHT,
+    @SerialName("controls_locked") CONTROLS_LOCKED,
+    @SerialName("ionization") IONIZATION,
+    @SerialName("keep_warm") KEEP_WARM,
+    @SerialName("mute") MUTE,
+    @SerialName("oscillation") OSCILLATION,
+    @SerialName("pause") PAUSE
 }
 
+/**
+ * Параметры возможности переключения.
+ */
+@Serializable
 data class ToggleCapabilityParameters(
     val instance: ToggleCapabilityInstance
-)
+): CapabilityParameters
 
-@kotlinx.serialization.Serializable
+/**
+ * Новое значение для возможности переключения.
+ */
+@Serializable
 data class ToggleCapabilityInstanceActionState(
     val instance: ToggleCapabilityInstance,
     val value: Boolean

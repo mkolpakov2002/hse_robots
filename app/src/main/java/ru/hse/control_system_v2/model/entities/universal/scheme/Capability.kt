@@ -1,40 +1,29 @@
 package ru.hse.control_system_v2.model.entities.universal.scheme
 
-import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.descriptors.PrimitiveKind
-import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
-import kotlinx.serialization.descriptors.SerialDescriptor
-import kotlinx.serialization.encoding.Decoder
-import kotlinx.serialization.encoding.Encoder
-import kotlinx.serialization.json.JsonDecoder
-import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.JsonEncoder
-import kotlinx.serialization.json.JsonPrimitive
-import kotlinx.serialization.json.boolean
-import kotlinx.serialization.json.booleanOrNull
-import kotlinx.serialization.json.int
-import kotlinx.serialization.json.intOrNull
 
 @Serializable
-enum class CapabilityType(val shortName: String) {
+enum class CapabilityType {
     @SerialName("devices.capabilities.on_off")
-    ON_OFF("on_off"),
+    ON_OFF,
     @SerialName("devices.capabilities.color_setting")
-    COLOR_SETTING("color_setting"),
+    COLOR_SETTING,
     @SerialName("devices.capabilities.mode")
-    MODE("mode"),
+    MODE,
     @SerialName("devices.capabilities.range")
-    RANGE("range"),
+    RANGE,
     @SerialName("devices.capabilities.toggle")
-    TOGGLE("toggle"),
+    TOGGLE,
     @SerialName("devices.capabilities.video_stream")
-    VIDEO_STREAM("video_stream");
+    VIDEO_STREAM
 }
 
 @Serializable
-sealed class CapabilityParameters
+sealed interface CapabilityParameters : APIModel
+
+@Serializable
+sealed interface CapabilityInstance : APIModel
 
 @Serializable
 data class CapabilityDescription(
@@ -42,118 +31,101 @@ data class CapabilityDescription(
     val retrievable: Boolean,
     val reportable: Boolean,
     val parameters: CapabilityParameters? = null
-)
+) : APIModel
+
+
+//TODO: проверить список Capability классов
+@Serializable
+sealed class CapabilityStateValue
 
 @Serializable
-sealed class CapabilityInstance
+data class OnOffCapabilityStateValue(val value: Boolean) : CapabilityStateValue()
+
+@Serializable
+data class ColorSettingCapabilityStateValue(val value: ColorSettingCapabilityInstanceActionState) : CapabilityStateValue()
+
+@Serializable
+data class RGBCapabilityStateValue(val value: RGBInstanceActionState) : CapabilityStateValue()
+
+@Serializable
+data class TemperatureKCapabilityStateValue(val value: TemperatureKInstanceActionState) : CapabilityStateValue()
+
+@Serializable
+data class SceneCapabilityStateValue(val value: SceneInstanceActionState) : CapabilityStateValue()
+
+@Serializable
+data class ModeCapabilityStateValue(val value: ModeCapabilityInstanceActionState) : CapabilityStateValue()
+
+@Serializable
+data class RangeCapabilityStateValue(val value: RangeCapabilityInstanceActionState) : CapabilityStateValue()
+
+@Serializable
+data class ToggleCapabilityStateValue(val value: ToggleCapabilityInstanceActionState) : CapabilityStateValue()
+
+@Serializable
+data class VideoStreamCapabilityStateValue(val value: GetStreamInstanceActionState) : CapabilityStateValue()
 
 @Serializable
 data class CapabilityInstanceStateValue(
     val instance: CapabilityInstance,
-    val value: @Serializable(with = DynamicSerializer::class) Any
-)
+    val value: CapabilityStateValue
+) : APIModel
 
 @Serializable
 data class CapabilityInstanceState(
     val type: CapabilityType,
     val state: CapabilityInstanceStateValue
-)
+) : APIModel
+
+@Serializable
+sealed interface CapabilityInstanceAction : APIModel {
+    val type: CapabilityType
+}
 
 @Serializable
 @SerialName("devices.capabilities.on_off")
 data class OnOffCapabilityInstanceAction(
-    val type: CapabilityType = CapabilityType.ON_OFF,
+    override val type: CapabilityType = CapabilityType.ON_OFF,
     val state: OnOffCapabilityInstanceActionState
-)
+) : CapabilityInstanceAction
 
 @Serializable
 @SerialName("devices.capabilities.color_setting")
 data class ColorSettingCapabilityInstanceAction(
-    val type: CapabilityType = CapabilityType.COLOR_SETTING,
+    override val type: CapabilityType = CapabilityType.COLOR_SETTING,
     val state: ColorSettingCapabilityInstanceActionState
-)
+) : CapabilityInstanceAction
 
 @Serializable
 @SerialName("devices.capabilities.mode")
 data class ModeCapabilityInstanceAction(
-    val type: CapabilityType = CapabilityType.MODE,
+    override val type: CapabilityType = CapabilityType.MODE,
     val state: ModeCapabilityInstanceActionState
-)
+) : CapabilityInstanceAction
 
 @Serializable
 @SerialName("devices.capabilities.range")
 data class RangeCapabilityInstanceAction(
-    val type: CapabilityType = CapabilityType.RANGE,
+    override val type: CapabilityType = CapabilityType.RANGE,
     val state: RangeCapabilityInstanceActionState
-)
+) : CapabilityInstanceAction
 
 @Serializable
 @SerialName("devices.capabilities.toggle")
 data class ToggleCapabilityInstanceAction(
-    val type: CapabilityType = CapabilityType.TOGGLE,
+    override val type: CapabilityType = CapabilityType.TOGGLE,
     val state: ToggleCapabilityInstanceActionState
-)
+) : CapabilityInstanceAction
 
 @Serializable
 @SerialName("devices.capabilities.video_stream")
 data class VideoStreamCapabilityInstanceAction(
-    val type: CapabilityType = CapabilityType.VIDEO_STREAM,
+    override val type: CapabilityType = CapabilityType.VIDEO_STREAM,
     val state: GetStreamInstanceActionState
-)
+) : CapabilityInstanceAction
 
 @Serializable
-sealed class CapabilityInstanceAction
+sealed class CapabilityInstanceActionState : APIModel
 
 @Serializable
-sealed class CapabilityInstanceActionState
-
-@Serializable
-sealed class CapabilityInstanceActionResultValue
-
-object DynamicSerializer : KSerializer<Any> {
-    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("DynamicSerializer", PrimitiveKind.STRING)
-
-    override fun serialize(encoder: Encoder, value: Any) {
-        val jsonEncoder = encoder as? JsonEncoder ?: throw IllegalArgumentException("DynamicSerializer can be used only with Json format.")
-        jsonEncoder.encodeJsonElement(serializeToJsonElement(value))
-    }
-
-    override fun deserialize(decoder: Decoder): Any {
-        val jsonDecoder = decoder as? JsonDecoder ?: throw IllegalArgumentException("DynamicSerializer can be used only with Json format.")
-        val element = jsonDecoder.decodeJsonElement()
-        return deserializeFromJsonElement(element)
-    }
-
-    private fun serializeToJsonElement(value: Any): JsonElement = when (value) {
-        is Int -> JsonPrimitive(value)
-        is String -> JsonPrimitive(value)
-        is Boolean -> JsonPrimitive(value)
-        is ColorScene -> ColorSceneSerializer.serializeToJsonElement(value)
-        else -> throw IllegalArgumentException("Unsupported type for DynamicSerializer: ${value.javaClass}")
-    }
-
-    private fun deserializeFromJsonElement(element: JsonElement): Any = when {
-        element is JsonPrimitive -> {
-            when {
-                element.isString -> element.content
-                element.intOrNull != null -> element.int
-                element.booleanOrNull != null -> element.boolean
-                else -> throw IllegalArgumentException("Unsupported JsonPrimitive for DynamicSerializer: $element")
-            }
-        }
-        else -> ColorSceneSerializer.deserializeFromJsonElement(element)
-    }
-}
-
-object ColorSceneSerializer {
-    fun serializeToJsonElement(value: ColorScene): JsonElement {
-        return JsonPrimitive(value.name.lowercase())
-    }
-
-    fun deserializeFromJsonElement(element: JsonElement): ColorScene {
-        if (element !is JsonPrimitive || !element.isString) {
-            throw IllegalArgumentException("Invalid JSON element for ColorScene deserialization: $element")
-        }
-        return ColorScene.valueOf(element.content.uppercase())
-    }
-}
+sealed class CapabilityInstanceActionResultValue : APIModel

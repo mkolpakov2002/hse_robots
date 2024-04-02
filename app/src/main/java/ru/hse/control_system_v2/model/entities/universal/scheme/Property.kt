@@ -1,70 +1,71 @@
 package ru.hse.control_system_v2.model.entities.universal.scheme
 
-import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.descriptors.PrimitiveKind
-import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
-import kotlinx.serialization.descriptors.SerialDescriptor
-
-/**
- * Schema for device property.
- *
- * https://yandex.ru/dev/dialogs/smart-home/doc/concepts/properties-types.html
- */
 
 @Serializable
-enum class PropertyType(private val value: String) {
+enum class PropertyType {
     @SerialName("devices.properties.float")
-    FLOAT("devices.properties.float"),
+    FLOAT,
     @SerialName("devices.properties.event")
-    EVENT("devices.properties.event");
-
-    val short: String
-        get() = value.replace("devices.properties.", "")
-}
-
-@Serializable
-sealed class PropertyDescription {
-    abstract val type: PropertyType
-    abstract val retrievable: Boolean
-    abstract val reportable: Boolean
+    EVENT;
 }
 
 @Serializable
 @SerialName("devices.properties.float")
 data class FloatPropertyDescription(
-    override val type: PropertyType = PropertyType.FLOAT,
-    @SerialName("retrievable") override val retrievable: Boolean,
-    @SerialName("reportable") override val reportable: Boolean,
-    @SerialName("parameters") val parameters: FloatPropertyParameters
-) : PropertyDescription()
+    val type: PropertyType = PropertyType.FLOAT,
+    val retrievable: Boolean,
+    val reportable: Boolean,
+    val parameters: FloatPropertyParameters<FloatUnit>
+) : PropertyDescription
 
+//TODO: не уверен, что в EventPropertyParameters будет EventInstanceEvent
+// См. https://yandex.ru/dev/dialogs/smart-home/doc/concepts/event.html#discovery__example
 @Serializable
 @SerialName("devices.properties.event")
 data class EventPropertyDescription(
-    override val type: PropertyType = PropertyType.EVENT,
-    @SerialName("retrievable") override val retrievable: Boolean,
-    @SerialName("reportable") override val reportable: Boolean,
-    @SerialName("parameters") val parameters: EventPropertyParameters
-) : PropertyDescription()
+    val type: PropertyType = PropertyType.EVENT,
+    val retrievable: Boolean,
+    val reportable: Boolean,
+    val parameters: EventPropertyParameters<EventInstanceEvent>
+) : PropertyDescription
 
 @Serializable
-sealed class PropertyInstance
+sealed interface PropertyDescription : APIModel
 
 @Serializable
-data class EventValue(
-    @SerialName("value") val value: String
-)
+sealed interface PropertyParameters : APIModel
 
+@Serializable
+sealed class PropertyInstance : APIModel
+
+//TODO: add more properties?
+@Serializable
+sealed interface PropertyValue : APIModel
+
+@Serializable
+@SerialName("string")
+data class StringPropertyValue(val value: String) : PropertyValue
+
+@Serializable
+@SerialName("number")
+data class NumberPropertyValue(val value: Int) : PropertyValue
+
+/**
+ * Property instance value.
+ */
 @Serializable
 data class PropertyInstanceStateValue(
-    @SerialName("instance") val instance: PropertyInstance,
-    @SerialName("value") val value: String
-)
+    val instance: PropertyInstance,
+    val value: PropertyValue
+) : APIModel
 
+/**
+ * Property state for state query and callback requests.
+ */
 @Serializable
 data class PropertyInstanceState(
-    @SerialName("type") val type: PropertyType,
-    @SerialName("state") val state: PropertyInstanceStateValue
-)
+    val type: PropertyType,
+    val state: PropertyInstanceStateValue
+) : APIModel

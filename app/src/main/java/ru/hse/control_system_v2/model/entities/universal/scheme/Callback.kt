@@ -2,42 +2,68 @@ package ru.hse.control_system_v2.model.entities.universal.scheme
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import java.time.Instant
 
+/**
+ * Полезная нагрузка запроса на уведомление об изменении состояния устройств.
+ * https://yandex.ru/dev/dialogs/smart-home/doc/reference-alerts/resources-alerts.html
+ * https://raw.githubusercontent.com/dext0r/yandex_smart_home/master/custom_components/yandex_smart_home/schema/callback.py
+ */
 @Serializable
 data class CallbackStatesRequestPayload(
     @SerialName("user_id") val userId: String,
-    @SerialName("devices") val devices: List<DeviceState>
+    val devices: List<DeviceState>
 )
 
+/**
+ * Запрос на уведомление об изменении состояния устройств.
+ * https://yandex.ru/dev/dialogs/smart-home/doc/reference-alerts/resources-alerts.html
+ * https://raw.githubusercontent.com/dext0r/yandex_smart_home/master/custom_components/yandex_smart_home/schema/callback.py
+ */
 @Serializable
 data class CallbackStatesRequest(
-    @SerialName("ts") val ts: Long = Instant.now().epochSecond,
-    @SerialName("payload") val payload: CallbackStatesRequestPayload
-)
+    val ts: Long = System.currentTimeMillis() / 1000,
+    val payload: CallbackStatesRequestPayload
+): APIModel
 
+/**
+ * Полезная нагрузка запроса на уведомление об изменении параметров устройств.
+ * https://yandex.ru/dev/dialogs/smart-home/doc/reference-alerts/resources-alerts.html
+ * https://raw.githubusercontent.com/dext0r/yandex_smart_home/master/custom_components/yandex_smart_home/schema/callback.py
+ */
 @Serializable
 data class CallbackDiscoveryRequestPayload(
     @SerialName("user_id") val userId: String
 )
 
+/**
+ * Запрос на уведомление об изменении параметров устройств.
+ * https://yandex.ru/dev/dialogs/smart-home/doc/reference-alerts/resources-alerts.html
+ * https://raw.githubusercontent.com/dext0r/yandex_smart_home/master/custom_components/yandex_smart_home/schema/callback.py
+ */
 @Serializable
 data class CallbackDiscoveryRequest(
-    @SerialName("ts") val ts: Long = Instant.now().epochSecond,
-    @SerialName("payload") val payload: CallbackDiscoveryRequestPayload
-)
+    val ts: Long = System.currentTimeMillis() / 1000,
+    val payload: CallbackDiscoveryRequestPayload
+): APIModel
 
+/**
+ * Статус ответа на запрос обратного вызова.
+ * https://yandex.ru/dev/dialogs/smart-home/doc/reference-alerts/resources-alerts.html
+ * https://raw.githubusercontent.com/dext0r/yandex_smart_home/master/custom_components/yandex_smart_home/schema/callback.py
+ */
 @Serializable
 enum class CallbackResponseStatus {
-    @SerialName("ok") OK,
-    @SerialName("error") ERROR
+    OK, ERROR
 }
 
+/**
+ * Ответ на запрос обратного вызова.
+ * https://yandex.ru/dev/dialogs/smart-home/doc/reference-alerts/resources-alerts.html
+ * https://raw.githubusercontent.com/dext0r/yandex_smart_home/master/custom_components/yandex_smart_home/schema/callback.py
+ */
 @Serializable
 data class CallbackResponse(
-    @SerialName("status") val status: CallbackResponseStatus,
+    val status: CallbackResponseStatus,
     @SerialName("error_code") val errorCode: String? = null,
     @SerialName("error_message") val errorMessage: String? = null
-)
-
-typealias CallbackRequest = CallbackDiscoveryRequest
+): APIModel

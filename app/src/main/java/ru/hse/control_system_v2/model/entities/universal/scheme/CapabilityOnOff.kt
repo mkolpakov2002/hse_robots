@@ -15,7 +15,6 @@ enum class OnOffCapabilityInstance: CapabilityInstance {
  * Параметры возможности включения/выключения.
  */
 @Serializable
-@SerialName("on_off")
 data class OnOffCapabilityParameters(
     val split: Boolean
 ): CapabilityParameters()

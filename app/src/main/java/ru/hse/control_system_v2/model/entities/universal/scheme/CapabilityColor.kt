@@ -75,7 +75,6 @@ data class CapabilityParameterColorScene(
  * Параметры возможности настройки цвета.
  */
 @Serializable
-@SerialName("color_setting")
 data class ColorSettingCapabilityParameters(
     @SerialName("color_model") val colorModel: CapabilityParameterColorModel? = null,
     @SerialName("temperature_k") val temperatureK: CapabilityParameterTemperatureK? = null,

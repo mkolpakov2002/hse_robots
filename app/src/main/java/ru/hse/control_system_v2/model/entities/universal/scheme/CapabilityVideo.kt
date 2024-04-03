@@ -17,7 +17,6 @@ enum class VideoStreamCapabilityInstance: CapabilityInstance {
  * Параметры возможности видеопотока.
  */
 @Serializable
-@SerialName("video_stream")
 data class VideoStreamCapabilityParameters(
     val protocols: StreamProtocols
 ): CapabilityParameters()

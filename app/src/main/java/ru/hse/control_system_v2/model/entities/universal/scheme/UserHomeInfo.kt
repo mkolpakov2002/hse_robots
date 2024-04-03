@@ -4,8 +4,11 @@ import kotlinx.serialization.Polymorphic
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+@Serializable
 sealed class UserHomeInfoApiResponse {
+    @Serializable
     data class Success(val data: UserInfoModel) : UserHomeInfoApiResponse()
+    @Serializable
     data class Error(val error: UserInfoErrorModel) : UserHomeInfoApiResponse()
 }
 
@@ -27,6 +30,7 @@ data class UserInfoModel(
     val householdList: List<HouseholdModel>
 )
 
+@Serializable
 data class UserInfoErrorModel(
     val status: String,
     @SerialName("request_id")

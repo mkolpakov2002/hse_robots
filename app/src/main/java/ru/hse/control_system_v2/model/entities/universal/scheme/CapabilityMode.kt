@@ -111,7 +111,6 @@ enum class ModeCapabilityMode {
  * Параметры возможности режима.
  */
 @Serializable
-@SerialName("mode")
 data class ModeCapabilityParameters(
     val instance: ModeCapabilityInstance,
     val modes: List<Map<String, ModeCapabilityMode>>

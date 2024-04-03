@@ -43,7 +43,6 @@ data class RangeCapabilityRange(
  * Параметры возможности диапазона.
  */
 @Serializable
-@SerialName("range")
 data class RangeCapabilityParameters(
     val instance: RangeCapabilityInstance,
     var unit: RangeCapabilityUnit? = null,

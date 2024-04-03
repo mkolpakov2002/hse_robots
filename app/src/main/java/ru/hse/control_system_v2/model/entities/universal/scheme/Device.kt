@@ -1,76 +1,243 @@
 package ru.hse.control_system_v2.model.entities.universal.scheme
 
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.InternalSerializationApi
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.descriptors.PolymorphicKind
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.descriptors.buildSerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
+import kotlinx.serialization.json.JsonDecoder
+import kotlinx.serialization.json.JsonEncoder
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.jsonPrimitive
+
+@Serializable(with = DeviceTypeSerializer::class)
+sealed class DeviceType {
+    @Serializable
+    @SerialName("devices.types.light")
+    object Light : DeviceType()
+
+    @Serializable
+    @SerialName("devices.types.socket")
+    object Socket : DeviceType()
+
+    @Serializable
+    @SerialName("devices.types.switch")
+    object Switch : DeviceType()
+
+    @Serializable
+    @SerialName("devices.types.thermostat")
+    object Thermostat : DeviceType()
+
+    @Serializable
+    @SerialName("devices.types.thermostat.ac")
+    object ThermostatAC : DeviceType()
+
+    @Serializable
+    @SerialName("devices.types.media_device")
+    object MediaDevice : DeviceType()
+
+    @Serializable
+    @SerialName("devices.types.media_device.tv")
+    object MediaDeviceTV : DeviceType()
+
+    @Serializable
+    @SerialName("devices.types.media_device.tv_box")
+    object MediaDeviceTVBox : DeviceType()
+
+    @Serializable
+    @SerialName("devices.types.media_device.receiver")
+    object MediaDeviceReceiver : DeviceType()
+
+    @Serializable
+    @SerialName("devices.types.cooking")
+    object Cooking : DeviceType()
+
+    @Serializable
+    @SerialName("devices.types.cooking.coffee_maker")
+    object CoffeeMaker : DeviceType()
+
+    @Serializable
+    @SerialName("devices.types.cooking.kettle")
+    object Kettle : DeviceType()
+
+    @Serializable
+    @SerialName("devices.types.cooking.multicooker")
+    object Multicooker : DeviceType()
+
+    @Serializable
+    @SerialName("devices.types.openable")
+    object Openable : DeviceType()
+
+    @Serializable
+    @SerialName("devices.types.openable.curtain")
+    object OpenableCurtain : DeviceType()
+
+    @Serializable
+    @SerialName("devices.types.humidifier")
+    object Humidifier : DeviceType()
+
+    @Serializable
+    @SerialName("devices.types.purifier")
+    object Purifier : DeviceType()
+
+    @Serializable
+    @SerialName("devices.types.vacuum_cleaner")
+    object VacuumCleaner : DeviceType()
+
+    @Serializable
+    @SerialName("devices.types.washing_machine")
+    object WashingMachine : DeviceType()
+
+    @Serializable
+    @SerialName("devices.types.dishwasher")
+    object Dishwasher : DeviceType()
+
+    @Serializable
+    @SerialName("devices.types.iron")
+    object Iron : DeviceType()
+
+    @Serializable
+    @SerialName("devices.types.sensor")
+    object Sensor : DeviceType()
+
+    @Serializable
+    @SerialName("devices.types.sensor.motion")
+    object SensorMotion : DeviceType()
+
+    @Serializable
+    @SerialName("devices.types.sensor.door")
+    object SensorDoor : DeviceType()
+
+    @Serializable
+    @SerialName("devices.types.sensor.window")
+    object SensorWindow : DeviceType()
+
+    @Serializable
+    @SerialName("devices.types.sensor.water_leak")
+    object SensorWaterLeak : DeviceType()
+
+    @Serializable
+    @SerialName("devices.types.sensor.smoke")
+    object SensorSmoke : DeviceType()
+
+    @Serializable
+    @SerialName("devices.types.sensor.gas")
+    object SensorGas : DeviceType()
+
+    @Serializable
+    @SerialName("devices.types.sensor.vibration")
+    object SensorVibration : DeviceType()
+
+    @Serializable
+    @SerialName("devices.types.sensor.button")
+    object SensorButton : DeviceType()
+
+    @Serializable
+    @SerialName("devices.types.sensor.illumination")
+    object SensorIllumination : DeviceType()
+
+    @Serializable
+    @SerialName("devices.types.other")
+    object Other : DeviceType()
+}
 
 @Serializable
-enum class DeviceType {
-    @SerialName("devices.types.light")
-    LIGHT,
-    @SerialName("devices.types.socket")
-    SOCKET,
-    @SerialName("devices.types.switch")
-    SWITCH,
-    @SerialName("devices.types.thermostat")
-    THERMOSTAT,
-    @SerialName("devices.types.thermostat.ac")
-    THERMOSTAT_AC,
-    @SerialName("devices.types.media_device")
-    MEDIA_DEVICE,
-    @SerialName("devices.types.media_device.tv")
-    MEDIA_DEVICE_TV,
-    @SerialName("devices.types.media_device.tv_box")
-    MEDIA_DEVICE_TV_BOX,
-    @SerialName("devices.types.media_device.receiver")
-    MEDIA_DEVICE_RECEIVER,
-    @SerialName("devices.types.cooking")
-    COOKING,
-    @SerialName("devices.types.cooking.coffee_maker")
-    COFFEE_MAKER,
-    @SerialName("devices.types.cooking.kettle")
-    KETTLE,
-    @SerialName("devices.types.cooking.multicooker")
-    MULTICOOKER,
-    @SerialName("devices.types.openable")
-    OPENABLE,
-    @SerialName("devices.types.openable.curtain")
-    OPENABLE_CURTAIN,
-    @SerialName("devices.types.humidifier")
-    HUMIDIFIER,
-    @SerialName("devices.types.purifier")
-    PURIFIER,
-    @SerialName("devices.types.vacuum_cleaner")
-    VACUUM_CLEANER,
-    @SerialName("devices.types.washing_machine")
-    WASHING_MACHINE,
-    @SerialName("devices.types.dishwasher")
-    DISHWASHER,
-    @SerialName("devices.types.iron")
-    IRON,
-    @SerialName("devices.types.sensor")
-    SENSOR,
-    @SerialName("devices.types.sensor.motion")
-    SENSOR_MOTION,
-    @SerialName("devices.types.sensor.door")
-    SENSOR_DOOR,
-    @SerialName("devices.types.sensor.window")
-    SENSOR_WINDOW,
-    @SerialName("devices.types.sensor.water_leak")
-    SENSOR_WATER_LEAK,
-    @SerialName("devices.types.sensor.smoke")
-    SENSOR_SMOKE,
-    @SerialName("devices.types.sensor.gas")
-    SENSOR_GAS,
-    @SerialName("devices.types.sensor.vibration")
-    SENSOR_VIBRATION,
-    @SerialName("devices.types.sensor.button")
-    SENSOR_BUTTON,
-    @SerialName("devices.types.sensor.illumination")
-    SENSOR_ILLUMINATION,
-    @SerialName("devices.types.smart_speaker.yandex.station.micro")
-    SMART_SPEAKER_YANDEX_STATION_MICRO,
-    @SerialName("devices.types.other")
-    OTHER
+data class CustomDeviceType(
+    @SerialName(value = "serialName") val serialName: String
+) : DeviceType()
+
+object DeviceTypeSerializer : KSerializer<DeviceType> {
+    @OptIn(InternalSerializationApi::class, ExperimentalSerializationApi::class)
+    override val descriptor: SerialDescriptor = buildSerialDescriptor("DeviceType", PolymorphicKind.OPEN)
+
+    override fun deserialize(decoder: Decoder): DeviceType {
+        val jsonDecoder = decoder as? JsonDecoder ?: error("This class can be loaded only by Json")
+        val json = jsonDecoder.decodeJsonElement().jsonPrimitive.content
+
+        return when (json) {
+            "devices.types.light" -> DeviceType.Light
+            "devices.types.socket" -> DeviceType.Socket
+            "devices.types.switch" -> DeviceType.Switch
+            "devices.types.thermostat" -> DeviceType.Thermostat
+            "devices.types.thermostat.ac" -> DeviceType.ThermostatAC
+            "devices.types.media_device" -> DeviceType.MediaDevice
+            "devices.types.media_device.tv" -> DeviceType.MediaDeviceTV
+            "devices.types.media_device.tv_box" -> DeviceType.MediaDeviceTVBox
+            "devices.types.media_device.receiver" -> DeviceType.MediaDeviceReceiver
+            "devices.types.cooking" -> DeviceType.Cooking
+            "devices.types.cooking.coffee_maker" -> DeviceType.CoffeeMaker
+            "devices.types.cooking.kettle" -> DeviceType.Kettle
+            "devices.types.cooking.multicooker" -> DeviceType.Multicooker
+            "devices.types.openable" -> DeviceType.Openable
+            "devices.types.openable.curtain" -> DeviceType.OpenableCurtain
+            "devices.types.humidifier" -> DeviceType.Humidifier
+            "devices.types.purifier" -> DeviceType.Purifier
+            "devices.types.vacuum_cleaner" -> DeviceType.VacuumCleaner
+            "devices.types.washing_machine" -> DeviceType.WashingMachine
+            "devices.types.dishwasher" -> DeviceType.Dishwasher
+            "devices.types.iron" -> DeviceType.Iron
+            "devices.types.sensor" -> DeviceType.Sensor
+            "devices.types.sensor.motion" -> DeviceType.SensorMotion
+            "devices.types.sensor.door" -> DeviceType.SensorDoor
+            "devices.types.sensor.window" -> DeviceType.SensorWindow
+            "devices.types.sensor.water_leak" -> DeviceType.SensorWaterLeak
+            "devices.types.sensor.smoke" -> DeviceType.SensorSmoke
+            "devices.types.sensor.gas" -> DeviceType.SensorGas
+            "devices.types.sensor.vibration" -> DeviceType.SensorVibration
+            "devices.types.sensor.button" -> DeviceType.SensorButton
+            "devices.types.sensor.illumination" -> DeviceType.SensorIllumination
+            "devices.types.other" -> DeviceType.Other
+            else -> CustomDeviceType(json)
+        }
+    }
+
+    override fun serialize(encoder: Encoder, value: DeviceType) {
+        val jsonEncoder = encoder as? JsonEncoder ?: error("This class can be saved only by Json")
+        jsonEncoder.encodeJsonElement(
+            JsonPrimitive(
+            when (value) {
+                is DeviceType.Light -> "devices.types.light"
+                is DeviceType.Socket -> "devices.types.socket"
+                is DeviceType.Switch -> "devices.types.switch"
+                is DeviceType.Thermostat -> "devices.types.thermostat"
+                is DeviceType.ThermostatAC -> "devices.types.thermostat.ac"
+                is DeviceType.MediaDevice -> "devices.types.media_device"
+                is DeviceType.MediaDeviceTV -> "devices.types.media_device.tv"
+                is DeviceType.MediaDeviceTVBox -> "devices.types.media_device.tv_box"
+                is DeviceType.MediaDeviceReceiver -> "devices.types.media_device.receiver"
+                is DeviceType.Cooking -> "devices.types.cooking"
+                is DeviceType.CoffeeMaker -> "devices.types.cooking.coffee_maker"
+                is DeviceType.Kettle -> "devices.types.cooking.kettle"
+                is DeviceType.Multicooker -> "devices.types.cooking.multicooker"
+                is DeviceType.Openable -> "devices.types.openable"
+                is DeviceType.OpenableCurtain -> "devices.types.openable.curtain"
+                is DeviceType.Humidifier -> "devices.types.humidifier"
+                is DeviceType.Purifier -> "devices.types.purifier"
+                is DeviceType.VacuumCleaner -> "devices.types.vacuum_cleaner"
+                is DeviceType.WashingMachine -> "devices.types.washing_machine"
+                is DeviceType.Dishwasher -> "devices.types.dishwasher"
+                is DeviceType.Iron -> "devices.types.iron"
+                is DeviceType.Sensor -> "devices.types.sensor"
+                is DeviceType.SensorMotion -> "devices.types.sensor.motion"
+                is DeviceType.SensorDoor -> "devices.types.sensor.door"
+                is DeviceType.SensorWindow -> "devices.types.sensor.window"
+                is DeviceType.SensorWaterLeak -> "devices.types.sensor.water_leak"
+                is DeviceType.SensorSmoke -> "devices.types.sensor.smoke"
+                is DeviceType.SensorGas -> "devices.types.sensor.gas"
+                is DeviceType.SensorVibration -> "devices.types.sensor.vibration"
+                is DeviceType.SensorButton -> "devices.types.sensor.button"
+                is DeviceType.SensorIllumination -> "devices.types.sensor.illumination"
+                is DeviceType.Other -> "devices.types.other"
+                is CustomDeviceType -> value.serialName
+            }
+        )
+        )
+    }
 }
 
 @Serializable

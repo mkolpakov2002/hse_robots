@@ -43,12 +43,13 @@ data class RangeCapabilityRange(
  * Параметры возможности диапазона.
  */
 @Serializable
+@SerialName("range")
 data class RangeCapabilityParameters(
     val instance: RangeCapabilityInstance,
     var unit: RangeCapabilityUnit? = null,
     @SerialName("random_access") val randomAccess: Boolean,
     val range: RangeCapabilityRange? = null
-): CapabilityParameters {
+): CapabilityParameters() {
     init {
         unit = when (instance) {
             RangeCapabilityInstance.BRIGHTNESS,

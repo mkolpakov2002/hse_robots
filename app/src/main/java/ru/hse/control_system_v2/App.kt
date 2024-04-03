@@ -15,8 +15,6 @@ import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logging
 import kotlinx.serialization.json.Json
 import ru.hse.control_system_v2.model.db.AppDatabase
-import ru.hse.control_system_v2.model.entities.universal.classes.connection_desc.yandex.RemoteDeviceDataSource
-import ru.hse.control_system_v2.model.entities.universal.classes.device_desc.room.DeviceRepository
 
 class App : Application() {
 
@@ -28,35 +26,9 @@ class App : Application() {
         mSettings = PreferenceManager.getDefaultSharedPreferences(
             instance
         )
-        httpClient = HttpClient(Android) {
-            install(ContentNegotiation) {
-                Json {
-                    isLenient = true
-                    ignoreUnknownKeys = true
-                }
-            }
-            install(Logging) {
-                level = LogLevel.ALL
-            }
-            install(Auth) {
-                bearer {
-                    loadTokens {
-                        BearerTokens(token, token)
-                    }
-                }
-            }
-            expectSuccess = true
-        }
-        val deviceDao = AppDatabase.getInstance(this).deviceDao()
-        val remoteDeviceDataSource = RemoteDeviceDataSource(client = httpClient)
-        deviceRepository = DeviceRepository(remoteDeviceDataSource)
     }
 
     companion object {
-        lateinit var deviceRepository: DeviceRepository
-            private set
-        lateinit var httpClient: HttpClient
-            private set
         lateinit var instance: App
             private set
         var mSettings: SharedPreferences? = null

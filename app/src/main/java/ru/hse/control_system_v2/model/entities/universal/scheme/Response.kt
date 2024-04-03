@@ -42,7 +42,8 @@ data class Error(
  * https://raw.githubusercontent.com/dext0r/yandex_smart_home/master/custom_components/yandex_smart_home/schema/response.py
  */
 @Serializable
-data class Response(
-    @SerialName("request_id") val requestId: String? = null,
-    val payload: ResponsePayload? = null
-): APIModel
+sealed interface Response: APIModel {
+    @SerialName("request_id")
+    val requestId: String?
+    val payload: ResponsePayload?
+}

@@ -11,23 +11,19 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import ru.hse.control_system_v2.utility.AppConstants.DATABASE_NAME
 import ru.hse.control_system_v2.model.entities.DeviceOld
-import ru.hse.control_system_v2.model.entities.universal.classes.device_desc.room.CapabilityEntity
-import ru.hse.control_system_v2.model.entities.universal.classes.device_desc.room.DeviceDao
-import ru.hse.control_system_v2.model.entities.universal.classes.device_desc.room.DeviceEntity
-import ru.hse.control_system_v2.model.entities.universal.classes.device_desc.room.PropertyEntity
 import ru.hse.control_system_v2.ui.packages.XmlTag
 
 /**
  * Класс локальной базы данных
  */
 @Database(
-    entities = [DeviceOld::class, DeviceEntity::class, CapabilityEntity::class, PropertyEntity::class ],
+    entities = [DeviceOld::class],
     version = 1
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun deviceOldItemTypeDao(): DeviceItemTypeDao?
-    abstract fun deviceDao(): DeviceDao
+
     companion object {
         private const val DATABASE_NAME = "device_database"
 

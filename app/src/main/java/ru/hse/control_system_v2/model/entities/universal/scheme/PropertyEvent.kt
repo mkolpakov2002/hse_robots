@@ -14,7 +14,8 @@ enum class EventPropertyInstance {
     @SerialName("battery_level") BATTERY_LEVEL,
     @SerialName("food_level") FOOD_LEVEL,
     @SerialName("water_level") WATER_LEVEL,
-    @SerialName("water_leak") WATER_LEAK
+    @SerialName("water_leak") WATER_LEAK,
+    @SerialName("voice_activity") VOICE_ACTIVITY
 }
 
 @Serializable
@@ -85,6 +86,11 @@ enum class WaterLevelInstanceEvent : EventInstanceEvent {
 enum class WaterLeakInstanceEvent : EventInstanceEvent {
     @SerialName("dry") DRY,
     @SerialName("leak") LEAK
+}
+
+@Serializable
+enum class VoiceActivityInstanceEvent : EventInstanceEvent {
+    @SerialName("speech_finished") SPEECH_FINISHED,
 }
 
 @Serializable

@@ -1,7 +1,15 @@
 package ru.hse.control_system_v2.model.entities.universal.scheme
 
+import android.util.Log
+import kotlinx.serialization.DeserializationStrategy
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonClassDiscriminator
+import kotlinx.serialization.json.JsonContentPolymorphicSerializer
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 
 @Serializable
 enum class CapabilityType {
@@ -20,23 +28,51 @@ enum class CapabilityType {
 }
 
 @Serializable
-sealed interface CapabilityParameters : APIModel
-
-@Serializable
 sealed interface CapabilityInstance : APIModel
+
+@Serializable(with = CapabilityParametersSerializer::class)
+//@JsonClassDiscriminator("type")
+//JsonClassDiscriminator не используется, т.к. в Json не указывается тип CapabilityParameters
+//Например, {"color_model":"hsv","temperature_k":{"min":2700,"max":6500}}
+sealed class CapabilityParameters : APIModel
+
+object CapabilityParametersSerializer : JsonContentPolymorphicSerializer<CapabilityParameters>(CapabilityParameters::class) {
+    override fun selectDeserializer(element: JsonElement): DeserializationStrategy<CapabilityParameters> {
+        return when {
+            element.jsonObject.containsKey("color_model") ||
+                    element.jsonObject.containsKey("temperature_k") ||
+                    element.jsonObject.containsKey("color_scene") ->
+                        ColorSettingCapabilityParameters.serializer()
+            element.jsonObject.containsKey("instance") && element.jsonObject.containsKey("modes") ->
+                ModeCapabilityParameters.serializer()
+            element.jsonObject.containsKey("split") ->
+                OnOffCapabilityParameters.serializer()
+            element.jsonObject.containsKey("instance") && element.jsonObject.containsKey("random_access") ->
+                RangeCapabilityParameters.serializer()
+            element.jsonObject.containsKey("instance") ->
+                ToggleCapabilityParameters.serializer()
+            element.jsonObject.containsKey("protocols") ->
+                VideoStreamCapabilityParameters.serializer()
+            else -> {
+                Log.e("CapabilityParametersSerializer", element.jsonObject.toString())
+                throw Exception("Unknown CapabilityParameters: key 'type' not found or does not match any capability type")
+            }
+        }
+    }
+}
 
 @Serializable
 data class CapabilityDescription(
     val type: CapabilityType,
     val retrievable: Boolean,
-    val reportable: Boolean,
+    val reportable: Boolean? = null,
     val parameters: CapabilityParameters? = null
 ) : APIModel
 
 
 //TODO: проверить список Capability классов
 @Serializable
-sealed class CapabilityStateValue
+open class CapabilityStateValue
 
 @Serializable
 data class OnOffCapabilityStateValue(val value: Boolean) : CapabilityStateValue()

@@ -22,9 +22,10 @@ enum class ToggleCapabilityInstance: CapabilityInstance {
  * Параметры возможности переключения.
  */
 @Serializable
+@SerialName("toggle")
 data class ToggleCapabilityParameters(
     val instance: ToggleCapabilityInstance
-): CapabilityParameters
+): CapabilityParameters()
 
 /**
  * Новое значение для возможности переключения.

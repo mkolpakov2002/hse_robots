@@ -20,8 +20,7 @@ import ru.hse.control_system_v2.R
 import ru.hse.control_system_v2.model.entities.DeviceOld
 import ru.hse.control_system_v2.databinding.FragmentConnectionTypeBinding
 import ru.hse.control_system_v2.databinding.ItemConnectionTypeBinding
-import ru.hse.control_system_v2.model.entities.universal.classes.connection_desc.yandex.DeviceService
-import ru.hse.control_system_v2.model.entities.universal.classes.device_desc.api.Capability
+import ru.hse.control_system_v2.model.entities.universal.YandexSmartHomeAPITest
 
 class ConnectionTypeFragment : Fragment() {
 
@@ -44,17 +43,8 @@ class ConnectionTypeFragment : Fragment() {
 
         binding.fabConnect.setOnClickListener {
             viewLifecycleOwner.lifecycleScope.launch {
-                viewModel.devices.value?.let { devices ->
-                    //TODO: Таня, тут начало запроса к Яндексу
-                    for (device in devices) {
-                        device.capabilities.find { it.type == "devices.capabilities.on_off" }?.let { onOffCapability ->
-                            val updatedCapability = onOffCapability.copy(
-                                state = mapOf("value" to true)
-                            )
-                            viewModel.handleDeviceAction(device.id, updatedCapability)
-                        }
-                    }
-                }
+                val apiTest = YandexSmartHomeAPITest()
+                apiTest.testAll()
             }
         }
     }

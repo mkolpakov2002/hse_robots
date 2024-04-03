@@ -111,10 +111,11 @@ enum class ModeCapabilityMode {
  * Параметры возможности режима.
  */
 @Serializable
+@SerialName("mode")
 data class ModeCapabilityParameters(
     val instance: ModeCapabilityInstance,
     val modes: List<Map<String, ModeCapabilityMode>>
-): CapabilityParameters {
+): CapabilityParameters() {
     companion object {
         fun fromList(instance: ModeCapabilityInstance, modes: List<ModeCapabilityMode>) =
             ModeCapabilityParameters(instance, modes.map { mapOf("value" to it) })

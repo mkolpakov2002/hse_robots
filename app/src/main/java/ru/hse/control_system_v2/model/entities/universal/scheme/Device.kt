@@ -67,6 +67,8 @@ enum class DeviceType {
     SENSOR_BUTTON,
     @SerialName("devices.types.sensor.illumination")
     SENSOR_ILLUMINATION,
+    @SerialName("devices.types.smart_speaker.yandex.station.micro")
+    SMART_SPEAKER_YANDEX_STATION_MICRO,
     @SerialName("devices.types.other")
     OTHER
 }
@@ -89,6 +91,21 @@ data class DeviceDescription(
     val capabilities: List<CapabilityDescription>? = null,
     val properties: List<PropertyDescription>? = null,
     @SerialName("device_info") val deviceInfo: DeviceInfo? = null
+) : APIModel
+
+@Serializable
+data class UserDeviceDescription(
+    val id: String,
+    val name: String,
+    val aliases: List<String> = listOf(),
+    val room: String? = null,
+    @SerialName("external_id") val externalId: String,
+    @SerialName("skill_id") val skillId: String,
+    val type: DeviceType,
+    val groups: List<String>? = null,
+    val capabilities: List<CapabilityDescription>? = null,
+    val properties: List<PropertyDescription>? = null,
+    @SerialName("household_id") val householdId: String
 ) : APIModel
 
 @Serializable

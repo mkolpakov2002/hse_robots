@@ -75,11 +75,12 @@ data class CapabilityParameterColorScene(
  * Параметры возможности настройки цвета.
  */
 @Serializable
+@SerialName("color_setting")
 data class ColorSettingCapabilityParameters(
     @SerialName("color_model") val colorModel: CapabilityParameterColorModel? = null,
     @SerialName("temperature_k") val temperatureK: CapabilityParameterTemperatureK? = null,
     @SerialName("color_scene") val colorScene: CapabilityParameterColorScene? = null
-): CapabilityParameters {
+): CapabilityParameters() {
     init {
         require(colorModel != null || temperatureK != null || colorScene != null) {
             "one of color_model, temperature_k or color_scene must have a value"
